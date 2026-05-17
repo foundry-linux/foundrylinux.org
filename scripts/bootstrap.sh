@@ -128,9 +128,12 @@ if ! $DRY_RUN; then
             export CF_EMAIL
         fi
         if [[ -z "${CF_GLOBAL_API_KEY:-}" ]]; then
-            echo "  Cloudflare Global API Key — paste it and press Enter (input is hidden):"
-            echo "  https://dash.cloudflare.com/profile/api-tokens  (scroll to Global API Key → View)"
-            read -rsp "  Key: " CF_GLOBAL_API_KEY
+            echo "  Cloudflare Global API Key needed to create the operator token."
+            echo "  Option A: get it at https://dash.cloudflare.com/profile/api-tokens"
+            echo "            (scroll to Global API Key → View), paste below (input hidden)."
+            echo "  Option B: Ctrl-C, manually create the token in the dashboard, then re-run with:"
+            echo "            export CF_API_TOKEN=<token> CF_ACCOUNT_ID=<id> CF_ZONE_ID=<id>"
+            read -rsp "  Global API Key (or Ctrl-C for Option B): " CF_GLOBAL_API_KEY
             echo
             export CF_GLOBAL_API_KEY
         fi
