@@ -33,6 +33,12 @@ tasks:
           dpkg-deb --info "$f" | head -20
         done
 
+  generate-index:
+    desc: "Generate public/index.html from packages/*/DEBIAN/control"
+    deps: [publish-local]
+    cmds:
+      - bash scripts/generate-index.sh
+
   apt-test:
     desc: "After publish-local, point apt at ./public/ and resolve packages"
     deps: [publish-local]

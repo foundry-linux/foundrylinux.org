@@ -94,6 +94,29 @@ task bump    # auto-increments patch version and triggers publish.yml
 
 Confirm the `smoke-install` job goes green before calling bootstrap complete.
 
+## Step 5.5 — Verify landing page
+
+Once the publish workflow goes green, confirm the root URL returns HTML:
+
+```bash
+curl -sI https://<CUSTOM_DOMAIN>/
+# expect: HTTP/2 200  content-type: text/html
+```
+
+`scripts/generate-index.sh` generates `public/index.html` automatically on every publish run,
+pulling package names, versions, and descriptions from `packages/*/DEBIAN/control` — no
+manual updates needed as packages evolve.
+
+To preview locally before pushing:
+
+```bash
+task generate-index   # runs publish-local as a dep, then generates the page
+# open public/index.html in a browser
+```
+
+To customise branding for a new repo, edit `SITE_TITLE`, `SITE_URL`, and `GITHUB_URL` at
+the top of `scripts/generate-index.sh`.
+
 ## Credential storage
 
 `bootstrap.sh` automatically stores all secrets to a private `<gh-org>-secrets` R2 bucket

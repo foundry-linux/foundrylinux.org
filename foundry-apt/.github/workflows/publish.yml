@@ -51,6 +51,10 @@ jobs:
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
           gpg --export --armor > ./public/key.gpg
 
+      - name: Generate index.html
+        if: ${{ !inputs.dry_run }}
+        run: bash scripts/generate-index.sh
+
       - name: Sync to Cloudflare R2
         if: ${{ !inputs.dry_run }}
         env:
