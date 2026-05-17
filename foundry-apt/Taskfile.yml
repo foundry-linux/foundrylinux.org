@@ -42,7 +42,7 @@ tasks:
           | sudo tee /etc/apt/sources.list.d/foundry-test.list
         sudo apt-get update -o Dir::Etc::sourceparts=- \
                             -o APT::Get::List-Cleanup=0 || true
-        apt-cache show task
+        apt-cache depends worldfoundry-dev
         sudo rm /etc/apt/sources.list.d/foundry-test.list
 
   shellcheck:
