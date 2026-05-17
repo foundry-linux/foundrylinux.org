@@ -102,6 +102,7 @@ Once the publish workflow goes green, confirm the root URL returns HTML:
 ```bash
 curl -sI https://<CUSTOM_DOMAIN>/
 # expect: HTTP/2 200  content-type: text/html
+# (URL rewrite, not redirect — free plan doesn't support http_request_redirect phase)
 ```
 
 `scripts/generate-index.sh` generates `public/index.html` automatically on every publish run,

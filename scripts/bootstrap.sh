@@ -154,8 +154,8 @@ if ! $DRY_RUN; then
     fi
 fi
 
-R2_ACCESS_KEY_ID=""
-R2_SECRET_ACCESS_KEY=""
+R2_ACCESS_KEY_ID="${R2_ACCESS_KEY_ID:-}"
+R2_SECRET_ACCESS_KEY="${R2_SECRET_ACCESS_KEY:-}"
 R2_DEV_HOSTNAME=""
 
 echo ""
@@ -461,38 +461,40 @@ fi
 # Step 7.5 — Cloudflare Redirect Rule: / → /index.html
 # ════════════════════════════════════════════════════════════════════════════
 
-info "[7.5] Creating redirect rule: ${CUSTOM_DOMAIN}/ → /index.html"
+info "[7.5] Creating URL rewrite rule: ${CUSTOM_DOMAIN}/ → /index.html"
 
-REDIRECT_EXPR="(http.host eq \"${CUSTOM_DOMAIN}\" and http.request.uri.path eq \"/\")"
-
-RULE_BODY=$(jq -n \
-    --arg expr "$REDIRECT_EXPR" \
-    --arg url  "https://${CUSTOM_DOMAIN}/index.html" \
-    '{action:"redirect",action_parameters:{from_value:{target_url:{value:$url},status_code:301,preserve_query_string:false}},expression:$expr,enabled:true}')
+# http_request_redirect is not available on the free plan; http_request_transform
+# (URL rewrite) is — it serves index.html transparently without a 301 round-trip.
+REWRITE_EXPR="(http.host eq \"${CUSTOM_DOMAIN}\" and http.request.uri.path eq \"/\")"
 
 if $DRY_RUN; then
-    echo "  [dry-run] PUT /zones/.../rulesets/phases/http_request_redirect/entrypoint"
+    echo "  [dry-run] PUT /zones/.../rulesets/phases/http_request_transform/entrypoint"
 else
     PHASE_JSON=$(cf_api GET \
-        "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" \
+        "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_transform/entrypoint" \
         2>/dev/null || echo '{}')
     RULESET_ID=$(echo "$PHASE_JSON" | jq -r '.result.id // empty' 2>/dev/null || true)
     EXISTING_RULE=$(echo "$PHASE_JSON" | jq -r \
-        --arg expr "$REDIRECT_EXPR" \
+        --arg expr "$REWRITE_EXPR" \
         '.result.rules[]? | select(.expression == $expr) | .id' 2>/dev/null || true)
 
+    RULE_BODY=$(jq -n --arg expr "$REWRITE_EXPR" \
+        '{action:"rewrite",action_parameters:{uri:{path:{value:"/index.html"}}},expression:$expr,enabled:true}')
+
     if [[ -n "$EXISTING_RULE" ]]; then
-        ok "[7.5] Redirect rule already exists (id: ${EXISTING_RULE})"
+        ok "[7.5] URL rewrite rule already exists (id: ${EXISTING_RULE})"
     elif [[ -z "$RULESET_ID" ]]; then
-        cf_api PUT \
-            "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" \
-            -d "$(jq -n --argjson rule "$RULE_BODY" \
-                    '{name:"Zone Redirect Rules",rules:[$rule]}')" >/dev/null
-        ok "[7.5] Redirect rule created: ${CUSTOM_DOMAIN}/ → /index.html"
+        RESP=$(cf_api PUT \
+            "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_transform/entrypoint" \
+            -d "$(jq -n --argjson rule "$RULE_BODY" '{name:"Zone Rewrite Rules",rules:[$rule]}')")
+        echo "$RESP" | jq -e '.success == true' &>/dev/null \
+            || { err "[7.5] $(echo "$RESP" | jq -r '.errors[0].message')"; exit 1; }
+        ok "[7.5] URL rewrite rule created: ${CUSTOM_DOMAIN}/ → /index.html"
     else
-        cf_api POST "/zones/${CF_ZONE_ID}/rulesets/${RULESET_ID}/rules" \
-            -d "$RULE_BODY" >/dev/null
-        ok "[7.5] Redirect rule added: ${CUSTOM_DOMAIN}/ → /index.html"
+        RESP=$(cf_api POST "/zones/${CF_ZONE_ID}/rulesets/${RULESET_ID}/rules" -d "$RULE_BODY")
+        echo "$RESP" | jq -e '.success == true' &>/dev/null \
+            || { err "[7.5] $(echo "$RESP" | jq -r '.errors[0].message')"; exit 1; }
+        ok "[7.5] URL rewrite rule added: ${CUSTOM_DOMAIN}/ → /index.html"
     fi
 fi
 
