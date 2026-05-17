@@ -111,7 +111,9 @@ if ! $DRY_RUN; then
         echo "  Permissions:"
         echo "    Account | Workers R2 Storage | Edit"
         echo "    Account | API Tokens         | Edit"
-        echo "    Zone    | DNS                | Edit  (zone: ${CF_ZONE_NAME}, not 'All zones')"
+        echo "    Zone    | DNS                | Edit  (Specific zone: ${CF_ZONE_NAME})"
+        echo "  Account Resources: Include → your account (default)"
+        echo "  Zone Resources:    Include → Specific zone → ${CF_ZONE_NAME}"
         echo ""
         read -rsp "  Paste token value (input hidden): " CF_API_TOKEN
         echo
