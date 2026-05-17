@@ -16,17 +16,20 @@ PKG_NAMES=()
 PKG_VERSIONS=()
 PKG_DESCS=()
 PKG_HOMEPAGES=()
+PKG_ARCHS=()
 
 for control in "$REPO_ROOT"/packages/*/DEBIAN/control; do
   [[ -f "$control" ]] || continue
-  pkg=$(grep '^Package:'     "$control" | sed 's/^Package: *//')
-  ver=$(grep '^Version:'     "$control" | sed 's/^Version: *//')
+  pkg=$(grep '^Package:'      "$control" | sed 's/^Package: *//')
+  ver=$(grep '^Version:'      "$control" | sed 's/^Version: *//')
   desc=$(grep '^Description:' "$control" | sed 's/^Description: *//')
-  homepage=$(grep '^Homepage:' "$control" | sed 's/^Homepage: *//' || true)
+  homepage=$(grep '^Homepage:'     "$control" | sed 's/^Homepage: *//' || true)
+  arch=$(grep '^Architecture:' "$control" | sed 's/^Architecture: *//' || true)
   PKG_NAMES+=("$pkg")
   PKG_VERSIONS+=("$ver")
   PKG_DESCS+=("$desc")
   PKG_HOMEPAGES+=("${homepage:-}")
+  PKG_ARCHS+=("${arch:-all}")
 done
 
 # Build the package table rows
@@ -36,13 +39,21 @@ for i in "${!PKG_NAMES[@]}"; do
   ver="${PKG_VERSIONS[$i]}"
   desc="${PKG_DESCS[$i]}"
   hp="${PKG_HOMEPAGES[$i]}"
+  arch="${PKG_ARCHS[$i]}"
   if [[ -n "$hp" ]]; then
     name_cell="<a href=\"${hp}\">${name}</a>"
   else
     name_cell="$name"
   fi
+  L="${name:0:1}"
+  if [[ "$arch" == "all" ]]; then
+    deb_url="/pool/main/${L}/${name}/${name}_${ver}_all.deb"
+    ver_cell="<a href=\"${deb_url}\">${ver}</a>"
+  else
+    ver_cell="${ver} (<a href=\"/pool/main/${L}/${name}/${name}_${ver}_amd64.deb\">amd64</a> <a href=\"/pool/main/${L}/${name}/${name}_${ver}_arm64.deb\">arm64</a>)"
+  fi
   PKG_ROWS="${PKG_ROWS}
-      <tr><td>${name_cell}</td><td>${ver}</td><td>${desc}</td></tr>"
+      <tr><td>${name_cell}</td><td>${ver_cell}</td><td>${desc}</td></tr>"
 done
 
 cat > "$OUT" <<HTML
@@ -105,6 +116,7 @@ cat > "$OUT" <<HTML
     text-align: left;
   }
   td { padding: .5rem .75rem; border-top: 1px solid var(--border); }
+  td:nth-child(1) { white-space: nowrap; }
   td:nth-child(2) { color: var(--dim); white-space: nowrap; }
   footer {
     margin-top: 3rem;
