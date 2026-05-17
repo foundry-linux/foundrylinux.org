@@ -86,10 +86,10 @@ for pkg in "${PACKAGES[@]}"; do
         apt-get install -y ${INSTALL_FLAG} ${pkg}
     "; then
         echo "[PASS] ${pkg}"
-        ((pass++))
+        pass=$((pass + 1))
     else
         echo "[FAIL] ${pkg}"
-        ((fail++))
+        fail=$((fail + 1))
     fi
 done
 
