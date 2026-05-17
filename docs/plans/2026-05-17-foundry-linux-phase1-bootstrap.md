@@ -92,12 +92,12 @@ The `smoke-install` job at the end of `publish.yml` proves a clean Ubuntu 26.04 
 
 ---
 
-## Step 11 — Create `/bootstrap` skill
+## Step 11 — Create `/new-web-apt-repo` skill
 
 Wrap the bootstrap process as a Claude Code slash command so future runs can be invoked as
 `/bootstrap` from within Claude Code.
 
-Skill file: `.claude/commands/bootstrap.md`
+Skill file: `.claude/commands/new-web-apt-repo.md`
 
 The skill:
 - Checks preflight conditions (tools installed, `gh auth status`)
@@ -145,4 +145,4 @@ apt-get install -y --no-install-recommends foundry-linux-dev
 - [ ] First tag `v0.0.1` pushed
 - [ ] `publish.yml` workflow green
 - [ ] `smoke-install` job confirms `apt install foundry-linux-dev` from live repo
-- [ ] `/bootstrap` skill created at `.claude/commands/bootstrap.md`
+- [ ] `/new-web-apt-repo` skill created at `.claude/commands/new-web-apt-repo.md`
