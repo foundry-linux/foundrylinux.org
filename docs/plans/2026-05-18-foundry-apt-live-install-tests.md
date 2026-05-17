@@ -1,7 +1,7 @@
 # foundry-apt live install tests
 
 **Date:** 2026-05-18  
-**Status:** In progress
+**Status:** Done
 
 ## Context
 
@@ -81,3 +81,53 @@ task live-test
 ```
 
 Expected output: `[PASS]` per package, `N passed, 0 failed` at the end.
+
+## Test results
+
+### `--download-only` (resolution check) — 2026-05-18
+
+All five packages resolve correctly against the live repo:
+
+| Package | Result | Notes |
+|---|---|---|
+| `foundry-linux-retro-tools` | PASS | |
+| `worldfoundry-android-dev` | PASS | |
+| `worldfoundry-blender` | PASS | |
+| `worldfoundry-dev` | PASS | Cloudsmith task repo added automatically (detected via `Depends: task`) |
+| `worldfoundry-engine-build-deps` | PASS | |
+
+**Finding during test development:** `worldfoundry-dev` depends on `task` (go-task), which is
+not in the Ubuntu archive. Test script detects `task` in the `Depends:` field and adds the
+Cloudsmith APT repo (`dl.cloudsmith.io/public/task/task/setup.deb.sh`) before installing.
+
+### Full install — 2026-05-18
+
+All five packages install successfully from the live repo in a fresh Ubuntu 26.04 container:
+
+| Package | Result | Notes |
+|---|---|---|
+| `foundry-linux-retro-tools` | PASS | ~483 MB download |
+| `worldfoundry-android-dev` | PASS | ~253 MB download |
+| `worldfoundry-blender` | PASS | ~475 MB download |
+| `worldfoundry-dev` | PASS | ~900 MB download (all deps + Cloudsmith task repo) |
+| `worldfoundry-engine-build-deps` | PASS | ~209 MB download |
+
+**Bug found and fixed during test development:**
+`((pass++))` with `set -euo pipefail` exits the script when the counter is 0 (falsy expression).
+Fixed by using `pass=$((pass + 1))` instead.
+
+### CI smoke-install — v0.0.10 — 2026-05-18
+
+`build-and-publish` green; `smoke-install` failed once with:
+
+```
+E: Failed to fetch …/Packages.gz  File has unexpected size (2800 != 2798).
+Mirror sync in progress?
+```
+
+`Packages.gz` and `Release` are currently consistent at 2798 bytes each.
+`cf-cache-status: BYPASS` (Packages.gz) and `DYNAMIC` (Release) — no CDN caching active.
+**Re-run passed (both jobs green).** Confirmed transient: the smoke-install job started
+immediately after `build-and-publish` (via `needs:`) and caught R2 mid-upload — new
+Packages.gz was live but the old Release was still in place during Pass 2. Adding a
+`sleep 5` between Pass 1 and Pass 2 in the workflow would close this window if it recurs.
