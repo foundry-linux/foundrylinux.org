@@ -1,0 +1,55 @@
+version: '3'
+
+vars:
+  GH_REPO: foundry-linux/foundry-apt
+  SRC_DIR: foundry-apt
+  WORK_DIR: /tmp/foundry-apt-sync
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+
+  sync:
+    desc: "Sync foundry-apt/ to github.com/{{.GH_REPO}} and push"
+    cmds:
+      - |
+        set -euo pipefail
+        rm -rf {{.WORK_DIR}}
+        gh repo clone {{.GH_REPO}} {{.WORK_DIR}}
+        rsync -a --delete --exclude='.git' {{.SRC_DIR}}/ {{.WORK_DIR}}/
+        cd {{.WORK_DIR}}
+        if git diff --quiet && git diff --cached --quiet; then
+          echo "Nothing to sync — remote is already up to date."
+          exit 0
+        fi
+        git add -A
+        git commit -m "chore: sync from linuxfoundry.org $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        git push
+
+  release:
+    desc: "Tag and push a release to trigger publish.yml (usage: task release TAG=v0.1.0)"
+    requires:
+      vars: [TAG]
+    cmds:
+      - |
+        set -euo pipefail
+        if [[ ! -d {{.WORK_DIR}}/.git ]]; then
+          echo "Run 'task sync' first to clone the repo." >&2
+          exit 1
+        fi
+        cd {{.WORK_DIR}}
+        git pull --ff-only
+        git tag {{.TAG}}
+        git push origin {{.TAG}}
+        echo "Tagged {{.TAG}} — watch: https://github.com/{{.GH_REPO}}/actions"
+
+  sync-and-release:
+    desc: "Sync then tag a release (usage: task sync-and-release TAG=v0.1.0)"
+    requires:
+      vars: [TAG]
+    cmds:
+      - task: sync
+      - task: release
+        vars: { TAG: '{{.TAG}}' }
