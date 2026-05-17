@@ -83,7 +83,7 @@ If step 1b reports missing permissions, edit the token at
 |---|---|---|
 | `[1b] Token is missing required permissions` | Operator token incomplete | Edit token — the output lists which permissions are missing |
 | `[1b] Could not retrieve account ID` | Token can't read account | Verify Account Resources → your account is selected |
-| `[6]` prompts for R2 credentials | R2 S3 tokens can't be created via API — must be done in the R2 dashboard | Follow the prompt URL: `https://dash.cloudflare.com/{account_id}/r2/api-tokens` |
+| `[6]` prompts for R2 credentials | R2 S3 tokens can't be created via API — must be done in the R2 dashboard | Follow the prompt URL and click **Create Account API token** (not User — Account tokens survive org membership changes and are recommended for CI) |
 
 ## Step 5 — Push first tag
 
