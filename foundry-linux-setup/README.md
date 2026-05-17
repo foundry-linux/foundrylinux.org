@@ -1,11 +1,11 @@
 # foundry-linux-setup
 
-**Phase 0 of the [Foundry Linux](https://docs.worldfoundry.org) distro plan** — a curl-bash installer that bootstraps a vanilla [Kubuntu 26.04 LTS](https://kubuntu.org/) (or any Ubuntu-family 26.04) into a [World Foundry](https://worldfoundry.org) game-dev workstation.
+**Phase 0 of the [Foundry Linux](https://foundrylinux.org) distro plan** — a curl-bash installer that bootstraps a vanilla [Kubuntu 26.04 LTS](https://kubuntu.org/) (or any Ubuntu-family 26.04) into a Foundry Linux game-dev workstation.
 
 ## Quick start
 
 ```bash
-curl -fsSL https://worldfoundry.org/install.sh | bash
+curl -fsSL https://foundrylinux.org/install.sh | bash
 ```
 
 Or, if you've cloned this repo:
@@ -58,7 +58,7 @@ The installer prompts (or accepts `--role`) for one of these:
 
 This script is **Phase 0** of the [distro plan](../docs/investigations/2026-05-16-foundry-linux-distro-proposal.md): the lowest-friction onboarding path that works before our APT repo exists.
 
-It's the **only** path where Foundry Linux compiles tooling on the user's machine. **Phase 1** (the APT repo on Cloudflare R2) ships prebuilt `.deb`s for `wftools`, `wf-launcher`, the Blender addon, and everything else — at that point this script collapses to ~20 lines: add the apt source, `apt install worldfoundry-dev`, clone the repos.
+It's the **only** path where Foundry Linux compiles tooling on the user's machine. **Phase 1** (the APT repo on Cloudflare R2) ships prebuilt `.deb`s for `wftools`, `wf-launcher`, the Blender addon, and everything else — at that point this script collapses to ~20 lines: add the apt source, `apt install foundry-linux-dev`, clone the repos.
 
 ## Testing
 
@@ -93,7 +93,7 @@ foundry-linux-setup/
 
 ## Hosting
 
-The canonical URL `https://worldfoundry.org/install.sh` is served from this repo via Cloudflare Pages with a redirect to the latest `install.sh` on `main`. See `docs/hosting.md` (TBD) for the DNS / Pages setup steps.
+The canonical URL `https://foundrylinux.org/install.sh` is served from this repo via Cloudflare Pages with a redirect to the latest `install.sh` on `main`. See `docs/hosting.md` (TBD) for the DNS / Pages setup steps.
 
 ## License
 

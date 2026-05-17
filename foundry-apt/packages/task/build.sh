@@ -47,7 +47,7 @@ build_one() {
 Package: task
 Version: ${VERSION}
 Architecture: ${arch}
-Maintainer: World Foundry <packages@worldfoundry.org>
+Maintainer: Foundry Linux <packages@foundrylinux.org>
 Section: devel
 Priority: optional
 Homepage: https://taskfile.dev/

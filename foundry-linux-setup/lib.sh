@@ -1,6 +1,6 @@
 # Shared helpers for foundry-linux-setup install scripts.
 #
-# Sourced by install.sh and each install-worldfoundry-*.sh per-metapackage
+# Sourced by install.sh and each install-foundry-linux-*.sh per-metapackage
 # script. Defines colors, logging, and dry-run-aware command wrappers.
 #
 # Usage:

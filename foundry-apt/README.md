@@ -1,18 +1,18 @@
 # foundry-apt
 
-**Phase 1 of the [Foundry Linux](https://docs.worldfoundry.org) distro plan** — the signed APT repo + `worldfoundry-*` metapackages that collapse the Phase 0 curl-bash installer into a one-line `apt install worldfoundry-dev`.
+**Phase 1 of the [Foundry Linux](https://foundrylinux.org) distro plan** — the signed APT repo + `foundry-linux-*` metapackages that collapse the Phase 0 curl-bash installer into a one-line `apt install foundry-linux-dev`.
 
 ## Quick start (consumer)
 
-Once the repo is live at `foundry.worldfoundry.org`:
+Once the repo is live at `apt.foundrylinux.org`:
 
 ```bash
-curl -fsSL https://foundry.worldfoundry.org/key.gpg \
+curl -fsSL https://apt.foundrylinux.org/key.gpg \
   | sudo gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
-echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://foundry.worldfoundry.org resolute main" \
+echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
   | sudo tee /etc/apt/sources.list.d/foundry.list
 sudo apt update
-sudo apt install worldfoundry-dev
+sudo apt install foundry-linux-dev
 ```
 
 `resolute` is the suite name (matches Kubuntu 26.04's [release codename](https://kubuntu.org/news/kubuntu-26-04-resolute-released/) "Resolute Raccoon"). The repo also exposes a `noble` suite as an alias for 24.04 users on the `--allow-24.04` path.
@@ -21,11 +21,11 @@ sudo apt install worldfoundry-dev
 
 | Package | Pulls in | When you want it |
 |---|---|---|
-| **`worldfoundry-dev`** | everything below | Default — most contributors |
-| `worldfoundry-engine-build-deps` | build-essential, cmake, libx11, libgl, gdb, xxd, pkg-config, git | Just compiling the engine |
-| `worldfoundry-blender` | [Blender](https://www.blender.org/) 4.2+ + python3 + engine-build-deps | Authoring levels |
-| `worldfoundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils; Recommends [ghidra](https://ghidra-sre.org/), [f9dasm](http://www.df.lth.se.orbin.se/~triad/f9dasm/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm), [xa65](https://www.floodgap.com/retrotech/xa/) | Porting arcade ROMs |
-| `worldfoundry-android-dev` | JDK 17, adb, NDK r26c | Cross-compiling for Android (separate because ~3 GB) |
+| **`foundry-linux-dev`** | everything below | Default — most contributors |
+| `foundry-linux-engine-build-deps` | build-essential, cmake, libx11, libgl, gdb, xxd, pkg-config, git | Just compiling the engine |
+| `foundry-linux-blender` | [Blender](https://www.blender.org/) 4.2+ + python3 + engine-build-deps | Authoring levels |
+| `foundry-linux-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils; Recommends [ghidra](https://ghidra-sre.org/), [f9dasm](http://www.df.lth.se.orbin.se/~triad/f9dasm/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm), [xa65](https://www.floodgap.com/retrotech/xa/) | Porting arcade ROMs |
+| `foundry-linux-android-dev` | JDK 17, adb, NDK r26c | Cross-compiling for Android (separate because ~3 GB) |
 
 ## Vendored upstream packages
 
@@ -44,11 +44,11 @@ The package set comes from [`Taskfile.yml:236-251`](../Taskfile.yml) (`task dev-
 ```
 foundry-apt/
   packages/
-    worldfoundry-dev/DEBIAN/control
-    worldfoundry-engine-build-deps/DEBIAN/control
-    worldfoundry-blender/DEBIAN/control
-    worldfoundry-retro-tools/DEBIAN/control
-    worldfoundry-android-dev/DEBIAN/control
+    foundry-linux-dev/DEBIAN/control
+    foundry-linux-engine-build-deps/DEBIAN/control
+    foundry-linux-blender/DEBIAN/control
+    foundry-linux-retro-tools/DEBIAN/control
+    foundry-linux-android-dev/DEBIAN/control
     task/build.sh               Fetches upstream binary + builds .deb
   aptly/
     aptly.conf                  Local aptly config (rootDir, architectures)
@@ -73,8 +73,8 @@ Build every `.deb` and inspect the result without touching aptly:
 
 ```bash
 bash scripts/build-all.sh
-dpkg-deb --info dist/worldfoundry-dev_1.0.0_all.deb
-dpkg-deb --contents dist/worldfoundry-dev_1.0.0_all.deb
+dpkg-deb --info dist/foundry-linux-dev_1.0.0_all.deb
+dpkg-deb --contents dist/foundry-linux-dev_1.0.0_all.deb
 ```
 
 End-to-end with [aptly](https://www.aptly.info/) (requires `sudo apt install aptly`):
@@ -84,7 +84,7 @@ bash scripts/build-all.sh       # → dist/*.deb
 bash scripts/init-repo.sh       # → ~/.aptly/foundry repo
 bash scripts/publish-local.sh   # → ./public/ apt tree
 sudo apt-get update -o Dir::Etc::sourcelist="<(echo deb [trusted=yes] file://$(pwd)/public resolute main)"
-apt-cache depends worldfoundry-dev
+apt-cache depends foundry-linux-dev
 ```
 
 ## Adding or upgrading a package
@@ -108,15 +108,15 @@ To release: `git tag v1.0.1 && git push origin v1.0.1` — the [publish workflow
 ## Phase 0 → Phase 1 → Phase 2+
 
 - **[Phase 0](../foundry-linux-setup/)** (current): bash installer composes the apt list inline; works on any vanilla Ubuntu-family 26.04
-- **Phase 1 (this repo):** signed apt repo + metapackages → `apt install worldfoundry-dev`
-- **Phase 2:** `ghcr.io/worldfoundry/devbox:26.04` Distrobox image (`Dockerfile FROM ubuntu:26.04 RUN apt install worldfoundry-dev`)
+- **Phase 1 (this repo):** signed apt repo + metapackages → `apt install foundry-linux-dev`
+- **Phase 2:** `ghcr.io/foundry-linux/devbox:26.04` Distrobox image (`Dockerfile FROM ubuntu:26.04 RUN apt install foundry-linux-dev`)
 - **Phase 3:** Foundry Linux ISO (`live-build` pulls from this repo into a Kubuntu 26.04 remix)
 
 See [`docs/investigations/2026-05-16-foundry-linux-distro-proposal.md`](../docs/investigations/2026-05-16-foundry-linux-distro-proposal.md) for the full plan.
 
 ## Hosting
 
-- **Apt repo:** [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/) (10 GB free tier, zero egress) → `foundry.worldfoundry.org`
+- **Apt repo:** [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/) (10 GB free tier, zero egress) → `apt.foundrylinux.org`
 - **Signing key:** [AWS SSM SecureString](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-paramstore-securestring.html) (free tier) + [GitHub OIDC federation](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect) — no long-lived AWS access keys in repo secrets
 - **Release signing (annual):** YubiKey offline (Tier 2)
 

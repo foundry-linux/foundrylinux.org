@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the worldfoundry-android-dev metapackage.
+# Phase 0 installer for the foundry-linux-android-dev metapackage.
 #
-# apt deps (from foundry-apt/packages/worldfoundry-android-dev/DEBIAN/control):
+# apt deps (from foundry-apt/packages/foundry-linux-android-dev/DEBIAN/control):
 #   openjdk-17-jdk adb google-android-ndk-r26c-installer
 #
 # Phase 1 collapse:
-#   run_sudo apt-get install -y worldfoundry-android-dev
+#   run_sudo apt-get install -y foundry-linux-android-dev
 
 set -euo pipefail
 
@@ -13,7 +13,7 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-Phase 0 installer for worldfoundry-android-dev
+Phase 0 installer for foundry-linux-android-dev
 
 Installs the Android build toolchain: JDK 17, adb, and the Android NDK r26c
 (used by 'task build-cmake-android' and 'task build-apk').
@@ -50,7 +50,7 @@ else
     apt_update() { run_sudo apt-get update -q 2>&1 || echo "⚠ apt-get update had errors; continuing"; }
 fi
 
-step "Installing worldfoundry-android-dev (apt)"
+step "Installing foundry-linux-android-dev (apt)"
 apt_update
 run_sudo apt-get install -y \
     openjdk-17-jdk \

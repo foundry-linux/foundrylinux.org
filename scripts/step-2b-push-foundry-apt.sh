@@ -19,6 +19,7 @@ PKG_NAME="foundry-apt"
 GH_REPO="${GH_ORG}/${PKG_NAME}"
 SRC_DIR="${REPO_ROOT}/${PKG_NAME}"
 WORK_DIR="/tmp/${PKG_NAME}-push"
+REPO_DESC="Foundry Linux signed APT repo and metapackages"
 DRY_RUN=false
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -71,6 +72,8 @@ run rm -rf "$WORK_DIR"
 run cp -r "$SRC_DIR" "$WORK_DIR"
 
 if ! $DRY_RUN; then
+    trap 'rm -rf "$WORK_DIR"' EXIT
+
     cd "$WORK_DIR"
     git init -q
     git add .
@@ -79,15 +82,16 @@ if ! $DRY_RUN; then
     info "Creating https://github.com/${GH_REPO} and pushing"
     gh repo create "$GH_REPO" \
         --public \
-        --description "Foundry Linux signed APT repo and worldfoundry-* metapackages" \
+        --description "$REPO_DESC" \
         --source=. --remote=origin --push
 
-    cd "$REPO_ROOT"
-    rm -rf "$WORK_DIR"
+    info "Enabling Discussions"
+    gh repo edit "$GH_REPO" --enable-discussions
 else
     echo "  [dry-run] cd ${WORK_DIR}"
     echo "  [dry-run] git init && git add . && git commit -m 'feat: initial ${PKG_NAME} import'"
-    echo "  [dry-run] gh repo create ${GH_REPO} --public --source=. --push"
+    echo "  [dry-run] gh repo create ${GH_REPO} --public --description '${REPO_DESC}' --source=. --push"
+    echo "  [dry-run] gh repo edit ${GH_REPO} --enable-discussions"
     echo "  [dry-run] rm -rf ${WORK_DIR}"
 fi
 

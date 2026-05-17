@@ -18,7 +18,7 @@
 #   play       — just play games (no dev tools; needs a runtime metapackage, coming later)
 #   game-dev   — author WF games (engine-build-deps + blender + retro-tools + task)
 #   engine-dev — hack on the engine (engine-build-deps + retro-tools + task; no blender)
-#   both       — game-dev + engine-dev (default; installs worldfoundry-dev umbrella)
+#   both       — game-dev + engine-dev (default; installs foundry-linux-dev umbrella)
 #   maintainer — both + android-dev + foundry distro repos
 #
 # Idempotent: safe to re-run.
@@ -88,8 +88,8 @@ Options:
   --role ROLE       Install role: play, game-dev, engine-dev, both, maintainer
                     (default: both)
   --allow-24.04     Allow installation on Ubuntu/Kubuntu 24.04 (default: 26.04)
-  --skip-blender    Skip worldfoundry-blender install
-  --skip-retro      Skip worldfoundry-retro-tools install (saves ~400 MB for Ghidra)
+  --skip-blender    Skip foundry-linux-blender install
+  --skip-retro      Skip foundry-linux-retro-tools install (saves ~400 MB for Ghidra)
   --apt-only        Forwarded to retro-tools: skip source-build sidecars
   --force           Bypass distro/version checks (use at own risk)
   -n, --dry-run     Print the plan without executing anything
@@ -189,24 +189,24 @@ install_metapackages() {
             warn "Role 'play': no runtime metapackage yet — nothing to install via apt"
             ;;
         game-dev)
-            run_subscript install-worldfoundry-engine-build-deps.sh "${dry[@]}"
+            run_subscript install-foundry-linux-engine-build-deps.sh "${dry[@]}"
             run_subscript install-task.sh "${dry[@]}"
-            $SKIP_BLENDER || run_subscript install-worldfoundry-blender.sh "${dry[@]}"
+            $SKIP_BLENDER || run_subscript install-foundry-linux-blender.sh "${dry[@]}"
             if ! $SKIP_RETRO; then
                 local args=("${dry[@]}")
                 $APT_ONLY && args+=(--apt-only)
                 $FORCE    && args+=(--force)
-                run_subscript install-worldfoundry-retro-tools.sh "${args[@]}"
+                run_subscript install-foundry-linux-retro-tools.sh "${args[@]}"
             fi
             ;;
         engine-dev)
-            run_subscript install-worldfoundry-engine-build-deps.sh "${dry[@]}"
+            run_subscript install-foundry-linux-engine-build-deps.sh "${dry[@]}"
             run_subscript install-task.sh "${dry[@]}"
             if ! $SKIP_RETRO; then
                 local args=("${dry[@]}")
                 $APT_ONLY && args+=(--apt-only)
                 $FORCE    && args+=(--force)
-                run_subscript install-worldfoundry-retro-tools.sh "${args[@]}"
+                run_subscript install-foundry-linux-retro-tools.sh "${args[@]}"
             fi
             ;;
         both)
@@ -215,7 +215,7 @@ install_metapackages() {
             $SKIP_RETRO   && dev_args+=(--skip-retro)
             $APT_ONLY     && dev_args+=(--apt-only)
             $FORCE        && dev_args+=(--force)
-            run_subscript install-worldfoundry-dev.sh "${dev_args[@]}"
+            run_subscript install-foundry-linux-dev.sh "${dev_args[@]}"
             ;;
         maintainer)
             local dev_args=("${dry[@]}")
@@ -223,8 +223,8 @@ install_metapackages() {
             $SKIP_RETRO   && dev_args+=(--skip-retro)
             $APT_ONLY     && dev_args+=(--apt-only)
             $FORCE        && dev_args+=(--force)
-            run_subscript install-worldfoundry-dev.sh "${dev_args[@]}"
-            run_subscript install-worldfoundry-android-dev.sh "${dry[@]}"
+            run_subscript install-foundry-linux-dev.sh "${dev_args[@]}"
+            run_subscript install-foundry-linux-android-dev.sh "${dry[@]}"
             if ! $DRY_RUN; then
                 clone_foundry_repos
             else

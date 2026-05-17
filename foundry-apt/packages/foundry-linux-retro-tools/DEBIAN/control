@@ -1,7 +1,7 @@
-Package: worldfoundry-retro-tools
+Package: foundry-linux-retro-tools
 Version: 1.0.0
 Architecture: all
-Maintainer: World Foundry <packages@worldfoundry.org>
+Maintainer: Foundry Linux <packages@foundrylinux.org>
 Section: metapackages
 Priority: optional
 Depends: mame,
@@ -20,7 +20,7 @@ Recommends: ghidra,
  libvgm,
  xa65
 Suggests: java-common
-Homepage: https://docs.worldfoundry.org/port-arcade/
+Homepage: https://foundrylinux.org/port-arcade/
 Description: arcade reverse-engineering and porting toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine:
  MAME (debugger + tools), 6502/Z80/68k disassemblers and assemblers,

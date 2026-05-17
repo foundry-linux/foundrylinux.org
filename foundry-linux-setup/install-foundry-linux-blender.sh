@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the worldfoundry-blender metapackage.
+# Phase 0 installer for the foundry-linux-blender metapackage.
 #
-# apt deps (from foundry-apt/packages/worldfoundry-blender/DEBIAN/control):
+# apt deps (from foundry-apt/packages/foundry-linux-blender/DEBIAN/control):
 #   blender (>=4.2) python3
 #
-# Blender addon registration (Recommends: worldfoundry-blender-addon) requires
+# Blender addon registration (Recommends: foundry-linux-blender-addon) requires
 # the WF engine repo to be cloned first. That step lives in setup-wf-workspace.sh
 # per docs/plans/2026-05-17-wf-workspace-setup.md.
 #
 # Phase 1 collapse:
-#   run_sudo apt-get install -y worldfoundry-blender
+#   run_sudo apt-get install -y foundry-linux-blender
 
 set -euo pipefail
 
@@ -17,7 +17,7 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-Phase 0 installer for worldfoundry-blender
+Phase 0 installer for foundry-linux-blender
 
 Installs Blender 4.2+ via apt. Blender addon registration is handled
 separately by setup-wf-workspace.sh (requires the engine repo to be cloned).
@@ -54,7 +54,7 @@ else
     apt_update() { run_sudo apt-get update -q 2>&1 || echo "⚠ apt-get update had errors; continuing"; }
 fi
 
-step "Installing worldfoundry-blender (apt)"
+step "Installing foundry-linux-blender (apt)"
 apt_update
 run_sudo apt-get install -y blender python3
 ok "Blender installed"

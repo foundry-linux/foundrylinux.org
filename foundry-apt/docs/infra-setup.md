@@ -11,13 +11,13 @@ gpg --full-generate-key
 # Type: RSA (sign only)
 # Bits: 4096
 # Expires: 2 years (rotate annually)
-# Real name: World Foundry Packages
-# Email: packages@worldfoundry.org
-gpg --armor --export packages@worldfoundry.org > /tmp/foundry-packages.pub.gpg
-gpg --armor --export-secret-keys packages@worldfoundry.org > /tmp/foundry-packages.sec.gpg  # NEVER commit
+# Real name: Foundry Linux Packages
+# Email: packages@foundrylinux.org
+gpg --armor --export packages@foundrylinux.org > /tmp/foundry-packages.pub.gpg
+gpg --armor --export-secret-keys packages@foundrylinux.org > /tmp/foundry-packages.sec.gpg  # NEVER commit
 ```
 
-Publish the **public** key to `worldfoundry.org/keys/packages.gpg` (Cloudflare Pages) and link from the README install snippet.
+Publish the **public** key to `foundrylinux.org/keys/packages.gpg` (Cloudflare Pages) and link from the README install snippet.
 
 ## 2. Store the private key in AWS SSM SecureString
 
@@ -53,8 +53,8 @@ The CI workflow uses [OIDC federation](https://docs.github.com/en/actions/deploy
 ## 5. Wire up the custom domain
 
 1. Cloudflare DNS → add a CNAME `apt` → `pub-xxxxx.r2.dev` (proxied: orange cloud on).
-2. R2 bucket → Settings → Public access → Connect custom domain → `apt.worldfoundry.org`.
-3. Verify: `curl -I https://apt.worldfoundry.org/dists/resolute/Release` returns 200.
+2. R2 bucket → Settings → Public access → Connect custom domain → `apt.foundrylinux.org`.
+3. Verify: `curl -I https://apt.foundrylinux.org/dists/resolute/Release` returns 200.
 
 ## 6. First release
 
@@ -65,12 +65,12 @@ git push origin v1.0.0
 #   https://github.com/foundry-linux/foundry-apt/actions
 ```
 
-After it goes green, the smoke-install job inside the workflow proves a clean Ubuntu 26.04 container can `apt install worldfoundry-dev` from the live repo.
+After it goes green, the smoke-install job inside the workflow proves a clean Ubuntu 26.04 container can `apt install foundry-linux-dev` from the live repo.
 
 ## Status
 
 - [ ] GPG signing key generated
-- [ ] Public key published to `worldfoundry.org/keys/packages.gpg`
+- [ ] Public key published to `foundrylinux.org/keys/packages.gpg`
 - [ ] Private key stored in AWS SSM
 - [ ] GitHub OIDC identity provider added to AWS
 - [ ] `foundry-apt-publish` IAM role created
@@ -78,7 +78,7 @@ After it goes green, the smoke-install job inside the workflow proves a clean Ub
 - [ ] Cloudflare R2 bucket `foundry-apt` created
 - [ ] R2 API token issued
 - [ ] R2 secrets added to repo
-- [ ] DNS CNAME `foundry.worldfoundry.org` configured
+- [ ] DNS CNAME `apt.foundrylinux.org` configured
 - [ ] Custom domain attached to R2 bucket
 - [ ] First tag (`v1.0.0`) pushed
 - [ ] Smoke-install passes against live repo

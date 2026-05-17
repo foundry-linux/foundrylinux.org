@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the worldfoundry-engine-build-deps metapackage.
+# Phase 0 installer for the foundry-linux-engine-build-deps metapackage.
 #
 # Installs the apt packages listed in:
-#   foundry-apt/packages/worldfoundry-engine-build-deps/DEBIAN/control
+#   foundry-apt/packages/foundry-linux-engine-build-deps/DEBIAN/control
 #
 # Phase 1 collapse: replace the apt-get install body with
-#   run_sudo apt-get install -y worldfoundry-engine-build-deps
-# once apt.worldfoundry.org is published.
+#   run_sudo apt-get install -y foundry-linux-engine-build-deps
+# once apt.foundrylinux.org is published.
 
 set -euo pipefail
 
@@ -15,7 +15,7 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-Phase 0 installer for worldfoundry-engine-build-deps
+Phase 0 installer for foundry-linux-engine-build-deps
 
 Installs the C++ engine build toolchain (build-essential, cmake, X11/GL dev
 headers, gdb, python3, git, curl, etc.).
@@ -53,7 +53,7 @@ else
     apt_update() { run_sudo apt-get update -q 2>&1 || echo "⚠ apt-get update had errors; continuing"; }
 fi
 
-step "Installing worldfoundry-engine-build-deps (apt)"
+step "Installing foundry-linux-engine-build-deps (apt)"
 apt_update
 run_sudo apt-get install -y \
     build-essential \

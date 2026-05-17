@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the worldfoundry-dev umbrella metapackage.
+# Phase 0 installer for the foundry-linux-dev umbrella metapackage.
 #
 # Composes the constituent per-metapackage installers in dependency order,
-# mirroring foundry-apt/packages/worldfoundry-dev/DEBIAN/control:
+# mirroring foundry-apt/packages/foundry-linux-dev/DEBIAN/control:
 #
-#   Depends: worldfoundry-engine-build-deps,
-#            worldfoundry-blender,
-#            worldfoundry-retro-tools,
+#   Depends: foundry-linux-engine-build-deps,
+#            foundry-linux-blender,
+#            foundry-linux-retro-tools,
 #            task,
 #            gnupg, ca-certificates, software-properties-common
 #
 # Phase 1 collapse:
-#   run_sudo apt-get install -y worldfoundry-dev
+#   run_sudo apt-get install -y foundry-linux-dev
 
 set -euo pipefail
 
@@ -19,13 +19,13 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-Phase 0 installer for worldfoundry-dev (umbrella metapackage)
+Phase 0 installer for foundry-linux-dev (umbrella metapackage)
 
 Runs the per-metapackage installers in this order:
-  1. install-worldfoundry-engine-build-deps.sh
+  1. install-foundry-linux-engine-build-deps.sh
   2. install-task.sh
-  3. install-worldfoundry-blender.sh
-  4. install-worldfoundry-retro-tools.sh
+  3. install-foundry-linux-blender.sh
+  4. install-foundry-linux-retro-tools.sh
 
 Usage: $(basename "$0") [--dry-run|-n] [--apt-only] [--skip-blender]
                        [--skip-retro] [--force] [-h|--help]
@@ -84,28 +84,28 @@ run_subscript() {
     bash "$path" "$@"
 }
 
-step "worldfoundry-dev: engine build deps"
-run_subscript install-worldfoundry-engine-build-deps.sh "${DRY_FLAG[@]}"
+step "foundry-linux-dev: engine build deps"
+run_subscript install-foundry-linux-engine-build-deps.sh "${DRY_FLAG[@]}"
 
-step "worldfoundry-dev: task runner"
+step "foundry-linux-dev: task runner"
 run_subscript install-task.sh "${DRY_FLAG[@]}"
 
 if $SKIP_BLENDER; then
-    info "Skipping worldfoundry-blender (--skip-blender)"
+    info "Skipping foundry-linux-blender (--skip-blender)"
 else
-    step "worldfoundry-dev: Blender"
-    run_subscript install-worldfoundry-blender.sh "${DRY_FLAG[@]}"
+    step "foundry-linux-dev: Blender"
+    run_subscript install-foundry-linux-blender.sh "${DRY_FLAG[@]}"
 fi
 
 if $SKIP_RETRO; then
-    info "Skipping worldfoundry-retro-tools (--skip-retro)"
+    info "Skipping foundry-linux-retro-tools (--skip-retro)"
 else
-    step "worldfoundry-dev: retro tools"
+    step "foundry-linux-dev: retro tools"
     retro_args=("${DRY_FLAG[@]}")
     $APT_ONLY && retro_args+=(--apt-only)
     $FORCE    && retro_args+=(--force)
-    run_subscript install-worldfoundry-retro-tools.sh "${retro_args[@]}"
+    run_subscript install-foundry-linux-retro-tools.sh "${retro_args[@]}"
 fi
 
-step "worldfoundry-dev install complete"
+step "foundry-linux-dev install complete"
 ok "All constituent metapackages installed"

@@ -1,7 +1,7 @@
-Package: worldfoundry-engine-build-deps
+Package: foundry-linux-engine-build-deps
 Version: 1.0.0
 Architecture: all
-Maintainer: World Foundry <packages@worldfoundry.org>
+Maintainer: Foundry Linux <packages@foundrylinux.org>
 Section: metapackages
 Priority: optional
 Depends: build-essential,
@@ -17,7 +17,7 @@ Depends: build-essential,
  curl,
  wget,
  unzip
-Homepage: https://docs.worldfoundry.org/
+Homepage: https://foundrylinux.org/
 Description: build dependencies for the World Foundry engine
  Pulls in everything required to compile the World Foundry C++17 engine
  (build_game.sh) and its vendored libraries (Jolt, miniaudio, zForth,
@@ -25,5 +25,5 @@ Description: build dependencies for the World Foundry engine
  covers only the system-side toolchain and headers.
  .
  This is the lowest-common-denominator package — install
- worldfoundry-dev if you also want the asset compilers, Blender addon,
+ foundry-linux-dev if you also want the asset compilers, Blender addon,
  and retro-porting tools.

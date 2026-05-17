@@ -1,6 +1,6 @@
 # Contributing to foundry-apt
 
-Thanks for considering a contribution! This repo is the signed [APT repo](https://wiki.debian.org/DebianRepository) + metapackage source for [Foundry Linux](https://docs.worldfoundry.org).
+Thanks for considering a contribution! This repo is the signed [APT repo](https://wiki.debian.org/DebianRepository) + metapackage source for [Foundry Linux](https://foundrylinux.org).
 
 ## What to contribute
 
@@ -8,7 +8,7 @@ Thanks for considering a contribution! This repo is the signed [APT repo](https:
 |---|---|
 | **Bug fixes** | A metapackage `Depends:` line references the wrong package; CI runs out of disk; sign.sh fails on a key with a passphrase. |
 | **New vendored upstream packages** | Repackage `xa65`, an updated `f9dasm`, a newer `vgmstream` release. Each one needs a `packages/<name>/` dir, a build script, and the upstream's licence preserved under `/usr/share/doc/<name>/`. |
-| **New metapackages** | A focused bundle (e.g. `worldfoundry-shaders-dev`) that pulls in a curated set of system deps. |
+| **New metapackages** | A focused bundle (e.g. `foundry-linux-shaders-dev`) that pulls in a curated set of system deps. |
 | **CI hardening** | shellcheck-clean scripts; arm64 build matrix; a `--dry-run` mode for sign.sh that uses a throwaway GPG key. |
 
 ## Workflow
@@ -20,10 +20,10 @@ Thanks for considering a contribution! This repo is the signed [APT repo](https:
 
 ## Adding a metapackage
 
-1. `mkdir -p packages/worldfoundry-<thing>/DEBIAN`
-2. Write `packages/worldfoundry-<thing>/DEBIAN/control` matching the format of the existing five — Section: metapackages, Architecture: all, Depends: …
+1. `mkdir -p packages/foundry-linux-<thing>/DEBIAN`
+2. Write `packages/foundry-linux-<thing>/DEBIAN/control` matching the format of the existing five — Section: metapackages, Architecture: all, Depends: …
 3. `bash scripts/build-all.sh` to verify it builds.
-4. Update `packages/worldfoundry-dev/DEBIAN/control` if the new package should be pulled in by the top-level metapackage.
+4. Update `packages/foundry-linux-dev/DEBIAN/control` if the new package should be pulled in by the top-level metapackage.
 5. Mention it in `README.md`'s table.
 
 ## Adding a vendored upstream package
@@ -50,7 +50,7 @@ Maintainer-only:
 
 1. `git tag -s v1.0.X -m "..."` (signed tag).
 2. `git push origin v1.0.X`.
-3. Watch [the publish workflow](.github/workflows/publish.yml) — it builds, signs, syncs to R2, and smoke-installs `worldfoundry-dev` in a clean Ubuntu 26.04 container.
+3. Watch [the publish workflow](.github/workflows/publish.yml) — it builds, signs, syncs to R2, and smoke-installs `foundry-linux-dev` in a clean Ubuntu 26.04 container.
 4. If smoke-install fails, the apt repo is still uploaded — fix forward with `v1.0.X+1`, don't try to delete a published version.
 
 ## Licence

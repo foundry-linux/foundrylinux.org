@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the worldfoundry-retro-tools metapackage.
+# Phase 0 installer for the foundry-linux-retro-tools metapackage.
 #
 # Installs the arcade reverse-engineering / 6502+Z80+68k+6809 porting toolchain:
 #
-#   apt (from foundry-apt/packages/worldfoundry-retro-tools/DEBIAN/control Depends):
+#   apt (from foundry-apt/packages/foundry-linux-retro-tools/DEBIAN/control Depends):
 #     mame mame-tools dasm cc65 z80dasm z80asm radare2 binwalk sox
 #     binutils-m68k-linux-gnu
 #
@@ -25,8 +25,8 @@
 # See docs/investigations/2026-05-15-claude-arcade-tooling.md for the rationale.
 #
 # Phase 1 collapse: this entire script reduces to
-#   run_sudo apt-get install -y worldfoundry-retro-tools
-# once apt.worldfoundry.org is publishing the source-build sidecars as .debs.
+#   run_sudo apt-get install -y foundry-linux-retro-tools
+# once apt.foundrylinux.org is publishing the source-build sidecars as .debs.
 
 set -euo pipefail
 
@@ -34,7 +34,7 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-Phase 0 installer for worldfoundry-retro-tools
+Phase 0 installer for foundry-linux-retro-tools
 
 Installs the arcade reverse-engineering / 6502 / Z80 / 68k / 6809 porting
 toolchain (MAME, dasm, cc65 → sim65 + da65, z80dasm, radare2, etc.) plus
@@ -93,7 +93,7 @@ OPT_DIR="${HOME}/opt"
 # ----------------------------------------------------------------------------
 # Step 1: apt packages
 # ----------------------------------------------------------------------------
-step "Installing worldfoundry-retro-tools (apt)"
+step "Installing foundry-linux-retro-tools (apt)"
 apt_update
 # xa65 is not in current Ubuntu repos under that name; install the rest, then
 # pick it up via source-build below.
@@ -176,7 +176,7 @@ GHIDRA_DIR="$OPT_DIR/ghidra_${GHIDRA_VERSION}_PUBLIC"
 GHIDRA_URL="https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_${GHIDRA_VERSION}_build/ghidra_${GHIDRA_VERSION}_PUBLIC_${GHIDRA_BUILD}.zip"
 if source_build_guard ghidra "$GHIDRA_DIR"; then
     if ! command -v java &>/dev/null; then
-        warn "Ghidra requires a JRE (apt install openjdk-21-jre or run install-worldfoundry-android-dev.sh which installs openjdk-17-jdk)"
+        warn "Ghidra requires a JRE (apt install openjdk-21-jre or run install-foundry-linux-android-dev.sh which installs openjdk-17-jdk)"
     fi
     run curl -fL --progress-bar -o "$OPT_DIR/ghidra.zip" "$GHIDRA_URL"
     run unzip -q "$OPT_DIR/ghidra.zip" -d "$OPT_DIR"
@@ -184,7 +184,7 @@ if source_build_guard ghidra "$GHIDRA_DIR"; then
     ok "Ghidra installed — launcher at $GHIDRA_DIR/ghidraRun"
 fi
 
-step "worldfoundry-retro-tools install complete"
+step "foundry-linux-retro-tools install complete"
 ok "6502: sim65, da65, mame, radare2, xa65"
 ok "Z80:  z80dasm, z80asm, mame, radare2"
 ok "68k:  m68k-linux-gnu-objdump, mame, radare2"
