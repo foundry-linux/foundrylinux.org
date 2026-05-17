@@ -63,10 +63,21 @@ jobs:
           RCLONE_CONFIG_R2_ENDPOINT:          ${{ secrets.R2_ENDPOINT }}
           RCLONE_CONFIG_R2_REGION: auto
         run: |
+          # Pass 1: sync everything except Release files.
+          # Packages.gz must be live before Release is updated, otherwise apt
+          # sees a Release with hashes that don't match the cached old Packages.
           rclone sync ./public/ R2:foundry-apt/ \
-            --progress \
-            --transfers=8 \
-            --checksum
+            --progress --transfers=8 --checksum \
+            --exclude 'Release' --exclude 'Release.gpg' --exclude 'InRelease' \
+            --header-upload "Cache-Control:no-store"
+
+          # Pass 2: upload Release files last (single-threaded, no race).
+          # no-store prevents Cloudflare's edge from serving a stale Release
+          # while Packages.gz is still propagating.
+          rclone copy ./public/dists/ R2:foundry-apt/dists/ \
+            --progress --transfers=1 --checksum \
+            --include '**/Release' --include '**/Release.gpg' --include '**/InRelease' \
+            --header-upload "Cache-Control:no-store"
 
       - name: Upload artifacts (always, for audit)
         uses: actions/upload-artifact@v4
