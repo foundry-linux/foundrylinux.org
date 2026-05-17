@@ -468,18 +468,21 @@ info "[7.5] Creating redirect rule: ${CUSTOM_DOMAIN}/ → /index.html"
 
 REDIRECT_EXPR="(http.host eq \"${CUSTOM_DOMAIN}\" and http.request.uri.path eq \"/\")"
 
-RULE_BODY="{
-    \"action\": \"redirect\",
-    \"action_parameters\": {
-        \"from_value\": {
-            \"target_url\": {\"value\": \"https://${CUSTOM_DOMAIN}/index.html\"},
-            \"status_code\": 301,
-            \"preserve_query_string\": false
-        }
-    },
-    \"expression\": \"${REDIRECT_EXPR}\",
-    \"enabled\": true
-}"
+RULE_BODY=$(cat <<JSON
+{
+  "action": "redirect",
+  "action_parameters": {
+    "from_value": {
+      "target_url": {"value": "https://${CUSTOM_DOMAIN}/index.html"},
+      "status_code": 301,
+      "preserve_query_string": false
+    }
+  },
+  "expression": "${REDIRECT_EXPR}",
+  "enabled": true
+}
+JSON
+)
 
 if $DRY_RUN; then
     echo "  [dry-run] PUT /zones/.../rulesets/phases/http_request_redirect/entrypoint"
