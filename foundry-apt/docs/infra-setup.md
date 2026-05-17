@@ -12,8 +12,9 @@ bash scripts/bootstrap.sh --dry-run   # preview all steps
 bash scripts/bootstrap.sh             # run for real
 ```
 
-If `CF_API_TOKEN` is not already exported the script prompts for your Cloudflare Global API Key
-(Dash → My Profile → API Tokens → Global API Key) and creates the scoped operator token itself.
+If `CF_API_TOKEN` is not already exported, the script prompts for your Cloudflare account email
+and Global API Key (Dash → My Profile → API Tokens → Global API Key), then creates the scoped
+operator token automatically.
 
 See [`docs/plans/2026-05-17-foundry-linux-phase1-bootstrap.md`](../../docs/plans/2026-05-17-foundry-linux-phase1-bootstrap.md)
 for the full step-by-step breakdown and status checklist.
