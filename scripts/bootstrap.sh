@@ -39,6 +39,7 @@ SEC_KEY="/tmp/foundry-packages.sec.gpg"
 R2_BUCKET="foundry-apt"
 SECRETS_BUCKET="foundry-linux-secrets"
 R2_TOKEN_NAME="foundry-apt-ci"
+BOOTSTRAP_CACHE="/tmp/foundry-linux-bootstrap.env"
 CUSTOM_DOMAIN="apt.foundrylinux.org"
 DNS_CNAME="apt"
 CF_OPERATOR_TOKEN_NAME="foundry-linux-operator"
@@ -68,6 +69,14 @@ cleanup() {
     [[ -n "${BATCH_FILE}" && -f "${BATCH_FILE}" ]] && rm -f  "${BATCH_FILE}" || true
 }
 trap cleanup EXIT
+
+cache_set() {
+    local key="$1" val="$2"
+    { grep -v "^${key}=" "$BOOTSTRAP_CACHE" 2>/dev/null || true
+      printf '%s=%q\n' "$key" "$val"
+    } > "${BOOTSTRAP_CACHE}.tmp" && mv "${BOOTSTRAP_CACHE}.tmp" "$BOOTSTRAP_CACHE"
+    chmod 600 "$BOOTSTRAP_CACHE"
+}
 
 cf_api() {
     local method="$1" path="$2"
@@ -107,6 +116,12 @@ done
 
 # ── preflight ────────────────────────────────────────────────────────────────
 
+if [[ -f "$BOOTSTRAP_CACHE" ]]; then
+    # shellcheck source=/dev/null
+    source "$BOOTSTRAP_CACHE"
+    info "Loaded cached credentials from $BOOTSTRAP_CACHE"
+fi
+
 [[ -d "${SRC_DIR}" ]] || die "${PKG_NAME}/ not found under ${REPO_ROOT}"
 
 command -v gpg   &>/dev/null || die "gpg not found — install gnupg2"
@@ -135,6 +150,7 @@ if ! $DRY_RUN; then
             [[ -z "${CF_API_TOKEN:-}" ]] && echo "  (token cannot be blank — try again)"
         done
         export CF_API_TOKEN
+        cache_set CF_API_TOKEN "$CF_API_TOKEN"
     fi
 fi
 
@@ -386,6 +402,8 @@ elif [[ -z "${R2_ACCESS_KEY_ID:-}" || -z "${R2_SECRET_ACCESS_KEY:-}" ]]; then
         [[ -z "${R2_SECRET_ACCESS_KEY:-}" ]] && echo "  (cannot be blank — try again)"
     done
     export R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY
+    cache_set R2_ACCESS_KEY_ID     "$R2_ACCESS_KEY_ID"
+    cache_set R2_SECRET_ACCESS_KEY "$R2_SECRET_ACCESS_KEY"
     ok "[6] R2 credentials captured"
 fi
 
@@ -450,32 +468,41 @@ info "[7.5] Creating redirect rule: ${CUSTOM_DOMAIN}/ → /index.html"
 
 REDIRECT_EXPR="(http.host eq \"${CUSTOM_DOMAIN}\" and http.request.uri.path eq \"/\")"
 
+RULE_BODY="{
+    \"action\": \"redirect\",
+    \"action_parameters\": {
+        \"from_value\": {
+            \"target_url\": {\"value\": \"https://${CUSTOM_DOMAIN}/index.html\"},
+            \"status_code\": 301,
+            \"preserve_query_string\": false
+        }
+    },
+    \"expression\": \"${REDIRECT_EXPR}\",
+    \"enabled\": true
+}"
+
 if $DRY_RUN; then
-    echo "  [dry-run] GET  /zones/.../rulesets/phases/http_request_redirect/entrypoint"
-    echo "  [dry-run] POST /zones/.../rulesets/phases/http_request_redirect/entrypoint/rules"
+    echo "  [dry-run] PUT /zones/.../rulesets/phases/http_request_redirect/entrypoint"
 else
-    EXISTING_RULE=$(cf_api GET \
-        "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" 2>/dev/null \
-        | jq -r ".result.rules[]? | select(.expression == \"${REDIRECT_EXPR}\") | .id" \
-        || true)
-    if [[ -n "${EXISTING_RULE}" ]]; then
+    PHASE_JSON=$(cf_api GET \
+        "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" \
+        2>/dev/null || echo '{}')
+    RULESET_ID=$(echo "$PHASE_JSON" | jq -r '.result.id // empty' 2>/dev/null || true)
+    EXISTING_RULE=$(echo "$PHASE_JSON" | jq -r \
+        --arg expr "$REDIRECT_EXPR" \
+        '.result.rules[]? | select(.expression == $expr) | .id' 2>/dev/null || true)
+
+    if [[ -n "$EXISTING_RULE" ]]; then
         ok "[7.5] Redirect rule already exists (id: ${EXISTING_RULE})"
-    else
-        cf_api POST \
-            "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint/rules" \
-            -d "{
-                \"action\": \"redirect\",
-                \"action_parameters\": {
-                    \"from_value\": {
-                        \"target_url\": {\"value\": \"https://${CUSTOM_DOMAIN}/index.html\"},
-                        \"status_code\": 301,
-                        \"preserve_query_string\": false
-                    }
-                },
-                \"expression\": \"${REDIRECT_EXPR}\",
-                \"enabled\": true
-            }" >/dev/null
+    elif [[ -z "$RULESET_ID" ]]; then
+        cf_api PUT \
+            "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" \
+            -d "{\"name\": \"Zone Redirect Rules\", \"rules\": [${RULE_BODY}]}" >/dev/null
         ok "[7.5] Redirect rule created: ${CUSTOM_DOMAIN}/ → /index.html"
+    else
+        cf_api POST "/zones/${CF_ZONE_ID}/rulesets/${RULESET_ID}/rules" \
+            -d "$RULE_BODY" >/dev/null
+        ok "[7.5] Redirect rule added: ${CUSTOM_DOMAIN}/ → /index.html"
     fi
 fi
 
