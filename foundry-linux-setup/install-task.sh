@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the 'task' metapackage.
+# Installs task (go-task) from the official Cloudsmith apt repo.
 #
-# The task metapackage (foundry-apt/packages/task/) ships go-task/task binaries
-# as a .deb. In Phase 0 (before the apt repo is up) we install it via the
-# upstream taskfile.dev installer script into ~/.local/bin.
-#
-# Phase 1 collapse:
-#   run_sudo apt-get install -y task
+# Adds the Cloudsmith repo if not already present, then installs task
+# system-wide via apt. Idempotent — safe to re-run.
 
 set -euo pipefail
 
@@ -14,10 +10,7 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-Phase 0 installer for the task metapackage
-
-Installs the go-task/task binary into ~/.local/bin (Phase 1 will ship it as a
-.deb from foundry-apt).
+Installs task (go-task) from the official Cloudsmith apt repo.
 
 Usage: $(basename "$0") [--dry-run|-n] [-h|--help]
 
@@ -47,20 +40,19 @@ else
     ok()   { echo "✓ $*"; }
     die()  { echo "✗ $*" >&2; exit 1; }
     step() { echo; echo "━━━ $* ━━━"; }
-    run() { if $DRY_RUN; then echo "  [dry-run] $*"; else "$@"; fi; }
+    run_sudo() { if $DRY_RUN; then echo "  [dry-run] sudo $*"; else sudo "$@"; fi; }
+    apt_update() { run_sudo apt-get update -qq; }
 fi
 
 step "Installing task (Taskfile runner)"
+
 if command -v task &>/dev/null; then
     info "task already installed: $(task --version 2>/dev/null || echo '?')"
     exit 0
 fi
 
-info "Installing task via upstream install.sh (Phase 1+ will ship as our .deb)"
-if $DRY_RUN; then
-    echo "  [dry-run] sh -c \"\$(curl --location https://taskfile.dev/install.sh)\" -- -d -b ~/.local/bin"
-else
-    mkdir -p "$HOME/.local/bin"
-    sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b "$HOME/.local/bin"
-fi
-ok "task installed to ~/.local/bin/task"
+info "Adding official Cloudsmith apt repo for task"
+run_sudo bash -c "curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' | bash"
+apt_update
+run_sudo apt-get install -y task
+ok "task installed"
