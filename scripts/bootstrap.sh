@@ -139,8 +139,12 @@ if ! $DRY_RUN; then
         || die "AWS credentials not configured — run: aws configure"
     # CF vars are either pre-exported or will be populated in step 1b below
     if [[ -z "${CF_API_TOKEN:-}" ]]; then
-        : "${CF_EMAIL:?CF_API_TOKEN not set — export CF_EMAIL and CF_GLOBAL_API_KEY to create it}"
-        : "${CF_GLOBAL_API_KEY:?CF_API_TOKEN not set — export CF_GLOBAL_API_KEY to create it}"
+        CF_EMAIL="${CF_EMAIL:-wbnorris@gmail.com}"
+        if [[ -z "${CF_GLOBAL_API_KEY:-}" ]]; then
+            read -rsp "Cloudflare Global API Key (for ${CF_EMAIL}): " CF_GLOBAL_API_KEY
+            echo
+            export CF_GLOBAL_API_KEY
+        fi
         cf_global GET "/user" &>/dev/null \
             || die "Cloudflare Global API Key auth failed — check CF_EMAIL and CF_GLOBAL_API_KEY"
     fi
