@@ -126,6 +126,7 @@ if ! $DRY_RUN; then
         echo "  Permissions:"
         echo "    Account | Workers R2 Storage | Edit"
         echo "    Zone    | DNS                | Edit  (Specific zone: ${CF_ZONE_NAME})"
+        echo "    Zone    | Transform Rules    | Edit  (Specific zone: ${CF_ZONE_NAME})"
         echo "  Account Resources: Include → select your account"
         echo "  Zone Resources:    Include → Specific zone → ${CF_ZONE_NAME}"
         echo ""
@@ -181,6 +182,8 @@ else
         || PERM_ERRORS+=("  Account | Workers R2 Storage | Edit")
     cf_api GET "/zones/${CF_ZONE_ID}/dns_records?per_page=1" &>/dev/null \
         || PERM_ERRORS+=("  Zone    | DNS                | Edit  (zone: ${CF_ZONE_NAME})")
+    cf_api GET "/zones/${CF_ZONE_ID}/rulesets" &>/dev/null \
+        || PERM_ERRORS+=("  Zone    | Transform Rules    | Edit  (zone: ${CF_ZONE_NAME})")
     if [[ ${#PERM_ERRORS[@]} -gt 0 ]]; then
         err "[1b] Token is missing required permissions:"
         for e in "${PERM_ERRORS[@]}"; do err "$e"; done
@@ -427,6 +430,43 @@ else
         ok "[7] Custom domain already attached: ${CUSTOM_DOMAIN}"
     else
         die "[7] Unexpected HTTP ${DOMAIN_HTTP} attaching custom domain — check Cloudflare dashboard"
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════════════════════
+# Step 7.5 — Cloudflare Redirect Rule: / → /index.html
+# ════════════════════════════════════════════════════════════════════════════
+
+info "[7.5] Creating redirect rule: ${CUSTOM_DOMAIN}/ → /index.html"
+
+REDIRECT_EXPR="(http.host eq \"${CUSTOM_DOMAIN}\" and http.request.uri.path eq \"/\")"
+
+if $DRY_RUN; then
+    echo "  [dry-run] GET  /zones/.../rulesets/phases/http_request_redirect/entrypoint"
+    echo "  [dry-run] POST /zones/.../rulesets/phases/http_request_redirect/entrypoint/rules"
+else
+    EXISTING_RULE=$(cf_api GET \
+        "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" 2>/dev/null \
+        | jq -r ".result.rules[]? | select(.expression == \"${REDIRECT_EXPR}\") | .id" \
+        || true)
+    if [[ -n "${EXISTING_RULE}" ]]; then
+        ok "[7.5] Redirect rule already exists (id: ${EXISTING_RULE})"
+    else
+        cf_api POST \
+            "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint/rules" \
+            -d "{
+                \"action\": \"redirect\",
+                \"action_parameters\": {
+                    \"from_value\": {
+                        \"target_url\": {\"value\": \"https://${CUSTOM_DOMAIN}/index.html\"},
+                        \"status_code\": 301,
+                        \"preserve_query_string\": false
+                    }
+                },
+                \"expression\": \"${REDIRECT_EXPR}\",
+                \"enabled\": true
+            }" >/dev/null
+        ok "[7.5] Redirect rule created: ${CUSTOM_DOMAIN}/ → /index.html"
     fi
 fi
 

@@ -56,9 +56,10 @@ If `CF_API_TOKEN` is not already exported, the script will print instructions an
 2. Click **+ Create Token** → **Get started** next to **Create Custom Token**
 3. Fill in:
    - **Name:** value of `CF_OPERATOR_TOKEN_NAME` from config
-   - **Permissions** (exactly two):
+   - **Permissions** (exactly three):
      - Account → Workers R2 Storage → Edit
      - Zone → DNS → Edit
+     - Zone → Transform Rules → Edit
    - **Account Resources:** Include → select your account
    - **Zone Resources:** Include → Specific zone → `CF_ZONE_NAME` (not "All zones")
 4. Continue to summary → **Create Token** → copy the value, paste at the script prompt
