@@ -60,6 +60,7 @@ If `CF_API_TOKEN` is not already exported, the script will print instructions an
    - **Permissions:**
      - Account → Workers R2 Storage → Edit
      - Account → API Tokens → Edit
+     - User → API Tokens → Edit  ← required to create the CI token
      - Zone → DNS → Edit
    - **Account Resources:** Include → select your account
    - **Zone Resources:** Include → Specific zone → `CF_ZONE_NAME` (not "All zones")

@@ -111,6 +111,7 @@ if ! $DRY_RUN; then
         echo "  Permissions:"
         echo "    Account | Workers R2 Storage | Edit"
         echo "    Account | API Tokens         | Edit"
+        echo "    User    | API Tokens         | Edit"
         echo "    Zone    | DNS                | Edit  (Specific zone: ${CF_ZONE_NAME})"
         echo "  Account Resources: Include → select your account"
         echo "  Zone Resources:    Include → Specific zone → ${CF_ZONE_NAME}"
@@ -159,6 +160,24 @@ else
     else
         ok "[1b] CF_ZONE_ID already set: ${CF_ZONE_ID}"
     fi
+
+    # Validate all required permissions upfront before any destructive steps
+    info "[1b] Validating token permissions..."
+    PERM_ERRORS=()
+    cf_api GET "/accounts/${CF_ACCOUNT_ID}/r2/buckets?per_page=1" &>/dev/null \
+        || PERM_ERRORS+=("  Account | Workers R2 Storage | Edit")
+    cf_api GET "/zones/${CF_ZONE_ID}/dns_records?per_page=1" &>/dev/null \
+        || PERM_ERRORS+=("  Zone    | DNS                | Edit  (zone: ${CF_ZONE_NAME})")
+    cf_api GET "/user/tokens/permission_groups" &>/dev/null \
+        || PERM_ERRORS+=("  User    | API Tokens         | Edit")
+    if [[ ${#PERM_ERRORS[@]} -gt 0 ]]; then
+        err "[1b] Token is missing required permissions:"
+        for e in "${PERM_ERRORS[@]}"; do err "$e"; done
+        err ""
+        err "  Edit your token at: https://dash.cloudflare.com/profile/api-tokens"
+        die "[1b] Fix token permissions and re-run."
+    fi
+    ok "[1b] Token permissions verified"
 fi
 
 R2_ENDPOINT="https://${CF_ACCOUNT_ID:-DRY_RUN}.r2.cloudflarestorage.com"
@@ -281,7 +300,7 @@ if $DRY_RUN; then
 else
     R2_MANAGED=$(cf_api PUT \
         "/accounts/${CF_ACCOUNT_ID}/r2/buckets/${R2_BUCKET}/domains/managed" \
-        -d '{"enabled":true}')
+        -d '{"enabled":true}' 2>/dev/null || true)
     R2_DEV_HOSTNAME="$(echo "${R2_MANAGED}" | jq -r '.result.domain // empty' \
         | grep -o '[a-zA-Z0-9-]*\.r2\.dev' | head -1 || true)"
     if [[ -z "${R2_DEV_HOSTNAME}" ]]; then
