@@ -321,6 +321,7 @@ elif [[ -z "${R2_ACCESS_KEY_ID:-}" || -z "${R2_SECRET_ACCESS_KEY:-}" ]]; then
     echo "    Permissions: Object Read & Write"
     echo "    Bucket:      Apply to specific bucket → ${R2_BUCKET}"
     echo ""
+    echo "  Under 'Use the following credentials for S3 clients':"
     read -rsp "  Paste Access Key ID (input hidden): " R2_ACCESS_KEY_ID; echo
     read -rsp "  Paste Secret Access Key (input hidden): " R2_SECRET_ACCESS_KEY; echo
     export R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY
@@ -436,8 +437,6 @@ fi
 echo ""
 ok "Steps 1b–9 complete."
 echo ""
-info "Step 10 — push the first release tag to trigger CI:"
-info "  gh repo clone ${GH_REPO} /tmp/foundry-apt-release"
-info "  git -C /tmp/foundry-apt-release tag v0.0.1"
-info "  git -C /tmp/foundry-apt-release push origin v0.0.1"
+info "Step 10 — sync and push the first release tag to trigger CI:"
+info "  task sync-and-release TAG=v0.0.1"
 info "  # Watch: https://github.com/${GH_REPO}/actions"

@@ -53,3 +53,21 @@ tasks:
       - task: sync
       - task: release
         vars: { TAG: '{{.TAG}}' }
+
+  bump:
+    desc: "Sync and auto-increment patch version (e.g. v0.0.3 → v0.0.4)"
+    cmds:
+      - task: sync
+      - |
+        set -euo pipefail
+        cd {{.WORK_DIR}}
+        # Find highest vX.Y.Z tag; default to v0.0.0 if none
+        LATEST=$(git tag --list 'v*.*.*' | sort -V | tail -1)
+        LATEST="${LATEST:-v0.0.0}"
+        # Split into parts and increment patch
+        IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST#v}"
+        NEXT="v${MAJOR}.${MINOR}.$((PATCH + 1))"
+        echo "Latest tag: ${LATEST}  →  next: ${NEXT}"
+        git tag "${NEXT}"
+        git push origin "${NEXT}"
+        echo "Tagged ${NEXT} — watch: https://github.com/{{.GH_REPO}}/actions"
