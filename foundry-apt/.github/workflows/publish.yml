@@ -73,10 +73,6 @@ jobs:
             --exclude 'Release' --exclude 'Release.gpg' --exclude 'InRelease' \
             --header-upload "Cache-Control:no-store"
 
-          # Brief pause so R2 propagates Packages.gz to all edges before
-          # Release goes live — prevents a narrow apt hash-mismatch window.
-          sleep 5
-
           # Pass 2: upload Release files last (single-threaded, no race).
           # no-store prevents Cloudflare's edge from serving a stale Release
           # while Packages.gz is still propagating.
@@ -84,6 +80,24 @@ jobs:
             --progress --transfers=1 --checksum \
             --include '**/Release' --include '**/Release.gpg' --include '**/InRelease' \
             --header-upload "Cache-Control:no-store"
+
+      - name: Verify repo consistency
+        if: ${{ !inputs.dry_run }}
+        run: |
+          for i in $(seq 1 10); do
+            EXPECTED=$(curl -fsSL https://apt.foundrylinux.org/dists/resolute/Release \
+              | awk '/^SHA256:/{found=1} found && /main\/binary-amd64\/Packages\.gz/{print $1; exit}')
+            ACTUAL=$(curl -fsSL https://apt.foundrylinux.org/dists/resolute/main/binary-amd64/Packages.gz \
+              | sha256sum | awk '{print $1}')
+            if [[ "$EXPECTED" == "$ACTUAL" ]]; then
+              echo "Repo consistent (attempt ${i})"
+              exit 0
+            fi
+            echo "Attempt ${i}/10: expected ${EXPECTED}, got ${ACTUAL} — retrying in 2s"
+            sleep 2
+          done
+          echo "Repo never became consistent after 10 attempts" >&2
+          exit 1
 
       - name: Upload artifacts (always, for audit)
         uses: actions/upload-artifact@v7
