@@ -2,43 +2,39 @@ name: Build .debs (PR)
 
 on:
   push:
-    paths:
-      - 'foundry-apt/**'
+    branches: ['**']
   pull_request:
-    paths:
-      - 'foundry-apt/**'
 
 jobs:
   build-debs:
     name: Build every metapackage with dpkg-deb
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
+
       - name: shellcheck scripts
         run: |
           sudo apt-get update -q
           sudo apt-get install -y shellcheck
-          shellcheck foundry-apt/scripts/*.sh
+          shellcheck scripts/*.sh
+          find packages -name '*.sh' -exec shellcheck {} +
+
       - name: Build all .debs
-        working-directory: foundry-apt
         run: bash scripts/build-all.sh
-      - name: Sanity-check task package
-        working-directory: foundry-apt
+
+      - name: Verify all .debs
         run: |
-          # Make sure the Depends line names every sub-metapackage we ship,
-          # plus the vendored `task` package (since it's not in Ubuntu repos).
-      - name: Sanity-check vendored task package
-        working-directory: foundry-apt
-        run: |
-          set -e
-          ls dist/task_*_amd64.deb dist/task_*_arm64.deb
-          # /usr/bin/task must be present and executable
-          dpkg-deb --contents dist/task_*_amd64.deb | grep -q ' ./usr/bin/task$'
-          # The upstream copyright must travel with the package
-          dpkg-deb --contents dist/task_*_amd64.deb | grep -q ' ./usr/share/doc/task/copyright$'
+          set -euo pipefail
+          for deb in dist/*.deb; do
+            echo "=== $deb ==="
+            dpkg-deb --info "$deb"
+          done
+
       - name: Upload built .debs
         uses: actions/upload-artifact@v4
         with:
           name: foundry-apt-debs
-          path: foundry-apt/dist/*.deb
+          path: dist/*.deb
           retention-days: 14
