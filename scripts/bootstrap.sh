@@ -267,7 +267,7 @@ else
         -d "{\"name\":\"${R2_BUCKET}\",\"locationHint\":\"auto\"}")
     if echo "${BUCKET_RESPONSE}" | jq -e '.success == true' &>/dev/null; then
         ok "[6] R2 bucket '${R2_BUCKET}' created"
-    elif echo "${BUCKET_RESPONSE}" | jq -r '.errors[].code' 2>/dev/null | grep -q "10006"; then
+    elif echo "${BUCKET_RESPONSE}" | jq -r '.errors[].code' 2>/dev/null | grep -qE "10004|10006"; then
         ok "[6] R2 bucket '${R2_BUCKET}' already exists"
     else
         die "[6] Unexpected bucket response: $(echo "${BUCKET_RESPONSE}" | jq -c '.errors')"
