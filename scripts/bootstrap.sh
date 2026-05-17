@@ -12,7 +12,6 @@
 #
 # Prerequisites:
 #   gpg (gnupg2), shred, curl, jq
-#   aws CLI (S3-compat client for R2 upload — no AWS account needed)
 #   gh CLI (gh auth login)
 #
 # After this script: Step 10 — push the first release tag from your
@@ -97,7 +96,6 @@ command -v gpg   &>/dev/null || die "gpg not found — install gnupg2"
 command -v shred &>/dev/null || die "shred not found (install util-linux)"
 command -v curl  &>/dev/null || die "curl not found"
 command -v jq    &>/dev/null || die "jq not found"
-command -v aws   &>/dev/null || die "aws CLI not found (needed as S3-compat client for R2)"
 command -v gh    &>/dev/null || die "gh CLI not found — https://cli.github.com"
 
 if ! $DRY_RUN; then
@@ -110,7 +108,6 @@ if ! $DRY_RUN; then
         echo "  Name: ${CF_OPERATOR_TOKEN_NAME}"
         echo "  Permissions:"
         echo "    Account | Workers R2 Storage | Edit"
-        echo "    Account | API Tokens         | Edit"
         echo "    User    | API Tokens         | Edit"
         echo "    Zone    | DNS                | Edit  (Specific zone: ${CF_ZONE_NAME})"
         echo "  Account Resources: Include → select your account"
@@ -329,7 +326,6 @@ fi
 
 info "[6] Creating scoped R2 CI token: ${R2_TOKEN_NAME}"
 if $DRY_RUN; then
-    R2_WRITE_ID="DRY_RUN_R2_WRITE_ID"
     echo "  [dry-run] GET /user/tokens/permission_groups"
     echo "  [dry-run] POST /user/tokens {name: ${R2_TOKEN_NAME}}"
     R2_ACCESS_KEY_ID="DRY_RUN_KEY_ID"
@@ -390,10 +386,18 @@ info "[7] Attaching custom domain ${CUSTOM_DOMAIN} to R2 bucket"
 if $DRY_RUN; then
     echo "  [dry-run] POST /r2/buckets/${R2_BUCKET}/domains/custom"
 else
-    cf_api POST \
-        "/accounts/${CF_ACCOUNT_ID}/r2/buckets/${R2_BUCKET}/domains/custom" \
-        -d "{\"domain\":\"${CUSTOM_DOMAIN}\",\"zoneId\":\"${CF_ZONE_ID}\",\"enabled\":true}" >/dev/null
-    ok "[7] Custom domain attached: ${CUSTOM_DOMAIN}"
+    DOMAIN_HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -X POST \
+        "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${R2_BUCKET}/domains/custom" \
+        -H "Authorization: Bearer ${CF_API_TOKEN}" \
+        -H "Content-Type: application/json" \
+        -d "{\"domain\":\"${CUSTOM_DOMAIN}\",\"zoneId\":\"${CF_ZONE_ID}\",\"enabled\":true}")
+    if [[ "${DOMAIN_HTTP}" == "200" ]]; then
+        ok "[7] Custom domain attached: ${CUSTOM_DOMAIN}"
+    elif [[ "${DOMAIN_HTTP}" == "409" ]]; then
+        ok "[7] Custom domain already attached: ${CUSTOM_DOMAIN}"
+    else
+        die "[7] Unexpected HTTP ${DOMAIN_HTTP} attaching custom domain — check Cloudflare dashboard"
+    fi
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -410,20 +414,19 @@ if $KEY_LIVE; then
     ok "[8] key.gpg already reachable at https://${CUSTOM_DOMAIN}/key.gpg"
     [[ -f "${PUB_KEY}" ]] && shred -u "${PUB_KEY}"
 else
-    info "[8] Uploading public key → s3://${R2_BUCKET}/key.gpg"
+    info "[8] Uploading public key → r2://${R2_BUCKET}/key.gpg"
     if $DRY_RUN; then
-        echo "  [dry-run] aws s3 cp ${PUB_KEY} s3://${R2_BUCKET}/key.gpg --endpoint-url ${R2_ENDPOINT}"
+        echo "  [dry-run] PUT /accounts/.../r2/buckets/${R2_BUCKET}/objects/key.gpg"
         echo "  [dry-run] shred -u ${PUB_KEY}"
     else
         [[ -f "${PUB_KEY}" ]] \
             || die "[8] Public key missing — re-export: gpg --armor --export ${KEY_EMAIL} > ${PUB_KEY}"
-        [[ -n "${R2_SECRET_ACCESS_KEY}" ]] \
-            || die "[8] R2_SECRET_ACCESS_KEY empty — see warning above"
-        AWS_ACCESS_KEY_ID="${R2_ACCESS_KEY_ID}" \
-        AWS_SECRET_ACCESS_KEY="${R2_SECRET_ACCESS_KEY}" \
-        aws s3 cp "${PUB_KEY}" \
-            "s3://${R2_BUCKET}/key.gpg" \
-            --endpoint-url "${R2_ENDPOINT}"
+        curl -fsSL -X PUT \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${R2_BUCKET}/objects/key.gpg" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @"${PUB_KEY}" \
+            >/dev/null
         ok "[8] Public key uploaded"
         shred -u "${PUB_KEY}"
         ok "[8] Public key shredded"

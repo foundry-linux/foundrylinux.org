@@ -34,7 +34,6 @@ command -v gpg   || echo "missing: install gnupg2"
 command -v shred || echo "missing: install util-linux"
 command -v curl  || echo "missing"
 command -v jq    || echo "missing"
-command -v aws   || echo "missing: install awscli (S3-compat client for R2 — no AWS account needed)"
 command -v gh    || echo "missing: https://cli.github.com"
 gh auth status
 ```
@@ -57,16 +56,20 @@ If `CF_API_TOKEN` is not already exported, the script will print instructions an
 2. Click **+ Create Token** → **Get started** next to **Create Custom Token**
 3. Fill in:
    - **Name:** value of `CF_OPERATOR_TOKEN_NAME` from config
-   - **Permissions:**
+   - **Permissions** (exactly three):
      - Account → Workers R2 Storage → Edit
-     - Account → API Tokens → Edit
-     - User → API Tokens → Edit  ← required to create the CI token
+     - User → API Tokens → Edit
      - Zone → DNS → Edit
    - **Account Resources:** Include → select your account
    - **Zone Resources:** Include → Specific zone → `CF_ZONE_NAME` (not "All zones")
 4. Continue to summary → **Create Token** → copy the value, paste at the script prompt
 
 `CF_ACCOUNT_ID` and `CF_ZONE_ID` are fetched automatically — no manual lookup needed.
+
+The script validates all three permissions at the end of step 1b before touching anything.
+
+**Note:** Do not add `Account → API Tokens → Edit` — it is not needed and causes confusion
+during validation (the script validates `User → API Tokens → Edit` only).
 
 ## Step 4 — Run for real
 
@@ -76,16 +79,14 @@ bash scripts/bootstrap.sh
 
 ## Known failure modes
 
-The script validates all token permissions at the end of step 1b and lists exactly what's
-missing before touching anything. If it reports missing permissions, edit the token at
+If step 1b reports missing permissions, edit the token at
 <https://dash.cloudflare.com/profile/api-tokens> and re-run.
 
 | Pattern in output | What it means | Fix |
 |---|---|---|
 | `[1b] Token is missing required permissions` | Operator token incomplete | Edit token — the output lists which permissions are missing |
 | `[1b] Could not retrieve account ID` | Token can't read account | Verify Account Resources → your account is selected |
-| `[6] R2 CI token … already exists` | Prior partial run; secret value is gone | Delete the CI token at <https://dash.cloudflare.com/profile/api-tokens> and re-run |
-| `[8] R2_SECRET_ACCESS_KEY empty` | Step 6 hit the existing-token path | See above |
+| `[6] Could not find R2 write permission group ID` | `/user/tokens/permission_groups` returned unexpected data | Verify `User → API Tokens → Edit` is set on the operator token |
 
 ## Step 5 — Push first tag
 

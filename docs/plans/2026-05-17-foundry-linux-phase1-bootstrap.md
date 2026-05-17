@@ -19,15 +19,31 @@ self-describing.
 
 ## Step 1b — Create the Cloudflare operator API token
 
-Handled automatically by `bootstrap.sh` when `CF_API_TOKEN` is not already exported.
-The script prompts for the Cloudflare account email and **Global API Key**
-(Dash → My Profile → API Tokens → Global API Key), uses them once to mint a scoped
-`foundry-linux-operator` token, then they are no longer needed.
+Create the `foundry-linux-operator` token manually at
+<https://dash.cloudflare.com/profile/api-tokens> (one unavoidable manual step — no API path for
+creating the first credential). The script prompts for the token value if `CF_API_TOKEN` is not
+already exported; `CF_ACCOUNT_ID` and `CF_ZONE_ID` are fetched automatically via the API.
 
-The resulting token has:
-- **Workers R2 Storage: Write** — bucket create + object upload
-- **Zone DNS: Write** — CNAME for `apt.foundrylinux.org`
-- **User API Tokens: Edit** — creates the narrow `foundry-apt-ci` CI token in Step 6
+The token requires exactly three permissions:
+- **Account | Workers R2 Storage | Edit** — bucket create, object upload, custom domain attach
+- **User | API Tokens | Edit** — creates the narrow `foundry-apt-ci` CI token in Step 6
+- **Zone | DNS | Edit** (Specific zone: `foundrylinux.org`) — CNAME for `apt.foundrylinux.org`
+
+The script validates all three at the end of step 1b before touching anything.
+
+### CI token credentials (step 6 finding)
+
+The CI token is created via `POST /user/tokens` with the `Workers R2 Storage Bucket Item Write`
+permission group. The resulting token's `.result.id` and `.result.value` are the R2 S3
+credentials. These work with `rclone --provider Cloudflare` (used by `publish.yml`) but NOT with
+the vanilla `aws` CLI (which produces `SignatureDoesNotMatch`). Do not use `aws s3` with R2.
+
+### Key upload (step 8 finding)
+
+`key.gpg` is uploaded via the Cloudflare R2 REST API using Bearer token auth:
+`PUT /accounts/{id}/r2/buckets/{bucket}/objects/key.gpg`
+
+No `aws` CLI or S3 credentials required for this step. The `aws` CLI is not a prerequisite.
 
 ---
 
@@ -54,27 +70,26 @@ bash scripts/bootstrap.sh --dry-run   # preview all steps
 bash scripts/bootstrap.sh             # run for real
 ```
 
-If `CF_API_TOKEN` is not already exported, the script prompts for the Cloudflare account email
-and Global API Key, then creates the operator token automatically.
+If `CF_API_TOKEN` is not already exported, the script prompts for it (hidden input).
+`CF_ACCOUNT_ID` and `CF_ZONE_ID` are fetched automatically.
 
-If `CF_API_TOKEN` is already set (re-run scenario), also export `CF_ACCOUNT_ID` and `CF_ZONE_ID`.
-
-No AWS account is required.
+No AWS account or `aws` CLI required.
 
 What the script does, in order:
 
 | Step | What |
 |------|------|
-| 1b | Create `foundry-linux-operator` Cloudflare token (R2 + DNS + user-token:edit) |
+| 1b | Resolve `CF_ACCOUNT_ID` + `CF_ZONE_ID`; validate operator token permissions |
 | 2b | Push `foundry-apt/` to `foundry-linux/foundry-apt` on GitHub |
 | 3 | Generate 4096-bit RSA GPG signing key (`packages@foundrylinux.org`, 2-year expiry) |
 | 4 | Set `GPG_PRIVATE_KEY` GitHub Actions secret; shred local private key copy |
-| 6 | Create R2 bucket `foundry-apt`; create scoped `foundry-apt-ci` CI token |
+| 6 | Create R2 bucket `foundry-apt`; create scoped `foundry-apt-ci` CI token via `/user/tokens` |
 | 7 | Create proxied DNS CNAME `apt.foundrylinux.org`; attach custom domain to R2 bucket |
-| 8 | Upload `key.gpg` to R2; shred local public key copy |
+| 8 | Upload `key.gpg` to R2 via CF REST API (Bearer auth); shred local public key copy |
 | 9 | Set `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets |
 
-All steps are idempotent — safe to re-run.
+All steps are idempotent — safe to re-run. Custom domain 409 (already attached) is treated as
+success.
 
 ---
 
@@ -88,23 +103,13 @@ git -C /tmp/foundry-apt-release push origin v0.0.1
 ```
 
 The `smoke-install` job at the end of `publish.yml` proves a clean Ubuntu 26.04 container can
-`apt install foundry-linux-dev` from the live repo.
+`apt install task` from the live repo.
 
 ---
 
-## Step 11 — Create `/new-web-apt-repo` skill
-
-Wrap the bootstrap process as a Claude Code slash command so future runs can be invoked as
-`/bootstrap` from within Claude Code.
+## ~~Step 11 — Create `/new-web-apt-repo` skill~~ (done)
 
 Skill file: `.claude/commands/new-web-apt-repo.md`
-
-The skill:
-- Checks preflight conditions (tools installed, `gh auth status`)
-- Runs `bash scripts/bootstrap.sh --dry-run` and shows output
-- Prompts for confirmation before running for real
-- Monitors for errors and helps diagnose known failure modes
-- Reminds the user to push the first tag after completion
 
 ---
 
@@ -120,8 +125,8 @@ echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org
   | sudo tee /etc/apt/sources.list.d/foundry.list
 
 sudo apt update
-apt-cache show foundry-linux-dev
-apt-get install -y --no-install-recommends foundry-linux-dev
+apt-cache show task
+apt-get install -y --no-install-recommends task
 ```
 
 ---
@@ -131,7 +136,7 @@ apt-get install -y --no-install-recommends foundry-linux-dev
 - [x] Domain decided — `apt.foundrylinux.org`
 - [x] `foundry-linux` GitHub org created
 - [x] `foundry-linux/foundry-apt` GitHub repo created and pushed
-- [ ] Cloudflare operator token `foundry-linux-operator` created
+- [ ] Cloudflare operator token `foundry-linux-operator` created with correct permissions
 - [ ] GPG signing key generated (`packages@foundrylinux.org`, 4096-bit RSA, 2-year expiry)
 - [ ] `GPG_PRIVATE_KEY` secret set on `foundry-linux/foundry-apt`
 - [ ] Local copy of private key shredded
@@ -144,5 +149,5 @@ apt-get install -y --no-install-recommends foundry-linux-dev
 - [ ] `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets set
 - [ ] First tag `v0.0.1` pushed
 - [ ] `publish.yml` workflow green
-- [ ] `smoke-install` job confirms `apt install foundry-linux-dev` from live repo
-- [ ] `/new-web-apt-repo` skill created at `.claude/commands/new-web-apt-repo.md`
+- [ ] `smoke-install` job confirms `apt install task` from live repo
+- [x] `/new-web-apt-repo` skill created at `.claude/commands/new-web-apt-repo.md`
