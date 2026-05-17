@@ -372,6 +372,7 @@ elif [[ -z "${R2_ACCESS_KEY_ID:-}" || -z "${R2_SECRET_ACCESS_KEY:-}" ]]; then
     echo "  https://dash.cloudflare.com/${CF_ACCOUNT_ID}/r2/api-tokens"
     echo ""
     echo "  Click 'Create Account API token' (not User — Account tokens survive org changes)"
+    echo "    Token name:  ${R2_TOKEN_NAME}"
     echo "    Permissions: Object Read & Write"
     echo "    Bucket:      Apply to specific bucket → ${R2_BUCKET}"
     echo ""
