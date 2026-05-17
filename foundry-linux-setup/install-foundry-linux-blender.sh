@@ -55,6 +55,8 @@ else
 fi
 
 step "Installing foundry-linux-blender (apt)"
+info "Enabling universe (Blender 5.0+ is in Ubuntu 26.04 universe — no PPA needed)"
+run_sudo add-apt-repository -y universe
 apt_update
 run_sudo apt-get install -y blender python3
 ok "Blender installed"
