@@ -227,7 +227,7 @@ else
         "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets" \
         -H "Authorization: Bearer ${CF_API_TOKEN}" \
         -H "Content-Type: application/json" \
-        -d "{\"name\":\"${SECRETS_BUCKET}\",\"locationHint\":\"auto\"}")
+        -d "$(jq -n --arg n "$SECRETS_BUCKET" '{name:$n,locationHint:"auto"}')")
     if echo "${SEC_BUCKET_RESP}" | jq -e '.success == true' &>/dev/null; then
         ok "[1c] Secrets bucket '${SECRETS_BUCKET}' created (no public access)"
     elif echo "${SEC_BUCKET_RESP}" | jq -r '.errors[].code' 2>/dev/null | grep -qE "10004|10006"; then
@@ -347,7 +347,7 @@ else
         "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets" \
         -H "Authorization: Bearer ${CF_API_TOKEN}" \
         -H "Content-Type: application/json" \
-        -d "{\"name\":\"${R2_BUCKET}\",\"locationHint\":\"auto\"}")
+        -d "$(jq -n --arg n "$R2_BUCKET" '{name:$n,locationHint:"auto"}')")
     if echo "${BUCKET_RESPONSE}" | jq -e '.success == true' &>/dev/null; then
         ok "[6] R2 bucket '${R2_BUCKET}' created"
     elif echo "${BUCKET_RESPONSE}" | jq -r '.errors[].code' 2>/dev/null | grep -qE "10004|10006"; then
@@ -431,13 +431,10 @@ else
     if $DRY_RUN; then
         echo "  [dry-run] POST /zones/.../dns_records {type: CNAME, name: ${DNS_CNAME}}"
     else
-        cf_api POST "/zones/${CF_ZONE_ID}/dns_records" -d "{
-            \"type\": \"CNAME\",
-            \"name\": \"${DNS_CNAME}\",
-            \"content\": \"${R2_DEV_HOSTNAME}\",
-            \"proxied\": true,
-            \"comment\": \"foundry-apt R2 bucket\"
-          }" >/dev/null
+        cf_api POST "/zones/${CF_ZONE_ID}/dns_records" -d "$(jq -n \
+            --arg name    "$DNS_CNAME" \
+            --arg content "$R2_DEV_HOSTNAME" \
+            '{type:"CNAME",name:$name,content:$content,proxied:true,comment:"foundry-apt R2 bucket"}')" >/dev/null
         ok "[7] DNS CNAME created"
     fi
 fi
@@ -450,7 +447,7 @@ else
         "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${R2_BUCKET}/domains/custom" \
         -H "Authorization: Bearer ${CF_API_TOKEN}" \
         -H "Content-Type: application/json" \
-        -d "{\"domain\":\"${CUSTOM_DOMAIN}\",\"zoneId\":\"${CF_ZONE_ID}\",\"enabled\":true}")
+        -d "$(jq -n --arg d "$CUSTOM_DOMAIN" --arg z "$CF_ZONE_ID" '{domain:$d,zoneId:$z,enabled:true}')")
     if [[ "${DOMAIN_HTTP}" == "200" ]]; then
         ok "[7] Custom domain attached: ${CUSTOM_DOMAIN}"
     elif [[ "${DOMAIN_HTTP}" == "409" ]]; then
