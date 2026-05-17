@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Full Phase 1 bootstrap: create CF operator token, push foundry-apt to GitHub,
-# generate GPG key, store in SSM, create OIDC/IAM, provision R2 bucket,
-# configure DNS, upload public key, wire GitHub secrets.
+# generate GPG key, wire GitHub secrets, provision R2 bucket, configure DNS,
+# upload public key.
 # Steps 1b–9 — run once from the linuxfoundry.org repo root.
 #
 # Usage:
@@ -16,13 +16,10 @@
 # If CF_API_TOKEN/CF_ACCOUNT_ID/CF_ZONE_ID are already exported, Step 1b
 # is skipped automatically.
 #
-# AWS prerequisites:
-#   aws CLI authenticated: sts:GetCallerIdentity, ssm:PutParameter,
-#   iam:CreateOpenIDConnectProvider, iam:CreateRole, iam:PutRolePolicy,
-#   iam:GetRole, iam:GetOpenIDConnectProvider
-#
-# Other prerequisites:
-#   gpg (gnupg2), shred, curl, jq, gh CLI (gh auth login)
+# Prerequisites:
+#   gpg (gnupg2), shred, curl, jq
+#   aws CLI (S3-compat client for R2 upload — no AWS account needed)
+#   gh CLI (gh auth login)
 #
 # After this script: Step 10 — push the first release tag from your
 # foundry-apt checkout to trigger the publish workflow.
@@ -43,15 +40,8 @@ KEY_NAME="Foundry Linux Packages"
 KEY_EMAIL="packages@foundrylinux.org"
 KEY_BITS=4096
 KEY_EXPIRY="2y"
-SSM_PARAM="/foundry-apt/signing-key"
-SSM_DESC="GPG signing key for foundry-apt CI"
 PUB_KEY="/tmp/foundry-packages.pub.gpg"
 SEC_KEY="/tmp/foundry-packages.sec.gpg"
-
-OIDC_URL="https://token.actions.githubusercontent.com"
-OIDC_THUMBPRINT="6938fd4d98bab03faadb97b34396831e3780aea1"
-IAM_ROLE_NAME="foundry-apt-publish"
-IAM_POLICY_NAME="foundry-apt-ssm-read"
 
 R2_BUCKET="foundry-apt"
 R2_TOKEN_NAME="foundry-apt-ci"
@@ -65,8 +55,6 @@ DRY_RUN=false
 # Temp paths — all cleaned up on exit
 WORK_DIR=""
 BATCH_FILE=""
-TRUST_FILE=""
-POLICY_FILE=""
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -84,8 +72,6 @@ usage() {
 cleanup() {
     [[ -n "${WORK_DIR}"   && -d "${WORK_DIR}"   ]] && rm -rf "${WORK_DIR}"
     [[ -n "${BATCH_FILE}" && -f "${BATCH_FILE}" ]] && rm -f  "${BATCH_FILE}"
-    [[ -n "${TRUST_FILE}" && -f "${TRUST_FILE}" ]] && rm -f  "${TRUST_FILE}"
-    [[ -n "${POLICY_FILE}" && -f "${POLICY_FILE}" ]] && rm -f "${POLICY_FILE}"
 }
 trap cleanup EXIT
 
@@ -127,16 +113,14 @@ done
 [[ -d "${SRC_DIR}" ]] || die "${PKG_NAME}/ not found under ${REPO_ROOT}"
 
 command -v gpg   &>/dev/null || die "gpg not found — install gnupg2"
-command -v aws   &>/dev/null || die "aws CLI not found"
 command -v shred &>/dev/null || die "shred not found (install util-linux)"
 command -v curl  &>/dev/null || die "curl not found"
 command -v jq    &>/dev/null || die "jq not found"
+command -v aws   &>/dev/null || die "aws CLI not found (needed as S3-compat client for R2)"
 command -v gh    &>/dev/null || die "gh CLI not found — https://cli.github.com"
 
 if ! $DRY_RUN; then
     gh auth status &>/dev/null || die "gh not authenticated — run: gh auth login"
-    aws sts get-caller-identity &>/dev/null \
-        || die "AWS credentials not configured — run: aws configure"
     # CF vars are either pre-exported or will be populated in step 1b below
     if [[ -z "${CF_API_TOKEN:-}" ]]; then
         if [[ -z "${CF_EMAIL:-}" ]]; then
@@ -153,17 +137,9 @@ if ! $DRY_RUN; then
     fi
 fi
 
-if $DRY_RUN; then
-    AWS_ACCOUNT_ID="111122223333"
-else
-    AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
-fi
-OIDC_ARN="arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/token.actions.githubusercontent.com"
-
-ROLE_ARN=""
-R2_DEV_HOSTNAME=""
 R2_ACCESS_KEY_ID=""
 R2_SECRET_ACCESS_KEY=""
+R2_DEV_HOSTNAME=""
 
 echo ""
 info "Bootstrap: Steps 1b–9 for ${GH_REPO}"
@@ -175,7 +151,6 @@ echo ""
 
 if [[ -n "${CF_API_TOKEN:-}" ]]; then
     ok "[1b] CF_API_TOKEN already set — skipping token creation"
-    # CF_ACCOUNT_ID and CF_ZONE_ID must also be set if CF_API_TOKEN is pre-exported
     if ! $DRY_RUN; then
         : "${CF_ACCOUNT_ID:?CF_API_TOKEN is set but CF_ACCOUNT_ID is missing}"
         : "${CF_ZONE_ID:?CF_API_TOKEN is set but CF_ZONE_ID is missing}"
@@ -192,7 +167,6 @@ else
         echo "  [dry-run] GET /user/tokens/permission_groups"
         echo "  [dry-run] POST /user/tokens {name: ${CF_OPERATOR_TOKEN_NAME}}"
     else
-        # Check for existing token by name
         EXISTING_OP_TOKEN=$(cf_global GET "/user/tokens" \
             | jq -r ".result[] | select(.name == \"${CF_OPERATOR_TOKEN_NAME}\") | .id" || true)
         if [[ -n "${EXISTING_OP_TOKEN}" ]]; then
@@ -256,7 +230,6 @@ else
         [[ -n "${CF_API_TOKEN}" && "${CF_API_TOKEN}" != "null" ]] \
             || die "[1b] Token creation failed: $(echo "${OP_RESPONSE}" | jq -c '.errors')"
         ok "[1b] Operator token created (CF_GLOBAL_API_KEY no longer needed)"
-        # Export so subsequent steps in this process use the new token
         export CF_API_TOKEN CF_ACCOUNT_ID CF_ZONE_ID
     fi
 fi
@@ -329,100 +302,27 @@ else
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
-# Step 4 — Store private key in AWS SSM, shred local copy
+# Step 4 — Set GPG_PRIVATE_KEY GitHub secret, shred local private key
 # ════════════════════════════════════════════════════════════════════════════
 
-if ! $DRY_RUN && aws ssm get-parameter --name "${SSM_PARAM}" &>/dev/null 2>&1; then
-    ok "[4] SSM parameter ${SSM_PARAM} already exists"
+GPG_SECRET_EXISTS=false
+if ! $DRY_RUN && gh secret list --repo "${GH_REPO}" 2>/dev/null | grep -q "^GPG_PRIVATE_KEY"; then
+    GPG_SECRET_EXISTS=true
+fi
+
+if $GPG_SECRET_EXISTS; then
+    ok "[4] GPG_PRIVATE_KEY secret already exists on ${GH_REPO}"
     [[ -f "${SEC_KEY}" ]] && shred -u "${SEC_KEY}"
 else
-    info "[4] Uploading private key to SSM: ${SSM_PARAM}"
+    info "[4] Setting GPG_PRIVATE_KEY secret on ${GH_REPO}"
     if $DRY_RUN; then
-        echo "  [dry-run] aws ssm put-parameter --name ${SSM_PARAM} --type SecureString ..."
+        echo "  [dry-run] gh secret set GPG_PRIVATE_KEY --repo ${GH_REPO} --body <private-key>"
         echo "  [dry-run] shred -u ${SEC_KEY}"
     else
-        aws ssm put-parameter \
-            --name "${SSM_PARAM}" \
-            --type SecureString \
-            --value "$(cat "${SEC_KEY}")" \
-            --description "${SSM_DESC}"
-        ok "[4] Private key stored in SSM"
+        gh secret set GPG_PRIVATE_KEY --repo "${GH_REPO}" --body "$(cat "${SEC_KEY}")"
+        ok "[4] GPG_PRIVATE_KEY secret set"
         shred -u "${SEC_KEY}"
         ok "[4] Private key shredded"
-    fi
-fi
-
-# ════════════════════════════════════════════════════════════════════════════
-# Step 5 — GitHub OIDC identity provider + IAM role
-# ════════════════════════════════════════════════════════════════════════════
-
-if ! $DRY_RUN && aws iam get-open-id-connect-provider \
-        --open-id-connect-provider-arn "${OIDC_ARN}" &>/dev/null 2>&1; then
-    ok "[5] GitHub OIDC provider already exists"
-else
-    info "[5] Registering GitHub OIDC identity provider"
-    if $DRY_RUN; then
-        echo "  [dry-run] aws iam create-open-id-connect-provider --url ${OIDC_URL} ..."
-    else
-        aws iam create-open-id-connect-provider \
-            --url "${OIDC_URL}" \
-            --client-id-list sts.amazonaws.com \
-            --thumbprint-list "${OIDC_THUMBPRINT}" \
-            2>/dev/null \
-            || warn "[5] OIDC provider already exists (concurrent call), continuing"
-        ok "[5] OIDC identity provider registered"
-    fi
-fi
-
-if ! $DRY_RUN && aws iam get-role --role-name "${IAM_ROLE_NAME}" &>/dev/null 2>&1; then
-    ok "[5] IAM role ${IAM_ROLE_NAME} already exists"
-    ROLE_ARN="$(aws iam get-role --role-name "${IAM_ROLE_NAME}" --query Role.Arn --output text)"
-else
-    info "[5] Creating IAM role: ${IAM_ROLE_NAME}"
-    TRUST_FILE="$(mktemp /tmp/foundry-apt-trust-XXXXXX.json)"
-    POLICY_FILE="$(mktemp /tmp/foundry-apt-policy-XXXXXX.json)"
-    cat > "${TRUST_FILE}" <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [{
-    "Effect": "Allow",
-    "Principal": { "Federated": "${OIDC_ARN}" },
-    "Action": "sts:AssumeRoleWithWebIdentity",
-    "Condition": {
-      "StringEquals": {
-        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-        "token.actions.githubusercontent.com:sub": "repo:${GH_REPO}:ref:refs/tags/v*"
-      }
-    }
-  }]
-}
-EOF
-    cat > "${POLICY_FILE}" <<'EOF'
-{
-  "Version": "2012-10-17",
-  "Statement": [{
-    "Effect": "Allow",
-    "Action": ["ssm:GetParameter", "kms:Decrypt"],
-    "Resource": "arn:aws:ssm:*:*:parameter/foundry-apt/*"
-  }]
-}
-EOF
-    if $DRY_RUN; then
-        echo "  [dry-run] aws iam create-role --role-name ${IAM_ROLE_NAME} ..."
-        echo "  [dry-run] aws iam put-role-policy --policy-name ${IAM_POLICY_NAME} ..."
-        ROLE_ARN="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${IAM_ROLE_NAME}"
-    else
-        aws iam create-role \
-            --role-name "${IAM_ROLE_NAME}" \
-            --assume-role-policy-document "file://${TRUST_FILE}" \
-            --description "OIDC role — ${GH_REPO} tag-push CI only"
-        aws iam put-role-policy \
-            --role-name "${IAM_ROLE_NAME}" \
-            --policy-name "${IAM_POLICY_NAME}" \
-            --policy-document "file://${POLICY_FILE}"
-        ROLE_ARN="$(aws iam get-role --role-name "${IAM_ROLE_NAME}" \
-            --query Role.Arn --output text)"
-        ok "[5] IAM role created: ${ROLE_ARN}"
     fi
 fi
 
@@ -595,20 +495,13 @@ fi
 
 info "[9] Setting GitHub Actions secrets on ${GH_REPO}"
 
-if [[ -z "${ROLE_ARN}" ]] && ! $DRY_RUN; then
-    ROLE_ARN="$(aws iam get-role --role-name "${IAM_ROLE_NAME}" \
-        --query Role.Arn --output text)"
-fi
-
 if $DRY_RUN; then
-    echo "  [dry-run] gh secret set AWS_ROLE_ARN         --repo ${GH_REPO}"
     echo "  [dry-run] gh secret set R2_ACCESS_KEY_ID     --repo ${GH_REPO}"
     echo "  [dry-run] gh secret set R2_SECRET_ACCESS_KEY --repo ${GH_REPO}"
     echo "  [dry-run] gh secret set R2_ENDPOINT          --repo ${GH_REPO}"
 else
     [[ -n "${R2_SECRET_ACCESS_KEY}" ]] \
         || die "[9] R2_SECRET_ACCESS_KEY empty — see warning above"
-    gh secret set AWS_ROLE_ARN         --repo "${GH_REPO}" --body "${ROLE_ARN}"
     gh secret set R2_ACCESS_KEY_ID     --repo "${GH_REPO}" --body "${R2_ACCESS_KEY_ID}"
     gh secret set R2_SECRET_ACCESS_KEY --repo "${GH_REPO}" --body "${R2_SECRET_ACCESS_KEY}"
     gh secret set R2_ENDPOINT          --repo "${GH_REPO}" --body "${R2_ENDPOINT}"
@@ -621,7 +514,7 @@ fi
 # ════════════════════════════════════════════════════════════════════════════
 
 echo ""
-ok "Steps 2b–9 complete."
+ok "Steps 1b–9 complete."
 echo ""
 info "Step 10 — push the first release tag to trigger CI:"
 info "  gh repo clone ${GH_REPO} /tmp/foundry-apt-release"

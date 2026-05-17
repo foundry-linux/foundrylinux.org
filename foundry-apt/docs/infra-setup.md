@@ -2,6 +2,7 @@
 
 One-time setup needed before [`publish.yml`](../.github/workflows/publish.yml) can build, sign,
 and sync the APT repo to `apt.foundrylinux.org`. Everything is automated via a single script.
+No AWS account required.
 
 ## Run bootstrap.sh
 

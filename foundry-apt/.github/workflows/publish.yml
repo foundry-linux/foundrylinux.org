@@ -12,7 +12,6 @@ on:
         default: false
 
 permissions:
-  id-token: write   # for AWS OIDC federation
   contents: read
 
 jobs:
@@ -24,7 +23,7 @@ jobs:
       - name: Install aptly
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y aptly gnupg awscli rclone
+          sudo apt-get install -y aptly gnupg rclone
 
       - name: Build all .debs
         run: bash scripts/build-all.sh
@@ -34,20 +33,13 @@ jobs:
 
       - name: Publish to ./public/ (unsigned smoke step)
         env:
-          GPG_KEY: ''   # signing happens in the next step using SSM
+          GPG_KEY: ''   # signing happens in the next step
         run: bash scripts/publish-local.sh
 
-      - name: Configure AWS credentials (OIDC)
-        if: ${{ !inputs.dry_run }}
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1
-
-      - name: Sign Release with key from SSM
+      - name: Sign Release
         if: ${{ !inputs.dry_run }}
         env:
-          SSM_PARAM_NAME: /foundry-apt/signing-key
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           PUBLISH_DIR: ./public/dists/resolute
         run: bash scripts/sign.sh
 

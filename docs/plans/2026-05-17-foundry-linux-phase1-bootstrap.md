@@ -42,7 +42,6 @@ All subsequent GitHub operations use `gh` CLI.
 
 `foundry-apt/` in the `linuxfoundry.org` repo is the development working copy;
 `foundry-linux/foundry-apt` on GitHub is the CI-facing authoritative source.
-The `publish.yml` OIDC trust policy scopes to `repo:foundry-linux/foundry-apt:ref:refs/tags/v*`.
 
 ---
 
@@ -60,6 +59,8 @@ and Global API Key, then creates the operator token automatically.
 
 If `CF_API_TOKEN` is already set (re-run scenario), also export `CF_ACCOUNT_ID` and `CF_ZONE_ID`.
 
+No AWS account is required.
+
 What the script does, in order:
 
 | Step | What |
@@ -67,12 +68,11 @@ What the script does, in order:
 | 1b | Create `foundry-linux-operator` Cloudflare token (R2 + DNS + user-token:edit) |
 | 2b | Push `foundry-apt/` to `foundry-linux/foundry-apt` on GitHub |
 | 3 | Generate 4096-bit RSA GPG signing key (`packages@foundrylinux.org`, 2-year expiry) |
-| 4 | Store private key in AWS SSM `/foundry-apt/signing-key`; shred local copy |
-| 5 | Register GitHub OIDC provider in AWS IAM; create `foundry-apt-publish` role (tag-push only) |
+| 4 | Set `GPG_PRIVATE_KEY` GitHub Actions secret; shred local private key copy |
 | 6 | Create R2 bucket `foundry-apt`; create scoped `foundry-apt-ci` CI token |
 | 7 | Create proxied DNS CNAME `apt.foundrylinux.org`; attach custom domain to R2 bucket |
 | 8 | Upload `key.gpg` to R2; shred local public key copy |
-| 9 | Set `AWS_ROLE_ARN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets |
+| 9 | Set `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets |
 
 All steps are idempotent — safe to re-run.
 
@@ -89,6 +89,22 @@ git -C /tmp/foundry-apt-release push origin v0.0.1
 
 The `smoke-install` job at the end of `publish.yml` proves a clean Ubuntu 26.04 container can
 `apt install foundry-linux-dev` from the live repo.
+
+---
+
+## Step 11 — Create `/bootstrap` skill
+
+Wrap the bootstrap process as a Claude Code slash command so future runs can be invoked as
+`/bootstrap` from within Claude Code.
+
+Skill file: `.claude/commands/bootstrap.md`
+
+The skill:
+- Checks preflight conditions (tools installed, `gh auth status`)
+- Runs `bash scripts/bootstrap.sh --dry-run` and shows output
+- Prompts for confirmation before running for real
+- Monitors for errors and helps diagnose known failure modes
+- Reminds the user to push the first tag after completion
 
 ---
 
@@ -117,17 +133,16 @@ apt-get install -y --no-install-recommends foundry-linux-dev
 - [x] `foundry-linux/foundry-apt` GitHub repo created and pushed
 - [ ] Cloudflare operator token `foundry-linux-operator` created
 - [ ] GPG signing key generated (`packages@foundrylinux.org`, 4096-bit RSA, 2-year expiry)
-- [ ] Private key stored in AWS SSM at `/foundry-apt/signing-key`
+- [ ] `GPG_PRIVATE_KEY` secret set on `foundry-linux/foundry-apt`
 - [ ] Local copy of private key shredded
-- [ ] GitHub OIDC identity provider added to AWS IAM
-- [ ] `foundry-apt-publish` IAM role created with scoped trust + minimal SSM policy
 - [ ] R2 bucket `foundry-apt` created
 - [ ] R2.dev subdomain enabled
 - [ ] Scoped R2 CI token `foundry-apt-ci` created
 - [ ] Public signing key uploaded to R2 as `key.gpg`
 - [ ] DNS CNAME `apt.foundrylinux.org` configured (proxied)
 - [ ] Custom domain attached to R2 bucket
-- [ ] `AWS_ROLE_ARN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets set
+- [ ] `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets set
 - [ ] First tag `v0.0.1` pushed
 - [ ] `publish.yml` workflow green
 - [ ] `smoke-install` job confirms `apt install foundry-linux-dev` from live repo
+- [ ] `/bootstrap` skill created at `.claude/commands/bootstrap.md`
