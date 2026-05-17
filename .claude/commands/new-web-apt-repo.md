@@ -37,6 +37,21 @@ bash scripts/bootstrap.sh
 The script prompts interactively for Cloudflare credentials if `CF_API_TOKEN` is not exported.
 Do not attempt to pre-supply them — let the script prompt.
 
+If the user doesn't want to use the Global API Key (Option B), guide them to:
+1. Go to <https://dash.cloudflare.com/profile/api-tokens/create>
+2. Click **Get started** next to **Create Custom Token** (top of page)
+3. Set name `foundry-linux-operator`, add these permissions:
+   - Account → Workers R2 Storage → Edit
+   - Account → API Tokens → Edit
+   - Zone → DNS → Edit (zone: `foundrylinux.org`)
+4. Find Account ID at <https://dash.cloudflare.com/> (right sidebar)
+5. Find Zone ID at `https://dash.cloudflare.com/<account-id>/foundrylinux.org` (right sidebar)
+6. Ctrl-C, then re-run with the values exported:
+   ```bash
+   export CF_API_TOKEN=<token> CF_ACCOUNT_ID=<account-id> CF_ZONE_ID=<zone-id>
+   bash scripts/bootstrap.sh
+   ```
+
 ## Monitor for known failure modes
 
 | Pattern in output | What it means | Fix |

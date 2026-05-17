@@ -136,6 +136,7 @@ if ! $DRY_RUN; then
             echo ""
             echo "  Option B: create the token manually (no Global API Key needed):"
             echo "    1. https://dash.cloudflare.com/profile/api-tokens/create"
+            echo "       Click 'Get started' next to 'Create Custom Token' (top of page)"
             echo "       Name: ${CF_OPERATOR_TOKEN_NAME}"
             echo "       Permissions:"
             echo "         Account | Workers R2 Storage | Edit"
