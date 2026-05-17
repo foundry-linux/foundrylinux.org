@@ -43,7 +43,7 @@ To create `CF_API_TOKEN` before running the script:
 3. Set name `foundry-linux-operator`, add these permissions:
    - Account → Workers R2 Storage → Edit
    - Account → API Tokens → Edit
-   - Zone → DNS → Edit (zone: `foundrylinux.org`)
+   - Zone → DNS → Edit → Specific zone → `foundrylinux.org` (not "All zones")
 4. Find Account ID at <https://dash.cloudflare.com/> (right sidebar)
 5. Find Zone ID at `https://dash.cloudflare.com/<account-id>/foundrylinux.org` (right sidebar)
 6. Ctrl-C, then re-run with the values exported:
