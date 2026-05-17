@@ -51,6 +51,12 @@ tasks:
         apt-cache depends worldfoundry-dev
         sudo rm /etc/apt/sources.list.d/foundry-test.list
 
+  live-test:
+    desc: "Install each published package from apt.foundrylinux.org in a fresh container"
+    dir: "{{.TASKFILE_DIR}}"
+    cmds:
+      - bash test/run-test.sh {{.CLI_ARGS}}
+
   shellcheck:
     desc: "Lint all shell scripts"
     cmds:
