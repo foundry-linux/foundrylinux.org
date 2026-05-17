@@ -393,11 +393,11 @@ fi
 
 info "[7] Attaching custom domain ${CUSTOM_DOMAIN} to R2 bucket"
 if $DRY_RUN; then
-    echo "  [dry-run] PUT /r2/buckets/${R2_BUCKET}/domains/custom"
+    echo "  [dry-run] POST /r2/buckets/${R2_BUCKET}/domains/custom"
 else
-    cf_api PUT \
+    cf_api POST \
         "/accounts/${CF_ACCOUNT_ID}/r2/buckets/${R2_BUCKET}/domains/custom" \
-        -d "{\"domains\":[{\"domain\":\"${CUSTOM_DOMAIN}\",\"enabled\":true}]}" >/dev/null
+        -d "{\"domain\":\"${CUSTOM_DOMAIN}\",\"zoneId\":\"${CF_ZONE_ID}\",\"enabled\":true}" >/dev/null
     ok "[7] Custom domain attached: ${CUSTOM_DOMAIN}"
 fi
 
