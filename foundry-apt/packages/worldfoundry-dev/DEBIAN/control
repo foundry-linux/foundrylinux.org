@@ -6,7 +6,7 @@ Section: metapackages
 Priority: optional
 Depends: worldfoundry-engine-build-deps,
  worldfoundry-blender,
- worldfoundry-retro-tools,
+ foundry-linux-retro-tools,
  task,
  gnupg,
  ca-certificates,

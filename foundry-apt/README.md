@@ -22,7 +22,7 @@ sudo apt install worldfoundry-dev
 | **`worldfoundry-dev`** | everything below | Default — most contributors |
 | `worldfoundry-engine-build-deps` | build-essential, cmake, libx11, libgl, gdb, xxd, pkg-config, git | Just compiling the engine |
 | `worldfoundry-blender` | [Blender](https://www.blender.org/) 4.2+ + python3 + engine-build-deps | Authoring levels |
-| `worldfoundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils; Recommends [ghidra](https://ghidra-sre.org/), [f9dasm](http://www.df.lth.se.orbin.se/~triad/f9dasm/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm), [xa65](https://www.floodgap.com/retrotech/xa/) | Porting arcade ROMs |
+| `foundry-linux-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils; Recommends [ghidra](https://ghidra-sre.org/), [f9dasm](http://www.df.lth.se.orbin.se/~triad/f9dasm/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm), [xa65](https://www.floodgap.com/retrotech/xa/) | Porting arcade ROMs |
 | `worldfoundry-android-dev` | JDK 17, adb, NDK r26c | Cross-compiling for Android (separate because ~3 GB) |
 
 ## Vendored upstream packages
@@ -43,7 +43,7 @@ foundry-apt/
     worldfoundry-dev/DEBIAN/control
     worldfoundry-engine-build-deps/DEBIAN/control
     worldfoundry-blender/DEBIAN/control
-    worldfoundry-retro-tools/DEBIAN/control
+    foundry-linux-retro-tools/DEBIAN/control
     worldfoundry-android-dev/DEBIAN/control
     task/build.sh               Fetches upstream binary + builds .deb
   aptly/
