@@ -108,7 +108,6 @@ if ! $DRY_RUN; then
         echo "  Name: ${CF_OPERATOR_TOKEN_NAME}"
         echo "  Permissions:"
         echo "    Account | Workers R2 Storage | Edit"
-        echo "    User    | API Tokens         | Edit"
         echo "    Zone    | DNS                | Edit  (Specific zone: ${CF_ZONE_NAME})"
         echo "  Account Resources: Include → select your account"
         echo "  Zone Resources:    Include → Specific zone → ${CF_ZONE_NAME}"
@@ -165,8 +164,6 @@ else
         || PERM_ERRORS+=("  Account | Workers R2 Storage | Edit")
     cf_api GET "/zones/${CF_ZONE_ID}/dns_records?per_page=1" &>/dev/null \
         || PERM_ERRORS+=("  Zone    | DNS                | Edit  (zone: ${CF_ZONE_NAME})")
-    cf_api GET "/user/tokens/permission_groups" &>/dev/null \
-        || PERM_ERRORS+=("  User    | API Tokens         | Edit")
     if [[ ${#PERM_ERRORS[@]} -gt 0 ]]; then
         err "[1b] Token is missing required permissions:"
         for e in "${PERM_ERRORS[@]}"; do err "$e"; done
@@ -311,46 +308,25 @@ else
     ok "[6] r2.dev hostname: ${R2_DEV_HOSTNAME}"
 fi
 
-EXISTING_TOKEN_ID=""
-if ! $DRY_RUN; then
-    EXISTING_TOKEN_ID=$(cf_api GET "/user/tokens" \
-        | jq -r ".result[] | select(.name == \"${R2_TOKEN_NAME}\") | .id" || true)
-fi
-
-if [[ -n "${EXISTING_TOKEN_ID}" ]]; then
-    info "[6] R2 CI token '${R2_TOKEN_NAME}' already exists — deleting to recover secret"
-    cf_api DELETE "/user/tokens/${EXISTING_TOKEN_ID}" >/dev/null \
-        || die "[6] Could not delete existing CI token — delete it manually at https://dash.cloudflare.com/profile/api-tokens"
-    ok "[6] Deleted stale CI token"
-fi
-
-info "[6] Creating scoped R2 CI token: ${R2_TOKEN_NAME}"
+info "[6] R2 CI credentials needed (R2 S3 tokens must be created in the R2 dashboard)"
 if $DRY_RUN; then
-    echo "  [dry-run] GET /user/tokens/permission_groups"
-    echo "  [dry-run] POST /user/tokens {name: ${R2_TOKEN_NAME}}"
     R2_ACCESS_KEY_ID="DRY_RUN_KEY_ID"
     R2_SECRET_ACCESS_KEY="DRY_RUN_SECRET"
+elif [[ -z "${R2_ACCESS_KEY_ID:-}" || -z "${R2_SECRET_ACCESS_KEY:-}" ]]; then
+    echo ""
+    echo "  Create an R2 API token at:"
+    echo "  https://dash.cloudflare.com/${CF_ACCOUNT_ID}/r2/api-tokens"
+    echo ""
+    echo "  Click 'Create API Token', then:"
+    echo "    Permissions: Object Read & Write"
+    echo "    Bucket:      Apply to specific bucket → ${R2_BUCKET}"
+    echo ""
+    read -rsp "  Paste Access Key ID (input hidden): " R2_ACCESS_KEY_ID; echo
+    read -rsp "  Paste Secret Access Key (input hidden): " R2_SECRET_ACCESS_KEY; echo
+    export R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY
+    ok "[6] R2 credentials captured"
 else
-    R2_WRITE_ID=$(cf_api GET "/user/tokens/permission_groups" \
-        | jq -r '.result[] | select(.name | test("R2.*Storage.*Bucket.*Item.*Write"; "i")) | .id' \
-        | head -1 || true)
-    [[ -n "${R2_WRITE_ID}" ]] || die "[6] Could not find R2 write permission group ID"
-    R2_TOKEN_RESPONSE=$(cf_api POST "/user/tokens" -d "{
-        \"name\": \"${R2_TOKEN_NAME}\",
-        \"policies\": [{
-          \"effect\": \"allow\",
-          \"resources\": { \"com.cloudflare.api.account.${CF_ACCOUNT_ID}\": \"*\" },
-          \"permission_groups\": [{
-            \"id\": \"${R2_WRITE_ID}\",
-            \"name\": \"Workers R2 Storage Bucket Item Write\"
-          }]
-        }]
-      }")
-    R2_ACCESS_KEY_ID="$(echo "${R2_TOKEN_RESPONSE}" | jq -r '.result.id')"
-    R2_SECRET_ACCESS_KEY="$(echo "${R2_TOKEN_RESPONSE}" | jq -r '.result.value')"
-    [[ -n "${R2_ACCESS_KEY_ID}" && "${R2_ACCESS_KEY_ID}" != "null" ]] \
-        || die "[6] R2 token creation failed: $(echo "${R2_TOKEN_RESPONSE}" | jq -c '.errors')"
-    ok "[6] R2 CI token created (ID: ${R2_ACCESS_KEY_ID})"
+    ok "[6] R2 credentials already set"
 fi
 
 # ════════════════════════════════════════════════════════════════════════════

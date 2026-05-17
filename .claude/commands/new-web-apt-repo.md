@@ -56,9 +56,8 @@ If `CF_API_TOKEN` is not already exported, the script will print instructions an
 2. Click **+ Create Token** → **Get started** next to **Create Custom Token**
 3. Fill in:
    - **Name:** value of `CF_OPERATOR_TOKEN_NAME` from config
-   - **Permissions** (exactly three):
+   - **Permissions** (exactly two):
      - Account → Workers R2 Storage → Edit
-     - User → API Tokens → Edit
      - Zone → DNS → Edit
    - **Account Resources:** Include → select your account
    - **Zone Resources:** Include → Specific zone → `CF_ZONE_NAME` (not "All zones")
@@ -66,10 +65,7 @@ If `CF_API_TOKEN` is not already exported, the script will print instructions an
 
 `CF_ACCOUNT_ID` and `CF_ZONE_ID` are fetched automatically — no manual lookup needed.
 
-The script validates all three permissions at the end of step 1b before touching anything.
-
-**Note:** Do not add `Account → API Tokens → Edit` — it is not needed and causes confusion
-during validation (the script validates `User → API Tokens → Edit` only).
+The script validates both permissions at the end of step 1b before touching anything.
 
 ## Step 4 — Run for real
 
@@ -86,7 +82,7 @@ If step 1b reports missing permissions, edit the token at
 |---|---|---|
 | `[1b] Token is missing required permissions` | Operator token incomplete | Edit token — the output lists which permissions are missing |
 | `[1b] Could not retrieve account ID` | Token can't read account | Verify Account Resources → your account is selected |
-| `[6] Could not find R2 write permission group ID` | `/user/tokens/permission_groups` returned unexpected data | Verify `User → API Tokens → Edit` is set on the operator token |
+| `[6]` prompts for R2 credentials | R2 S3 tokens can't be created via API — must be done in the R2 dashboard | Follow the prompt URL: `https://dash.cloudflare.com/{account_id}/r2/api-tokens` |
 
 ## Step 5 — Push first tag
 
