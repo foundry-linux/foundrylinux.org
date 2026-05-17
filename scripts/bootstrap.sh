@@ -468,21 +468,10 @@ info "[7.5] Creating redirect rule: ${CUSTOM_DOMAIN}/ → /index.html"
 
 REDIRECT_EXPR="(http.host eq \"${CUSTOM_DOMAIN}\" and http.request.uri.path eq \"/\")"
 
-RULE_BODY=$(cat <<JSON
-{
-  "action": "redirect",
-  "action_parameters": {
-    "from_value": {
-      "target_url": {"value": "https://${CUSTOM_DOMAIN}/index.html"},
-      "status_code": 301,
-      "preserve_query_string": false
-    }
-  },
-  "expression": "${REDIRECT_EXPR}",
-  "enabled": true
-}
-JSON
-)
+RULE_BODY=$(jq -n \
+    --arg expr "$REDIRECT_EXPR" \
+    --arg url  "https://${CUSTOM_DOMAIN}/index.html" \
+    '{action:"redirect",action_parameters:{from_value:{target_url:{value:$url},status_code:301,preserve_query_string:false}},expression:$expr,enabled:true}')
 
 if $DRY_RUN; then
     echo "  [dry-run] PUT /zones/.../rulesets/phases/http_request_redirect/entrypoint"
@@ -500,7 +489,8 @@ else
     elif [[ -z "$RULESET_ID" ]]; then
         cf_api PUT \
             "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" \
-            -d "{\"name\": \"Zone Redirect Rules\", \"rules\": [${RULE_BODY}]}" >/dev/null
+            -d "$(jq -n --argjson rule "$RULE_BODY" \
+                    '{name:"Zone Redirect Rules",rules:[$rule]}')" >/dev/null
         ok "[7.5] Redirect rule created: ${CUSTOM_DOMAIN}/ → /index.html"
     else
         cf_api POST "/zones/${CF_ZONE_ID}/rulesets/${RULESET_ID}/rules" \
