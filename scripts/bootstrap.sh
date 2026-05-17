@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
-# Full Phase 1 bootstrap: create CF operator token, push foundry-apt to GitHub,
-# generate GPG key, wire GitHub secrets, provision R2 bucket, configure DNS,
-# upload public key.
-# Steps 1b–9 — run once from the linuxfoundry.org repo root.
+# Full Phase 1 bootstrap: push foundry-apt to GitHub, generate GPG key,
+# wire GitHub secrets, provision R2 bucket, configure DNS, upload public key.
+# Steps 2b–9 — run once from the linuxfoundry.org repo root.
 #
 # Usage:
 #   bash scripts/bootstrap.sh [--dry-run] [-h]
 #
-# If CF_API_TOKEN is not already set, Step 1b runs first and creates it.
-# Required env vars for Step 1b (used once, then no longer needed):
-#   CF_EMAIL          — Cloudflare account email
-#   CF_GLOBAL_API_KEY — Cloudflare Global API Key
-#                       (Dash → My Profile → API Tokens → Global API Key)
+# Requires these env vars to be set before running (Step 1b — done manually):
+#   CF_API_TOKEN   — foundry-linux-operator Cloudflare token
+#   CF_ACCOUNT_ID  — Cloudflare account ID
+#   CF_ZONE_ID     — Cloudflare zone ID for foundrylinux.org
 #
-# If CF_API_TOKEN/CF_ACCOUNT_ID/CF_ZONE_ID are already exported, Step 1b
-# is skipped automatically.
+# To create CF_API_TOKEN: https://dash.cloudflare.com/profile/api-tokens
+#   Click '+ Create Token', then 'Get started' next to 'Create Custom Token', then add:
+#     Account | Workers R2 Storage | Edit
+#     Account | API Tokens         | Edit
+#     Zone    | DNS                | Edit  (zone: foundrylinux.org)
+#   Account ID: https://dash.cloudflare.com/ (right sidebar)
+#   Zone ID:    https://dash.cloudflare.com/<account-id>/foundrylinux.org (right sidebar)
 #
 # Prerequisites:
 #   gpg (gnupg2), shred, curl, jq
@@ -75,25 +78,12 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Cloudflare API using the scoped operator token (steps 1b+)
 cf_api() {
     local method="$1" path="$2"
     shift 2
     curl -fsSL -X "$method" \
         "https://api.cloudflare.com/client/v4${path}" \
         -H "Authorization: Bearer ${CF_API_TOKEN:-}" \
-        -H "Content-Type: application/json" \
-        "$@"
-}
-
-# Cloudflare API using Global API Key (step 1b only)
-cf_global() {
-    local method="$1" path="$2"
-    shift 2
-    curl -fsSL -X "$method" \
-        "https://api.cloudflare.com/client/v4${path}" \
-        -H "X-Auth-Email: ${CF_EMAIL:-}" \
-        -H "X-Auth-Key: ${CF_GLOBAL_API_KEY:-}" \
         -H "Content-Type: application/json" \
         "$@"
 }
@@ -121,40 +111,27 @@ command -v gh    &>/dev/null || die "gh CLI not found — https://cli.github.com
 
 if ! $DRY_RUN; then
     gh auth status &>/dev/null || die "gh not authenticated — run: gh auth login"
-    # CF vars are either pre-exported or will be populated in step 1b below
     if [[ -z "${CF_API_TOKEN:-}" ]]; then
-        if [[ -z "${CF_EMAIL:-}" ]]; then
-            read -rp "Cloudflare account email: " CF_EMAIL
-            export CF_EMAIL
-        fi
-        if [[ -z "${CF_GLOBAL_API_KEY:-}" ]]; then
-            echo "  Cloudflare Global API Key needed to create the operator token."
-            echo ""
-            echo "  Option A: paste the Global API Key below (input hidden)."
-            echo "    https://dash.cloudflare.com/profile/api-tokens"
-            echo "    (scroll to Global API Key → View)"
-            echo ""
-            echo "  Option B: create the token manually (no Global API Key needed):"
-            echo "    1. https://dash.cloudflare.com/profile/api-tokens/create"
-            echo "       Click 'Get started' next to 'Create Custom Token' (top of page)"
-            echo "       Name: ${CF_OPERATOR_TOKEN_NAME}"
-            echo "       Permissions:"
-            echo "         Account | Workers R2 Storage | Edit"
-            echo "         Account | API Tokens         | Edit"
-            echo "         Zone    | DNS                | Edit  (zone: ${CF_ZONE_NAME})"
-            echo "    2. Account ID: https://dash.cloudflare.com/ (right sidebar)"
-            echo "       Zone ID:    https://dash.cloudflare.com/<account-id>/${CF_ZONE_NAME} (right sidebar)"
-            echo "    3. Ctrl-C, then re-run:"
-            echo "       export CF_API_TOKEN=<token> CF_ACCOUNT_ID=<account-id> CF_ZONE_ID=<zone-id>"
-            echo "       bash scripts/bootstrap.sh"
-            echo ""
-            read -rsp "  Global API Key (or Ctrl-C for Option B): " CF_GLOBAL_API_KEY
-            echo
-            export CF_GLOBAL_API_KEY
-        fi
-        cf_global GET "/user" &>/dev/null \
-            || die "Cloudflare Global API Key auth failed — check CF_EMAIL and CF_GLOBAL_API_KEY"
+        err "CF_API_TOKEN is not set. Create the '${CF_OPERATOR_TOKEN_NAME}' token first:"
+        err ""
+        err "  1. https://dash.cloudflare.com/profile/api-tokens"
+        err "     Click '+ Create Token', then 'Get started' next to 'Create Custom Token'"
+        err "     Name: ${CF_OPERATOR_TOKEN_NAME}"
+        err "     Permissions:"
+        err "       Account | Workers R2 Storage | Edit"
+        err "       Account | API Tokens         | Edit"
+        err "       Zone    | DNS                | Edit  (zone: ${CF_ZONE_NAME})"
+        err ""
+        err "  2. Account ID: https://dash.cloudflare.com/ (right sidebar)"
+        err "     Zone ID:    https://dash.cloudflare.com/<account-id>/${CF_ZONE_NAME} (right sidebar)"
+        err ""
+        err "  3. Then re-run:"
+        err "     export CF_API_TOKEN=<token> CF_ACCOUNT_ID=<account-id> CF_ZONE_ID=<zone-id>"
+        err "     bash scripts/bootstrap.sh"
+        exit 1
     fi
+    : "${CF_ACCOUNT_ID:?CF_ACCOUNT_ID is required — see above}"
+    : "${CF_ZONE_ID:?CF_ZONE_ID is required — see above}"
 fi
 
 R2_ACCESS_KEY_ID=""
@@ -166,92 +143,16 @@ info "Bootstrap: Steps 1b–9 for ${GH_REPO}"
 echo ""
 
 # ════════════════════════════════════════════════════════════════════════════
-# Step 1b — Create scoped Cloudflare operator token (skip if already set)
+# Step 1b — Verify CF_API_TOKEN is set (created manually before running)
 # ════════════════════════════════════════════════════════════════════════════
 
-if [[ -n "${CF_API_TOKEN:-}" ]]; then
-    ok "[1b] CF_API_TOKEN already set — skipping token creation"
-    if ! $DRY_RUN; then
-        : "${CF_ACCOUNT_ID:?CF_API_TOKEN is set but CF_ACCOUNT_ID is missing}"
-        : "${CF_ZONE_ID:?CF_API_TOKEN is set but CF_ZONE_ID is missing}"
-    fi
+if $DRY_RUN; then
+    CF_API_TOKEN="${CF_API_TOKEN:-DRY_RUN_TOKEN}"
+    CF_ACCOUNT_ID="${CF_ACCOUNT_ID:-DRY_RUN_ACCOUNT_ID}"
+    CF_ZONE_ID="${CF_ZONE_ID:-DRY_RUN_ZONE_ID}"
+    ok "[1b] CF_API_TOKEN present (or dry-run placeholder)"
 else
-    info "[1b] Creating Cloudflare operator token: ${CF_OPERATOR_TOKEN_NAME}"
-
-    if $DRY_RUN; then
-        CF_API_TOKEN="DRY_RUN_TOKEN"
-        CF_ACCOUNT_ID="DRY_RUN_ACCOUNT_ID"
-        CF_ZONE_ID="DRY_RUN_ZONE_ID"
-        echo "  [dry-run] GET /accounts → CF_ACCOUNT_ID"
-        echo "  [dry-run] GET /zones?name=${CF_ZONE_NAME} → CF_ZONE_ID"
-        echo "  [dry-run] GET /user/tokens/permission_groups"
-        echo "  [dry-run] POST /user/tokens {name: ${CF_OPERATOR_TOKEN_NAME}}"
-    else
-        EXISTING_OP_TOKEN=$(cf_global GET "/user/tokens" \
-            | jq -r ".result[] | select(.name == \"${CF_OPERATOR_TOKEN_NAME}\") | .id" || true)
-        if [[ -n "${EXISTING_OP_TOKEN}" ]]; then
-            die "[1b] Token '${CF_OPERATOR_TOKEN_NAME}' already exists but CF_API_TOKEN is not set." \
-                $'\n'"    Its value cannot be retrieved. Options:" \
-                $'\n'"    1. export CF_API_TOKEN=<value> if you still have it." \
-                $'\n'"    2. Delete it at https://dash.cloudflare.com/profile/api-tokens and re-run."
-        fi
-
-        CF_ACCOUNT_ID=$(cf_global GET "/accounts?per_page=1" | jq -r '.result[0].id')
-        [[ -n "${CF_ACCOUNT_ID}" ]] || die "[1b] Could not retrieve Cloudflare account ID"
-        ok "[1b] Account ID: ${CF_ACCOUNT_ID}"
-
-        CF_ZONE_ID=$(cf_global GET "/zones?name=${CF_ZONE_NAME}" | jq -r '.result[0].id')
-        [[ -n "${CF_ZONE_ID}" && "${CF_ZONE_ID}" != "null" ]] \
-            || die "[1b] Zone ${CF_ZONE_NAME} not found in your Cloudflare account"
-        ok "[1b] Zone ID: ${CF_ZONE_ID}"
-
-        OP_PERMS=$(cf_global GET "/user/tokens/permission_groups")
-        OP_R2_ID=$(echo "${OP_PERMS}" \
-            | jq -r '.result[] | select(.name | test("R2.*Storage.*Bucket.*Item.*Write"; "i")) | .id' \
-            | head -1 || true)
-        [[ -n "${OP_R2_ID}" ]] || {
-            OP_R2_ID=$(echo "${OP_PERMS}" \
-                | jq -r '.result[] | select(.name | test("R2"; "i")) | select(.name | test("Write|Edit"; "i")) | .id' \
-                | head -1 || true)
-        }
-        [[ -n "${OP_R2_ID}" ]] || die "[1b] Could not find R2 write permission group"
-
-        OP_DNS_ID=$(echo "${OP_PERMS}" \
-            | jq -r '.result[] | select(.name | test("Zone.*DNS.*Write|DNS.*Write"; "i")) | .id' \
-            | head -1 || true)
-        [[ -n "${OP_DNS_ID}" ]] || die "[1b] Could not find Zone DNS Write permission group"
-
-        OP_TOKEN_ID=$(echo "${OP_PERMS}" \
-            | jq -r '.result[] | select(.name | test("User.*API.*Token.*Edit|API.*Token.*Edit"; "i")) | .id' \
-            | head -1 || true)
-        [[ -n "${OP_TOKEN_ID}" ]] || die "[1b] Could not find User API Tokens Edit permission group"
-
-        OP_RESPONSE=$(cf_global POST "/user/tokens" -d "{
-            \"name\": \"${CF_OPERATOR_TOKEN_NAME}\",
-            \"policies\": [
-              {
-                \"effect\": \"allow\",
-                \"resources\": { \"com.cloudflare.api.account.${CF_ACCOUNT_ID}\": \"*\" },
-                \"permission_groups\": [
-                  { \"id\": \"${OP_R2_ID}\" },
-                  { \"id\": \"${OP_TOKEN_ID}\" }
-                ]
-              },
-              {
-                \"effect\": \"allow\",
-                \"resources\": { \"com.cloudflare.api.account.zone.${CF_ZONE_ID}\": \"*\" },
-                \"permission_groups\": [
-                  { \"id\": \"${OP_DNS_ID}\" }
-                ]
-              }
-            ]
-          }")
-        CF_API_TOKEN=$(echo "${OP_RESPONSE}" | jq -r '.result.value')
-        [[ -n "${CF_API_TOKEN}" && "${CF_API_TOKEN}" != "null" ]] \
-            || die "[1b] Token creation failed: $(echo "${OP_RESPONSE}" | jq -c '.errors')"
-        ok "[1b] Operator token created (CF_GLOBAL_API_KEY no longer needed)"
-        export CF_API_TOKEN CF_ACCOUNT_ID CF_ZONE_ID
-    fi
+    ok "[1b] CF_API_TOKEN set — proceeding"
 fi
 
 R2_ENDPOINT="https://${CF_ACCOUNT_ID:-DRY_RUN}.r2.cloudflarestorage.com"
