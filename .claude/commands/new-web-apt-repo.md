@@ -76,11 +76,16 @@ bash scripts/bootstrap.sh
 
 ## Known failure modes
 
+The script validates all token permissions at the end of step 1b and lists exactly what's
+missing before touching anything. If it reports missing permissions, edit the token at
+<https://dash.cloudflare.com/profile/api-tokens> and re-run.
+
 | Pattern in output | What it means | Fix |
 |---|---|---|
-| `[1b] Could not retrieve account ID` | Token lacks account scope | Verify R2 Storage and API Tokens permissions are Account-scoped |
-| `[6] R2 CI token … already exists` | Prior partial run; secret is gone | Delete the CI token at <https://dash.cloudflare.com/profile/api-tokens> and re-run |
-| `[8] R2_SECRET_ACCESS_KEY empty` | Step 6 hit existing-token path | See above |
+| `[1b] Token is missing required permissions` | Operator token incomplete | Edit token — the output lists which permissions are missing |
+| `[1b] Could not retrieve account ID` | Token can't read account | Verify Account Resources → your account is selected |
+| `[6] R2 CI token … already exists` | Prior partial run; secret value is gone | Delete the CI token at <https://dash.cloudflare.com/profile/api-tokens> and re-run |
+| `[8] R2_SECRET_ACCESS_KEY empty` | Step 6 hit the existing-token path | See above |
 
 ## Step 5 — Push first tag
 
