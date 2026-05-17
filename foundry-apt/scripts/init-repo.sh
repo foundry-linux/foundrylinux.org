@@ -7,7 +7,14 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-export APTLY_CONFIG="${APTLY_CONFIG:-$(pwd)/aptly/aptly.conf}"
+# Generate a runtime config with the absolute path to ./public/ baked in,
+# since aptly requires FileSystemPublishEndpoints.rootDir to be absolute.
+RUNTIME_CONFIG="/tmp/aptly-foundry.conf"
+PUBLIC_DIR="$(pwd)/public"
+jq --arg pub "$PUBLIC_DIR" \
+    '.FileSystemPublishEndpoints = {"public": {"rootDir": $pub, "linkMethod": "copy", "verifyMethod": "md5"}}' \
+    aptly/aptly.conf > "$RUNTIME_CONFIG"
+export APTLY_CONFIG="${APTLY_CONFIG:-$RUNTIME_CONFIG}"
 
 if ! command -v aptly &>/dev/null; then
     echo "ERROR: aptly not installed. Run: sudo apt install aptly" >&2

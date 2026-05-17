@@ -12,7 +12,12 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-export APTLY_CONFIG="${APTLY_CONFIG:-$(pwd)/aptly/aptly.conf}"
+RUNTIME_CONFIG="/tmp/aptly-foundry.conf"
+PUBLIC_DIR="$(pwd)/public"
+jq --arg pub "$PUBLIC_DIR" \
+    '.FileSystemPublishEndpoints = {"public": {"rootDir": $pub, "linkMethod": "copy", "verifyMethod": "md5"}}' \
+    aptly/aptly.conf > "$RUNTIME_CONFIG"
+export APTLY_CONFIG="${APTLY_CONFIG:-$RUNTIME_CONFIG}"
 SUITE="${SUITE:-resolute}"
 GPG_KEY="${GPG_KEY:-}"   # empty = skip signing (smoke test only — not for production)
 
