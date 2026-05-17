@@ -54,6 +54,11 @@ tasks:
       - task: release
         vars: { TAG: '{{.TAG}}' }
 
+  secrets:
+    desc: "List secret names on github.com/{{.GH_REPO}}"
+    cmds:
+      - gh secret list --repo {{.GH_REPO}}
+
   bump:
     desc: "Sync and auto-increment patch version (e.g. v0.0.3 → v0.0.4)"
     cmds:

@@ -45,6 +45,14 @@ jobs:
           PUBLISH_DIR: ./public/dists/resolute
         run: bash scripts/sign.sh
 
+      - name: Export public key into repo root
+        if: ${{ !inputs.dry_run }}
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          gpg --export --armor > ./public/key.gpg
+
       - name: Sync to Cloudflare R2
         if: ${{ !inputs.dry_run }}
         env:

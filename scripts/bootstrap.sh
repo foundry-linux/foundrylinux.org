@@ -37,6 +37,7 @@ PUB_KEY="/tmp/foundry-packages.pub.gpg"
 SEC_KEY="/tmp/foundry-packages.sec.gpg"
 
 R2_BUCKET="foundry-apt"
+SECRETS_BUCKET="foundry-linux-secrets"
 R2_TOKEN_NAME="foundry-apt-ci"
 CUSTOM_DOMAIN="apt.foundrylinux.org"
 DNS_CNAME="apt"
@@ -63,8 +64,8 @@ usage() {
 }
 
 cleanup() {
-    [[ -n "${WORK_DIR}"   && -d "${WORK_DIR}"   ]] && rm -rf "${WORK_DIR}"
-    [[ -n "${BATCH_FILE}" && -f "${BATCH_FILE}" ]] && rm -f  "${BATCH_FILE}"
+    [[ -n "${WORK_DIR}"   && -d "${WORK_DIR}"   ]] && rm -rf "${WORK_DIR}"   || true
+    [[ -n "${BATCH_FILE}" && -f "${BATCH_FILE}" ]] && rm -f  "${BATCH_FILE}" || true
 }
 trap cleanup EXIT
 
@@ -76,6 +77,22 @@ cf_api() {
         -H "Authorization: Bearer ${CF_API_TOKEN:-}" \
         -H "Content-Type: application/json" \
         "$@"
+}
+
+# Store a secret in the private foundry-linux-secrets R2 bucket.
+# Usage: r2_put_secret <key-name> <value>
+r2_put_secret() {
+    local name="$1" value="$2"
+    if $DRY_RUN; then
+        echo "  [dry-run] PUT r2://${SECRETS_BUCKET}/${name}"
+        return
+    fi
+    printf '%s' "${value}" | curl -fsSL -X PUT \
+        "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${SECRETS_BUCKET}/objects/${name}" \
+        -H "Authorization: Bearer ${CF_API_TOKEN}" \
+        -H "Content-Type: text/plain; charset=utf-8" \
+        --data-binary @- \
+        >/dev/null
 }
 
 # ── arg parse ────────────────────────────────────────────────────────────────
@@ -177,6 +194,31 @@ fi
 R2_ENDPOINT="https://${CF_ACCOUNT_ID:-DRY_RUN}.r2.cloudflarestorage.com"
 
 # ════════════════════════════════════════════════════════════════════════════
+# Step 1c — Create private secrets bucket and store operator token
+# ════════════════════════════════════════════════════════════════════════════
+
+info "[1c] Ensuring private secrets bucket '${SECRETS_BUCKET}' exists"
+if $DRY_RUN; then
+    echo "  [dry-run] POST /accounts/.../r2/buckets {name: ${SECRETS_BUCKET}}"
+    echo "  [dry-run] PUT r2://${SECRETS_BUCKET}/CF_API_TOKEN"
+else
+    SEC_BUCKET_RESP=$(curl -sS -X POST \
+        "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets" \
+        -H "Authorization: Bearer ${CF_API_TOKEN}" \
+        -H "Content-Type: application/json" \
+        -d "{\"name\":\"${SECRETS_BUCKET}\",\"locationHint\":\"auto\"}")
+    if echo "${SEC_BUCKET_RESP}" | jq -e '.success == true' &>/dev/null; then
+        ok "[1c] Secrets bucket '${SECRETS_BUCKET}' created (no public access)"
+    elif echo "${SEC_BUCKET_RESP}" | jq -r '.errors[].code' 2>/dev/null | grep -qE "10004|10006"; then
+        ok "[1c] Secrets bucket '${SECRETS_BUCKET}' already exists"
+    else
+        die "[1c] Unexpected bucket response: $(echo "${SEC_BUCKET_RESP}" | jq -c '.errors')"
+    fi
+    r2_put_secret "CF_API_TOKEN" "${CF_API_TOKEN}"
+    ok "[1c] CF_API_TOKEN stored in r2://${SECRETS_BUCKET}/CF_API_TOKEN"
+fi
+
+# ════════════════════════════════════════════════════════════════════════════
 # Step 2b — Push foundry-apt/ to standalone GitHub repo
 # ════════════════════════════════════════════════════════════════════════════
 
@@ -252,15 +294,22 @@ fi
 
 if $GPG_SECRET_EXISTS; then
     ok "[4] GPG_PRIVATE_KEY secret already exists on ${GH_REPO}"
-    [[ -f "${SEC_KEY}" ]] && shred -u "${SEC_KEY}"
+    if ! $DRY_RUN && [[ -f "${SEC_KEY}" ]]; then
+        r2_put_secret "GPG_PRIVATE_KEY" "$(cat "${SEC_KEY}")"
+        ok "[4] GPG_PRIVATE_KEY stored in r2://${SECRETS_BUCKET}/GPG_PRIVATE_KEY"
+        shred -u "${SEC_KEY}"
+    fi
 else
     info "[4] Setting GPG_PRIVATE_KEY secret on ${GH_REPO}"
     if $DRY_RUN; then
         echo "  [dry-run] gh secret set GPG_PRIVATE_KEY --repo ${GH_REPO} --body <private-key>"
+        echo "  [dry-run] PUT r2://${SECRETS_BUCKET}/GPG_PRIVATE_KEY"
         echo "  [dry-run] shred -u ${SEC_KEY}"
     else
         gh secret set GPG_PRIVATE_KEY --repo "${GH_REPO}" --body "$(cat "${SEC_KEY}")"
         ok "[4] GPG_PRIVATE_KEY secret set"
+        r2_put_secret "GPG_PRIVATE_KEY" "$(cat "${SEC_KEY}")"
+        ok "[4] GPG_PRIVATE_KEY stored in r2://${SECRETS_BUCKET}/GPG_PRIVATE_KEY"
         shred -u "${SEC_KEY}"
         ok "[4] Private key shredded"
     fi
@@ -326,8 +375,12 @@ elif [[ -z "${R2_ACCESS_KEY_ID:-}" || -z "${R2_SECRET_ACCESS_KEY:-}" ]]; then
     read -rsp "  Paste Secret Access Key (input hidden): " R2_SECRET_ACCESS_KEY; echo
     export R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY
     ok "[6] R2 credentials captured"
-else
-    ok "[6] R2 credentials already set"
+fi
+
+if ! $DRY_RUN && [[ -n "${R2_ACCESS_KEY_ID}" && -n "${R2_SECRET_ACCESS_KEY}" ]]; then
+    r2_put_secret "R2_ACCESS_KEY_ID"     "${R2_ACCESS_KEY_ID}"
+    r2_put_secret "R2_SECRET_ACCESS_KEY" "${R2_SECRET_ACCESS_KEY}"
+    ok "[6] R2 credentials stored in r2://${SECRETS_BUCKET}/R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY"
 fi
 
 # ════════════════════════════════════════════════════════════════════════════

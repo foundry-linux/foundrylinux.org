@@ -89,10 +89,21 @@ If step 1b reports missing permissions, edit the token at
 After the script completes, trigger the first publish workflow:
 
 ```bash
-# values from config block
-gh repo clone "${GH_ORG}/${PKG_NAME}" /tmp/apt-repo-release
-git -C /tmp/apt-repo-release tag v0.0.1
-git -C /tmp/apt-repo-release push origin v0.0.1
+task bump    # auto-increments patch version and triggers publish.yml
 ```
 
 Confirm the `smoke-install` job goes green before calling bootstrap complete.
+
+## Credential storage
+
+`bootstrap.sh` automatically stores all secrets to a private `<gh-org>-secrets` R2 bucket
+(no public access, no custom domain) using the operator token with Bearer auth:
+
+| Secret | GitHub Actions secret | R2 backup |
+|---|---|---|
+| GPG signing key | `GPG_PRIVATE_KEY` | `r2://<org>-secrets/GPG_PRIVATE_KEY` |
+| R2 access key | `R2_ACCESS_KEY_ID` | `r2://<org>-secrets/R2_ACCESS_KEY_ID` |
+| R2 secret | `R2_SECRET_ACCESS_KEY` | `r2://<org>-secrets/R2_SECRET_ACCESS_KEY` |
+| CF operator token | (not in GitHub) | `r2://<org>-secrets/CF_API_TOKEN` |
+
+No AWS SSM or other external secrets store is used.

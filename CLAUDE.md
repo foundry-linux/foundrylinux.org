@@ -43,7 +43,7 @@ foundry-apt/
   .github/workflows/publish.yml          tag push → build + sign + sync to Cloudflare R2
 ```
 
-Hosted on Cloudflare R2 at `apt.foundrylinux.org`. GPG signing key in AWS SSM SecureString; CI uses GitHub OIDC federation (no long-lived AWS keys). See `foundry-apt/docs/infra-setup.md` for one-time setup checklist.
+Hosted on Cloudflare R2 at `apt.foundrylinux.org`. Credentials: GPG signing key + R2 CI tokens in GitHub Actions secrets (CI use); all backed up to a private `foundry-linux-secrets` R2 bucket for disaster recovery. No AWS account required. See `foundry-apt/docs/infra-setup.md` for one-time setup checklist.
 
 ## Key Commands
 
@@ -71,9 +71,9 @@ To release Phase 1: `git tag v1.0.1 && git push origin v1.0.1` — the publish w
 
 ## Infrastructure automation mandate
 
-**Everything is scripted — no manual console steps.** All site and infrastructure setup (GitHub repos, Cloudflare DNS/R2, AWS IAM/SSM/OIDC, GPG keys) must be executed via scripts, CLI tools (`gh`, `aws`, `curl`/`wrangler`), or Terraform. Never describe a step as "click X in the console" — translate it into the equivalent CLI command or script block. If a one-time action genuinely has no CLI path, document exactly why and what the minimum manual surface is.
+**Everything is scripted — no manual console steps.** All site and infrastructure setup (GitHub repos, Cloudflare DNS/R2, GPG keys) must be executed via scripts, CLI tools (`gh`, `curl`/`wrangler`), or Terraform. Never describe a step as "click X in the console" — translate it into the equivalent CLI command or script block. If a one-time action genuinely has no CLI path, document exactly why and what the minimum manual surface is.
 
-**Credentials and keys for automation only.** API tokens, access keys, and role ARNs are for non-interactive script/CI use. The private GPG signing key goes into AWS SSM immediately after generation; the local copy is shredded. R2 tokens are stored as GitHub Actions secrets. No credentials live in local files, `.env`, or are typed interactively more than once.
+**Credentials and keys for automation only.** API tokens, access keys, and role ARNs are for non-interactive script/CI use. The private GPG signing key and R2 CI tokens go into GitHub Actions secrets (for CI use) and are backed up to the private `foundry-linux-secrets` R2 bucket (for disaster recovery) — the local copy is shredded immediately. No credentials live in local files, `.env`, or are typed interactively more than once. No AWS account or SSM is used by this project.
 
 **Scripts are the source of truth.** `foundry-apt/scripts/` and any future `scripts/setup-*.sh` files must be runnable end-to-end (idempotent) to recreate the full stack from a blank account. A step that cannot be reproduced from scripts is not done.
 

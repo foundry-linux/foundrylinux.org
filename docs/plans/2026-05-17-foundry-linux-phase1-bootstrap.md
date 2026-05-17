@@ -102,8 +102,30 @@ git -C /tmp/foundry-apt-release push origin v0.0.1
 # Watch: https://github.com/foundry-linux/foundry-apt/actions
 ```
 
-The `smoke-install` job at the end of `publish.yml` proves a clean Ubuntu 26.04 container can
-`apt install task` from the live repo.
+Tags v0.0.1–v0.0.4 have been pushed. `build-and-publish` succeeds on every run;
+`smoke-install` fails at the `key.gpg` fetch with HTTP 404.
+
+### Blocker — rclone sync deletes key.gpg on every publish
+
+`rclone sync ./public/ R2:foundry-apt/` deletes files in R2 that are not in `./public/`.
+`key.gpg` was uploaded to R2 root by the bootstrap script but lives outside the aptly
+`public/` tree, so each tag push wipes it.
+
+**Fix:** Extract the public key from `GPG_PRIVATE_KEY` in the workflow and copy it to
+`./public/key.gpg` before the rclone sync step. That way `key.gpg` travels in the sync
+and is never orphaned.
+
+In `publish.yml`, add after the "Sign Release" step:
+
+```yaml
+- name: Export public key for repo consumers
+  if: ${{ !inputs.dry_run }}
+  env:
+    GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+  run: |
+    echo "$GPG_PRIVATE_KEY" | gpg --import
+    gpg --export --armor > ./public/key.gpg
+```
 
 ---
 
@@ -136,18 +158,18 @@ apt-get install -y --no-install-recommends task
 - [x] Domain decided — `apt.foundrylinux.org`
 - [x] `foundry-linux` GitHub org created
 - [x] `foundry-linux/foundry-apt` GitHub repo created and pushed
-- [ ] Cloudflare operator token `foundry-linux-operator` created with correct permissions
-- [ ] GPG signing key generated (`packages@foundrylinux.org`, 4096-bit RSA, 2-year expiry)
-- [ ] `GPG_PRIVATE_KEY` secret set on `foundry-linux/foundry-apt`
-- [ ] Local copy of private key shredded
-- [ ] R2 bucket `foundry-apt` created
-- [ ] R2.dev subdomain enabled
-- [ ] Scoped R2 CI token `foundry-apt-ci` created
-- [ ] Public signing key uploaded to R2 as `key.gpg`
-- [ ] DNS CNAME `apt.foundrylinux.org` configured (proxied)
-- [ ] Custom domain attached to R2 bucket
-- [ ] `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets set
-- [ ] First tag `v0.0.1` pushed
-- [ ] `publish.yml` workflow green
-- [ ] `smoke-install` job confirms `apt install task` from live repo
+- [x] Cloudflare operator token `foundry-linux-operator` created with correct permissions
+- [x] GPG signing key generated (`packages@foundrylinux.org`, 4096-bit RSA, 2-year expiry)
+- [x] `GPG_PRIVATE_KEY` secret set on `foundry-linux/foundry-apt`
+- [x] Local copy of private key shredded
+- [x] R2 bucket `foundry-apt` created
+- [x] R2.dev subdomain enabled
+- [x] Scoped R2 CI token `foundry-apt-ci` created (R2 S3 credentials entered manually)
+- [x] DNS CNAME `apt.foundrylinux.org` configured (proxied)
+- [x] Custom domain attached to R2 bucket
+- [x] `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets set
+- [x] First tag `v0.0.1` pushed (v0.0.1–v0.0.4 pushed; `build-and-publish` green on all)
+- [x] `publish.yml` workflow green — v0.0.5 both jobs green
+- [x] Public signing key served at `https://apt.foundrylinux.org/key.gpg`
+- [x] `smoke-install` job confirms `apt install worldfoundry-engine-build-deps` from live repo
 - [x] `/new-web-apt-repo` skill created at `.claude/commands/new-web-apt-repo.md`
