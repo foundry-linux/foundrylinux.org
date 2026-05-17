@@ -130,8 +130,10 @@ if ! $DRY_RUN; then
         echo "  Account Resources: Include → select your account"
         echo "  Zone Resources:    Include → Specific zone → ${CF_ZONE_NAME}"
         echo ""
-        read -rsp "  Paste token value (input hidden): " CF_API_TOKEN
-        echo
+        until [[ -n "${CF_API_TOKEN:-}" ]]; do
+            read -rsp "  Paste token value (input hidden): " CF_API_TOKEN; echo
+            [[ -z "${CF_API_TOKEN:-}" ]] && echo "  (token cannot be blank — try again)"
+        done
         export CF_API_TOKEN
     fi
 fi
@@ -374,8 +376,14 @@ elif [[ -z "${R2_ACCESS_KEY_ID:-}" || -z "${R2_SECRET_ACCESS_KEY:-}" ]]; then
     echo "    Bucket:      Apply to specific bucket → ${R2_BUCKET}"
     echo ""
     echo "  Under 'Use the following credentials for S3 clients':"
-    read -rsp "  Paste Access Key ID (input hidden): " R2_ACCESS_KEY_ID; echo
-    read -rsp "  Paste Secret Access Key (input hidden): " R2_SECRET_ACCESS_KEY; echo
+    until [[ -n "${R2_ACCESS_KEY_ID:-}" ]]; do
+        read -rsp "  Paste Access Key ID (input hidden): " R2_ACCESS_KEY_ID; echo
+        [[ -z "${R2_ACCESS_KEY_ID:-}" ]] && echo "  (cannot be blank — try again)"
+    done
+    until [[ -n "${R2_SECRET_ACCESS_KEY:-}" ]]; do
+        read -rsp "  Paste Secret Access Key (input hidden): " R2_SECRET_ACCESS_KEY; echo
+        [[ -z "${R2_SECRET_ACCESS_KEY:-}" ]] && echo "  (cannot be blank — try again)"
+    done
     export R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY
     ok "[6] R2 credentials captured"
 fi
