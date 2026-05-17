@@ -7,6 +7,7 @@ Priority: optional
 Depends: worldfoundry-engine-build-deps,
  worldfoundry-blender,
  worldfoundry-retro-tools,
+ task,
  gnupg,
  ca-certificates,
  software-properties-common
@@ -17,7 +18,8 @@ Homepage: https://worldfoundry.org/
 Description: complete World Foundry game-development environment
  The top-level metapackage — installs everything required for World
  Foundry game development on Ubuntu-family 26.04: the engine build
- toolchain, Blender 4.2 with the WF addon, and retro-porting tools.
+ toolchain, Blender 4.2 with the WF addon, retro-porting tools, and
+ the task runner (from the official Cloudsmith apt repo).
  .
  Android cross-compilation tooling and Claude Code CLI are
  Recommends/Suggests respectively — install worldfoundry-android-dev
