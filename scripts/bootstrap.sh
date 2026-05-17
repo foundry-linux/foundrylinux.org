@@ -128,7 +128,9 @@ if ! $DRY_RUN; then
             export CF_EMAIL
         fi
         if [[ -z "${CF_GLOBAL_API_KEY:-}" ]]; then
-            read -rsp "Cloudflare Global API Key (for ${CF_EMAIL}): " CF_GLOBAL_API_KEY
+            echo "  Cloudflare Global API Key — paste it and press Enter (input is hidden):"
+            echo "  https://dash.cloudflare.com/profile/api-tokens  (scroll to Global API Key → View)"
+            read -rsp "  Key: " CF_GLOBAL_API_KEY
             echo
             export CF_GLOBAL_API_KEY
         fi
