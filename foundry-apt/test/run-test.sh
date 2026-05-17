@@ -63,6 +63,14 @@ fail=0
 for pkg in "${PACKAGES[@]}"; do
     echo
     echo "=== Testing: apt-get install ${pkg} ==="
+
+    # If this package depends on `task`, set up the Cloudsmith task repo first.
+    EXTRA_REPOS=""
+    control_file="packages/${pkg}/DEBIAN/control"
+    if [[ -f "$control_file" ]] && grep -qE '(^Depends:|^\s)[^#]*\btask\b' "$control_file"; then
+        EXTRA_REPOS="curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' | bash"
+    fi
+
     if $RUNTIME run --rm "$IMAGE" bash -c "
         set -euo pipefail
         export DEBIAN_FRONTEND=noninteractive
@@ -73,6 +81,7 @@ for pkg in "${PACKAGES[@]}"; do
             | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
         echo 'deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main' \
             > /etc/apt/sources.list.d/foundry.list
+        ${EXTRA_REPOS}
         apt-get update -q
         apt-get install -y ${INSTALL_FLAG} ${pkg}
     "; then
