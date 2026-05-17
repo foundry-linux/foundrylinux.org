@@ -321,45 +321,40 @@ if ! $DRY_RUN; then
 fi
 
 if [[ -n "${EXISTING_TOKEN_ID}" ]]; then
-    warn "[6] R2 CI token '${R2_TOKEN_NAME}' already exists (ID: ${EXISTING_TOKEN_ID})"
-    warn "    Secret value is gone. If GitHub secrets aren't set, delete this token at"
-    warn "    https://dash.cloudflare.com/profile/api-tokens and re-run."
-    R2_ACCESS_KEY_ID="${EXISTING_TOKEN_ID}"
-    R2_SECRET_ACCESS_KEY=""
-else
-    info "[6] Creating scoped R2 CI token: ${R2_TOKEN_NAME}"
-    if $DRY_RUN; then
-        R2_WRITE_ID="DRY_RUN_R2_WRITE_ID"
-        echo "  [dry-run] GET /user/tokens/permission_groups"
-    else
-        R2_WRITE_ID=$(cf_api GET "/user/tokens/permission_groups" \
-            | jq -r '.result[] | select(.name | test("R2.*Storage.*Bucket.*Item.*Write"; "i")) | .id' \
-            | head -1 || true)
-        [[ -n "${R2_WRITE_ID}" ]] || die "[6] Could not find R2 write permission group ID"
-    fi
+    info "[6] R2 CI token '${R2_TOKEN_NAME}' already exists — deleting to recover secret"
+    cf_api DELETE "/user/tokens/${EXISTING_TOKEN_ID}" >/dev/null \
+        || die "[6] Could not delete existing CI token — delete it manually at https://dash.cloudflare.com/profile/api-tokens"
+    ok "[6] Deleted stale CI token"
+fi
 
-    if $DRY_RUN; then
-        echo "  [dry-run] POST /user/tokens {name: ${R2_TOKEN_NAME}}"
-        R2_ACCESS_KEY_ID="DRY_RUN_KEY_ID"
-        R2_SECRET_ACCESS_KEY="DRY_RUN_SECRET"
-    else
-        R2_TOKEN_RESPONSE=$(cf_api POST "/user/tokens" -d "{
-            \"name\": \"${R2_TOKEN_NAME}\",
-            \"policies\": [{
-              \"effect\": \"allow\",
-              \"resources\": { \"com.cloudflare.api.account.${CF_ACCOUNT_ID}\": \"*\" },
-              \"permission_groups\": [{
-                \"id\": \"${R2_WRITE_ID}\",
-                \"name\": \"Workers R2 Storage Bucket Item Write\"
-              }]
-            }]
-          }")
-        R2_ACCESS_KEY_ID="$(echo "${R2_TOKEN_RESPONSE}" | jq -r '.result.id')"
-        R2_SECRET_ACCESS_KEY="$(echo "${R2_TOKEN_RESPONSE}" | jq -r '.result.value')"
-        [[ -n "${R2_ACCESS_KEY_ID}" && "${R2_ACCESS_KEY_ID}" != "null" ]] \
-            || die "[6] R2 token creation failed: $(echo "${R2_TOKEN_RESPONSE}" | jq -c '.errors')"
-        ok "[6] R2 CI token created (ID: ${R2_ACCESS_KEY_ID})"
-    fi
+info "[6] Creating scoped R2 CI token: ${R2_TOKEN_NAME}"
+if $DRY_RUN; then
+    R2_WRITE_ID="DRY_RUN_R2_WRITE_ID"
+    echo "  [dry-run] GET /user/tokens/permission_groups"
+    echo "  [dry-run] POST /user/tokens {name: ${R2_TOKEN_NAME}}"
+    R2_ACCESS_KEY_ID="DRY_RUN_KEY_ID"
+    R2_SECRET_ACCESS_KEY="DRY_RUN_SECRET"
+else
+    R2_WRITE_ID=$(cf_api GET "/user/tokens/permission_groups" \
+        | jq -r '.result[] | select(.name | test("R2.*Storage.*Bucket.*Item.*Write"; "i")) | .id' \
+        | head -1 || true)
+    [[ -n "${R2_WRITE_ID}" ]] || die "[6] Could not find R2 write permission group ID"
+    R2_TOKEN_RESPONSE=$(cf_api POST "/user/tokens" -d "{
+        \"name\": \"${R2_TOKEN_NAME}\",
+        \"policies\": [{
+          \"effect\": \"allow\",
+          \"resources\": { \"com.cloudflare.api.account.${CF_ACCOUNT_ID}\": \"*\" },
+          \"permission_groups\": [{
+            \"id\": \"${R2_WRITE_ID}\",
+            \"name\": \"Workers R2 Storage Bucket Item Write\"
+          }]
+        }]
+      }")
+    R2_ACCESS_KEY_ID="$(echo "${R2_TOKEN_RESPONSE}" | jq -r '.result.id')"
+    R2_SECRET_ACCESS_KEY="$(echo "${R2_TOKEN_RESPONSE}" | jq -r '.result.value')"
+    [[ -n "${R2_ACCESS_KEY_ID}" && "${R2_ACCESS_KEY_ID}" != "null" ]] \
+        || die "[6] R2 token creation failed: $(echo "${R2_TOKEN_RESPONSE}" | jq -c '.errors')"
+    ok "[6] R2 CI token created (ID: ${R2_ACCESS_KEY_ID})"
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -406,7 +401,7 @@ fi
 # ════════════════════════════════════════════════════════════════════════════
 
 KEY_LIVE=false
-if ! $DRY_RUN && curl -fsSL "https://${CUSTOM_DOMAIN}/key.gpg" \
+if ! $DRY_RUN && curl -fsSL "https://${CUSTOM_DOMAIN}/key.gpg" 2>/dev/null \
         | gpg --show-keys &>/dev/null 2>&1; then
     KEY_LIVE=true
 fi
