@@ -9,7 +9,7 @@
 #
 # If CF_API_TOKEN is not already set, Step 1b runs first and creates it.
 # Required env vars for Step 1b (used once, then no longer needed):
-#   CF_EMAIL          — wbnorris@gmail.com (the Cloudflare account email)
+#   CF_EMAIL          — Cloudflare account email
 #   CF_GLOBAL_API_KEY — Cloudflare Global API Key
 #                       (Dash → My Profile → API Tokens → Global API Key)
 #
@@ -139,7 +139,10 @@ if ! $DRY_RUN; then
         || die "AWS credentials not configured — run: aws configure"
     # CF vars are either pre-exported or will be populated in step 1b below
     if [[ -z "${CF_API_TOKEN:-}" ]]; then
-        CF_EMAIL="${CF_EMAIL:-wbnorris@gmail.com}"
+        if [[ -z "${CF_EMAIL:-}" ]]; then
+            read -rp "Cloudflare account email: " CF_EMAIL
+            export CF_EMAIL
+        fi
         if [[ -z "${CF_GLOBAL_API_KEY:-}" ]]; then
             read -rsp "Cloudflare Global API Key (for ${CF_EMAIL}): " CF_GLOBAL_API_KEY
             echo

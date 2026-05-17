@@ -20,9 +20,9 @@ self-describing.
 ## Step 1b — Create the Cloudflare operator API token
 
 Handled automatically by `bootstrap.sh` when `CF_API_TOKEN` is not already exported.
-The script prompts for the **Global API Key** (Cloudflare dash → My Profile → API Tokens →
-Global API Key), uses it once to mint a scoped `foundry-linux-operator` token, then the Global
-API Key is no longer needed.
+The script prompts for the Cloudflare account email and **Global API Key**
+(Dash → My Profile → API Tokens → Global API Key), uses them once to mint a scoped
+`foundry-linux-operator` token, then they are no longer needed.
 
 The resulting token has:
 - **Workers R2 Storage: Write** — bucket create + object upload
@@ -55,8 +55,8 @@ bash scripts/bootstrap.sh --dry-run   # preview all steps
 bash scripts/bootstrap.sh             # run for real
 ```
 
-If `CF_API_TOKEN` is not already exported, the script prompts for the Cloudflare Global API Key
-and creates the operator token automatically (Step 1b).
+If `CF_API_TOKEN` is not already exported, the script prompts for the Cloudflare account email
+and Global API Key, then creates the operator token automatically.
 
 If `CF_API_TOKEN` is already set (re-run scenario), also export `CF_ACCOUNT_ID` and `CF_ZONE_ID`.
 
