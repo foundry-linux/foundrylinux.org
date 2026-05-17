@@ -51,6 +51,8 @@ else
 fi
 
 step "Installing foundry-linux-android-dev (apt)"
+info "Enabling multiverse (required for google-android-ndk-r26c-installer)"
+run_sudo add-apt-repository -y multiverse
 apt_update
 run_sudo apt-get install -y \
     openjdk-17-jdk \
