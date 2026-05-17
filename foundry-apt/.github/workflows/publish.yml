@@ -73,6 +73,10 @@ jobs:
             --exclude 'Release' --exclude 'Release.gpg' --exclude 'InRelease' \
             --header-upload "Cache-Control:no-store"
 
+          # Brief pause so R2 propagates Packages.gz to all edges before
+          # Release goes live — prevents a narrow apt hash-mismatch window.
+          sleep 5
+
           # Pass 2: upload Release files last (single-threaded, no race).
           # no-store prevents Cloudflare's edge from serving a stale Release
           # while Packages.gz is still propagating.
