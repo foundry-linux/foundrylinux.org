@@ -1,125 +1,56 @@
-# Plan: bootstrap.sh credential caching + step 7.5 bug fixes
+# bootstrap.sh credential caching + step 7.5
 
-## Context
+**Date:** 2026-05-18  
+**Status:** Done
 
-Two problems to fix in one commit:
+## Changes shipped
 
-1. **Credential re-entry fatigue**: `CF_API_TOKEN`, `R2_ACCESS_KEY_ID`, and
-   `R2_SECRET_ACCESS_KEY` are re-prompted on every fresh run even though they've already been
-   entered. Fix: cache prompted values to `/tmp/foundry-linux-bootstrap.env` (mode 600) and
-   source it at startup.
+### Credential caching (`BOOTSTRAP_CACHE=/tmp/foundry-linux-bootstrap.env`)
 
-2. **Step 7.5 double bug**: Two errors when creating the Cloudflare redirect rule:
-   - `jq` syntax error: `REDIRECT_EXPR` contains double-quotes that break the inline jq
-     string comparison. Fix: use `jq --arg` to pass the expression safely.
-   - `curl: 405 Method Not Allowed`: `POST .../entrypoint/rules` doesn't exist as an
-     endpoint. Fix: GET the phase entrypoint first to obtain the ruleset ID, then POST to
-     `/rulesets/{ruleset_id}/rules`. If the entrypoint doesn't exist yet (no ruleset ID),
-     use `PUT .../entrypoint` to create it with the rule inline.
+`CF_API_TOKEN`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` were re-prompted on every
+fresh run. Added:
 
-## File to modify
+- `BOOTSTRAP_CACHE="/tmp/foundry-linux-bootstrap.env"` to config block
+- `cache_set KEY value` helper — grep-and-replace single line in cache file, chmod 600
+- Source cache before preflight; `CF_API_TOKEN` saved immediately after entry, R2 creds
+  saved immediately after their `until` loops
+- Init vars as `${VAR:-}` (not `""`) so cache values survive the initialisation block
 
-`scripts/bootstrap.sh` only.
+### Step 7.5 — URL rewrite rule for `/` → `/index.html`
 
-## Change 1 — Credential caching
+Original plan used `http_request_redirect` phase (for 301 redirects). The Cloudflare **free
+plan does not allow this phase at zone level** — API returns:
 
-### 1a. Add `BOOTSTRAP_CACHE` to the config block (after existing vars)
-
-```bash
-BOOTSTRAP_CACHE="/tmp/foundry-linux-bootstrap.env"
+```
+"phase \"http_request_redirect\" not allowed at zone level"
 ```
 
-### 1b. Add `cache_set` helper next to `cf_api` / `r2_put_secret`
+Fix: use `http_request_transform` (URL rewrite) instead. The rewrite is transparent — the
+browser URL stays `/` — which is fine for a landing page.
 
-```bash
-# Usage: cache_set KEY value  — writes/updates one KEY=<quoted> line in BOOTSTRAP_CACHE
-cache_set() {
-    local key="$1" val="$2"
-    { grep -v "^${key}=" "$BOOTSTRAP_CACHE" 2>/dev/null || true
-      printf '%s=%q\n' "$key" "$val"
-    } > "${BOOTSTRAP_CACHE}.tmp" && mv "${BOOTSTRAP_CACHE}.tmp" "$BOOTSTRAP_CACHE"
-    chmod 600 "$BOOTSTRAP_CACHE"
-}
-```
+Also fixed along the way:
+- `jq` syntax error when `REDIRECT_EXPR` containing literal `"` was interpolated into an
+  inline jq string. Fix: `jq -n --arg expr "$EXPR"` throughout.
+- All other inline JSON bodies (`r2/buckets`, `dns_records`, `domains/custom`) converted
+  from escaped strings to `jq -n --arg` calls.
+- Interactive `read` prompts wrapped in `until` loops — blank Enter no longer silently sets
+  an empty variable.
+- Script opens `xdg-open https://<CUSTOM_DOMAIN>/` on completion so the landing page is
+  immediately visible.
 
-### 1c. Load cache before the preflight block (`command -v gpg`)
+### Additional fixes in this session
 
-```bash
-if [[ -f "$BOOTSTRAP_CACHE" ]]; then
-    # shellcheck source=/dev/null
-    source "$BOOTSTRAP_CACHE"
-    info "Loaded cached credentials from $BOOTSTRAP_CACHE"
-fi
-```
-
-### 1d. Save CF_API_TOKEN right after `export CF_API_TOKEN`
-
-```bash
-cache_set CF_API_TOKEN "$CF_API_TOKEN"
-```
-
-### 1e. Save R2 creds right after `export R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY` (step 6)
-
-```bash
-cache_set R2_ACCESS_KEY_ID     "$R2_ACCESS_KEY_ID"
-cache_set R2_SECRET_ACCESS_KEY "$R2_SECRET_ACCESS_KEY"
-```
-
-## Change 2 — Fix step 7.5 redirect rule creation
-
-Replace the entire step 7.5 body with the correct three-case logic:
-
-```bash
-info "[7.5] Creating redirect rule: ${CUSTOM_DOMAIN}/ → /index.html"
-REDIRECT_EXPR="(http.host eq \"${CUSTOM_DOMAIN}\" and http.request.uri.path eq \"/\")"
-
-if $DRY_RUN; then
-    echo "  [dry-run] PUT /zones/.../rulesets/phases/http_request_redirect/entrypoint"
-else
-    PHASE_JSON=$(cf_api GET \
-        "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" \
-        2>/dev/null || echo '{}')
-    RULESET_ID=$(echo "$PHASE_JSON" | jq -r '.result.id // empty' 2>/dev/null || true)
-    EXISTING_RULE=$(echo "$PHASE_JSON" | jq -r \
-        --arg expr "$REDIRECT_EXPR" \
-        '.result.rules[]? | select(.expression == $expr) | .id' 2>/dev/null || true)
-
-    RULE_BODY="{
-        \"action\": \"redirect\",
-        \"action_parameters\": {
-            \"from_value\": {
-                \"target_url\": {\"value\": \"https://${CUSTOM_DOMAIN}/index.html\"},
-                \"status_code\": 301,
-                \"preserve_query_string\": false
-            }
-        },
-        \"expression\": \"${REDIRECT_EXPR}\",
-        \"enabled\": true
-    }"
-
-    if [[ -n "$EXISTING_RULE" ]]; then
-        ok "[7.5] Redirect rule already exists (id: ${EXISTING_RULE})"
-    elif [[ -z "$RULESET_ID" ]]; then
-        # Phase ruleset doesn't exist yet — create it via PUT
-        cf_api PUT \
-            "/zones/${CF_ZONE_ID}/rulesets/phases/http_request_redirect/entrypoint" \
-            -d "{\"name\": \"Zone Redirect Rules\", \"rules\": [${RULE_BODY}]}" >/dev/null
-        ok "[7.5] Redirect rule created: ${CUSTOM_DOMAIN}/ → /index.html"
-    else
-        # Ruleset exists — append our rule
-        cf_api POST "/zones/${CF_ZONE_ID}/rulesets/${RULESET_ID}/rules" \
-            -d "$RULE_BODY" >/dev/null
-        ok "[7.5] Redirect rule added: ${CUSTOM_DOMAIN}/ → /index.html"
-    fi
-fi
-```
+| What | Fix |
+|---|---|
+| R2 token type guidance | Prompt now says "Create Account API token" (not User) with explanation |
+| Token name shown in prompt | `R2_TOKEN_NAME` displayed so no guessing |
+| Step 7.5 error visibility | Errors from CF API now surface the `.errors[0].message` instead of silently dying |
 
 ## Verification
 
-1. Run `bash scripts/bootstrap.sh` — enter CF_API_TOKEN once; confirm
-   `/tmp/foundry-linux-bootstrap.env` is created (mode 600) and step 7.5 completes with
-   `[ok]` instead of jq/curl errors.
-2. Kill and re-run — confirm "Loaded cached credentials" appears, no token prompt shown.
-3. `curl -sI https://apt.foundrylinux.org/` returns `HTTP/2 301` redirecting to
-   `/index.html`.
-4. `curl -sI https://apt.foundrylinux.org/index.html` returns `HTTP/2 200 text/html`.
+```bash
+curl -sI https://apt.foundrylinux.org/
+# HTTP/2 200  content-type: text/html
+curl -s https://apt.foundrylinux.org/ | grep '<title>'
+# <title>Foundry APT Repository</title>
+```

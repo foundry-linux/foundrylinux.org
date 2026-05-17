@@ -561,3 +561,6 @@ echo ""
 info "Step 10 — sync and push the first release tag to trigger CI:"
 info "  task sync-and-release TAG=v0.0.1"
 info "  # Watch: https://github.com/${GH_REPO}/actions"
+echo ""
+info "Opening repo landing page: https://${CUSTOM_DOMAIN}/"
+xdg-open "https://${CUSTOM_DOMAIN}/" 2>/dev/null || open "https://${CUSTOM_DOMAIN}/" 2>/dev/null || true

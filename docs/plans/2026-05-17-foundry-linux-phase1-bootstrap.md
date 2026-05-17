@@ -1,7 +1,7 @@
 # Foundry Linux Phase 1 bootstrap
 
 **Date:** 2026-05-17
-**Status:** In progress
+**Status:** Done
 **Scope:** All setup needed before the GitHub Actions `publish.yml` in `foundry-linux/foundry-apt`
 can build, sign, and serve the APT repo at `apt.foundrylinux.org`.
 
@@ -26,8 +26,8 @@ already exported; `CF_ACCOUNT_ID` and `CF_ZONE_ID` are fetched automatically via
 
 The token requires exactly three permissions:
 - **Account | Workers R2 Storage | Edit** — bucket create, object upload, custom domain attach
-- **User | API Tokens | Edit** — creates the narrow `foundry-apt-ci` CI token in Step 6
 - **Zone | DNS | Edit** (Specific zone: `foundrylinux.org`) — CNAME for `apt.foundrylinux.org`
+- **Zone | Transform Rules | Edit** (Specific zone: `foundrylinux.org`) — URL rewrite rule for `/` → `/index.html`
 
 The script validates all three at the end of step 1b before touching anything.
 
