@@ -19,6 +19,31 @@ self-describing. All tooling updated to reflect this.
 
 ---
 
+## Step 1b — Create the Cloudflare operator API token
+
+Run once. Uses the **Global API Key** to mint a scoped `foundry-linux-operator` token,
+then the Global API Key is no longer needed.
+
+```bash
+# Required env vars (one-time use):
+export CF_EMAIL="wbnorris@gmail.com"
+export CF_GLOBAL_API_KEY="<your-global-api-key>"
+# Global API Key: Cloudflare dash → My Profile → API Tokens → Global API Key
+
+bash scripts/step-1b-cf-api-token.sh
+# Prints three export lines — copy them into your shell for steps 3–9:
+#   export CF_API_TOKEN='...'
+#   export CF_ACCOUNT_ID='...'
+#   export CF_ZONE_ID='...'
+```
+
+The resulting `CF_API_TOKEN` ("foundry-linux-operator") has:
+- **Workers R2 Storage: Write** — bucket create + object upload
+- **Zone DNS: Write** — CNAME for `apt.foundrylinux.org`
+- **User API Tokens: Edit** — creates the narrow `foundry-apt-ci` token in Step 6
+
+---
+
 ## ~~Step 2a — Create the `foundry-linux` GitHub org~~ (done)
 
 Org exists. GitHub org creation has no public API — noted here as the one unavoidable manual step.
@@ -291,9 +316,9 @@ gh secret list --repo foundry-linux/foundry-apt
 ## Step 10 — Push the first tag
 
 ```bash
-cd /tmp/foundry-apt-push  # or wherever the standalone repo is checked out
-git tag v1.0.0
-git push origin v1.0.0
+gh repo clone foundry-linux/foundry-apt /tmp/foundry-apt-release
+git -C /tmp/foundry-apt-release tag v0.0.1
+git -C /tmp/foundry-apt-release push origin v0.0.1
 # Watch: https://github.com/foundry-linux/foundry-apt/actions
 ```
 
@@ -324,6 +349,7 @@ apt-cache show foundry-linux-dev
 ## Status checklist
 
 - [x] Domain decided — `apt.foundrylinux.org`
+- [ ] Cloudflare operator token `foundry-linux-operator` created (`CF_API_TOKEN`)
 - [x] `foundry-linux` GitHub org created
 - [x] `foundry-linux/foundry-apt` GitHub repo created and pushed
 - [ ] GPG signing key generated (`packages@foundrylinux.org`, 4096-bit RSA, 2-year expiry)
@@ -338,6 +364,6 @@ apt-cache show foundry-linux-dev
 - [ ] DNS CNAME `apt.foundrylinux.org` configured (proxied)
 - [ ] Custom domain attached to R2 bucket
 - [ ] `AWS_ROLE_ARN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` secrets set on repo
-- [ ] First tag `v1.0.0` pushed
+- [ ] First tag `v0.0.1` pushed
 - [ ] `publish.yml` workflow green
 - [ ] `smoke-install` job confirms `apt install foundry-linux-dev` from live repo
