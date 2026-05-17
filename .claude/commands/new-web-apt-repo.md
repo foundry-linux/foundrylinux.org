@@ -66,7 +66,7 @@ If `CF_API_TOKEN` is not already exported, the script will print instructions an
 
 `CF_ACCOUNT_ID` and `CF_ZONE_ID` are fetched automatically — no manual lookup needed.
 
-The script validates both permissions at the end of step 1b before touching anything.
+The script validates all three permissions in step 1b before touching anything.
 
 ## Step 4 — Run for real
 
@@ -74,16 +74,27 @@ The script validates both permissions at the end of step 1b before touching anyt
 bash scripts/bootstrap.sh
 ```
 
+The script caches `CF_API_TOKEN` and R2 credentials to `/tmp/foundry-linux-bootstrap.env`
+(mode 600) on first entry and reloads them on subsequent runs — no re-typing on restarts.
+
+When prompted for R2 S3 credentials (step 6), the dashboard page is printed automatically.
+Create an **Account API token** (not User — Account tokens survive org membership changes
+and are recommended for CI):
+- **Token name:** value of `R2_TOKEN_NAME` from config
+- **Permissions:** Object Read & Write
+- **Bucket:** Apply to specific buckets only → `R2_BUCKET`
+
 ## Known failure modes
 
 If step 1b reports missing permissions, edit the token at
-<https://dash.cloudflare.com/profile/api-tokens> and re-run.
+<https://dash.cloudflare.com/profile/api-tokens> and re-run (cached token reloads
+automatically, no re-paste needed).
 
 | Pattern in output | What it means | Fix |
 |---|---|---|
 | `[1b] Token is missing required permissions` | Operator token incomplete | Edit token — the output lists which permissions are missing |
 | `[1b] Could not retrieve account ID` | Token can't read account | Verify Account Resources → your account is selected |
-| `[6]` prompts for R2 credentials | R2 S3 tokens can't be created via API — must be done in the R2 dashboard | Follow the prompt URL and click **Create Account API token** (not User — Account tokens survive org membership changes and are recommended for CI) |
+| `[7.5]` error on transform rule | Zone may already have a conflicting rewrite rule | Check Cloudflare dashboard → `<zone>` → Rules → Transform Rules |
 
 ## Step 5 — Push first tag
 
@@ -102,8 +113,11 @@ Once the publish workflow goes green, confirm the root URL returns HTML:
 ```bash
 curl -sI https://<CUSTOM_DOMAIN>/
 # expect: HTTP/2 200  content-type: text/html
-# (URL rewrite, not redirect — free plan doesn't support http_request_redirect phase)
 ```
+
+The root URL is served via a Cloudflare URL rewrite rule (`http_request_transform` phase,
+created by bootstrap step 7.5) that transparently maps `/` → `/index.html`. The free plan
+does not support the `http_request_redirect` phase, so this is a rewrite, not a 301.
 
 `scripts/generate-index.sh` generates `public/index.html` automatically on every publish run,
 pulling package names, versions, and descriptions from `packages/*/DEBIAN/control` — no
@@ -130,5 +144,14 @@ the top of `scripts/generate-index.sh`.
 | R2 access key | `R2_ACCESS_KEY_ID` | `r2://<org>-secrets/R2_ACCESS_KEY_ID` |
 | R2 secret | `R2_SECRET_ACCESS_KEY` | `r2://<org>-secrets/R2_SECRET_ACCESS_KEY` |
 | CF operator token | (not in GitHub) | `r2://<org>-secrets/CF_API_TOKEN` |
+
+A local session cache at `/tmp/foundry-linux-bootstrap.env` (mode 600, cleared on reboot)
+holds `CF_API_TOKEN`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` so re-runs within the
+same session don't re-prompt. Retrieve any value from R2 backup if needed:
+
+```bash
+curl -fsSL "https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/r2/buckets/<org>-secrets/objects/<KEY>" \
+  -H "Authorization: Bearer $CF_API_TOKEN"
+```
 
 No AWS SSM or other external secrets store is used.
