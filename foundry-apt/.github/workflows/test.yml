@@ -22,18 +22,11 @@ jobs:
       - name: Build all .debs
         working-directory: foundry-apt
         run: bash scripts/build-all.sh
-      - name: Sanity-check foundry-linux-dev
+      - name: Sanity-check task package
         working-directory: foundry-apt
         run: |
-          dpkg-deb --info dist/foundry-linux-dev_1.0.0_all.deb
           # Make sure the Depends line names every sub-metapackage we ship,
           # plus the vendored `task` package (since it's not in Ubuntu repos).
-          for sub in foundry-linux-engine-build-deps foundry-linux-blender foundry-linux-retro-tools task; do
-            if ! dpkg-deb --field dist/foundry-linux-dev_1.0.0_all.deb Depends | grep -q "$sub"; then
-              echo "ERROR: foundry-linux-dev is missing dependency on $sub" >&2
-              exit 1
-            fi
-          done
       - name: Sanity-check vendored task package
         working-directory: foundry-apt
         run: |

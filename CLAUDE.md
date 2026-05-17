@@ -9,13 +9,13 @@ Two sibling directories, two phases:
 | Directory | Purpose |
 |-----------|---------|
 | `foundry-linux-setup/` | **Phase 0** — bash curl installer; runs on a stock Ubuntu box |
-| `foundry-apt/` | **Phase 1** — signed APT repo + `foundry-linux-*` metapackages |
+| `foundry-apt/` | **Phase 1** — signed APT repo (vendored upstreams not in Ubuntu — starting with `task`) |
 
 The distro roadmap: Phase 0 (this repo) → Phase 1 (APT repo, this repo) → Phase 2 (`ghcr.io/foundry-linux/devbox:26.04` Distrobox) → Phase 3 (Foundry Linux ISO).
 
 ### Phase 0: per-metapackage script pattern
 
-Each `foundry-linux-setup/install-<metapackage>.sh` is the Phase 0 expansion of one APT metapackage: its `Depends:` become `apt-get install` calls; its `Recommends:` that aren't in Ubuntu become source-builds under `~/opt/`. The Phase 1 collapse path is mechanical — replace the script body with a single `apt install <metapackage>` call once `apt.foundrylinux.org` ships.
+Each `foundry-linux-setup/install-<metapackage>.sh` is the Phase 0 expansion of one APT metapackage: its `Depends:` become `apt-get install` calls; its `Recommends:` that aren't in Ubuntu become source-builds under `~/opt/`. The Phase 1 collapse path is mechanical — replace the script body with a single `apt install <package>` call once `apt.foundrylinux.org` ships.
 
 ```
 foundry-linux-setup/

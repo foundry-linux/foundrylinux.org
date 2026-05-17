@@ -34,7 +34,7 @@ tasks:
         done
 
   apt-test:
-    desc: "After publish-local, point apt at ./public/ and resolve foundry-linux-dev"
+    desc: "After publish-local, point apt at ./public/ and resolve packages"
     deps: [publish-local]
     cmds:
       - |
@@ -42,7 +42,7 @@ tasks:
           | sudo tee /etc/apt/sources.list.d/foundry-test.list
         sudo apt-get update -o Dir::Etc::sourceparts=- \
                             -o APT::Get::List-Cleanup=0 || true
-        apt-cache depends foundry-linux-dev
+        apt-cache show task
         sudo rm /etc/apt/sources.list.d/foundry-test.list
 
   shellcheck:
