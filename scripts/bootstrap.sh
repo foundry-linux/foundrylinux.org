@@ -369,7 +369,7 @@ fi
 CNAME_EXISTS=""
 if ! $DRY_RUN; then
     CNAME_EXISTS=$(cf_api GET \
-        "/zones/${CF_ZONE_ID}/dns/records?type=CNAME&name=${DNS_CNAME}.foundrylinux.org" \
+        "/zones/${CF_ZONE_ID}/dns_records?type=CNAME&name=${DNS_CNAME}.foundrylinux.org" \
         | jq -r '.result[0].id // empty' || true)
 fi
 
@@ -378,9 +378,9 @@ if [[ -n "${CNAME_EXISTS}" ]]; then
 else
     info "[7] Creating DNS CNAME: ${DNS_CNAME}.foundrylinux.org → ${R2_DEV_HOSTNAME}"
     if $DRY_RUN; then
-        echo "  [dry-run] POST /zones/.../dns/records {type: CNAME, name: ${DNS_CNAME}}"
+        echo "  [dry-run] POST /zones/.../dns_records {type: CNAME, name: ${DNS_CNAME}}"
     else
-        cf_api POST "/zones/${CF_ZONE_ID}/dns/records" -d "{
+        cf_api POST "/zones/${CF_ZONE_ID}/dns_records" -d "{
             \"type\": \"CNAME\",
             \"name\": \"${DNS_CNAME}\",
             \"content\": \"${R2_DEV_HOSTNAME}\",
