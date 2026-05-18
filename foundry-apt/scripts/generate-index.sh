@@ -50,7 +50,13 @@ for i in "${!PKG_NAMES[@]}"; do
     deb_url="/pool/main/${L}/${name}/${name}_${ver}_all.deb"
     ver_cell="<a href=\"${deb_url}\">${ver}</a>"
   else
-    ver_cell="${ver} (<a href=\"/pool/main/${L}/${name}/${name}_${ver}_amd64.deb\">amd64</a> <a href=\"/pool/main/${L}/${name}/${name}_${ver}_arm64.deb\">arm64</a>)"
+    # Architecture may list multiple tokens (e.g. "amd64 arm64"). One sub-link per arch.
+    arch_links=""
+    for a in $arch; do
+      [[ -n "$arch_links" ]] && arch_links="${arch_links} "
+      arch_links="${arch_links}<a href=\"/pool/main/${L}/${name}/${name}_${ver}_${a}.deb\">${a}</a>"
+    done
+    ver_cell="${ver} (${arch_links})"
   fi
   PKG_ROWS="${PKG_ROWS}
       <tr><td>${name_cell}</td><td>${ver_cell}</td><td>${desc}</td></tr>"
