@@ -47,7 +47,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 **Thermal / forge** (batch 2)
 - [ ] **Thermal gradient creep** — one edge of the bar is very subtly warm-tinted (faint orange haze); that warmth conducts slowly across to the other side over 3–4 s, then cools. Unlike cooling bloom (point source expanding outward), this is directional edge-to-edge conduction.
-- [ ] **Shadow pass** — the only subtractive effect in the list: a soft Gaussian shadow drifts across via `globalCompositeOperation = 'multiply'`, slightly darkening and desaturating as it passes. The absence of light rather than its presence; suggests something heavy moving overhead.
+- [x] **Shadow pass** ★9 ✓ SHIPPED — soft Gaussian shadow drifts across via `mix-blend-mode:multiply` (canvas as last child, paints over white nav elements). The absence of light rather than its presence.
 
 **Mechanical / percussive** (batch 2)
 - [ ] **Mercury bead** — a single small bright specular dot (radial gradient, silvery-white, 4–6 px) rolls across the bottom of the bar end to end, leaving a brief luminous trail that fades immediately. Like a ball bearing rolling across a polished surface. One subject, tracking shot.
