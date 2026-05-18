@@ -1,3 +1,14 @@
+f9dasm (1.83-1foundry3) resolute; urgency=medium
+
+  * Drop `.PP` directly after `.SH EXAMPLES` in hex2bin(1), mot2bin(1),
+    and cmd2mot(1) man pages — mandoc(1) flags "skipping paragraph macro:
+    PP after SH" because section headers already open a new paragraph.
+    Replace the `.RS`/`.RE` block with `.IP` for indented sample commands.
+  * Caught by the new live-test mandoc-Tlint gate
+    (test/run-test.sh, plan 2026-05-18-live-test-manpage-assert.md).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 18 May 2026 11:45:00 +0000
+
 f9dasm (1.83-1foundry2) resolute; urgency=medium
 
   * Add Foundry-Linux-authored man pages for f9dasm(1), hex2bin(1),
