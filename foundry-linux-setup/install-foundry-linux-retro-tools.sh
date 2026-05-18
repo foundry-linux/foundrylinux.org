@@ -13,14 +13,13 @@
 #     f9dasm      → ~/opt/f9dasm/
 #     vgmstream   → ~/opt/vgmstream/
 #     libvgm      → ~/opt/libvgm/
-#     xa65        → ~/opt/xa65/
 #
 # What you get for the 6502 specifically:
 #   sim65   (from cc65)     — 6502 instruction-set simulator / unit-test runner
 #   da65    (from cc65)     — 6502 disassembler
 #   mame                    — full-system 6502 emulator (Atari, Apple, Q*bert, etc.)
 #   radare2                 — multi-arch disasm (Capstone covers 6502)
-#   xa65    (source-build)  — Atari/C64-style 6502 cross-assembler
+#   xa65                    — Atari/C64-style 6502 cross-assembler (Ubuntu universe)
 #
 # See docs/investigations/2026-05-15-claude-arcade-tooling.md for the rationale.
 #
@@ -37,8 +36,8 @@ for arg in "$@"; do
 Phase 0 installer for foundry-linux-retro-tools
 
 Installs the arcade reverse-engineering / 6502 / Z80 / 68k / 6809 porting
-toolchain (MAME, dasm, cc65 → sim65 + da65, z80dasm, radare2, etc.) plus
-source-built Ghidra / f9dasm / vgmstream / libvgm / xa65 under ~/opt/.
+toolchain (MAME, dasm, cc65 → sim65 + da65, z80dasm, radare2, xa65, etc.)
+plus source-built Ghidra / f9dasm / vgmstream / libvgm under ~/opt/.
 
 Usage: $(basename "$0") [--dry-run|-n] [--apt-only] [--force] [-h|--help]
 
@@ -54,7 +53,7 @@ What this installs that's relevant to the 6502:
   da65    — cc65's 6502 disassembler
   mame    — full-system 6502 emulator
   radare2 — Capstone-based multi-arch disasm (covers 6502)
-  xa65    — Atari/C64-style 6502 cross-assembler (source-built)
+  xa65    — Atari/C64-style 6502 cross-assembler (Ubuntu universe)
 EOF
             exit 0
             ;;
@@ -95,8 +94,6 @@ OPT_DIR="${HOME}/opt"
 # ----------------------------------------------------------------------------
 step "Installing foundry-linux-retro-tools (apt)"
 apt_update
-# xa65 is not in current Ubuntu repos under that name; install the rest, then
-# pick it up via source-build below.
 run_sudo apt-get install -y \
     mame \
     mame-tools \
@@ -107,11 +104,12 @@ run_sudo apt-get install -y \
     radare2 \
     binwalk \
     sox \
-    binutils-m68k-linux-gnu
-ok "Retro toolchain apt packages installed (sim65, da65, mame, radare2, dasm, z80dasm, ...)"
+    binutils-m68k-linux-gnu \
+    xa65
+ok "Retro toolchain apt packages installed (sim65, da65, mame, radare2, dasm, z80dasm, xa65, ...)"
 
 if $APT_ONLY; then
-    info "--apt-only set — skipping source-build sidecars (Ghidra, f9dasm, vgmstream, libvgm, xa65)"
+    info "--apt-only set — skipping source-build sidecars (Ghidra, f9dasm, vgmstream, libvgm)"
     exit 0
 fi
 
@@ -133,14 +131,6 @@ source_build_guard() {
     fi
     return 0
 }
-
-# --- xa65 -------------------------------------------------------------------
-step "Building xa65 (6502 cross-assembler)"
-if source_build_guard xa65 "$OPT_DIR/xa65"; then
-    run git clone --depth 1 https://github.com/fachat/xa65 "$OPT_DIR/xa65"
-    run make -C "$OPT_DIR/xa65"
-    ok "xa65 built — binary at $OPT_DIR/xa65/xa"
-fi
 
 # --- f9dasm -----------------------------------------------------------------
 step "Building f9dasm (6809 disassembler)"

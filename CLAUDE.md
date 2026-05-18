@@ -33,7 +33,7 @@ foundry-linux-setup/
 
 ### Phase 1: APT repo
 
-Every package in `foundry-apt/packages/` uses the **canonical Debian source-package layout** — the same `debian/{control,changelog,rules,source/format,copyright}` tree that real Debian and Ubuntu archive packages use. `dpkg-buildpackage` consumes it and produces a `.deb`. There is no `DEBIAN/` (uppercase) authored directory — that's a generated artifact inside built `.deb`s, not authored input. (The deprecated legacy exception is `packages/xa65/` which still uses uppercase `DEBIAN/control` until it's repackaged with `/package` — see TODO.md.)
+Every package in `foundry-apt/packages/` uses the **canonical Debian source-package layout** — the same `debian/{control,changelog,rules,source/format,copyright}` tree that real Debian and Ubuntu archive packages use. `dpkg-buildpackage` consumes it and produces a `.deb`. There is no `DEBIAN/` (uppercase) authored directory — that's a generated artifact inside built `.deb`s, not authored input.
 
 ```
 foundry-apt/

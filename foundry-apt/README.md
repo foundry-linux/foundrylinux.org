@@ -32,11 +32,13 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 | Package | Upstream | Notes |
 |---|---|---|
 | `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | Motorola 6800/6809/6309 family disassembler. amd64. |
-| `xa65` (legacy) | [fachat/xa65](https://github.com/fachat/xa65) | 6502/65816 cross-assembler. *Deprecated* — already in Ubuntu 26.04 universe; this package will be retired when Phase 0 starts pulling xa65 from universe instead. amd64. |
 
 Planned: [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm). See [`LICENSES-VENDORED.md`](LICENSES-VENDORED.md) for the running attribution list. Use the [`/package`](https://github.com/anthropics/claude-code) Claude Code skill to add new ones — it generates the Debian source tree via `dh_make` and wires it into this repo.
 
-For users of [`task`](https://taskfile.dev) the official Cloudsmith apt repo is the easiest source — Phase 0's `foundry-linux-setup/install-task.sh` configures it for you. (Previously this repo shipped a vendored `task`; removed once the official apt source covered our use case.)
+Two upstreams we *don't* repackage:
+
+- [`task`](https://taskfile.dev) — official Cloudsmith apt repo covers it; Phase 0's `foundry-linux-setup/install-task.sh` configures the repo directly.
+- [`xa65`](https://www.floodgap.com/retrotech/xa/) — Ubuntu 26.04 universe ships it as `xa65 2.4.1-0.1build1`; foundry-linux-retro-tools `Depends:` it from there.
 
 ## Repo layout
 
