@@ -281,10 +281,10 @@ function Editions() {
         <div className="section-head">
           <div>
             <span className="section-num">№ 03 · Editions</span>
-            <h2 className="section-title">Three<br />pours.</h2>
+            <h2 className="section-title">Three<br />marks.</h2>
           </div>
           <p className="section-blurb">
-            One distribution, three shapes. Same kernel, same archive — different
+            One distribution, three casts. Same kernel, same archive — different
             sets of tools struck in from the first boot.
           </p>
         </div>

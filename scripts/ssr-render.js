@@ -47,6 +47,16 @@ const page = `<!doctype html>
 <body data-bg="pure">
   <div id="root">${body}</div>
   <script>
+    /* Copy button — replaces the React useState handler */
+    document.querySelector('.copy').addEventListener('click', function() {
+      navigator.clipboard?.writeText('sudo apt install foundry-base');
+      this.lastChild.textContent = 'COPIED';
+      var btn = this;
+      setTimeout(function() { btn.lastChild.textContent = 'COPY'; }, 1400);
+    });
+  </script>
+  <script src="embers.js"></script>
+  <script>
     /* Scroll-shrink: --header-shrink ramps 0→1 as scrollY reaches half
      * a viewport. @property + html transition eases every change. */
     if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -66,16 +76,6 @@ const page = `<!doctype html>
       window.addEventListener("resize", _hsTick, { passive: true });
     }
   </script>
-  <script>
-    /* Copy button — replaces the React useState handler */
-    document.querySelector('.copy').addEventListener('click', function() {
-      navigator.clipboard?.writeText('sudo apt install foundry-base');
-      this.lastChild.textContent = 'COPIED';
-      var btn = this;
-      setTimeout(function() { btn.lastChild.textContent = 'COPY'; }, 1400);
-    });
-  </script>
-  <script src="embers.js"></script>
 </body>
 </html>`;
 
