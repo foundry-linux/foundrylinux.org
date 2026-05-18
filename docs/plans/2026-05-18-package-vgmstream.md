@@ -141,15 +141,21 @@ If vgmstream-cli links to libvgmstream as a static archive (the cmake default fo
 
 8. **Live test gate.** Deferred — runs post-publish via CI.
 
-## Skill update opportunities (per [feedback memory](../../../../.claude/projects/-home-will-SRC-foundrylinux-org/memory/feedback_package_skill_iterate.md))
+## Skill updates applied (per [feedback memory](../../../../.claude/projects/-home-will-SRC-foundrylinux-org/memory/feedback_package_skill_iterate.md))
 
-While packaging vgmstream, three skill refinements surfaced. Land them in `~/.claude/skills/package/SKILL.md` in the same session as this commit:
+Five skill refinements surfaced while packaging vgmstream — all landed in `~/.claude/skills/package/SKILL.md` in this session:
 
-1. **ISC license** — not in dh_make's `--copyright` list. Add a note in Step 3 §2 (`debian/copyright`) that for ISC/0BSD/MIT-no-attribution variants, use `--copyright bsd` and then hand-rewrite DEP-5 with the actual permission grant.
+1. **ISC license** — `--copyright bsd` stub + hand-rewrite to `License: ISC-<pkg>` in DEP-5. (Step 3 §2)
 
-2. **Non-`vN.N.N` upstream tag formats** — vgmstream uses `r<number>` (`r2083`). The skill's `debian/watch` template references `v?@ANY_VERSION@\.tar\.gz` which won't match `r`-prefix tags. Make Step 3 §6 mention common alternatives: `v?` for typical `vN.N.N`, `r` for `r<number>` rolling releases, `release-` for some projects, etc.
+2. **Non-`vN.N.N` upstream tag formats** — `r<number>` tags require a manual watch regex; `@ANY_VERSION@` only works with bare numerics. (Step 3 §6)
 
-3. **CMake-without-install() projects** — vgmstream has cmake but no Unix `install()` target. dh_auto_install becomes a no-op; we hand-install in `override_dh_auto_install`. Add to Step 3 §4's example overrides.
+3. **CMake + legacy Makefile coexistence** — add `--buildsystem=cmake` to both `override_dh_auto_configure` and `override_dh_auto_build` plus an empty `override_dh_autoreconf`. (Step 3 §4)
+
+4. **CMake with no Linux `install()` target** — `override_dh_auto_install` using `install -D`. (Step 3 §4)
+
+5. **Debian version must start with a digit** — upstream `r2083` → Debian version `2083`. Lintian-equivalent: `dpkg-buildpackage` hard-fails with "version number does not start with digit". (Step 3 §3)
+
+6. **Always build in Docker containers, not the host** — host packages silently satisfy build deps and mask missing `Build-Depends:`. Use `ubuntu:26.04` container with explicit apt-get install. (Step 4)
 
 ## Out of scope
 
