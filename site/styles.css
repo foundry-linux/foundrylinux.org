@@ -174,8 +174,9 @@ body[data-bg="textured"] {
 
 /* ============================ TOP BAR ============================ */
 
-/* Sticky wrapper — breathe glow lives on ::after so it blends above
- * the backdrop without lifting child z-indices. */
+/* Sticky wrapper. Animated pinstripes on ::before, clipped by overflow:hidden.
+ * inset: -50% oversizes the element so rotated corners stay covered.
+ * Three pairwise non-divisible timelines desync over ~11 hours. */
 .topbar-wrap {
   position: sticky;
   top: 0;
@@ -184,8 +185,53 @@ body[data-bg="textured"] {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--hairline);
+  overflow: hidden;
 }
-/* no ::after breathe — topbar is clean */
+.topbar-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 28px,
+    rgba(200, 197, 190, 0.07) 28px 32px
+  );
+  animation:
+    nav-stripes-t 60s  linear infinite,
+    nav-stripes-r 175s linear infinite,
+    nav-stripes-s 95s  linear infinite;
+  will-change: transform;
+}
+.topbar-wrap > * { position: relative; }
+
+@keyframes nav-stripes-t {
+  0%   { translate: 0 0;        animation-timing-function: ease-in-out; }
+  30%  { translate: 18px 18px;  animation-timing-function: ease-in-out; }
+  45%  { translate: 10px 10px;  animation-timing-function: ease-in-out; }
+  70%  { translate: 26px 26px;  animation-timing-function: ease-in-out; }
+  85%  { translate: 22px 22px;  animation-timing-function: ease-in-out; }
+  100% { translate: 32px 32px; }
+}
+@keyframes nav-stripes-r {
+  0%   { rotate: 0deg;    animation-timing-function: ease-in-out; }
+  25%  { rotate: 140deg;  animation-timing-function: ease-in-out; }
+  40%  { rotate: 80deg;   animation-timing-function: ease-in-out; }
+  65%  { rotate: 250deg;  animation-timing-function: ease-in-out; }
+  85%  { rotate: 220deg;  animation-timing-function: ease-in-out; }
+  100% { rotate: 360deg; }
+}
+@keyframes nav-stripes-s {
+  0%   { scale: 1;    animation-timing-function: ease-in-out; }
+  25%  { scale: 0.6;  animation-timing-function: ease-in-out; }
+  45%  { scale: 2.8;  animation-timing-function: ease-in-out; }
+  70%  { scale: 0.9;  animation-timing-function: ease-in-out; }
+  88%  { scale: 1.8;  animation-timing-function: ease-in-out; }
+  100% { scale: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topbar-wrap::before { animation: none; }
+}
 
 .topbar {
   display: flex;
@@ -258,91 +304,10 @@ body[data-bg="textured"] {
   padding: 80px 0 110px;
   position: relative;
   text-align: center;
-  overflow: hidden;
-  isolation: isolate;
 }
 
 @media (max-width: 800px) {
   .hero { padding: 60px 0 80px; }
-}
-
-/* ---- Hero motion graphics ---- */
-
-/* Layer 1 — animated diagonal pinstripes.
- * inset: -50% oversizes the element so no corners go bare during rotation.
- * Three pairwise non-divisible timelines (gcd 5) desync over ~11 hours,
- * so the pattern never visibly repeats. Transform runs on the compositor —
- * the gradient is rasterized once, animated as a cached bitmap. */
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: -50%;
-  pointer-events: none;
-  z-index: -1;
-  background-image: repeating-linear-gradient(
-    135deg,
-    transparent 0 28px,
-    rgba(255, 91, 26, 0.055) 28px 32px
-  );
-  animation:
-    hero-stripes-t 60s  linear infinite,
-    hero-stripes-r 175s linear infinite,
-    hero-stripes-s 95s  linear infinite;
-  will-change: transform;
-}
-
-/* Layer 2 — rotating conic sweep (forge-light / radar arc). */
-.hero::after {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  pointer-events: none;
-  z-index: -1;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent         0deg,
-    rgba(255,91,26,0.08) 22deg,
-    rgba(255,91,26,0.03) 40deg,
-    transparent         55deg
-  );
-  animation: hero-sweep 28s linear infinite;
-  mix-blend-mode: screen;
-}
-
-@keyframes hero-stripes-t {
-  0%   { translate: 0 0;        animation-timing-function: ease-in-out; }
-  30%  { translate: 18px 18px;  animation-timing-function: ease-in-out; }
-  45%  { translate: 10px 10px;  animation-timing-function: ease-in-out; }
-  70%  { translate: 26px 26px;  animation-timing-function: ease-in-out; }
-  85%  { translate: 22px 22px;  animation-timing-function: ease-in-out; }
-  100% { translate: 32px 32px; }
-}
-@keyframes hero-stripes-r {
-  0%   { rotate: 0deg;    animation-timing-function: ease-in-out; }
-  25%  { rotate: 140deg;  animation-timing-function: ease-in-out; }
-  40%  { rotate: 80deg;   animation-timing-function: ease-in-out; }
-  65%  { rotate: 250deg;  animation-timing-function: ease-in-out; }
-  85%  { rotate: 220deg;  animation-timing-function: ease-in-out; }
-  100% { rotate: 360deg; }
-}
-@keyframes hero-stripes-s {
-  0%   { scale: 1;    animation-timing-function: ease-in-out; }
-  25%  { scale: 0.6;  animation-timing-function: ease-in-out; }
-  45%  { scale: 2.8;  animation-timing-function: ease-in-out; }
-  70%  { scale: 0.9;  animation-timing-function: ease-in-out; }
-  88%  { scale: 1.8;  animation-timing-function: ease-in-out; }
-  100% { scale: 1; }
-}
-@keyframes hero-sweep {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero::before, .hero::after { animation: none; }
 }
 
 .hero-eyebrow {
