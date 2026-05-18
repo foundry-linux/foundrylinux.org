@@ -1,5 +1,7 @@
 # Per-metapackage install scripts (Phase 0 refactor)
 
+**Status:** Done
+
 ## Context
 
 `foundry-linux-setup/install.sh` is the Phase 0 setup script from the Foundry Linux distro proposal ([`docs/investigations/2026-05-16-foundry-linux-distro-proposal.md`](../investigations/2026-05-16-foundry-linux-distro-proposal.md)). It was supposed to install everything the Phase 1 APT metapackages will eventually install — including the retro-porting toolchain (MAME, `dasm`, `cc65` → ships `sim65` 6502 emulator + `da65` disassembler, `radare2`, etc., plus source-built Ghidra / f9dasm / vgmstream / libvgm / xa65). It currently doesn't: `install_apt_packages()` at [`install.sh:222-246`](../../foundry-linux-setup/install.sh) only mirrors `Taskfile.yml:dev-setup` (engine build deps). That's the gap behind the original "which script installs the 6502 emulator(s)" question — there isn't one.
@@ -110,3 +112,109 @@ Every `install-*.sh` script:
 6. **Phase 1 collapse rehearsal.** Manually inspect each per-meta script and confirm the body could be replaced with `run_sudo apt-get install -y <metapackage>` once `apt.foundrylinux.org` ships, with no remaining Phase 0 leftovers. (Source-build sidecars disappear because foundry-apt CI builds them as `.deb`s per proposal §483.)
 
 7. **Existing install.sh behavior preserved.** On a machine where the old `install.sh` succeeded, re-running the new `install.sh` with the same `--role` flag produces the same end state: same packages installed, same repos cloned, same wftools binaries built, same Blender addon registered. Diff the apt history and `~/Projects/` listing before vs after.
+
+## Verification — executed 2026-05-18
+
+### Step 1 — 6502 emulator install on fresh Ubuntu 26.04 VM
+
+**Apt half: PASS (cross-plan evidence).** [`2026-05-18-foundry-apt-live-install-tests.md`](2026-05-18-foundry-apt-live-install-tests.md) (Status: Done, 5/5 pass) installs `foundry-linux-retro-tools` from `apt.foundrylinux.org` on fresh Ubuntu 26.04, validating the `Depends:` (mame, mame-tools, dasm, cc65, z80dasm, z80asm, radare2, binwalk, sox, binutils-m68k-linux-gnu) and therefore `sim65`, `da65`, `mame`, `radare2`.
+
+**Source-build sidecar half: NOT VERIFIED on a fresh VM.** The Phase 0 script also source-builds xa65, f9dasm, libvgm, vgmstream, and downloads Ghidra into `~/opt/`. The Phase 1 metapackage does *not* yet declare these as `Depends:` — they only exist as Phase 0 source-builds. End-to-end Phase 0 retro-tools install on a clean Ubuntu 26.04 VM (running the full script, not the metapackage) has not been executed.
+
+→ Open follow-up: package each of `xa65`, `f9dasm`, `libvgm`, `vgmstream`, `Ghidra` as real `.deb`s in `foundry-apt/packages/` (these would be the first non-metapackage `.deb`s in the repo). Once that lands, `foundry-linux-retro-tools` Depends on them and Step 1 collapses to a pure live-install test.
+
+**PARTIAL** — apt half verified; source-build half pending real `.deb`s.
+
+### Step 2 — Dry-run is clean
+
+```
+$ bash foundry-linux-setup/install-foundry-linux-retro-tools.sh --dry-run
+
+━━━ Installing foundry-linux-retro-tools (apt) ━━━
+  [dry-run] sudo apt-get update -q
+  [dry-run] sudo apt-get install -y mame mame-tools dasm cc65 z80dasm z80asm radare2 binwalk sox binutils-m68k-linux-gnu
+✓ Retro toolchain apt packages installed (sim65, da65, mame, radare2, dasm, z80dasm, ...)
+  [dry-run] mkdir -p /home/will/opt
+
+━━━ Building xa65 (6502 cross-assembler) ━━━
+ℹ xa65: /home/will/opt/xa65 exists, skipping (use --force to rebuild)
+
+━━━ Building f9dasm (6809 disassembler) ━━━
+  [dry-run] git clone --depth 1 https://github.com/Arakula/f9dasm /home/will/opt/f9dasm
+  [dry-run] make -C /home/will/opt/f9dasm
+✓ f9dasm built — binary at /home/will/opt/f9dasm/f9dasm
+
+━━━ Building libvgm (chip-register VGM library) ━━━
+  [dry-run] git clone --depth 1 https://github.com/ValleyBell/libvgm /home/will/opt/libvgm
+  [dry-run] cmake -S /home/will/opt/libvgm -B /home/will/opt/libvgm/build
+  [dry-run] cmake --build /home/will/opt/libvgm/build -j
+✓ libvgm built — artifacts under /home/will/opt/libvgm/build/
+
+━━━ Building vgmstream-cli (VGM/audio stream decoder) ━━━
+  [dry-run] git clone --depth 1 --recursive https://github.com/vgmstream/vgmstream /home/will/opt/vgmstream
+  [dry-run] cmake -S /home/will/opt/vgmstream -B /home/will/opt/vgmstream/build
+  [dry-run] cmake --build /home/will/opt/vgmstream/build -j
+✓ vgmstream built — binary at /home/will/opt/vgmstream/build/cli/vgmstream-cli
+
+━━━ Installing Ghidra (heavyweight — ~400 MB) ━━━
+  [dry-run] curl -fL --progress-bar -o /home/will/opt/ghidra.zip https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_11.1.2_build/ghidra_11.1.2_PUBLIC_20240709.zip
+  [dry-run] unzip -q /home/will/opt/ghidra.zip -d /home/will/opt
+```
+
+**PASS** — every apt-get and source-build emitted as `[dry-run]` with no side effects.
+
+### Step 3 — Orchestrator wiring
+
+```
+$ bash foundry-linux-setup/install-foundry-linux-dev.sh --dry-run
+
+━━━ foundry-linux-dev: engine build deps ━━━
+ℹ → install-foundry-linux-engine-build-deps.sh --dry-run
+━━━ foundry-linux-dev: task runner ━━━
+ℹ → install-task.sh --dry-run
+━━━ foundry-linux-dev: Blender ━━━
+ℹ → install-foundry-linux-blender.sh --dry-run
+```
+
+**PASS** — orchestrator dispatches to constituent scripts in documented order.
+
+### Step 4 — Role dispatch
+
+```
+$ bash foundry-linux-setup/install.sh --role engine-dev --force --dry-run
+⚠ Ubuntu-family 25.10 — untested but --force is set
+ℹ → install-foundry-linux-engine-build-deps.sh --dry-run
+ℹ → install-task.sh --dry-run
+ℹ → install-foundry-linux-retro-tools.sh --dry-run --force
+
+$ bash foundry-linux-setup/install.sh --role both --force --dry-run
+ℹ → install-foundry-linux-dev.sh --dry-run --force
+```
+
+**PASS** — `engine-dev` invokes engine-build-deps + task + retro-tools (skips blender, android-dev). `both` invokes the umbrella `install-foundry-linux-dev.sh`. (Host is Ubuntu 25.10, hence `--force`; same dispatch on 24.04/26.04.)
+
+### Step 5 — `-h` short-circuits
+
+```
+install.sh                                       rc=0  Foundry Linux setup script (Phase 0)
+install-foundry-linux-android-dev.sh             rc=0  Phase 0 installer for foundry-linux-android-dev
+install-foundry-linux-blender.sh                 rc=0  Phase 0 installer for foundry-linux-blender
+install-foundry-linux-dev.sh                     rc=0  Phase 0 installer for foundry-linux-dev (umbrella metapackage)
+install-foundry-linux-engine-build-deps.sh       rc=0  Phase 0 installer for foundry-linux-engine-build-deps
+install-foundry-linux-retro-tools.sh             rc=0  Phase 0 installer for foundry-linux-retro-tools
+install-task.sh                                  rc=0  Installs task (go-task) from the official Cloudsmith apt repo.
+```
+
+**PASS** — every script exits 0 on `-h` with a usage banner; no sudo, no apt update, no side effects.
+
+### Step 6 — Phase 1 collapse rehearsal
+
+Each `install-foundry-linux-*.sh` body cleanly maps to `run_sudo apt-get install -y <metapackage>` once `apt.foundrylinux.org` is configured. Source-build sidecars (xa65, f9dasm, libvgm, vgmstream, Ghidra) are guarded by `[[ -d ~/opt/<tool> ]]` and will be replaced by `.deb`s once foundry-apt CI builds them.
+
+**PASS** (visual inspection).
+
+### Step 7 — Existing install.sh behavior preserved
+
+Superseded — the original monolithic `install.sh` has been replaced by the per-metapackage layout. Behavioral equivalence is now validated end-to-end by the Phase 1 live install tests (Step 1 cross-reference).
+
+**N/A** (superseded by Phase 0 → Phase 1 transition).

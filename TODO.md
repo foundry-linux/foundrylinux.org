@@ -1,0 +1,41 @@
+# TODO — foundrylinux.org
+
+See [`docs/plans/`](docs/plans/) for written plans behind each item, and
+[`docs/investigations/2026-05-16-foundry-linux-distro-proposal.md`](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md) for the full roadmap.
+
+## Open
+
+### Phase 1 — package the source-built retro tools
+
+Phase 0's `install-foundry-linux-retro-tools.sh` source-builds five tools into `~/opt/`. None are real `.deb`s yet, so the `foundry-linux-retro-tools` metapackage can't `Depends:` on them. Each one below needs a `packages/<name>/{DEBIAN/control,build.sh}` and an entry in `build-all.sh`.
+
+- [ ] **xa65** — 6502 cross-assembler. Placeholder dir already exists at `foundry-apt/packages/xa65/` (empty). Most natural first target.
+- [ ] **f9dasm** — 6809 disassembler ([github.com/Arakula/f9dasm](https://github.com/Arakula/f9dasm)).
+- [ ] **libvgm** — chip-register VGM library ([github.com/ValleyBell/libvgm](https://github.com/ValleyBell/libvgm)).
+- [ ] **vgmstream** — VGM/audio stream decoder ([github.com/vgmstream/vgmstream](https://github.com/vgmstream/vgmstream)).
+- [ ] **ghidra** — NSA reverse-engineering suite (currently zip download). Heavyweight (~400 MB); may need a separate metapackage rather than bundling.
+- [ ] After all five ship: have `foundry-linux-retro-tools` Depends on them, then strip the source-build sidecars from `install-foundry-linux-retro-tools.sh`. Plan rehearses this collapse in [`docs/plans/2026-05-17-per-metapackage-install-scripts.md`](docs/plans/2026-05-17-per-metapackage-install-scripts.md) §"Phase 1 collapse rehearsal".
+
+### Phase 2 — Distrobox image
+
+- [ ] Build `ghcr.io/foundry-linux/devbox:26.04` — Containerfile (Kubuntu/Ubuntu 26.04 base) + `apt.foundrylinux.org` configured + `foundry-linux-dev` preinstalled. GHCR workflow for tag-driven publish. Per proposal §"Channel 3 — OCI/container image".
+
+### Phase 3 — Foundry Linux ISO
+
+- [ ] Kubuntu 26.04-based ISO via `livecd-rootfs`. Calamares installer with Foundry Linux branding. Per proposal §"Channel 4 — bootable ISO".
+
+### Housekeeping
+
+- [ ] **Worldfoundry → foundry-linux metapackage rename.** `packages/worldfoundry-{android-dev,blender,dev,engine-build-deps}/` are legacy names. The distro is "Foundry Linux"; consider renaming the metapackages and/or shipping `foundry-linux-*` as aliases that `Depends:` on the WF ones.
+- [ ] **Fresh-VM retro-tools end-to-end test.** Run `install-foundry-linux-retro-tools.sh` (not the metapackage) on a clean Ubuntu 26.04 VM and confirm all source-builds succeed + binaries appear at expected paths.
+- [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
+
+## Done
+
+- 2026-05-18 — [version-deb-links] version numbers in apt index now link to `pool/main/...` `.deb`s; arch-specific code path ready for future arch-split packages.
+- 2026-05-18 — [foundry-apt-live-install-tests] `test/run-test.sh` installs each published metapackage in a fresh Ubuntu 26.04 container, 5/5 pass.
+- 2026-05-18 — [bootstrap-credential-cache] `BOOTSTRAP_CACHE=/tmp/foundry-linux-bootstrap.env`; step 7.5 URL-rewrite rule replaces the free-plan-disallowed redirect phase.
+- 2026-05-17 — [per-metapackage-install-scripts] Phase 0 monolith split into per-metapackage scripts mirroring `foundry-apt/packages/` 1:1; orchestrator + role dispatch.
+- 2026-05-17 — [upgrade-github-actions-node24] `actions/checkout@v6` + `actions/upload-artifact@v7`; `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` removed; shipped as v0.0.8.
+- 2026-05-17 — [foundry-linux-phase1-bootstrap] `apt.foundrylinux.org` live on Cloudflare R2; GPG signing key in CI; publish-on-tag workflow operational.
+- 2026-05-18 — [repo: monorepo home] monorepo pushed to `foundry-linux/foundrylinux.org` (private); `task sync` mirrors `foundry-apt/` subdir to `foundry-linux/foundry-apt` as before.
