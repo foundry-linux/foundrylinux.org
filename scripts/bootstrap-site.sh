@@ -142,11 +142,37 @@ else
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
-# Step 2 — Attach custom domain
-# Cloudflare automatically creates the DNS record (CNAME flattening for apex).
+# Step 2 — DNS CNAME for apex domain
+# Pages does NOT auto-create DNS even when the zone is on the same account.
+# Add a proxied CNAME (Cloudflare flattens it at the apex automatically).
 # ════════════════════════════════════════════════════════════════════════════
 
-info "[2] Attaching custom domain ${CUSTOM_DOMAIN}"
+info "[2] Creating DNS CNAME: ${CUSTOM_DOMAIN} → ${PAGES_PROJECT}.pages.dev"
+if $DRY_RUN; then
+    echo "  [dry-run] POST /zones/.../dns_records {type:CNAME, name:${CUSTOM_DOMAIN}}"
+else
+    CF_ZONE_ID=$(cf_api GET "/zones?name=${CUSTOM_DOMAIN}" | jq -r '.result[0].id')
+    [[ -n "$CF_ZONE_ID" && "$CF_ZONE_ID" != "null" ]] \
+        || die "[2] Zone for ${CUSTOM_DOMAIN} not found — check CF_API_TOKEN has DNS:Edit"
+
+    CNAME_EXISTS=$(cf_api GET "/zones/${CF_ZONE_ID}/dns_records?type=CNAME&name=${CUSTOM_DOMAIN}" \
+        | jq -r '.result[0].id // empty' || true)
+    if [[ -n "$CNAME_EXISTS" ]]; then
+        ok "[2] DNS CNAME already exists"
+    else
+        cf_api POST "/zones/${CF_ZONE_ID}/dns_records" -d "$(jq -n \
+            --arg name    "$CUSTOM_DOMAIN" \
+            --arg content "${PAGES_PROJECT}.pages.dev" \
+            '{type:"CNAME",name:$name,content:$content,proxied:true,comment:"Cloudflare Pages site"}')" >/dev/null
+        ok "[2] DNS CNAME created: ${CUSTOM_DOMAIN} → ${PAGES_PROJECT}.pages.dev"
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════════════════════
+# Step 3 — Attach custom domain to Pages project
+# ════════════════════════════════════════════════════════════════════════════
+
+info "[3] Attaching custom domain ${CUSTOM_DOMAIN} to Pages project"
 if $DRY_RUN; then
     echo "  [dry-run] POST /accounts/.../pages/projects/${PAGES_PROJECT}/domains {name: ${CUSTOM_DOMAIN}}"
 else
@@ -156,23 +182,21 @@ else
         -H "Content-Type: application/json" \
         -d "$(jq -n --arg d "$CUSTOM_DOMAIN" '{name:$d}')" 2>/dev/null || echo '{}')
     if echo "$DOMAIN_RESP" | jq -e '.success == true' &>/dev/null; then
-        ok "[2] Custom domain ${CUSTOM_DOMAIN} attached (DNS record created automatically)"
+        ok "[3] Custom domain ${CUSTOM_DOMAIN} attached"
     elif echo "$DOMAIN_RESP" | jq -r '.errors[].message' 2>/dev/null \
             | grep -qi "already\|conflict\|exist"; then
-        ok "[2] Custom domain ${CUSTOM_DOMAIN} already attached"
+        ok "[3] Custom domain ${CUSTOM_DOMAIN} already attached"
     else
-        warn "[2] Domain attach response: $(echo "$DOMAIN_RESP" | jq -c '.')"
-        warn "[2] If attachment is pending verification, check:"
-        warn "[2]   https://dash.cloudflare.com/${CF_ACCOUNT_ID}/pages/view/${PAGES_PROJECT}/domains"
+        warn "[3] Domain attach response: $(echo "$DOMAIN_RESP" | jq -c '.')"
     fi
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
-# Step 3 — Create scoped CI token for Pages deploy
+# Step 4 — Create scoped CI token for Pages deploy
 # ════════════════════════════════════════════════════════════════════════════
 
 CI_TOKEN_VALUE=""
-info "[3] Creating scoped CI token '${CI_TOKEN_NAME}'"
+info "[4] Creating scoped CI token '${CI_TOKEN_NAME}'"
 
 if $DRY_RUN; then
     CI_TOKEN_VALUE="DRY_RUN_CI_TOKEN"
@@ -184,10 +208,10 @@ else
         || true)
 
     if [[ -z "${PAGES_PERM_ID:-}" ]]; then
-        warn "[3] Could not look up 'Pages Write' permission group automatically."
-        warn "[3] Create the token manually at: https://dash.cloudflare.com/profile/api-tokens"
-        warn "[3]   Name: ${CI_TOKEN_NAME}"
-        warn "[3]   Permission: Pages Write (Account scope)"
+        warn "[4] Could not look up 'Pages Write' permission group automatically."
+        warn "[4] Create the token manually at: https://dash.cloudflare.com/profile/api-tokens"
+        warn "[4]   Name: ${CI_TOKEN_NAME}"
+        warn "[4]   Permission: Pages Write (Account scope)"
         echo ""
         until [[ -n "${CI_TOKEN_VALUE:-}" ]]; do
             read -rsp "  Paste token value (input hidden): " CI_TOKEN_VALUE; echo
@@ -207,24 +231,24 @@ else
               }]
             }')")
         echo "$TOKEN_RESP" | jq -e '.success == true' &>/dev/null \
-            || die "[3] Failed to create CI token: $(echo "$TOKEN_RESP" | jq -c '.errors')"
+            || die "[4] Failed to create CI token: $(echo "$TOKEN_RESP" | jq -c '.errors')"
         CI_TOKEN_VALUE=$(echo "$TOKEN_RESP" | jq -r '.result.value')
-        ok "[3] CI token '${CI_TOKEN_NAME}' created"
+        ok "[4] CI token '${CI_TOKEN_NAME}' created"
     fi
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
-# Step 4 — Wire GitHub Actions secrets
+# Step 5 — Wire GitHub Actions secrets
 # ════════════════════════════════════════════════════════════════════════════
 
-info "[4] Setting GitHub Actions secrets on ${GH_REPO}"
+info "[5] Setting GitHub Actions secrets on ${GH_REPO}"
 if $DRY_RUN; then
     echo "  [dry-run] gh secret set CF_PAGES_API_TOKEN  --repo ${GH_REPO}"
     echo "  [dry-run] gh secret set CF_PAGES_ACCOUNT_ID --repo ${GH_REPO}"
 else
     gh secret set CF_PAGES_API_TOKEN  --repo "${GH_REPO}" --body "${CI_TOKEN_VALUE}"
     gh secret set CF_PAGES_ACCOUNT_ID --repo "${GH_REPO}" --body "${CF_ACCOUNT_ID}"
-    ok "[4] GitHub secrets set"
+    ok "[5] GitHub secrets set"
     gh secret list --repo "${GH_REPO}"
 fi
 
