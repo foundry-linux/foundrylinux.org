@@ -125,74 +125,83 @@ cat > "$OUT" <<HTML
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${SITE_TITLE}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="https://foundrylinux.org/styles.css" />
 <style>
-  :root {
-    --bg:      #0d1117;
-    --surface: #161b22;
-    --border:  #30363d;
-    --fg:      #e6edf3;
-    --dim:     #8b949e;
-    --green:   #3fb950;
-    --blue:    #58a6ff;
-    --mono:    "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
-  }
+  /* apt-index layout — colour/font variables from foundrylinux.org/styles.css */
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--mono);
-    font-size: 14px;
-    line-height: 1.6;
-    padding: 2rem 1rem;
-  }
-  a { color: var(--blue); text-decoration: none; }
+  a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  .wrap { max-width: 860px; margin: 0 auto; }
-  h1 { font-size: 1.4rem; color: var(--green); margin-bottom: .25rem; }
-  .subtitle { color: var(--dim); margin-bottom: 2rem; }
-  h2 { font-size: 1rem; color: var(--dim); text-transform: uppercase;
-       letter-spacing: .08em; margin: 2rem 0 .75rem; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
+  h1 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: .5rem;
+  }
+  .site-title {
+    font-family: var(--font-wordmark);
+    font-size: 2.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: .25rem;
+  }
+  .subtitle { color: var(--ink-soft); margin-bottom: 2rem; font-size: 14px; }
+  h2 {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin: 2.5rem 0 .75rem;
+  }
   pre {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid var(--hairline-strong);
     padding: 1rem 1.25rem;
     overflow-x: auto;
-    white-space: pre;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink);
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-  }
+  table { width: 100%; border-collapse: collapse; border: 1px solid var(--hairline); }
   th {
-    background: var(--border);
-    color: var(--dim);
-    font-size: .8rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    letter-spacing: .06em;
+    color: var(--ink-faint);
     padding: .5rem .75rem;
     text-align: left;
+    border-bottom: 1px solid var(--hairline-strong);
   }
-  td { padding: .5rem .75rem; border-top: 1px solid var(--border); }
-  td:nth-child(1) { white-space: nowrap; }
-  td:nth-child(2) { color: var(--dim); white-space: nowrap; }
+  td { padding: .5rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; }
+  td:nth-child(1) { white-space: nowrap; font-family: var(--font-mono); font-size: 13px; }
+  td:nth-child(2) { color: var(--ink-soft); white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
   footer {
     margin-top: 3rem;
-    color: var(--dim);
-    font-size: .8rem;
-    border-top: 1px solid var(--border);
+    color: var(--ink-faint);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--hairline);
     padding-top: 1rem;
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>${SITE_TITLE}</h1>
-  <p class="subtitle">${SITE_URL} &mdash; signed APT packages for Ubuntu 26.04 (resolute)</p>
+  <h1>APT Repository</h1>
+  <p class="site-title">Foundry Linux</p>
+  <p class="subtitle">${SITE_URL} &mdash; signed packages for Ubuntu 26.04 (resolute)</p>
 
   <h2>Quick install</h2>
   <pre>curl -fsSL ${SITE_URL}/key.gpg \\
@@ -200,7 +209,7 @@ cat > "$OUT" <<HTML
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] ${SITE_URL} resolute main" \\
   | sudo tee /etc/apt/sources.list.d/foundry.list
 sudo apt-get update
-sudo apt-get install worldfoundry-dev</pre>
+sudo apt-get install foundry-linux-retro-tools</pre>
 
   <h2>GPG key</h2>
   <p><a href="/key.gpg">↓ key.gpg</a> &mdash; verify before trusting:
