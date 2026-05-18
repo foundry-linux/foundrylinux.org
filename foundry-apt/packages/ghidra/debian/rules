@@ -1,0 +1,84 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# pre-built upstream distribution — no configure step
+
+override_dh_auto_build:
+	# pre-built upstream distribution — no build step
+
+override_dh_auto_test:
+	# no test suite in the binary distribution
+
+override_dh_auto_install:
+	install -d $(CURDIR)/debian/ghidra/usr/lib/ghidra
+	install -d $(CURDIR)/debian/ghidra/usr/bin
+	# Copy the Ghidra distribution tree (JARs, scripts, native binaries, docs)
+	# Explicitly enumerate top-level items to exclude the debian/ overlay dir.
+	for item in Ghidra Extensions GPL server support docs licenses \
+	            ghidraRun LICENSE bom.json; do \
+	    if [ -e "$(CURDIR)/$$item" ]; then \
+	        cp -a "$(CURDIR)/$$item" $(CURDIR)/debian/ghidra/usr/lib/ghidra/; \
+	    fi; \
+	done
+	# The upstream zip sets +x on essentially everything. Strip it from all
+	# files, then selectively restore it to ELF binaries and shell scripts.
+	find $(CURDIR)/debian/ghidra/usr/lib/ghidra -type f -exec chmod 644 {} +
+	# Re-add +x to ELF binaries (decompile, sleigh, analyzeHeadless, etc.)
+	find $(CURDIR)/debian/ghidra/usr/lib/ghidra -type f -print0 \
+	    | xargs -0 file \
+	    | grep ": ELF " \
+	    | cut -d: -f1 \
+	    | xargs -r chmod 755
+	# Restore +x only to files whose first two bytes are '#!' (shebang at
+	# offset 0). Checking first 2 bytes (not whole-file grep) prevents false
+	# matches on binary files (.whl, .fidbf, .tar.gz) that contain "#!" in
+	# their content but are not scripts.
+	find $(CURDIR)/debian/ghidra/usr/lib/ghidra -type f -print0 \
+	    | xargs -0 -I{} sh -c \
+	      'head -c 2 "$$1" | grep -qF "#!" && chmod 755 "$$1" || true' -- {}
+	# Launcher: resolve symlink so ghidraRun finds its SCRIPT_DIR correctly
+	ln -s /usr/lib/ghidra/ghidraRun \
+	    $(CURDIR)/debian/ghidra/usr/bin/ghidra
+	ln -s /usr/lib/ghidra/support/analyzeHeadless \
+	    $(CURDIR)/debian/ghidra/usr/bin/ghidra-headless
+
+override_dh_fixperms:
+	dh_fixperms
+	# dh_fixperms only restores +x in standard binary dirs (/usr/bin etc.).
+	# Re-apply +x to ELF binaries and shebanged scripts in /usr/lib/ghidra.
+	find $(CURDIR)/debian/ghidra/usr/lib/ghidra -type f -print0 \
+	    | xargs -0 file \
+	    | grep ": ELF " \
+	    | cut -d: -f1 \
+	    | xargs -r chmod 755
+	find $(CURDIR)/debian/ghidra/usr/lib/ghidra -type f -print0 \
+	    | xargs -0 -I{} sh -c \
+	      'head -c 2 "$$1" | grep -qF "#!" && chmod 755 "$$1" || true' -- {}
+
+override_dh_strip:
+	# Strip ELF binaries inside the Ghidra tree; dh_strip skips non-ELF
+	# files (Windows PE .exe/.dll) automatically.
+	dh_strip
+	# dh_strip + objcopy --add-gnu-debuglink may reset permissions on modified
+	# ELF files. Restore +x as the very last step that touches binaries, using
+	# per-file -exec to avoid pipeline parsing issues under fakeroot.
+	# Exclude .so files — shared libraries must be 0644 (Debian Policy §8.1).
+	find $(CURDIR)/debian/ghidra/usr/lib/ghidra -type f \
+	    ! -name "*.so" ! -name "*.so.*" \
+	    -exec sh -c 'file "$$1" | grep -q ": ELF " && chmod 755 "$$1" || true' \
+	    sh {} \;
+
+override_dh_compress:
+	# Do not compress JARs or ZIPs inside the Ghidra tree — they are
+	# already compressed and double-compression wastes CPU with no gain.
+	dh_compress -X.jar -X.zip -X.gz
+
+override_dh_shlibdeps:
+	# Scan the native ELF binaries to resolve shared-library deps.
+	# --dpkg-shlibdeps-params=--ignore-missing-info suppresses warnings
+	# for symbols resolved from JARs (not real sonames).
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info

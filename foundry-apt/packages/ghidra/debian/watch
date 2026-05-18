@@ -1,0 +1,5 @@
+version=4
+# Ghidra tags use Ghidra_<version>_build — capture the numeric version.
+# Note: the release asset is a pre-built zip, not a source tarball.
+https://github.com/NationalSecurityAgency/ghidra/releases \
+    .*/Ghidra_(\d+\.\d+(?:\.\d+)?)_build

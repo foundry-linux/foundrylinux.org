@@ -1,3 +1,12 @@
+foundry-linux-retro-tools (1.0.5) resolute; urgency=medium
+
+  * Promote ghidra from Recommends to Depends — ghidra now ships as a real
+    .deb from the Foundry APT repo (packages/ghidra/, built via the /package
+    skill). Pulls in /usr/bin/ghidra and /usr/bin/ghidra-headless (NSA SRE
+    framework, pre-built 12.1 release, requires openjdk-21-jdk).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 18 May 2026 20:30:00 +0000
+
 foundry-linux-retro-tools (1.0.4) resolute; urgency=medium
 
   * Promote vgmstream from Recommends to Depends — vgmstream now ships as

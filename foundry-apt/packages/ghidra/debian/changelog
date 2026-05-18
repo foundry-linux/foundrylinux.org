@@ -1,0 +1,9 @@
+ghidra (12.1-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of Ghidra 12.1 (2026-05-13 release).
+  * Source: https://github.com/NationalSecurityAgency/ghidra/releases/tag/
+    Ghidra_12.1_build
+  * Pre-built upstream zip; native decompiler is upstream's Linux x86_64
+    binary. Requires openjdk-21-jdk at runtime.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 18 May 2026 20:00:00 +0000

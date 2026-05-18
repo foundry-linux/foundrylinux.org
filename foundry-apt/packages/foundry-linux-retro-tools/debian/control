@@ -23,8 +23,8 @@ Depends: ${misc:Depends},
  xa65,
  f9dasm,
  libvgm,
- vgmstream
-Recommends: ghidra
+ vgmstream,
+ ghidra
 Suggests: java-common
 Description: arcade reverse-engineering and porting toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine:
@@ -32,7 +32,4 @@ Description: arcade reverse-engineering and porting toolchain
  radare2, binwalk, sox (audio conversion), xa65 6502 cross-assembler,
  f9dasm 6800/6809/6309 disassembler, libvgm (vgm-player + vgm2wav for
  chip-register VGM playback and rendering), vgmstream-cli (100+ game audio
- formats decoded to WAV).
- .
- Recommends: ghidra (repackaged from upstream, not yet shipped from the
- Foundry APT repo).
+ formats decoded to WAV), ghidra (NSA SRE framework for binary analysis).

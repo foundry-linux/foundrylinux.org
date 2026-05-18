@@ -1,0 +1,29 @@
+Source: ghidra
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ unzip
+Standards-Version: 4.7.2
+Homepage: https://ghidra-sre.org/
+Rules-Requires-Root: no
+
+Package: ghidra
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ openjdk-21-jdk
+Recommends: python3
+Description: NSA software reverse engineering framework
+ Ghidra is a free and open-source software reverse engineering (SRE) framework
+ developed by the National Security Agency (NSA) Research Directorate. It
+ supports analysis of compiled code on a variety of platforms including Windows,
+ macOS, and Linux.
+ .
+ Features include disassembly, assembly, decompilation, graphing, and scripting,
+ along with hundreds of built-in analysers for ELF, PE, Mach-O, raw binaries,
+ and cartridge formats. A plugin API enables custom analysers written in Java or
+ Python (via Jython/PyGhidra).
+ .
+ This package ships the pre-built official Linux release from upstream. The
+ native decompiler (support/decompile) is a pre-compiled x86_64 ELF binary.
+ Run with the ghidra command or ghidra-headless for batch (non-GUI) analysis.
