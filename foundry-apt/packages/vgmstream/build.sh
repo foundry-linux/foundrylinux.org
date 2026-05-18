@@ -76,8 +76,9 @@ echo "=== Copying debian/ tree into source ==="
 cp -a "$PKG_DIR/debian" "$SRC_DIR/"
 
 echo "=== Installing Build-Depends ==="
-if [[ $EUID -eq 0 ]] && command -v apt-get >/dev/null; then
-    apt-get install -y --no-install-recommends \
+if command -v apt-get >/dev/null; then
+    _apt() { [[ $EUID -eq 0 ]] && apt-get "$@" || sudo apt-get "$@"; }
+    _apt install -y --no-install-recommends \
         cmake yasm libmpg123-dev libvorbis-dev libspeex-dev libopus-dev \
         libavcodec-dev libavformat-dev libavutil-dev libswresample-dev
 fi
