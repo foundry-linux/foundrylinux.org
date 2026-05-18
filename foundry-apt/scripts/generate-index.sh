@@ -171,7 +171,8 @@ cat > "$OUT" <<HTML
     line-height: 1.7;
     color: var(--ink);
   }
-  table { width: 100%; border-collapse: collapse; border: 1px solid var(--hairline); }
+  .table-wrap { border: 1px solid var(--hairline); }
+  table { width: 100%; border-collapse: collapse; }
   th {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -216,11 +217,13 @@ sudo apt-get install foundry-linux-retro-tools</pre>
      <code>gpg --show-keys /etc/apt/keyrings/foundry.gpg</code></p>
 
   <h2>Packages</h2>
+  <div class="table-wrap">
   <table>
     <thead><tr><th>Package</th><th>Version</th><th>Description</th></tr></thead>
     <tbody>${PKG_ROWS}
     </tbody>
   </table>
+  </div>
 
   <h2>Source</h2>
   <p><a href="${GITHUB_URL}">${GITHUB_URL}</a></p>
