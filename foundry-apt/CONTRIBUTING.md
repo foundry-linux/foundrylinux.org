@@ -7,7 +7,7 @@ Thanks for considering a contribution! This repo is the signed [APT repo](https:
 | Most useful | Examples |
 |---|---|
 | **Bug fixes** | A metapackage `Depends:` line references the wrong package; CI runs out of disk; sign.sh fails on a key with a passphrase. |
-| **New vendored upstream packages** | Repackage `xa65`, an updated `f9dasm`, a newer `vgmstream` release. Each one needs a `packages/<name>/` dir, a build script, and the upstream's licence preserved under `/usr/share/doc/<name>/`. |
+| **New vendored upstream packages** | A new tool we want shipped (`vgmstream`, `libvgm`, Ghidra…) or a bump of an existing one (`f9dasm`). Each goes through the [`/package`](#) Claude Code skill which generates the Debian source-package tree. |
 | **New metapackages** | A focused bundle (e.g. `foundry-linux-shaders-dev`) that pulls in a curated set of system deps. |
 | **CI hardening** | shellcheck-clean scripts; arm64 build matrix; a `--dry-run` mode for sign.sh that uses a throwaway GPG key. |
 
@@ -18,31 +18,73 @@ Thanks for considering a contribution! This repo is the signed [APT repo](https:
 3. **Don't bump versions in your PR** — the maintainer bumps them at tag time so versioning stays linear.
 4. Sign your commits if you can (`git commit -S`). Not required, encouraged.
 
+Every package in this repo uses the **canonical Debian source-package layout** — `packages/<name>/debian/{control,changelog,rules,source/format,copyright}` — built with `dpkg-buildpackage`. That's the same layout Debian and Ubuntu use for every package in their archives. We don't author uppercase `DEBIAN/control` (it's a *generated* artifact inside built `.deb`s, not authored input).
+
 ## Adding a metapackage
 
-1. `mkdir -p packages/foundry-linux-<thing>/DEBIAN`
-2. Write `packages/foundry-linux-<thing>/DEBIAN/control` matching the format of the existing five — Section: metapackages, Architecture: all, Depends: …
-3. `bash scripts/build-all.sh` to verify it builds.
-4. Update `packages/foundry-linux-dev/DEBIAN/control` if the new package should be pulled in by the top-level metapackage.
-5. Mention it in `README.md`'s table.
+1. `mkdir -p packages/foundry-linux-<thing>/debian/source`
+2. Create `debian/control`:
+
+    ```
+    Source: foundry-linux-<thing>
+    Section: metapackages
+    Priority: optional
+    Maintainer: World Foundry <packages@worldfoundry.org>
+    Build-Depends: debhelper-compat (= 13)
+    Standards-Version: 4.7.0
+    Homepage: https://foundrylinux.org/
+    Rules-Requires-Root: no
+
+    Package: foundry-linux-<thing>
+    Architecture: all
+    Depends: ${misc:Depends},
+     <your-deps-here>
+    Description: <one-line summary>
+     <multi-line description, each continuation line begins with single space>
+    ```
+
+3. Create `debian/changelog` (use `dch --create -v 1.0.0 -D resolute --package foundry-linux-<thing>`, or hand-write the first entry).
+4. Create `debian/rules` (executable, mode 0755):
+
+    ```make
+    #!/usr/bin/make -f
+    %:
+    	dh $@
+    ```
+
+5. Create `debian/source/format`:
+
+    ```
+    3.0 (native)
+    ```
+
+6. Create `debian/copyright` (DEP-5 format — see existing metapackages for the MIT-for-packaging boilerplate).
+7. `task build` to verify it builds; `task verify` to inspect the produced `.deb`.
+8. Update `packages/foundry-linux-dev/debian/control` if the new package should be pulled in by the top-level metapackage.
+9. Mention it in `README.md`'s table.
 
 ## Adding a vendored upstream package
 
-We repackage upstream binaries (or rebuild from source) when:
-- The package isn't in the Ubuntu archive at all (e.g. [`task`](https://github.com/go-task/task), `xa65`), **or**
-- The Ubuntu version is too old (e.g. Ghidra in 24.04 is years behind).
+**Step 0 — always check Ubuntu universe first.** Run `apt-cache policy <pkg>` on a fresh `ubuntu:26.04` container. If universe ships it, the right move is to add it to the Phase 0 apt-install list and the metapackage `Depends:` — don't duplicate. (xa65 turned out to already be in 26.04 universe; we wasted a packaging cycle before catching it.)
 
-Steps:
+For packages *genuinely* missing from Ubuntu, use the [`/package`](#) Claude Code skill (`~/.claude/skills/package/SKILL.md`). It:
 
-1. `mkdir packages/<name>/`
-2. Write `packages/<name>/build.sh` that:
-   - Fetches the upstream artefact (pin a SHA256 — use `curl -fL … && echo "<sha>  -" | sha256sum -c -`)
-   - Stages files into a `staging/` dir per the [Debian filesystem hierarchy](https://www.debian.org/doc/packaging-manuals/fhs/) (`usr/bin/`, `usr/share/doc/<name>/copyright`, etc.)
-   - Writes `staging/DEBIAN/control` from a template, substituting the upstream version
-   - Runs `dpkg-deb --build staging dist/<name>_<version>_<arch>.deb`
-3. `bash scripts/build-all.sh` — it auto-detects packages with a `build.sh` and runs them before `dpkg-deb --build` is invoked on the staging tree.
-4. Add the upstream's licence to `LICENSES-VENDORED.md`.
-5. Confirm `dpkg-deb --info` shows the right metadata and `dpkg-deb --contents` shows the files in the right place.
+1. Re-checks Ubuntu universe (blocking).
+2. Vendors the upstream tarball (sha256-pinned).
+3. Generates the `debian/` source tree via `dh_make`.
+4. Patches in Foundry-customized fields (Maintainer, Section, etc.) from the templates.
+5. Writes `packages/<name>/{build.sh, debian/}` — `build.sh` is a thin wrapper that fetches the tarball, overlays our `debian/`, and runs `dpkg-buildpackage -us -uc -b`.
+
+The skill gives you a Debian-policy-compliant package for free: `dh_strip` runs by default (debug info stripped), `dh_shlibdeps` resolves `${shlibs:Depends}` accurately, build hardening flags (PIE, stack-protector, FORTIFY_SOURCE) come from `/usr/share/dpkg/buildflags.mk`, and the resulting source package is exportable to a PPA.
+
+If you can't use `/package` (no Claude Code, working offline, etc.), the manual steps are the same as what the skill does — see [`docs/plans/2026-05-18-package-skill.md`](../docs/plans/2026-05-18-package-skill.md) for the exact pipeline and [`docs/plans/2026-05-18-canonical-debian-layout.md`](../docs/plans/2026-05-18-canonical-debian-layout.md) for the layout specifics.
+
+After packaging:
+
+1. `task build` to verify; `dpkg-deb -I` shows resolved `${shlibs:Depends}` with version constraints; `file usr/bin/<binary>` reports "stripped".
+2. `lintian dist/<name>_*.deb` — should be clean before committing.
+3. Add the upstream's licence to `LICENSES-VENDORED.md`.
+4. Add the new package to the relevant metapackage's `debian/control` `Depends:` (and bump the metapackage's `debian/changelog` with `dch -v <new-ver> ...`).
 
 ## Releasing
 

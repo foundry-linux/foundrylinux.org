@@ -9,7 +9,7 @@ Two sibling directories, two phases:
 | Directory | Purpose |
 |-----------|---------|
 | `foundry-linux-setup/` | **Phase 0** — bash curl installer; runs on a stock Ubuntu box |
-| `foundry-apt/` | **Phase 1** — signed APT repo (vendored upstreams not in Ubuntu — starting with `task`) |
+| `foundry-apt/` | **Phase 1** — signed APT repo (metapackages + vendored upstreams not in Ubuntu, e.g. `f9dasm`) |
 
 The distro roadmap: Phase 0 (this repo) → Phase 1 (APT repo, this repo) → Phase 2 (`ghcr.io/foundry-linux/devbox:26.04` Distrobox) → Phase 3 (Foundry Linux ISO).
 
@@ -33,15 +33,30 @@ foundry-linux-setup/
 
 ### Phase 1: APT repo
 
+Every package in `foundry-apt/packages/` uses the **canonical Debian source-package layout** — the same `debian/{control,changelog,rules,source/format,copyright}` tree that real Debian and Ubuntu archive packages use. `dpkg-buildpackage` consumes it and produces a `.deb`. There is no `DEBIAN/` (uppercase) authored directory — that's a generated artifact inside built `.deb`s, not authored input. (The deprecated legacy exception is `packages/xa65/` which still uses uppercase `DEBIAN/control` until it's repackaged with `/package` — see TODO.md.)
+
 ```
 foundry-apt/
-  packages/<metapackage>/DEBIAN/control   one per metapackage
-  packages/task/build.sh                  fetch upstream binary + build .deb
-  scripts/build-all.sh                    build every .deb → dist/
-  scripts/init-repo.sh                    aptly repo create (idempotent)
-  scripts/publish-local.sh               aptly publish → ./public/
-  .github/workflows/publish.yml          tag push → build + sign + sync to Cloudflare R2
+  packages/<name>/debian/                  Debian source-package format (canonical)
+    control                                Source: + Package: stanzas
+    changelog                              authoritative version source
+    rules                                  one-line "%: dh $@" (executable)
+    source/format                          "3.0 (native)" for metapackages
+                                           "3.0 (quilt)" for vendored upstreams
+    copyright                              DEP-5 format
+    [patches/series]                       optional quilt patches for vendored upstreams
+    [watch]                                optional uscan tracker for vendored upstreams
+  packages/<name>/build.sh                 only for vendored upstreams (e.g. f9dasm) —
+                                           fetches sha256-pinned tarball, overlays debian/,
+                                           runs dpkg-buildpackage
+  scripts/build-all.sh                     dispatch: build.sh wrapper, else dpkg-buildpackage
+  scripts/init-repo.sh                     aptly repo create (idempotent)
+  scripts/publish-local.sh                 aptly publish → ./public/
+  scripts/generate-index.sh                parse packages/*/debian/ → public/index.html
+  .github/workflows/publish.yml            tag push → build + sign + sync to Cloudflare R2
 ```
+
+To package a new upstream as a `.deb`, use the **`/package` skill** (`~/.claude/skills/package/SKILL.md`) — it checks Ubuntu universe first, generates the `debian/` tree via `dh_make`, and patches it with Foundry-customized fields. Don't hand-roll `dpkg-deb --build`.
 
 Hosted on Cloudflare R2 at `apt.foundrylinux.org`. Credentials: GPG signing key + R2 CI tokens in GitHub Actions secrets (CI use); all backed up to a private `foundry-linux-secrets` R2 bucket for disaster recovery. No AWS account required. See `foundry-apt/docs/infra-setup.md` for one-time setup checklist.
 
@@ -94,6 +109,8 @@ To release Phase 1: `git tag v1.0.1 && git push origin v1.0.1` — the publish w
 - `foundry-linux` — this repo and all Foundry Linux distro repos
 - `wbniv` — WorldFoundry engine repos (WorldFoundry, wf-games); out of scope here
 
-**Metapackage version bumps:** `1.0.x` for dep changes, `1.x.0` for new packages. After editing `DEBIAN/control`, run `task build` to verify.
+**Package version bumps:** edit `debian/changelog` (add a new top entry — preferably via `dch -v <NEW> -D resolute "what changed"`). Don't put `Version:` in `debian/control`; the changelog is authoritative. `1.0.x` for dep changes, `1.x.0` for new packages. After bumping, `task build` to verify.
 
-**Vendored upstreams** (e.g. `packages/task/`): edit the version + sha256 at the top of `build.sh`, re-pin with `curl -fsSL <url> | sha256sum`, then `task build`.
+**Vendored upstreams** (e.g. `packages/f9dasm/`): edit `UPSTREAM_VERSION` + `SHA256` at the top of `build.sh`, re-pin with `curl -fsSL <url> | sha256sum`, add a new `debian/changelog` entry, then `task build`. Use the `/package` skill for new vendored packages — see [`docs/plans/2026-05-18-package-skill.md`](docs/plans/2026-05-18-package-skill.md).
+
+**Always check Ubuntu universe first.** Before packaging *any* source-built tool, run `apt-cache policy <pkg>` on a fresh `ubuntu:26.04` container. If universe ships it, add it to the Phase 0 apt-install list and the metapackage `Depends:` — don't duplicate. (Lesson from xa65, which we accidentally re-packaged when it was already in 26.04 universe.)

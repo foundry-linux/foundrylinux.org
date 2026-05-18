@@ -4,22 +4,27 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 
 | Package | Upstream | Licence | Where the text lives in the .deb |
 |---|---|---|---|
-| `task` | [go-task/task](https://github.com/go-task/task) | [MIT](https://github.com/go-task/task/blob/main/LICENSE) | `/usr/share/doc/task/copyright` |
+| `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | [GPL-2.0+](https://github.com/Arakula/f9dasm) | `/usr/share/doc/f9dasm/copyright` |
+| `xa65` (legacy, deprecated) | [fachat/xa65](https://github.com/fachat/xa65) ([Cameron Kaiser](https://www.floodgap.com/retrotech/xa/)) | [GPL-2.0+](https://www.floodgap.com/retrotech/xa/) | `/usr/share/doc/xa65/copyright` |
 
 ## Planned future entries (not yet shipped)
 
 | Package | Upstream | Licence | Notes |
 |---|---|---|---|
 | `ghidra` | [NSA / Ghidra](https://ghidra-sre.org/) | [Apache-2.0](https://github.com/NationalSecurityAgency/ghidra/blob/master/LICENSE) | Big tarball (~400 MB); host on R2. |
-| `f9dasm` | [F9DASM](http://www.df.lth.se.orbin.se/~triad/f9dasm/) | [GPL-2.0](http://www.df.lth.se.orbin.se/~triad/f9dasm/f9dasm.html) | Compiles from source — small. |
 | `vgmstream` | [vgmstream/vgmstream](https://github.com/vgmstream/vgmstream) | [ISC](https://github.com/vgmstream/vgmstream/blob/master/COPYING) | Audio decode for legacy formats. |
 | `libvgm` | [ValleyBell/libvgm](https://github.com/ValleyBell/libvgm) | [GPL-2.0+](https://github.com/ValleyBell/libvgm/blob/master/LICENSE) | Sound chip emulation library. |
-| `xa65` | [André Fachat](https://www.floodgap.com/retrotech/xa/) | [GPL-2.0+](https://www.floodgap.com/retrotech/xa/) | 6502 cross-assembler. |
+
+## Retired entries
+
+| Package | Reason |
+|---|---|
+| `task` | The official Cloudsmith apt repo (`deb.taskfile.dev`) is the easiest source — Phase 0's `install-task.sh` configures it directly, no in-repo vendoring needed. |
 
 ## Foundry-authored content
 
-- Metapackage control files (`packages/*/DEBIAN/control`)
-- Helper scripts (`scripts/*.sh`)
-- aptly config + GitHub Actions workflows
+- Metapackage source trees (`packages/<name>/debian/`) — MIT for the packaging metadata itself
+- Helper scripts (`scripts/*.sh`) — GPL-2.0
+- aptly config + GitHub Actions workflows — GPL-2.0
 
-All [GPL-2.0](LICENSE), matching the World Foundry engine.
+The full project licence is [GPL-2.0](LICENSE), matching the World Foundry engine.
