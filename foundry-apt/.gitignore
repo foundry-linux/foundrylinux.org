@@ -1,3 +1,12 @@
 /dist/
 /public/
 /.aptly/
+# dpkg-buildpackage artifacts that land outside dist/ when built locally
+packages/**/.debhelper/
+packages/**/debhelper-build-stamp
+packages/**/files
+packages/**/*.substvars
+packages/**/*.buildinfo
+packages/**/*.changes
+packages/**/debian/*/
+packages/**/*.deb
