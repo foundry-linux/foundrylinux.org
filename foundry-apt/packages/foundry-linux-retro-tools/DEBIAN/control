@@ -1,5 +1,5 @@
 Package: foundry-linux-retro-tools
-Version: 1.0.0
+Version: 1.0.1
 Architecture: all
 Maintainer: World Foundry <packages@worldfoundry.org>
 Section: metapackages
@@ -13,20 +13,19 @@ Depends: mame,
  radare2,
  binwalk,
  sox,
- binutils-m68k-linux-gnu
+ binutils-m68k-linux-gnu,
+ xa65
 Recommends: ghidra,
  f9dasm,
  vgmstream,
- libvgm,
- xa65
+ libvgm
 Suggests: java-common
 Homepage: https://foundrylinux.org/
 Description: arcade reverse-engineering and porting toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine:
  MAME (debugger + tools), 6502/Z80/68k disassemblers and assemblers,
- radare2, binwalk, sox (audio conversion).
+ radare2, binwalk, sox (audio conversion), xa65 6502 cross-assembler.
  .
- Recommends includes packages we ship ourselves (Ghidra repackaged
- from the Apache upstream, f9dasm, vgmstream, libvgm, xa65) — they're
- not in the Ubuntu archive but are available from the Foundry APT
- repo.
+ Recommends includes packages we ship ourselves but haven't packaged
+ yet (Ghidra repackaged from upstream, f9dasm, vgmstream, libvgm) —
+ they'll move to Depends as each ships from the Foundry APT repo.

@@ -9,7 +9,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 Phase 0's `install-foundry-linux-retro-tools.sh` source-builds five tools into `~/opt/`. None are real `.deb`s yet, so the `foundry-linux-retro-tools` metapackage can't `Depends:` on them. Each one below needs a `packages/<name>/{DEBIAN/control,build.sh}` and an entry in `build-all.sh`.
 
-- [ ] **xa65** — 6502 cross-assembler. Placeholder dir already exists at `foundry-apt/packages/xa65/` (empty). Most natural first target.
+- [ ] **xa65** — 6502 cross-assembler. **In flight** — see [`docs/plans/2026-05-18-package-xa65.md`](docs/plans/2026-05-18-package-xa65.md). Vendoring `xa-2.4.1` tarball from `github.com/fachat/xa65`. Will be the first non-meta `.deb` and the first row to exercise the dormant arch-split path in `generate-index.sh`.
 - [ ] **f9dasm** — 6809 disassembler ([github.com/Arakula/f9dasm](https://github.com/Arakula/f9dasm)).
 - [ ] **libvgm** — chip-register VGM library ([github.com/ValleyBell/libvgm](https://github.com/ValleyBell/libvgm)).
 - [ ] **vgmstream** — VGM/audio stream decoder ([github.com/vgmstream/vgmstream](https://github.com/vgmstream/vgmstream)).
@@ -26,6 +26,7 @@ Phase 0's `install-foundry-linux-retro-tools.sh` source-builds five tools into `
 
 ### Housekeeping
 
+- [ ] **Phase 0 configures foundry-apt as an apt source.** `foundry-linux-setup/install.sh` (or a sibling `setup-foundry-apt-source.sh`) should add `https://apt.foundrylinux.org` to `sources.list.d`, import the signing key, and `apt-get update` — before any per-meta script runs. Unblocks stripping the Phase 0 source-build sidecars (`xa65`, then `f9dasm`, `libvgm`, etc., as each gets packaged). Pattern reference: `install-task.sh` (adds Cloudsmith apt repo for `task`).
 - [ ] **Worldfoundry → foundry-linux metapackage rename.** `packages/worldfoundry-{android-dev,blender,dev,engine-build-deps}/` are legacy names. The distro is "Foundry Linux"; consider renaming the metapackages and/or shipping `foundry-linux-*` as aliases that `Depends:` on the WF ones.
 - [ ] **Fresh-VM retro-tools end-to-end test.** Run `install-foundry-linux-retro-tools.sh` (not the metapackage) on a clean Ubuntu 26.04 VM and confirm all source-builds succeed + binaries appear at expected paths.
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
