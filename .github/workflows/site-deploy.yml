@@ -20,4 +20,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_PAGES_API_TOKEN }}
           accountId: ${{ secrets.CF_PAGES_ACCOUNT_ID }}
-          command: pages deploy site/ --project-name foundrylinux-org
+          command: pages deploy site/ --project-name foundrylinux-org --branch main

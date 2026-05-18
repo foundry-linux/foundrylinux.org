@@ -29,6 +29,14 @@ warn() { echo "  [warn]  $*" >&2; }
 err()  { echo "  [error] $*" >&2; }
 die()  { err "$*"; exit 1; }
 
+cache_set() {
+    local key="$1" val="$2"
+    { grep -v "^${key}=" "$BOOTSTRAP_CACHE" 2>/dev/null || true
+      printf '%s=%q\n' "$key" "$val"
+    } > "${BOOTSTRAP_CACHE}.tmp" && mv "${BOOTSTRAP_CACHE}.tmp" "$BOOTSTRAP_CACHE"
+    chmod 600 "$BOOTSTRAP_CACHE"
+}
+
 usage() {
     sed -n '2,10p' "$0" | sed 's/^# //'
     exit 0
@@ -86,6 +94,7 @@ if ! $DRY_RUN; then
         [[ -n "$CF_ACCOUNT_ID" && "$CF_ACCOUNT_ID" != "null" ]] \
             || die "Could not retrieve CF_ACCOUNT_ID — check CF_API_TOKEN permissions"
         export CF_ACCOUNT_ID
+        cache_set CF_ACCOUNT_ID "$CF_ACCOUNT_ID"
     fi
 
     # Verify the token has Cloudflare Pages access.
