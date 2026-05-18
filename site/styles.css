@@ -136,6 +136,13 @@ body[data-bg="textured"] {
   vertical-align: 1px;
 }
 
+@media (max-width: 600px) {
+  .topbar-version { display: none; }
+  .topbar-mark b { display: none; }
+  .topbar-nav { gap: 16px; font-size: 10px; letter-spacing: 0.07em; }
+  .topbar-nav a { white-space: nowrap; }
+}
+
 /* ============================ HERO ============================ */
 
 .hero {
