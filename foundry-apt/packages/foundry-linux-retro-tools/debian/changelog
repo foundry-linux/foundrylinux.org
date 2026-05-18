@@ -1,3 +1,14 @@
+foundry-linux-retro-tools (1.0.4) resolute; urgency=medium
+
+  * Promote vgmstream from Recommends to Depends — vgmstream now ships as
+    a real .deb from the Foundry APT repo (packages/vgmstream/, built via
+    the /package skill). Pulls in /usr/bin/vgmstream-cli (100+ game-audio
+    formats decoded to WAV).
+  * Mention vgmstream-cli in the short description.
+  * Remove vgmstream from Recommends comment (only ghidra remains).
+
+ -- World Foundry <packages@worldfoundry.org>  Mon, 18 May 2026 14:45:00 +0000
+
 foundry-linux-retro-tools (1.0.3) resolute; urgency=medium
 
   * Promote libvgm from Recommends to Depends — libvgm now ships as a

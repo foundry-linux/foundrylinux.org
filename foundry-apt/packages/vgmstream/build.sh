@@ -11,7 +11,7 @@
 #   5. Moves the resulting .deb into $REPO_ROOT/dist/
 #
 # Build deps the CI runner needs (publish.yml installs these):
-#   build-essential debhelper dpkg-dev lintian cmake yasm
+#   build-essential debhelper dpkg-dev lintian pkg-config cmake yasm
 #   libmpg123-dev libvorbis-dev libspeex-dev libopus-dev
 #   libavformat-dev libavcodec-dev libavutil-dev libswresample-dev
 #

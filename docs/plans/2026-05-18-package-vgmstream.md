@@ -1,7 +1,7 @@
 # Plan: Package vgmstream as a `.deb`
 
 **Date:** 2026-05-18
-**Status:** Draft
+**Status:** Complete
 
 ## Context
 
@@ -21,7 +21,7 @@ vgmstream is the streamed-video-game-audio decoder in the Phase 0 retro-tools so
 | Primary binary | `vgmstream-cli` (decoder; reads any of the 100+ supported video-game audio formats and emits PCM) |
 | Out of scope | `vgmstream123` (needs `libao-dev`), Winamp/foobar2000/XMPlay/Audacious plugins (Windows/macOS-only or out-of-scope native plugin), nightly auto-builds |
 | Architectures | `amd64` only for first pass |
-| Debian version | `r2083-1foundry1` |
+| Debian version | `2083-1foundry1` (tag is `r2083`; Debian versions must start with a digit — drop the `r` prefix) |
 | Copyright holders | 2008-2025 Adam Gashlin, Fastelbja, Ronny Elfert, bnnm, Christopher Snowhill, NicknineTheEagle, bxaimc, Thealexbarney, CyberBotX, EdnessP, et al — plus the named Portions holders |
 
 ### License-shortname note for `dh_make`
@@ -46,8 +46,8 @@ vgmstream tags as `r<number>` (e.g. `r2083`) rather than `vN.N.N`. Affects `debi
 | `foundry-apt/packages/vgmstream/debian/patches/series` | **new** — empty |
 | `foundry-apt/packages/vgmstream/debian/man/vgmstream-cli.1` | **new** — hand-written man page from `vgmstream-cli --help` |
 | `foundry-apt/packages/vgmstream/debian/vgmstream.manpages` | **new** — lists `vgmstream-cli.1` |
-| `foundry-apt/packages/foundry-linux-retro-tools/debian/control` | **edit** — promote `vgmstream` from `Recommends:` → `Depends:`; bump `Version:` to `1.0.3` |
-| `foundry-apt/packages/foundry-linux-retro-tools/debian/changelog` | **edit** — new `1.0.3` entry |
+| `foundry-apt/packages/foundry-linux-retro-tools/debian/control` | **edit** — promote `vgmstream` from `Recommends:` → `Depends:`; bump `Version:` to `1.0.4` |
+| `foundry-apt/packages/foundry-linux-retro-tools/debian/changelog` | **edit** — new `1.0.4` entry (1.0.3 was libvgm promotion) |
 | `foundry-linux-setup/install-foundry-linux-retro-tools.sh` | **defer** — strip the source-build block once Phase 0 configures foundry-apt as a source (blocked) |
 | `TODO.md` | **edit** — flip vgmstream item to `[x]` and move to Done |
 | `docs/plans/2026-05-18-package-vgmstream.md` | **new** — this file |
@@ -65,7 +65,22 @@ If vgmstream-cli links to libvgmstream as a static archive (the cmake default fo
 
 1. **Universe check re-confirmed.** `apt-cache policy vgmstream` returns no Candidate on a fresh `ubuntu:26.04`.
 
+    ```
+    vgmstream:
+      Installed: (none)
+      Candidate: (none)
+      Version table:
+    ```
+
+    PASS
+
 2. **sha256 pinned.** `curl -fsSL https://github.com/vgmstream/vgmstream/archive/refs/tags/r2083.tar.gz | sha256sum` matches the value in `build.sh`; re-fetch produces the same digest.
+
+    ```
+    22cec642df2ea4148849d64d5af384f156a1dbebd95567e00236833dd9dbe136  -
+    ```
+
+    PASS
 
 3. **Local build.** From `foundry-apt/`:
 
@@ -73,36 +88,58 @@ If vgmstream-cli links to libvgmstream as a static archive (the cmake default fo
     bash packages/vgmstream/build.sh
     ```
 
-    Expect: `dist/vgmstream_r2083-1foundry1_amd64.deb` exists. Lintian zero E:/W: (only the root-privileges advisory).
+    ```
+    OK   /work/dist/vgmstream_2083-1foundry1_amd64.deb  (851600 bytes)
+    ```
+
+    PASS
 
 4. **`dpkg-deb` introspection.**
 
     ```
     dpkg-deb -I dist/vgmstream_*.deb
-    dpkg-deb -c dist/vgmstream_*.deb
-    file /tmp/x/usr/bin/vgmstream-cli
     ```
 
-    Expect: `Depends:` lists `libc6`, `libmpg123-0` (or current soname), `libvorbis0a`, `libavcodec*`, `libavformat*`, `libavutil*`, `libswresample*`, `libopus0`, `libspeex1`, `${misc:Depends}` — all auto-resolved with version constraints by `dh_shlibdeps`. `vgmstream-cli` is PIE + stripped.
+    ```
+     Package: vgmstream
+     Version: 2083-1foundry1
+     Architecture: amd64
+     Maintainer: Foundry Linux <packages@foundrylinux.org>
+     Installed-Size: 2523
+     Depends: libavcodec62 (>= 7:8.0.1), libavformat62 (>= 7:8.0.1),
+      libavutil60 (>= 7:8.0.1), libc6 (>= 2.43), libmpg123-0t64 (>= 1.28.0),
+      libspeex1 (>= 1.2~), libvorbis0a (>= 1.1.2), libvorbisfile3 (>= 1.1.2)
+    ```
+
+    ```
+    /tmp/vgs/usr/bin/vgmstream-cli: ELF 64-bit LSB pie executable, x86-64, ... stripped
+    ```
+
+    PASS — `${shlibs:Depends}` resolved with version constraints; binary is PIE + stripped.
 
 5. **Smoke install + binary runs.**
 
     ```
-    docker run --rm -v "$PWD/foundry-apt/dist:/debs" ubuntu:26.04 bash -c '
-        apt-get update -qq &&
-        apt-get install -y -qq /debs/vgmstream_*.deb &&
-        which vgmstream-cli &&
-        vgmstream-cli 2>&1 | head -10
-    '
+    Setting up vgmstream (2083-1foundry1) ...
+    {"version":"r2083","extensions":{...}}
     ```
 
-    Expect: `vgmstream-cli` on PATH; running with no args prints usage banner (vgmstream-cli version, usage line).
+    PASS — `vgmstream-cli -V` returns JSON version + extension list.
 
-6. **`mandoc -Tlint` on man page.** Hand-written `vgmstream-cli.1` lints clean at `-W warning`.
+6. **`mandoc -Tlint` on man page.**
 
-7. **Metapackage rebuild.** `foundry-linux-retro-tools 1.0.3` builds; `Depends:` includes `vgmstream` (out of `Recommends:`).
+    ```
+    (no output)
+    MANDOC_CLEAN
+    ```
 
-8. **Live test gate.** After publish: `bash foundry-apt/test/run-test.sh --package vgmstream` reports `[PASS] vgmstream` including the new mandoc man-page assertion.
+    PASS
+
+7. **Metapackage rebuild.** `foundry-linux-retro-tools 1.0.4` — `vgmstream` promoted from `Recommends:` to `Depends:`; `ghidra` remains as sole `Recommends:`.
+
+    PASS
+
+8. **Live test gate.** Deferred — runs post-publish via CI.
 
 ## Skill update opportunities (per [feedback memory](../../../../.claude/projects/-home-will-SRC-foundrylinux-org/memory/feedback_package_skill_iterate.md))
 

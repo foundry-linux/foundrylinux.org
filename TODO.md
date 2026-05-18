@@ -7,15 +7,14 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### Phase 1 — package the source-built retro tools
 
-Phase 0's `install-foundry-linux-retro-tools.sh` source-built five tools into `~/opt/`. xa65 (Universe), f9dasm, and libvgm are now resolved via apt. The two below are still source-built sidecars. Use the `/package` skill — each new package needs `packages/<name>/debian/` + `build.sh`.
+Phase 0's `install-foundry-linux-retro-tools.sh` source-built five tools into `~/opt/`. xa65 (Universe), f9dasm, libvgm, and vgmstream are now resolved via apt. Only ghidra remains as an open item. Use the `/package` skill — each new package needs `packages/<name>/debian/` + `build.sh`.
 
 **Rule, learned the hard way (2026-05-18):** *before* packaging any source-built tool, run `apt-cache policy <pkg>` on a fresh `ubuntu:26.04`. If Ubuntu universe ships it, just add it to the Phase 0 apt-install list and the metapackage `Depends:` — don't duplicate.
 
 - [x] ~~**xa65**~~ — retired. Ubuntu 26.04 universe ships `xa65 2.4.1-0.1build1`. `packages/xa65/` deleted; Phase 0 retro-tools script apt-installs xa65; `foundry-linux-retro-tools` `Depends: xa65` resolves to universe. See [`docs/plans/2026-05-18-retire-xa65.md`](docs/plans/2026-05-18-retire-xa65.md).
-- [ ] **`/package` skill** ([plan](docs/plans/2026-05-18-package-skill.md)) — reusable Claude Code skill using `dh_make` + `debhelper` + `dpkg-buildpackage`. Use for the two below.
-- [ ] **vgmstream** — VGM/audio stream decoder ([github.com/vgmstream/vgmstream](https://github.com/vgmstream/vgmstream)). Confirmed not in Ubuntu universe. Stub in `packages/vgmstream/`.
+- [x] **`/package` skill** ([plan](docs/plans/2026-05-18-package-skill.md)) — reusable Claude Code skill using `dh_make` + `debhelper` + `dpkg-buildpackage`. Iteratively refined through f9dasm, libvgm, and vgmstream packaging runs.
 - [ ] **ghidra** — NSA reverse-engineering suite (currently zip download). Confirmed not in Ubuntu universe. Heavyweight (~400 MB); may need a separate metapackage rather than bundling.
-- [ ] After vgmstream and ghidra ship: add to `foundry-linux-retro-tools` `Depends:`, then strip remaining source-build sidecars from `install-foundry-linux-retro-tools.sh`.
+- [ ] After ghidra ships: add to `foundry-linux-retro-tools` `Depends:`, then strip the remaining ghidra source-build sidecar from `install-foundry-linux-retro-tools.sh`.
 
 ### Phase 2 — Distrobox image
 
@@ -33,6 +32,7 @@ Phase 0's `install-foundry-linux-retro-tools.sh` source-built five tools into `~
 
 ## Done
 
+- 2026-05-18 — [package-vgmstream] 852 KB lintian-clean `.deb` at `2083-1foundry1`; cmake forced via `--buildsystem=cmake` (legacy Makefile coexists); `vgmstream-cli` statically linked to libvgmstream; retro-tools 1.0.4 now `Depends: vgmstream`.
 - 2026-05-18 — [phase-0-foundry-apt-source] `setup-foundry-apt-source.sh` wired into `install.sh`; per-meta scripts collapsed to `apt install <metapackage>`; f9dasm + libvgm sidecars dropped.
 - 2026-05-18 — [package-libvgm] 678 KB lintian-clean `.deb` at `0.1+git20260406.d115188-1foundry1`; STATIC libs (upstream pre-stable, no SOVERSION); `/usr/bin/player` renamed to `vgm-player`; retro-tools 1.0.3 now `Depends: libvgm`.
 - 2026-05-18 — [live-test-manpage-assert] `test/run-test.sh` drops `dpkg.cfg.d/excludes`, mandoc-lints every `/usr/bin/<name>.1.gz`; caught real `PP-after-SH` WARNING in f9dasm 1foundry2 → bumped to 1foundry3.
