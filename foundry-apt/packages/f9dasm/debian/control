@@ -1,0 +1,26 @@
+Source: f9dasm
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.2
+Homepage: https://github.com/Arakula/f9dasm
+Rules-Requires-Root: no
+
+Package: f9dasm
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Motorola 6800/6809/6309 family disassembler
+ f9dasm is a portable disassembler for the Motorola 6800, 6801, 6802, 6803,
+ 6808, 6809 and Hitachi 6301, 6303, 6309 microprocessors. It reads Intel Hex,
+ Motorola S-record, FLEX9 binary, and raw binary input, and emits TSC
+ assembler-compatible (or, via the RB_VARIANT build flag, Rainer Buchty's
+ variant) output. Information files with directives can guide disassembly of
+ non-trivial binaries.
+ .
+ Three companion utilities are included: hex2bin (Intel Hex → binary),
+ mot2bin (Motorola S-record → binary), and cmd2mot (FLEX CMD → Motorola
+ S-record).
+ .
+ Based on Arto Salmi's original 6809/6309 disassembler engine, with
+ substantial additions by Hermann Seib, Colin Bourassa, and Rainer Buchty.

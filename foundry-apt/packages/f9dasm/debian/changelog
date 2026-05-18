@@ -1,0 +1,7 @@
+f9dasm (1.83-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of upstream V1.83.
+  * Source: https://github.com/Arakula/f9dasm/archive/refs/tags/V1.83.tar.gz
+  * First .deb built via the /package skill (debhelper, not hand-rolled).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 18 May 2026 03:24:49 +0000

@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+# Two upstream-Makefile quirks dh's defaults don't handle:
+#   1. No `install` target — override_dh_auto_install installs the four
+#      binaries into /usr/bin manually.
+#   2. The `clean` target runs `rm $(PROGS)` without -f, so it errors out
+#      when the binaries don't exist yet (which is the state dh_auto_clean
+#      runs in). Override clean to use rm -f directly.
+# dh handles strip, fixperms, shlibdeps, compress, md5sums, and the
+# reproducible-build settings automatically.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	rm -f f9dasm hex2bin mot2bin cmd2mot
+
+override_dh_auto_install:
+	install -d $(CURDIR)/debian/f9dasm/usr/bin
+	install -m 0755 f9dasm hex2bin mot2bin cmd2mot \
+	    $(CURDIR)/debian/f9dasm/usr/bin/

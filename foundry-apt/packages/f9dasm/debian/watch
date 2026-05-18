@@ -1,0 +1,4 @@
+version=4
+opts="filenamemangle=s%(?:.*?/)?V?(\d\S+)\.tar\.gz%f9dasm-$1.tar.gz%" \
+  https://github.com/Arakula/f9dasm/tags \
+  (?:.*?/)?V?(\d\S+)\.tar\.gz
