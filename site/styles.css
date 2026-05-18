@@ -174,9 +174,7 @@ body[data-bg="textured"] {
 
 /* ============================ TOP BAR ============================ */
 
-/* Sticky wrapper. Animated pinstripes on ::before, clipped by overflow:hidden.
- * inset: -50% oversizes the element so rotated corners stay covered.
- * Three pairwise non-divisible timelines desync over ~11 hours. */
+/* Sticky wrapper. Glint flash on ::before, clipped by overflow:hidden. */
 .topbar-wrap {
   position: sticky;
   top: 0;
@@ -187,51 +185,8 @@ body[data-bg="textured"] {
   border-bottom: 1px solid var(--hairline);
   overflow: hidden;
 }
-.topbar-wrap::before {
-  content: "";
-  position: absolute;
-  inset: -50%;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(
-    135deg,
-    transparent 0 28px,
-    rgba(200, 197, 190, 0.07) 28px 32px
-  );
-  animation:
-    nav-stripes-t 60s  linear infinite,
-    nav-stripes-r 175s linear infinite,
-    nav-stripes-s 95s  linear infinite;
-  will-change: transform;
-}
-.topbar-wrap > * { position: relative; }
 
-@keyframes nav-stripes-t {
-  0%   { translate: 0 0;        animation-timing-function: ease-in-out; }
-  30%  { translate: 18px 18px;  animation-timing-function: ease-in-out; }
-  45%  { translate: 10px 10px;  animation-timing-function: ease-in-out; }
-  70%  { translate: 26px 26px;  animation-timing-function: ease-in-out; }
-  85%  { translate: 22px 22px;  animation-timing-function: ease-in-out; }
-  100% { translate: 32px 32px; }
-}
-@keyframes nav-stripes-r {
-  0%   { rotate: 0deg;    animation-timing-function: ease-in-out; }
-  25%  { rotate: 140deg;  animation-timing-function: ease-in-out; }
-  40%  { rotate: 80deg;   animation-timing-function: ease-in-out; }
-  65%  { rotate: 250deg;  animation-timing-function: ease-in-out; }
-  85%  { rotate: 220deg;  animation-timing-function: ease-in-out; }
-  100% { rotate: 360deg; }
-}
-@keyframes nav-stripes-s {
-  0%   { scale: 1;    animation-timing-function: ease-in-out; }
-  25%  { scale: 0.6;  animation-timing-function: ease-in-out; }
-  45%  { scale: 2.8;  animation-timing-function: ease-in-out; }
-  70%  { scale: 0.9;  animation-timing-function: ease-in-out; }
-  88%  { scale: 1.8;  animation-timing-function: ease-in-out; }
-  100% { scale: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .topbar-wrap::before { animation: none; }
-}
+/* no motion graphics during benchmarking */
 
 .topbar {
   display: flex;
