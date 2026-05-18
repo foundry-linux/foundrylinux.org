@@ -15,9 +15,6 @@
 #      (sha256-pinned), extracting it, overlaying debian/, running
 #      dpkg-buildpackage, and moving the .deb into dist/. /package generates
 #      this layout for vendored upstreams (f9dasm, future libvgm/vgmstream).
-#      xa65 is the legacy variant that hand-rolls dpkg-deb instead of using
-#      dpkg-buildpackage; it'll be retired once Ubuntu universe xa65 is
-#      sourced via the Phase 0 apt-list (xa65 is already in 26.04).
 
 set -euo pipefail
 cd "$(dirname "$0")/.."

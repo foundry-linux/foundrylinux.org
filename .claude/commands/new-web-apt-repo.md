@@ -120,7 +120,7 @@ created by bootstrap step 7.5) that transparently maps `/` → `/index.html`. Th
 does not support the `http_request_redirect` phase, so this is a rewrite, not a 301.
 
 `scripts/generate-index.sh` generates `public/index.html` automatically on every publish run,
-pulling package names, versions, and descriptions from `packages/*/DEBIAN/control` — no
+pulling package names, versions, and descriptions from `packages/*/debian/control` — no
 manual updates needed as packages evolve.
 
 To preview locally before pushing:
@@ -157,11 +157,10 @@ Both pure metapackages and vendored upstreams use this layout. The only differen
 - **Vendored upstreams** (`/package` skill generates these): `3.0 (quilt)` source format, version like `2.4.1-1foundry1` (upstream-revision), pinned `build.sh` wrapper that fetches + sha256-verifies the upstream tarball.
 
 Hand-rolled vendor (a `build.sh` that calls `dpkg-deb --build` directly with a static
-`DEBIAN/control`) is **no longer supported**. The deprecated `packages/xa65/`
-(`build.sh` only, uppercase `DEBIAN/control`) still builds and ships a `.deb` via its
-own `build.sh`, but it's not on the landing page — `generate-index.sh` only reads
-`debian/`. xa65 disappears entirely once the "Phase 0 configures foundry-apt as a
-source" TODO lands and Ubuntu universe's xa65 takes over.
+`DEBIAN/control`) is **no longer supported**. The last holdout, `packages/xa65/`, was
+retired (see [`docs/plans/2026-05-18-retire-xa65.md`](../../docs/plans/2026-05-18-retire-xa65.md))
+— Ubuntu 26.04 universe ships `xa65 2.4.1-0.1build1` and `foundry-linux-retro-tools`'
+`Depends: xa65` resolves to that. Every remaining package uses canonical `debian/`.
 
 ## Step 6 — How users consume this repo
 
