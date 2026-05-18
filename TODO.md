@@ -26,6 +26,11 @@ Phase 0's `install-foundry-linux-retro-tools.sh` source-built five tools into `~
 
 - [ ] Kubuntu 26.04-based ISO via `livecd-rootfs`. Calamares installer with Foundry Linux branding. Per proposal §"Channel 4 — bootable ISO".
 
+### apt.worldfoundry.org [deferred]
+
+- [ ] **apt.worldfoundry.org Phase A** [deferred] — `worldfoundry.org/apt/` infrastructure + gen-index site; migrate `new-web-apt-repo` command → global skill with SKILL.md + templates (Tailwind v4, design-mode prompting). See [plan](docs/plans/2026-05-18-worldfoundry-apt-repo.md).
+- [ ] **apt.worldfoundry.org Phase B** [deferred] — five `worldfoundry-*` metapackages + `worldfoundry-blender-addon`; remove worldfoundry-* from `foundry-apt/`.
+
 ### Housekeeping
 
 - [ ] **Worldfoundry → foundry-linux metapackage rename.** `packages/worldfoundry-{android-dev,blender,dev,engine-build-deps}/` are legacy names. The distro is "Foundry Linux"; consider renaming the metapackages and/or shipping `foundry-linux-*` as aliases that `Depends:` on the WF ones.

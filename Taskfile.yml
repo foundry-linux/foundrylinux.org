@@ -62,6 +62,15 @@ tasks:
     cmds:
       - gh secret list --repo {{.GH_REPO}}
 
+  site-build:
+    desc: Compile site/*.jsx → site/*.js via esbuild (drops Babel standalone dep)
+    dir: "{{.ROOT_DIR}}"
+    cmds:
+      - npx --yes esbuild site/tweaks-panel.jsx --platform=browser --outfile=site/tweaks-panel.js
+      - npx --yes esbuild site/icons.jsx        --platform=browser --outfile=site/icons.js
+      - npx --yes esbuild site/sections.jsx     --platform=browser --outfile=site/sections.js
+      - npx --yes esbuild site/app.jsx          --platform=browser --outfile=site/app.js
+
   site-deploy:
     desc: "Deploy site/ to Cloudflare Pages (requires CF_PAGES_API_TOKEN + CF_PAGES_ACCOUNT_ID)"
     cmds:
