@@ -1,3 +1,12 @@
+foundry-linux-retro-tools (1.0.3) resolute; urgency=medium
+
+  * Promote libvgm from Recommends to Depends — libvgm now ships as a
+    real .deb from the Foundry APT repo (packages/libvgm/, built via the
+    /package skill). Pulls in /usr/bin/vgm-player and /usr/bin/vgm2wav.
+  * Mention libvgm in the short description.
+
+ -- World Foundry <packages@worldfoundry.org>  Mon, 18 May 2026 12:30:00 +0000
+
 foundry-linux-retro-tools (1.0.2) resolute; urgency=medium
 
   * Promote f9dasm from Recommends to Depends — f9dasm now ships as a

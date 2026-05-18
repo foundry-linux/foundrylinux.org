@@ -1,0 +1,24 @@
+libvgm (0.1+git20260406.d115188-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of libvgm at upstream commit
+    d1151884997ba4769b070b7c7aaedeffc60a25fb (2026-04-06).
+  * Upstream has no tagged releases; pinned to the commit by sha256.
+    Source: https://github.com/ValleyBell/libvgm/archive/
+    d1151884997ba4769b070b7c7aaedeffc60a25fb.tar.gz
+  * Built via the /package skill (debhelper + cmake buildsystem).
+  * Configured with LIBRARY_TYPE=STATIC because upstream is still at
+    VERSION 0.1 and CMakeLists.txt does not set SOVERSION on the vgm-*
+    targets; shipping unversioned .so files would trip lintian
+    shared-library-lacks-version and is hostile to downstream linkers.
+    Revisit a shared-library split when upstream cuts a 1.0 with a
+    stable ABI.
+  * USE_SANITIZERS=OFF so the binaries don't carry libasan/libubsan
+    runtime dependencies into a release build.
+  * Renames upstream's generic /usr/bin/player binary to /usr/bin/vgm-player
+    to namespace it under the libvgm convention (matches the vgm-player
+    library name) and to avoid colliding with future packages that may want
+    a /usr/bin/player name.
+  * Phase 0 expansion (foundry-linux-retro-tools metapackage source-build
+    sidecar at ~/opt/libvgm/) is superseded by this .deb.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 18 May 2026 12:00:00 +0000

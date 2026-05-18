@@ -21,17 +21,18 @@ Depends: ${misc:Depends},
  sox,
  binutils-m68k-linux-gnu,
  xa65,
- f9dasm
-Recommends: ghidra,
- vgmstream,
+ f9dasm,
  libvgm
+Recommends: ghidra,
+ vgmstream
 Suggests: java-common
 Description: arcade reverse-engineering and porting toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine:
  MAME (debugger + tools), 6502/Z80/68k/6809 disassemblers and assemblers,
  radare2, binwalk, sox (audio conversion), xa65 6502 cross-assembler,
- f9dasm 6800/6809/6309 disassembler.
+ f9dasm 6800/6809/6309 disassembler, libvgm (vgm-player + vgm2wav for
+ chip-register VGM playback and rendering).
  .
  Recommends includes packages we ship ourselves but haven't packaged
- yet (Ghidra repackaged from upstream, vgmstream, libvgm) — they'll
- move to Depends as each ships from the Foundry APT repo.
+ yet (Ghidra repackaged from upstream, vgmstream) — they'll move to
+ Depends as each ships from the Foundry APT repo.

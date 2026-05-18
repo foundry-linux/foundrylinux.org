@@ -1,0 +1,38 @@
+Source: libvgm
+Section: sound
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               cmake,
+               pkg-config,
+               zlib1g-dev,
+               libasound2-dev,
+               libpulse-dev,
+               libao-dev
+Standards-Version: 4.7.0
+Homepage: https://github.com/ValleyBell/libvgm
+Rules-Requires-Root: no
+
+Package: libvgm
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: chip-register VGM playback library with player utilities
+ libvgm is a modular rewrite of the audio components from VGMPlay. It exposes
+ sound emulation cores (vgm-emu), audio output drivers (vgm-audio), a generic
+ chiptune player (vgm-player), and helper utilities (vgm-utils) as shared
+ libraries usable by other applications.
+ .
+ The package supports playback of VGM (Video Game Music) and S98/DRO formats
+ by emulating the original sound chips (YM2151, YM2203, YM2608, YM2612,
+ YM3526, YM3812, AY-3-8910, SN76489, NES APU, SegaPCM, RF5C68, and many
+ others). Audio output uses ALSA, PulseAudio, or libao depending on what is
+ available at runtime.
+ .
+ Two reference applications are included:
+   * vgm-player — interactive VGM/S98/DRO player
+   * vgm2wav    — render a VGM file to a WAV file (offline rendering)
+ .
+ Headers and the libvgm CMake config package are installed under
+ /usr/include/vgm/ and /usr/lib/cmake/libvgm/ respectively, making the
+ libraries available for downstream applications such as vgmstream and
+ retro audio tooling.

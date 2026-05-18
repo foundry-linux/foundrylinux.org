@@ -1,0 +1,102 @@
+.TH VGM2WAV 1 "2026-05-18" "libvgm 0.1" "User Commands"
+.SH NAME
+vgm2wav \- render a VGM, S98, DRO, or GYM chiptune file to a WAV file
+.SH SYNOPSIS
+.B vgm2wav
+.RI [ options ]
+.I input-file
+.I output.wav
+.SH DESCRIPTION
+.B vgm2wav
+is the offline-rendering companion to
+.BR vgm-player (1).
+It reads a chiptune file, emulates the original sound chips via libvgm,
+and writes the rendered audio to a standard PCM WAV file. No audio
+output device is touched — rendering runs as fast as the host can
+emulate.
+.PP
+If
+.I output.wav
+is given as
+.BR - ,
+the WAV stream is written to standard output, allowing
+.B vgm2wav
+to be piped into other audio tools (for example
+.BR sox (1)
+for resampling or format conversion).
+.SH OPTIONS
+.TP
+.BI \-\-samplerate " n"
+Output sample rate in hertz. Default:
+.BR 44100 .
+Common alternatives are
+.B 48000
+(broadcast) and
+.B 22050
+(authentic-era).
+.TP
+.BI \-\-bps " n"
+Bits per sample. Valid values:
+.BR 16 ", " 24 ", " 32 .
+Default:
+.BR 16 .
+The output is always stereo (two channels).
+.TP
+.BI \-\-fade " seconds"
+Length of the fade-out applied after the last loop, in seconds.
+Default:
+.BR 8.0 .
+Set to
+.B 0
+to disable fading.
+.TP
+.BI \-\-loops " n"
+Number of times the looped section of the track is played before the
+fade-out begins. Default:
+.BR 2 .
+.SH SUPPORTED FORMATS
+.BR VGM " (.vgm, .vgz),"
+.BR S98 " (.s98),"
+.BR DRO " (.dro),"
+.BR GYM " (.gym)."
+See
+.BR vgm-player (1)
+for a description of each format.
+.SH EXAMPLES
+Render a VGM file at the default 44.1 kHz / 16-bit:
+.IP
+vgm2wav track01.vgm track01.wav
+.PP
+Render at 48 kHz / 24-bit with a longer fade and three loops:
+.IP
+vgm2wav --samplerate 48000 --bps 24 --loops 3 --fade 12 track01.vgm track01.wav
+.PP
+Pipe through
+.BR sox (1)
+to produce an MP3:
+.IP
+vgm2wav track01.vgm - | sox -t wav - track01.mp3
+.SH EXIT STATUS
+.B vgm2wav
+exits with status
+.B 0
+on success and a non-zero status if the input cannot be read, the format
+is unrecognised, or the output file cannot be written.
+.SH SEE ALSO
+.BR vgm-player (1),
+.BR vgmstream-cli (1),
+.BR sox (1)
+.SH AUTHORS
+libvgm is written by ValleyBell and contributors. See
+.UR https://github.com/ValleyBell/libvgm
+the project page
+.UE
+for the full history.
+.PP
+This manual page was written by Foundry Linux
+<packages@foundrylinux.org> for the Debian packaging of libvgm.
+.SH COPYRIGHT
+libvgm is distributed under the GNU General Public License version 2 or
+(at your option) any later version. See
+.I /usr/share/doc/libvgm/copyright
+for the full license text and per-file licensing details.

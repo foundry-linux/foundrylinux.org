@@ -1,0 +1,98 @@
+.TH VGM-PLAYER 1 "2026-05-18" "libvgm 0.1" "User Commands"
+.SH NAME
+vgm-player \- interactive player for VGM, S98, DRO, and GYM chiptune files
+.SH SYNOPSIS
+.B vgm-player
+.IR file " [" file " ...]"
+.SH DESCRIPTION
+.B vgm-player
+is the reference player application shipped with libvgm. It plays one or
+more chiptune files in sequence by emulating the original sound chips
+(YM2151, YM2203, YM2608, YM2612, YM3812, AY-3-8910, SN76489, NES APU,
+SegaPCM, and many others) and streaming the rendered audio to ALSA,
+PulseAudio, or libao, whichever backend is available at runtime.
+.PP
+Multiple files given on the command line are queued and played one after
+another. Use the
+.B N
+and
+.B B
+keys (see
+.B INTERACTIVE CONTROLS
+below) to skip between them.
+.PP
+The player is intentionally minimal — it exists to demonstrate the
+libvgm API and to provide a working command-line front-end. For richer
+playback features, downstream projects such as vgmstream-cli are typically
+preferred.
+.SH SUPPORTED FORMATS
+.TP
+.B VGM (.vgm, .vgz)
+Video Game Music format — sample-accurate chip-register dumps from a wide
+range of consoles and arcade boards.
+.TP
+.B S98 (.s98)
+Format originally designed for Yamaha YM-series chip recordings.
+.TP
+.B DRO (.dro)
+DOSBox Raw OPL — captures of AdLib / Sound Blaster OPL2/OPL3 register
+writes.
+.TP
+.B GYM (.gym)
+Genesis YM2612 + SN76489 register dump format.
+.SH INTERACTIVE CONTROLS
+While a file is playing, the following keys are recognised:
+.TP
+.B Space, P
+Pause or resume playback.
+.TP
+.B R
+Restart the current track from the beginning.
+.TP
+.B 0\(en9
+Seek to 0%\(en90% of the current track.
+.TP
+.B N
+Skip to the next file in the queue.
+.TP
+.B B
+Return to the previous file in the queue.
+.TP
+.B F
+Begin a manual fade-out.
+.TP
+.B C
+Enter chip-control mode, where individual sound-chip channels can be
+muted or unmuted for diagnostic listening.
+.TP
+.B Q, Esc
+Quit the player.
+.SH EXAMPLES
+Play a single VGM file:
+.IP
+vgm-player track01.vgm
+.PP
+Queue several files and skip between them with
+.B N
+/
+.BR B :
+.IP
+vgm-player album/*.vgm
+.SH SEE ALSO
+.BR vgm2wav (1),
+.BR vgmstream-cli (1),
+.BR aplay (1)
+.SH AUTHORS
+libvgm is written by ValleyBell and contributors. See
+.UR https://github.com/ValleyBell/libvgm
+the project page
+.UE
+for the full history.
+.PP
+This manual page was written by Foundry Linux
+<packages@foundrylinux.org> for the Debian packaging of libvgm.
+.SH COPYRIGHT
+libvgm is distributed under the GNU General Public License version 2 or
+(at your option) any later version. See
+.I /usr/share/doc/libvgm/copyright
+for the full license text and per-file licensing details.

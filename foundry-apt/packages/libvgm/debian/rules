@@ -1,0 +1,38 @@
+#!/usr/bin/make -f
+# libvgm cmake build customisation:
+#   1. USE_SANITIZERS=OFF        — release build must not pull in libasan/libubsan
+#                                  at runtime; upstream defaults USE_SANITIZERS=ON
+#                                  which is a debug-time convenience.
+#   2. LIBRARY_TYPE=STATIC       — upstream is pre-stable (VERSION 0.1) and
+#                                  CMakeLists.txt does not set SOVERSION on the
+#                                  vgm-* targets. Shipping unversioned .so files
+#                                  triggers lintian shared-library-lacks-version
+#                                  and is hostile to downstream linkers. Static
+#                                  libs avoid the ABI question entirely; revisit
+#                                  shared packaging when upstream cuts a 1.0 with
+#                                  a stable ABI and SOVERSION/VERSION props.
+#   3. BUILD_TESTS=OFF           — default; test executables aren't shipped.
+#   4. Rename /usr/bin/player    — collision-prone generic name; namespace it
+#      → /usr/bin/vgm-player       under the libvgm convention.
+# dh handles strip, fixperms, shlibdeps, compress, md5sums, and the
+# reproducible-build settings automatically.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --buildsystem=cmake
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DLIBRARY_TYPE=STATIC \
+	    -DUSE_SANITIZERS=OFF \
+	    -DBUILD_TESTS=OFF \
+	    -DBUILD_PLAYER=ON \
+	    -DBUILD_VGM2WAV=ON
+
+override_dh_auto_install:
+	dh_auto_install
+	# Rename generic /usr/bin/player to /usr/bin/vgm-player.
+	mv $(CURDIR)/debian/libvgm/usr/bin/player \
+	   $(CURDIR)/debian/libvgm/usr/bin/vgm-player

@@ -1,0 +1,7 @@
+version=4
+# libvgm has no tagged releases as of this packaging — uscan will report
+# "no new upstream version available" until upstream cuts a tag. When they
+# do, this watch file will pick it up automatically.
+opts="filenamemangle=s%(?:.*?/)?v?(\d\S+)\.tar\.gz%libvgm-$1.tar.gz%" \
+  https://github.com/ValleyBell/libvgm/tags \
+  (?:.*?/)?v?(\d\S+)\.tar\.gz
