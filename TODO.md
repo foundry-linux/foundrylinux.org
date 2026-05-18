@@ -7,14 +7,16 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### Phase 1 — package the source-built retro tools
 
-Phase 0's `install-foundry-linux-retro-tools.sh` source-builds five tools into `~/opt/`. None are real `.deb`s yet, so the `foundry-linux-retro-tools` metapackage can't `Depends:` on them. Each one below needs a `packages/<name>/{DEBIAN/control,build.sh}` and an entry in `build-all.sh`.
+Phase 0's `install-foundry-linux-retro-tools.sh` source-builds five tools into `~/opt/`. **One (xa65) turned out to already be in Ubuntu 26.04 universe** — see lesson below. The other four are still genuinely missing from Ubuntu, confirmed via `apt-cache policy` on a fresh `ubuntu:26.04`. Each one below needs `packages/<name>/{DEBIAN/control,build.sh}`.
 
-- [ ] **xa65** — 6502 cross-assembler. **In flight** — see [`docs/plans/2026-05-18-package-xa65.md`](docs/plans/2026-05-18-package-xa65.md). Vendoring `xa-2.4.1` tarball from `github.com/fachat/xa65`. Will be the first non-meta `.deb` and the first row to exercise the dormant arch-split path in `generate-index.sh`.
-- [ ] **f9dasm** — 6809 disassembler ([github.com/Arakula/f9dasm](https://github.com/Arakula/f9dasm)).
-- [ ] **libvgm** — chip-register VGM library ([github.com/ValleyBell/libvgm](https://github.com/ValleyBell/libvgm)).
-- [ ] **vgmstream** — VGM/audio stream decoder ([github.com/vgmstream/vgmstream](https://github.com/vgmstream/vgmstream)).
-- [ ] **ghidra** — NSA reverse-engineering suite (currently zip download). Heavyweight (~400 MB); may need a separate metapackage rather than bundling.
-- [ ] After all five ship: have `foundry-linux-retro-tools` Depends on them, then strip the source-build sidecars from `install-foundry-linux-retro-tools.sh`. Plan rehearses this collapse in [`docs/plans/2026-05-17-per-metapackage-install-scripts.md`](docs/plans/2026-05-17-per-metapackage-install-scripts.md) §"Phase 1 collapse rehearsal".
+**Rule, learned the hard way (2026-05-18):** *before* packaging any source-built tool, run `apt-cache policy <pkg>` on a fresh `ubuntu:26.04`. If Ubuntu universe ships it, just add it to the Phase 0 apt-install list and the metapackage `Depends:` — don't duplicate.
+
+- [x] ~~**xa65**~~ — already in Ubuntu 26.04 universe as `2.4.1-0.1build1`. We shipped a redundant package as `2.4.1-1foundry1` (works, wins by version sort) — see [`docs/plans/2026-05-18-package-xa65.md`](docs/plans/2026-05-18-package-xa65.md). **Cleanup follow-up:** delete `packages/xa65/`, drop xa65 from the Phase 0 source-build block, add xa65 to the apt-install list. Defer the deletion until after the "Phase 0 configures foundry-apt as a source" TODO lands so the cleanup ships as one atomic change.
+- [ ] **f9dasm** — 6809 disassembler ([github.com/Arakula/f9dasm](https://github.com/Arakula/f9dasm)). Confirmed not in Ubuntu universe.
+- [ ] **libvgm** — chip-register VGM library ([github.com/ValleyBell/libvgm](https://github.com/ValleyBell/libvgm)). Confirmed not in Ubuntu universe.
+- [ ] **vgmstream** — VGM/audio stream decoder ([github.com/vgmstream/vgmstream](https://github.com/vgmstream/vgmstream)). Confirmed not in Ubuntu universe.
+- [ ] **ghidra** — NSA reverse-engineering suite (currently zip download). Confirmed not in Ubuntu universe. Heavyweight (~400 MB); may need a separate metapackage rather than bundling.
+- [ ] After all four ship: have `foundry-linux-retro-tools` Depends on them, then strip the source-build sidecars from `install-foundry-linux-retro-tools.sh` (also strip xa65's then). Plan rehearses this collapse in [`docs/plans/2026-05-17-per-metapackage-install-scripts.md`](docs/plans/2026-05-17-per-metapackage-install-scripts.md) §"Phase 1 collapse rehearsal".
 
 ### Phase 2 — Distrobox image
 
