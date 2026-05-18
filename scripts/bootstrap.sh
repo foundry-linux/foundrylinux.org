@@ -140,6 +140,7 @@ if ! $DRY_RUN; then
         echo "  Name: ${CF_OPERATOR_TOKEN_NAME}"
         echo "  Permissions:"
         echo "    Account | Workers R2 Storage | Edit"
+        echo "    Account | Pages Write         |"
         echo "    Zone    | DNS                | Edit  (Specific zone: ${CF_ZONE_NAME})"
         echo "    Zone    | Transform Rules    | Edit  (Specific zone: ${CF_ZONE_NAME})"
         echo "  Account Resources: Include → select your account"

@@ -62,6 +62,11 @@ tasks:
     cmds:
       - gh secret list --repo {{.GH_REPO}}
 
+  site-deploy:
+    desc: "Deploy site/ to Cloudflare Pages (requires CF_PAGES_API_TOKEN + CF_PAGES_ACCOUNT_ID)"
+    cmds:
+      - wrangler pages deploy site/ --project-name foundrylinux-org
+
   bump:
     desc: "Sync and auto-increment patch version (e.g. v0.0.3 → v0.0.4)"
     cmds:
