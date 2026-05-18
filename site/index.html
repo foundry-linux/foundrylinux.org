@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=Cinzel:wght@700;900&family=Black+Ops+One&family=Major+Mono+Display&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
 
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body data-bg="pure">
   <div id="root"></div>
@@ -18,6 +18,26 @@
   <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
 
+  <script>
+    /* Scroll-shrink: --header-shrink ramps 0→1 as scrollY reaches half
+     * a viewport. @property + html transition eases every change. */
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      var _hsPending = false;
+      var _hsUpdate = function() {
+        _hsPending = false;
+        var raw = Math.min(1, window.scrollY / (window.innerHeight / 2));
+        var eased = 1 - (1 - raw) * (1 - raw);
+        document.documentElement.style.setProperty("--header-shrink", eased.toFixed(3));
+      };
+      var _hsTick = function() {
+        if (_hsPending) return;
+        _hsPending = true;
+        requestAnimationFrame(_hsUpdate);
+      };
+      window.addEventListener("scroll", _hsTick, { passive: true });
+      window.addEventListener("resize", _hsTick, { passive: true });
+    }
+  </script>
   <script src="tweaks-panel.js"></script>
   <script src="icons.js"></script>
   <script src="sections.js"></script>

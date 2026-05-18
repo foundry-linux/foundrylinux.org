@@ -2,23 +2,25 @@
 
 function Topbar({ wordmark }) {
   return (
-    <div className="shell">
-      <div className="topbar">
-        <div className="topbar-mark">
-          <FoundryMark />
-          <b>foundrylinux.org</b>
-        </div>
-        <nav className="topbar-nav">
-          <a href="#kit">The Kit</a>
-          <a href="#install">Install</a>
-          <a href="#editions">Editions</a>
-          <a href="#docs">Docs</a>
-        </nav>
-        <div className="topbar-version">
-          <span className="dot" />FOUNDRY 26.04 · "ANVIL" · LTS
+    <header className="topbar-wrap">
+      <div className="shell">
+        <div className="topbar">
+          <div className="topbar-mark">
+            <FoundryMark />
+            <b>foundrylinux.org</b>
+          </div>
+          <nav className="topbar-nav">
+            <a href="#kit">The Kit</a>
+            <a href="#install">Install</a>
+            <a href="#editions">Editions</a>
+            <a href="#docs">Docs</a>
+          </nav>
+          <div className="topbar-version">
+            <span className="dot" />FOUNDRY 26.04 · "ANVIL" · LTS
+          </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
 

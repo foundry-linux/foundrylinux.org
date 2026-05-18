@@ -28,7 +28,23 @@
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 }
 
+/* Register --header-shrink as a typed number so the CSS value itself
+ * interpolates (not just the properties derived from it). Transitioned
+ * on html so every scroll/resize/click-to-top change eases. */
+@property --header-shrink {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 * { box-sizing: border-box; }
+
+html {
+  transition: --header-shrink 220ms ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { transition: none; }
+}
 
 html, body {
   margin: 0;
@@ -78,11 +94,47 @@ body[data-bg="textured"] {
 
 /* ============================ TOP BAR ============================ */
 
+/* Sticky wrapper — breathe glow lives on ::after so it blends above
+ * the backdrop without lifting child z-indices. */
+.topbar-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hairline);
+  isolation: isolate;
+}
+.topbar-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 60% 300% at 50% 50%,
+    rgba(255, 91, 26, 0.22) 0%,
+    rgba(255, 91, 26, 0.08) 45%,
+    transparent 75%
+  );
+  mix-blend-mode: screen;
+  animation: topbar-breathe 2.5s ease-in-out infinite alternate;
+  z-index: 0;
+}
+.topbar-wrap > * { position: relative; z-index: 1; }
+@keyframes topbar-breathe {
+  from { opacity: 0.35; }
+  to   { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topbar-wrap::after { animation: none; }
+}
+
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 28px 0 0;
+  padding: calc(22px - 14px * var(--header-shrink, 0)) 0;
   font-size: 13px;
   letter-spacing: 0.04em;
 }
