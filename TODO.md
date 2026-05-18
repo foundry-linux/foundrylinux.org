@@ -39,6 +39,7 @@ Phase 0's `install-foundry-linux-retro-tools.sh` source-built five tools into `~
 
 ## Done
 
+- 2026-05-18 — [drop-babel-standalone] Pre-compile `site/*.jsx` → `.js` via esbuild; switch to prod React CDN builds; drop 2.9 MB Babel standalone; update import-claude-design skill. See [`docs/plans/2026-05-18-drop-babel-standalone.md`](docs/plans/2026-05-18-drop-babel-standalone.md).
 - 2026-05-18 — [package-ghidra] 541 MB pre-built zip → lintian-clean `.deb` at `12.1-1foundry1`; ghidra + ghidra-headless in `/usr/bin`; retro-tools 1.0.5 now `Depends: ghidra`; sidecar stripped from Phase 0 install script.
 - 2026-05-18 — [package-vgmstream] 852 KB lintian-clean `.deb` at `2083-1foundry1`; cmake forced via `--buildsystem=cmake` (legacy Makefile coexists); `vgmstream-cli` statically linked to libvgmstream; retro-tools 1.0.4 now `Depends: vgmstream`.
 - 2026-05-18 — [phase-0-foundry-apt-source] `setup-foundry-apt-source.sh` wired into `install.sh`; per-meta scripts collapsed to `apt install <metapackage>`; f9dasm + libvgm sidecars dropped.
