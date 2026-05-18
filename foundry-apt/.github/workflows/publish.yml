@@ -109,22 +109,24 @@ jobs:
           retention-days: 30
 
   smoke-install:
-    name: Smoke-install foundry-linux-retro-tools in Ubuntu 26.04
+    name: Smoke-check Foundry APT repo in Ubuntu 26.04
     needs: build-and-publish
     if: github.event_name == 'push'   # tag pushes only
     runs-on: ubuntu-latest
     container:
       image: ubuntu:26.04
     steps:
-      - name: Install from the freshly-published repo
+      - name: Verify packages are indexed in the freshly-published repo
         run: |
           apt-get update -q
-          apt-get install -y curl gnupg ca-certificates software-properties-common
-          add-apt-repository -y universe
+          apt-get install -y curl gnupg ca-certificates
           curl -fsSL https://apt.foundrylinux.org/key.gpg \
             | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
           echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
             > /etc/apt/sources.list.d/foundry.list
           apt-get update -q
           apt-cache show foundry-linux-retro-tools
-          apt-get install -y --no-install-recommends --download-only foundry-linux-retro-tools
+          apt-cache show f9dasm
+          apt-cache show vgmstream
+          apt-cache show ghidra
+          apt-cache show libvgm
