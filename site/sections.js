@@ -1,23 +1,22 @@
-function Topbar({ wordmark }) {
+function Topbar() {
   return /* @__PURE__ */ React.createElement("header", { className: "topbar-wrap" }, /* @__PURE__ */ React.createElement("div", { className: "shell" }, /* @__PURE__ */ React.createElement("div", { className: "topbar" }, /* @__PURE__ */ React.createElement("div", { className: "topbar-mark" }, /* @__PURE__ */ React.createElement(FoundryMark, null), /* @__PURE__ */ React.createElement("b", null, "foundrylinux.org")), /* @__PURE__ */ React.createElement("nav", { className: "topbar-nav" }, /* @__PURE__ */ React.createElement("a", { href: "#kit" }, "The Kit"), /* @__PURE__ */ React.createElement("a", { href: "#install" }, "Install"), /* @__PURE__ */ React.createElement("a", { href: "#editions" }, "Editions"), /* @__PURE__ */ React.createElement("a", { href: "#docs" }, "Docs")), /* @__PURE__ */ React.createElement("div", { className: "topbar-version" }, /* @__PURE__ */ React.createElement("span", { className: "dot" }), 'FOUNDRY 26.04 \xB7 "ANVIL" \xB7 LTS'))));
 }
-function Hero({ material, font, wordmark }) {
+function Hero() {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     navigator.clipboard?.writeText("sudo apt install foundry-base");
     setCopied(true);
     setTimeout(() => setCopied(false), 1400);
   };
-  const lines = wordmark === "foundry" ? ["FOUNDRY"] : wordmark === "anvil" ? ["ANVIL"] : ["FOUNDRY", "LINUX"];
   return /* @__PURE__ */ React.createElement("section", { className: "hero" }, /* @__PURE__ */ React.createElement("div", { className: "hero-deco left" }, /* @__PURE__ */ React.createElement(GearStackIcon, null)), /* @__PURE__ */ React.createElement("div", { className: "shell" }, /* @__PURE__ */ React.createElement("div", { className: "hero-eyebrow" }, "a linux distribution \xB7 est. 2026"), /* @__PURE__ */ React.createElement("div", { className: "hero-anvil" }, /* @__PURE__ */ React.createElement(BigAnvilLogo, { width: 420 })), /* @__PURE__ */ React.createElement(
     "h1",
     {
       className: "wordmark",
-      "data-material": material,
-      "data-font": font,
-      "data-mark": wordmark
+      "data-material": "chrome",
+      "data-font": "big-shoulders",
+      "data-mark": "foundry-linux"
     },
-    lines.map((l, i) => /* @__PURE__ */ React.createElement("span", { key: i, className: "wordmark-line" }, l))
+    ["FOUNDRY", "LINUX"].map((l, i) => /* @__PURE__ */ React.createElement("span", { key: i, className: "wordmark-line" }, l))
   ), /* @__PURE__ */ React.createElement("p", { className: "hero-tagline" }, "Forged for ", /* @__PURE__ */ React.createElement("em", null, "game makers, level designers, and digital artists"), " ", "of every kind \u2014 an Ubuntu LTS desktop with the tools of the trade struck into it from the first boot."), /* @__PURE__ */ React.createElement("div", { className: "apt-command" }, /* @__PURE__ */ React.createElement("span", { className: "prompt" }, "$"), /* @__PURE__ */ React.createElement("span", { className: "cmd" }, "sudo apt install foundry-base"), /* @__PURE__ */ React.createElement("button", { className: "copy", onClick: copy }, /* @__PURE__ */ React.createElement(CopyIcon, null), copied ? "COPIED" : "COPY")), /* @__PURE__ */ React.createElement("div", { className: "hero-actions" }, /* @__PURE__ */ React.createElement("a", { className: "cta cta-primary", href: "#download" }, /* @__PURE__ */ React.createElement(DownloadIcon, null), "Download foundry-26.04.iso"), /* @__PURE__ */ React.createElement("a", { className: "cta cta-secondary", href: "#install" }, "Set up the repo", /* @__PURE__ */ React.createElement(ArrowRightIcon, null)))));
 }
 const KIT = [

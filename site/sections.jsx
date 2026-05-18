@@ -1,6 +1,6 @@
 // Page sections — Hero, Kit, Install, Editions, Footer
 
-function Topbar({ wordmark }) {
+function Topbar() {
   return (
     <header className="topbar-wrap">
       <div className="shell">
@@ -24,19 +24,13 @@ function Topbar({ wordmark }) {
   );
 }
 
-function Hero({ material, font, wordmark }) {
+function Hero() {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     navigator.clipboard?.writeText("sudo apt install foundry-base");
     setCopied(true);
     setTimeout(() => setCopied(false), 1400);
   };
-
-  const lines = wordmark === "foundry"
-    ? ["FOUNDRY"]
-    : wordmark === "anvil"
-      ? ["ANVIL"]
-      : ["FOUNDRY", "LINUX"];
 
   return (
     <section className="hero">
@@ -50,10 +44,10 @@ function Hero({ material, font, wordmark }) {
         </div>
 
         <h1 className="wordmark"
-            data-material={material}
-            data-font={font}
-            data-mark={wordmark}>
-          {lines.map((l, i) => (
+            data-material="chrome"
+            data-font="big-shoulders"
+            data-mark="foundry-linux">
+          {["FOUNDRY", "LINUX"].map((l, i) => (
             <span key={i} className="wordmark-line">{l}</span>
           ))}
         </h1>
