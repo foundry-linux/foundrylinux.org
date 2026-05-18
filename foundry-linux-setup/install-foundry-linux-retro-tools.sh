@@ -5,11 +5,7 @@
 #
 #   apt (from foundry-apt/packages/foundry-linux-retro-tools/debian/control Depends):
 #     mame mame-tools dasm cc65 z80dasm z80asm radare2 binwalk sox
-#     binutils-m68k-linux-gnu xa65 f9dasm libvgm
-#
-#   source-build sidecars (tools not yet in foundry-apt):
-#     ghidra      → ~/opt/ghidra-*/
-#     vgmstream   → ~/opt/vgmstream/
+#     binutils-m68k-linux-gnu xa65 f9dasm libvgm vgmstream ghidra
 #
 # What you get for the 6502 specifically:
 #   sim65   (from cc65)     — 6502 instruction-set simulator / unit-test runner
@@ -19,9 +15,6 @@
 #   xa65                    — Atari/C64-style 6502 cross-assembler (Ubuntu universe)
 #
 # See docs/investigations/2026-05-15-claude-arcade-tooling.md for the rationale.
-#
-# Final collapse: this script reduces to just the apt-install once Ghidra and
-# vgmstream are packaged in foundry-apt (tracked in TODO.md).
 
 set -euo pipefail
 
@@ -32,16 +25,14 @@ for arg in "$@"; do
 Phase 0 installer for foundry-linux-retro-tools
 
 Installs the arcade reverse-engineering / 6502 / Z80 / 68k / 6809 porting
-toolchain (MAME, dasm, cc65 → sim65 + da65, z80dasm, radare2, xa65, etc.)
-plus source-built Ghidra / vgmstream under ~/opt/ (not yet packaged in foundry-apt).
+toolchain via apt.foundrylinux.org:
+  MAME, dasm, cc65 (sim65 + da65), z80dasm, z80asm, radare2, binwalk, sox,
+  xa65, f9dasm, libvgm (vgm2wav + vgm-player), vgmstream-cli, ghidra.
 
-Usage: $(basename "$0") [--dry-run|-n] [--apt-only] [--force] [-h|--help]
+Usage: $(basename "$0") [--dry-run|-n] [-h|--help]
 
 Options:
   -n, --dry-run   Print commands without executing
-  --apt-only      Skip source-build sidecars (Ghidra is ~400 MB; this is the
-                  fast path for someone who only wants apt-shipped tools)
-  --force         Re-run source-builds even if ~/opt/<tool>/ already exists
   -h, --help      Show this help and exit
 
 What this installs that's relevant to the 6502:
@@ -57,13 +48,9 @@ EOF
 done
 
 DRY_RUN=false
-APT_ONLY=false
-FORCE=false
 for arg in "$@"; do
     case "$arg" in
         -n|--dry-run) DRY_RUN=true ;;
-        --apt-only)   APT_ONLY=true ;;
-        --force)      FORCE=true ;;
         *) echo "Unknown option: $arg (try --help)" >&2; exit 1 ;;
     esac
 done
@@ -83,68 +70,13 @@ else
     apt_update() { run_sudo apt-get update -q 2>&1 || echo "⚠ apt-get update had errors; continuing"; }
 fi
 
-OPT_DIR="${HOME}/opt"
-
-# ----------------------------------------------------------------------------
-# Step 1: apt packages (via foundry-linux-retro-tools metapackage)
-# ----------------------------------------------------------------------------
 step "Installing foundry-linux-retro-tools (apt)"
 apt_update
 run_sudo apt-get install -y foundry-linux-retro-tools
-ok "Retro toolchain apt packages installed (mame, sim65, da65, radare2, dasm, z80dasm, xa65, f9dasm, libvgm, ...)"
-
-if $APT_ONLY; then
-    info "--apt-only set — skipping source-build sidecars (Ghidra, vgmstream)"
-    exit 0
-fi
-
-# ----------------------------------------------------------------------------
-# Step 2: source-build sidecars under ~/opt/
-# ----------------------------------------------------------------------------
-run mkdir -p "$OPT_DIR"
-
-source_build_guard() {
-    # Returns 0 if we should build, 1 if we should skip (already present).
-    local name="$1" dir="$2"
-    if [[ -d "$dir" ]]; then
-        if $FORCE; then
-            warn "$name: $dir exists, --force set, rebuilding"
-            return 0
-        fi
-            info "$name: $dir exists, skipping (use --force to rebuild)"
-        return 1
-    fi
-    return 0
-}
-
-# --- vgmstream --------------------------------------------------------------
-step "Building vgmstream-cli (VGM/audio stream decoder)"
-if source_build_guard vgmstream "$OPT_DIR/vgmstream"; then
-    run git clone --depth 1 --recursive https://github.com/vgmstream/vgmstream "$OPT_DIR/vgmstream"
-    run cmake -S "$OPT_DIR/vgmstream" -B "$OPT_DIR/vgmstream/build"
-    run cmake --build "$OPT_DIR/vgmstream/build" -j
-    ok "vgmstream built — binary at $OPT_DIR/vgmstream/build/cli/vgmstream-cli"
-fi
-
-# --- ghidra (~400 MB) -------------------------------------------------------
-step "Installing Ghidra (heavyweight — ~400 MB)"
-GHIDRA_VERSION="11.1.2"
-GHIDRA_BUILD="20240709"
-GHIDRA_DIR="$OPT_DIR/ghidra_${GHIDRA_VERSION}_PUBLIC"
-GHIDRA_URL="https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_${GHIDRA_VERSION}_build/ghidra_${GHIDRA_VERSION}_PUBLIC_${GHIDRA_BUILD}.zip"
-if source_build_guard ghidra "$GHIDRA_DIR"; then
-    if ! command -v java &>/dev/null; then
-        warn "Ghidra requires a JRE (apt install openjdk-21-jre or run install-foundry-linux-android-dev.sh which installs openjdk-17-jdk)"
-    fi
-    run curl -fL --progress-bar -o "$OPT_DIR/ghidra.zip" "$GHIDRA_URL"
-    run unzip -q "$OPT_DIR/ghidra.zip" -d "$OPT_DIR"
-    run rm "$OPT_DIR/ghidra.zip"
-    ok "Ghidra installed — launcher at $GHIDRA_DIR/ghidraRun"
-fi
 
 step "foundry-linux-retro-tools install complete"
 ok "6502: sim65, da65, mame, radare2, xa65"
 ok "Z80:  z80dasm, z80asm, mame, radare2"
 ok "68k:  m68k-linux-gnu-objdump, mame, radare2"
-ok "6809: ghidra, f9dasm (apt), mame"
-ok "Audio: sox, vgmstream-cli, libvgm (apt), mame -wavwrite"
+ok "6809: ghidra (apt), f9dasm (apt), mame"
+ok "Audio: sox, vgmstream-cli (apt), libvgm (apt), mame -wavwrite"
