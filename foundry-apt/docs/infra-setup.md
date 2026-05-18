@@ -6,7 +6,7 @@ No AWS account required.
 
 ## Run bootstrap.sh
 
-From the `linuxfoundry.org` repo root:
+From the `foundrylinux.org` repo root:
 
 ```bash
 bash scripts/bootstrap.sh --dry-run   # preview all steps

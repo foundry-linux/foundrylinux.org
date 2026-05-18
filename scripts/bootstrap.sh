@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Full Phase 1 bootstrap: push foundry-apt to GitHub, generate GPG key,
 # wire GitHub secrets, provision R2 bucket, configure DNS, upload public key.
-# Steps 1b–9 — run once from the linuxfoundry.org repo root.
+# Steps 1b–9 — run once from the foundrylinux.org repo root.
 #
 # Usage:
 #   bash scripts/bootstrap.sh [--dry-run] [-h]

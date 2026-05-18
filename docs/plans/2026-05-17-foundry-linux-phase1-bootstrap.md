@@ -56,14 +56,14 @@ All subsequent GitHub operations use `gh` CLI.
 
 ## ~~Step 2b — Push `foundry-apt/` to its own GitHub repo~~ (done)
 
-`foundry-apt/` in the `linuxfoundry.org` repo is the development working copy;
+`foundry-apt/` in the `foundrylinux.org` repo is the development working copy;
 `foundry-linux/foundry-apt` on GitHub is the CI-facing authoritative source.
 
 ---
 
 ## Steps 1b–9 — Run `bootstrap.sh`
 
-All remaining setup is fully automated. From the `linuxfoundry.org` repo root:
+All remaining setup is fully automated. From the `foundrylinux.org` repo root:
 
 ```bash
 bash scripts/bootstrap.sh --dry-run   # preview all steps
