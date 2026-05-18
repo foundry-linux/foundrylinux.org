@@ -90,6 +90,12 @@ mv "$WORKDIR/${NAME}-${UPSTREAM_COMMIT}" "$SRC_DIR"
 echo "=== Copying debian/ tree into source ==="
 cp -a "$PKG_DIR/debian" "$SRC_DIR/"
 
+echo "=== Installing Build-Depends ==="
+if [[ $EUID -eq 0 ]] && command -v apt-get >/dev/null; then
+    apt-get install -y --no-install-recommends \
+        cmake pkg-config zlib1g-dev libasound2-dev libpulse-dev libao-dev
+fi
+
 echo "=== dpkg-buildpackage -us -uc -b ==="
 ( cd "$SRC_DIR" && dpkg-buildpackage -us -uc -b )
 

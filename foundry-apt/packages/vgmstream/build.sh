@@ -75,6 +75,13 @@ SRC_DIR="$WORKDIR/${NAME}-r${UPSTREAM_VERSION}"
 echo "=== Copying debian/ tree into source ==="
 cp -a "$PKG_DIR/debian" "$SRC_DIR/"
 
+echo "=== Installing Build-Depends ==="
+if [[ $EUID -eq 0 ]] && command -v apt-get >/dev/null; then
+    apt-get install -y --no-install-recommends \
+        cmake yasm libmpg123-dev libvorbis-dev libspeex-dev libopus-dev \
+        libavcodec-dev libavformat-dev libavutil-dev libswresample-dev
+fi
+
 echo "=== dpkg-buildpackage -us -uc -b ==="
 ( cd "$SRC_DIR" && dpkg-buildpackage -us -uc -b )
 
