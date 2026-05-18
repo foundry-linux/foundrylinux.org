@@ -11,25 +11,80 @@ SITE_URL="https://apt.foundrylinux.org"
 GITHUB_URL="https://github.com/foundry-linux/foundry-apt"
 PUBLISHED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-# Parse packages/*/DEBIAN/control into parallel arrays (bash 3 compat)
+# Parse each packages/<name>/ into parallel arrays (bash 3 compat).
+# Two layouts are supported:
+#
+#   1. packages/<name>/debian/{control,changelog}  — Debian source-package
+#      format (preferred; produced by the /package skill via dh_make).
+#      Multiple binary stanzas per file; version comes from changelog.
+#
+#   2. packages/<name>/DEBIAN/control              — single binary-package
+#      stanza (used by pure metapackages and the legacy xa65 build).
+#
+# If both exist, debian/ wins (it's authoritative for source builds).
 PKG_NAMES=()
 PKG_VERSIONS=()
 PKG_DESCS=()
 PKG_HOMEPAGES=()
 PKG_ARCHS=()
 
-for control in "$REPO_ROOT"/packages/*/DEBIAN/control; do
-  [[ -f "$control" ]] || continue
-  pkg=$(grep '^Package:'      "$control" | sed 's/^Package: *//')
-  ver=$(grep '^Version:'      "$control" | sed 's/^Version: *//')
-  desc=$(grep '^Description:' "$control" | sed 's/^Description: *//')
-  homepage=$(grep '^Homepage:'     "$control" | sed 's/^Homepage: *//' || true)
-  arch=$(grep '^Architecture:' "$control" | sed 's/^Architecture: *//' || true)
-  PKG_NAMES+=("$pkg")
-  PKG_VERSIONS+=("$ver")
-  PKG_DESCS+=("$desc")
-  PKG_HOMEPAGES+=("${homepage:-}")
-  PKG_ARCHS+=("${arch:-all}")
+# Source-format parser: emits one TSV line per binary stanza:
+#   pkg<TAB>arch<TAB>desc_short
+# Skips the Source: stanza (the first one). Field continuations (lines
+# starting with space) on Description are ignored — we only emit the
+# short summary line.
+parse_source_control_binaries() {
+  awk -v RS='' -v ORS='\n' '
+    NR == 1 { next }     # First stanza is "Source:" — skip
+    {
+      pkg=""; arch=""; desc=""
+      n = split($0, lines, "\n")
+      for (i = 1; i <= n; i++) {
+        if      (lines[i] ~ /^Package:/)      { sub(/^Package: */,      "", lines[i]); pkg  = lines[i] }
+        else if (lines[i] ~ /^Architecture:/) { sub(/^Architecture: */, "", lines[i]); arch = lines[i] }
+        else if (lines[i] ~ /^Description:/)  { sub(/^Description: */,  "", lines[i]); desc = lines[i] }
+      }
+      if (pkg != "") print pkg "\t" arch "\t" desc
+    }
+  ' "$1"
+}
+
+for pkgdir in "$REPO_ROOT"/packages/*/; do
+  [[ -d "$pkgdir" ]] || continue
+  src_control="${pkgdir}debian/control"
+  src_changelog="${pkgdir}debian/changelog"
+  bin_control="${pkgdir}DEBIAN/control"
+
+  if [[ -f "$src_control" && -f "$src_changelog" ]]; then
+    # Source-format layout (debian/). Homepage is in the Source: stanza;
+    # version comes from the first changelog entry.
+    homepage=$(awk '/^Homepage:/ {sub(/^Homepage: */,""); print; exit}' "$src_control" || true)
+    ver=$(awk 'NR==1 {if (match($0, /\(([^)]+)\)/, a)) print a[1]; exit}' "$src_changelog")
+    if [[ -z "$ver" ]]; then
+      echo "WARNING: $src_changelog missing version on line 1 — skipping $pkgdir" >&2
+      continue
+    fi
+    while IFS=$'\t' read -r pkg arch desc; do
+      [[ -n "$pkg" ]] || continue
+      PKG_NAMES+=("$pkg")
+      PKG_VERSIONS+=("$ver")
+      PKG_DESCS+=("$desc")
+      PKG_HOMEPAGES+=("${homepage:-}")
+      PKG_ARCHS+=("${arch:-all}")
+    done < <(parse_source_control_binaries "$src_control")
+  elif [[ -f "$bin_control" ]]; then
+    # Binary-format layout (DEBIAN/). Single stanza; everything in one file.
+    pkg=$(grep '^Package:'      "$bin_control" | sed 's/^Package: *//')
+    ver=$(grep '^Version:'      "$bin_control" | sed 's/^Version: *//')
+    desc=$(grep '^Description:' "$bin_control" | sed 's/^Description: *//')
+    homepage=$(grep '^Homepage:'     "$bin_control" | sed 's/^Homepage: *//' || true)
+    arch=$(grep '^Architecture:' "$bin_control" | sed 's/^Architecture: *//' || true)
+    PKG_NAMES+=("$pkg")
+    PKG_VERSIONS+=("$ver")
+    PKG_DESCS+=("$desc")
+    PKG_HOMEPAGES+=("${homepage:-}")
+    PKG_ARCHS+=("${arch:-all}")
+  fi
 done
 
 # Build the package table rows
