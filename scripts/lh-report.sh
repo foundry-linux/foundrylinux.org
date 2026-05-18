@@ -112,7 +112,7 @@ for f in "${reports[@]}"; do
         | . * 1000 | round / 1000 | tostring)
     ] | @tsv' "$f")
 
-  ts="${fetch_ts%%.*}Z"
+  ts=$(date -d "${fetch_ts}" '+%Y-%m-%dT%H:%M:%S %Z')
 
   echo
   printf '  %s▶%s %s%s%s\n' "$CYAN" "$RST" "$BOLD" "$slug" "$RST"
