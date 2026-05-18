@@ -24,15 +24,12 @@ Runs the per-metapackage installers in this order:
   3. install-foundry-linux-blender.sh
   4. install-foundry-linux-retro-tools.sh
 
-Usage: $(basename "$0") [--dry-run|-n] [--apt-only] [--skip-blender]
-                       [--skip-retro] [--force] [-h|--help]
+Usage: $(basename "$0") [--dry-run|-n] [--skip-blender] [--skip-retro] [-h|--help]
 
 Options:
   -n, --dry-run     Print all sub-script commands without executing
-  --apt-only        Forwarded to retro-tools: skip its source-build sidecars
   --skip-blender    Skip Blender entirely
   --skip-retro      Skip retro-tools entirely
-  --force           Forwarded to retro-tools: rebuild ~/opt/<tool>/ even if present
   -h, --help        Show this help and exit
 EOF
             exit 0
@@ -41,17 +38,13 @@ EOF
 done
 
 DRY_RUN=false
-APT_ONLY=false
 SKIP_BLENDER=false
 SKIP_RETRO=false
-FORCE=false
 for arg in "$@"; do
     case "$arg" in
         -n|--dry-run)   DRY_RUN=true ;;
-        --apt-only)     APT_ONLY=true ;;
         --skip-blender) SKIP_BLENDER=true ;;
         --skip-retro)   SKIP_RETRO=true ;;
-        --force)        FORCE=true ;;
         *) echo "Unknown option: $arg (try --help)" >&2; exit 1 ;;
     esac
 done
@@ -98,10 +91,7 @@ if $SKIP_RETRO; then
     info "Skipping foundry-linux-retro-tools (--skip-retro)"
 else
     step "foundry-linux-dev: retro tools"
-    retro_args=("${DRY_FLAG[@]}")
-    $APT_ONLY && retro_args+=(--apt-only)
-    $FORCE    && retro_args+=(--force)
-    run_subscript install-foundry-linux-retro-tools.sh "${retro_args[@]}"
+    run_subscript install-foundry-linux-retro-tools.sh "${DRY_FLAG[@]}"
 fi
 
 step "foundry-linux-dev install complete"
