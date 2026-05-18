@@ -62,6 +62,12 @@ tasks:
     cmds:
       - gh secret list --repo {{.GH_REPO}}
 
+  lh-report:
+    desc: "Print Lighthouse score table. Default: /tmp/lh/latest/. Args: lh-report v0.0.29 | lh-report path/to/file.json"
+    dir: "{{.ROOT_DIR}}"
+    cmds:
+      - bash scripts/lh-report.sh {{.CLI_ARGS}}
+
   lighthouse:
     desc: "Run Lighthouse against https://foundrylinux.org, RUNS=${RUNS:-3} runs, devtools throttling. Reports under /tmp/lh/latest/."
     dir: "{{.ROOT_DIR}}"
