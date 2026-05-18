@@ -133,6 +133,54 @@ task generate-index   # runs publish-local as a dep, then generates the page
 To customise branding for a new repo, edit `SITE_TITLE`, `SITE_URL`, and `GITHUB_URL` at
 the top of `scripts/generate-index.sh`.
 
+### Package-layout gotcha — three flavours, only two visible to the index
+
+`generate-index.sh` parses `packages/*/DEBIAN/control` to build the table. A package
+in this repo can take one of three layouts:
+
+| Layout | `packages/<name>/` contents | Visible to index? |
+|---|---|---|
+| **Pure metapackage** | `DEBIAN/control` only | yes — that file *is* the metadata |
+| **Hand-rolled vendor** (xa65 today) | `build.sh` generates DEBIAN/control at build time inside a tmpdir | **no** unless you also stash a static `DEBIAN/control` for index display |
+| **Debhelper / dh_make** (preferred — see `/package` skill) | `build.sh` (thin wrapper) + `debian/{control,changelog,rules,...}` source-format tree | depends on whether `generate-index.sh` reads `debian/control` too |
+
+Today the index generator only knows about the first layout. If you ship anything
+hand-rolled or debhelper-based, either:
+
+1. Add a static `packages/<name>/DEBIAN/control` mirror (xa65 does this).
+2. Or update `scripts/generate-index.sh` to parse `debian/control` (recommended — strictly
+   more capable: it's the source-package format with multiple binary stanzas).
+
+The `/package` skill prefers debhelper-based packaging, so do (2) before adding the
+second debhelper-built package.
+
+## Step 6 — How users consume this repo
+
+Downstream users (and CI smoke-install jobs, fresh containers, etc.) add the repo via:
+
+```bash
+sudo install -d /etc/apt/keyrings
+curl -fsSL https://<CUSTOM_DOMAIN>/key.gpg \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/<SLUG>.gpg
+echo "deb [signed-by=/etc/apt/keyrings/<SLUG>.gpg] https://<CUSTOM_DOMAIN> <SUITE> main" \
+  | sudo tee /etc/apt/sources.list.d/<SLUG>.list
+sudo apt-get update
+sudo apt-get install <pkg>
+```
+
+Where:
+- `<CUSTOM_DOMAIN>` is e.g. `apt.foundrylinux.org` (the repo's web hostname)
+- `<SLUG>` is a short identifier for the keyring filename (e.g. `foundry`)
+- `<SUITE>` is the distribution codename the repo was published for — look up the value in
+  `aptly/aptly.conf` or the publish workflow output. **It is *not* the same as `<CUSTOM_DOMAIN>`.**
+  For an Ubuntu 26.04-targeted repo this is `resolute`, not `noble` or `jammy`.
+
+The published key lives at exactly **`/key.gpg`** (`bootstrap.sh` step 8 uploads it).
+Do **not** invent paths like `/foundry-archive-keyring.gpg`, `/pubkey.asc`, etc. — those
+are 404. The path is canonical.
+
+Add this snippet to the repo's `README.md` so users don't have to guess.
+
 ## Credential storage
 
 `bootstrap.sh` automatically stores all secrets to a private `<gh-org>-secrets` R2 bucket
