@@ -1,0 +1,45 @@
+.TH CMD2MOT 1 "2026-05-18" "f9dasm 1.83" "User Commands"
+.SH NAME
+cmd2mot \- convert FLEX9 binary (.CMD) files to Motorola S\-records
+.SH SYNOPSIS
+.B cmd2mot
+.RI [ \-out
+.IR file ]
+.I file.cmd
+.SH DESCRIPTION
+.B cmd2mot
+reads a FLEX9 binary
+.RB ( .CMD )
+file and emits the equivalent Motorola S\-record stream, suitable for
+loading into ROM programmers or as input to
+.BR mot2bin (1).
+.PP
+It is shipped as a companion utility to
+.BR f9dasm (1)
+for round\-tripping FLEX9 binaries between dump formats.
+.SH OPTIONS
+.TP
+.BI \-out " file"
+Write the S\-record output to
+.IR file
+instead of standard output.
+.SH EXAMPLES
+.PP
+Convert
+.I prog.cmd
+to
+.IR prog.s19 :
+.PP
+.RS
+.B cmd2mot \-out prog.s19 prog.cmd
+.RE
+.SH SEE ALSO
+.BR f9dasm (1),
+.BR hex2bin (1),
+.BR mot2bin (1)
+.SH AUTHORS
+Part of the
+.B f9dasm
+suite by Arto Salmi, Hermann Seib, Colin Bourassa, and Rainer Buchty.
+.SH COPYRIGHT
+Distributed under the GNU General Public License version 2 or later.

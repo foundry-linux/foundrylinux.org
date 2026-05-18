@@ -120,6 +120,15 @@ override_dh_auto_install:
 
     PASS. 50 KB — 4.5× smaller than xa65's 223 KB unstripped hand-rolled build, as predicted.
 
+    **Follow-up (1foundry2, same day):** the 4× `no-manual-page` lintian warnings above are a Debian Policy §12.1 violation, not a soft style nit. Authored four hand-written section-1 man pages (`debian/man/{f9dasm,hex2bin,mot2bin,cmd2mot}.1`), listed in `debian/f9dasm.manpages`, rebuilt as `1.83-1foundry2_amd64.deb` (53 KB; man pages add ~3 KB). Re-ran lintian:
+
+    ```
+    $ lintian dist/f9dasm_1.83-1foundry2_amd64.deb
+    (clean — no E:, no W:, only the root-privileges advisory)
+    ```
+
+    Skill updated in `~/.claude/skills/package/SKILL.md`: man-page authoring is now an explicit Step 3 sub-step, and lintian is a BLOCKING gate before commit/upload (both E: and W: must be clean, not just E:).
+
 4. **`dpkg-deb` introspection.**
 
     ```

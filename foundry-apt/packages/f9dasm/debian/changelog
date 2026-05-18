@@ -1,3 +1,13 @@
+f9dasm (1.83-1foundry2) resolute; urgency=medium
+
+  * Add Foundry-Linux-authored man pages for f9dasm(1), hex2bin(1),
+    mot2bin(1), and cmd2mot(1) — upstream ships none, and lintian's
+    no-manual-page warning is a real Debian Policy §12.1 violation
+    (every binary in /usr/bin/ must have a man page). With this revision
+    lintian is clean of E: and W: lines.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 18 May 2026 11:00:00 +0000
+
 f9dasm (1.83-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of upstream V1.83.

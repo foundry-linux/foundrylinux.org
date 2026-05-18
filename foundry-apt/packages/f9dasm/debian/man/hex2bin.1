@@ -1,0 +1,42 @@
+.TH HEX2BIN 1 "2026-05-18" "f9dasm 1.83" "User Commands"
+.SH NAME
+hex2bin \- convert Intel Hex records to a raw binary file
+.SH SYNOPSIS
+.B hex2bin
+.RI [ \-out
+.IR file ]
+.I file.hex
+.SH DESCRIPTION
+.B hex2bin
+reads an Intel Hex\-formatted file and writes the decoded data as a raw
+binary stream.
+.PP
+It is shipped as a companion utility to
+.BR f9dasm (1)
+for preparing raw binary input from common ROM dump formats.
+.SH OPTIONS
+.TP
+.BI \-out " file"
+Write the binary output to
+.IR file
+instead of standard output.
+.SH EXAMPLES
+.PP
+Convert
+.I rom.hex
+to
+.IR rom.bin :
+.PP
+.RS
+.B hex2bin \-out rom.bin rom.hex
+.RE
+.SH SEE ALSO
+.BR f9dasm (1),
+.BR mot2bin (1),
+.BR cmd2mot (1)
+.SH AUTHORS
+Part of the
+.B f9dasm
+suite by Arto Salmi, Hermann Seib, Colin Bourassa, and Rainer Buchty.
+.SH COPYRIGHT
+Distributed under the GNU General Public License version 2 or later.

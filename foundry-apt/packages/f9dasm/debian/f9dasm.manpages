@@ -1,0 +1,4 @@
+debian/man/f9dasm.1
+debian/man/hex2bin.1
+debian/man/mot2bin.1
+debian/man/cmd2mot.1

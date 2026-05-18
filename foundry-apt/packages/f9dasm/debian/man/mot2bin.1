@@ -1,0 +1,42 @@
+.TH MOT2BIN 1 "2026-05-18" "f9dasm 1.83" "User Commands"
+.SH NAME
+mot2bin \- convert Motorola S\-record files to a raw binary file
+.SH SYNOPSIS
+.B mot2bin
+.RI [ \-out
+.IR file ]
+.I file.s19
+.SH DESCRIPTION
+.B mot2bin
+reads a Motorola S\-record (S19/S28/S37) file and writes the decoded data
+as a raw binary stream.
+.PP
+It is shipped as a companion utility to
+.BR f9dasm (1)
+for preparing raw binary input from common ROM dump formats.
+.SH OPTIONS
+.TP
+.BI \-out " file"
+Write the binary output to
+.IR file
+instead of standard output.
+.SH EXAMPLES
+.PP
+Convert
+.I rom.s19
+to
+.IR rom.bin :
+.PP
+.RS
+.B mot2bin \-out rom.bin rom.s19
+.RE
+.SH SEE ALSO
+.BR f9dasm (1),
+.BR hex2bin (1),
+.BR cmd2mot (1)
+.SH AUTHORS
+Part of the
+.B f9dasm
+suite by Arto Salmi, Hermann Seib, Colin Bourassa, and Rainer Buchty.
+.SH COPYRIGHT
+Distributed under the GNU General Public License version 2 or later.
