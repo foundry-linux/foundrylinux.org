@@ -72,9 +72,9 @@ tasks:
       - npx --yes esbuild site/app.jsx          --platform=browser --outfile=site/app.js
 
   site-deploy:
-    desc: "Deploy site/ to Cloudflare Pages (requires CF_PAGES_API_TOKEN + CF_PAGES_ACCOUNT_ID)"
+    desc: "Deploy site/ to Cloudflare Pages (requires CLOUDFLARE_API_TOKEN)"
     cmds:
-      - wrangler pages deploy site/ --project-name foundrylinux-org --branch main
+      - npx --yes wrangler pages deploy site/ --project-name foundrylinux-org --branch main
 
   bump:
     desc: "Sync and auto-increment patch version (e.g. v0.0.3 → v0.0.4)"
