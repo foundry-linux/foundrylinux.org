@@ -1,0 +1,77 @@
+.TH GHIDRA 1 "May 2026" "Ghidra 12.1" "Reverse Engineering Tools"
+.SH NAME
+ghidra \- NSA software reverse engineering framework (GUI mode)
+.SH SYNOPSIS
+.B ghidra
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B ghidra
+launches the Ghidra Software Reverse Engineering (SRE) framework developed by
+the National Security Agency (NSA) Research Directorate.
+.PP
+Ghidra is a multi-platform reverse engineering tool that provides disassembly,
+assembly, decompilation, graphing, and scripting capabilities for compiled
+binaries.  It supports a wide range of processor instruction sets and executable
+formats including ELF, PE (Windows), Mach-O, raw binary images, and many game
+cartridge formats.
+.PP
+Launching
+.B ghidra
+opens the project manager window from which you can create or open projects,
+import binaries for analysis, and open the CodeBrowser for interactive
+disassembly and decompilation.
+.PP
+Ghidra stores project data under
+.I $HOME/.ghidra/
+and user preferences under
+.IR $HOME/.ghidra-<version>/ .
+.SH OPTIONS
+Ghidra's launcher passes all arguments to the Java process.  Common JVM flags:
+.TP
+.B \-\-help
+Display built\-in usage information (passed through to Ghidra's Java main).
+.TP
+.BI \-DGHIDRA_MAXMEM= size
+Override the maximum JVM heap size (e.g.
+.IR 8G ,
+.IR 4096m ).
+The environment variable
+.B GHIDRA_MAXMEM
+serves the same purpose.
+.SH ENVIRONMENT
+.TP
+.B GHIDRA_MAXMEM
+Override the default maximum JVM heap memory (1/4 of system RAM).
+Accepted values match the regex \fI\ed+[gGmMkK]\fR (e.g. \fI8G\fR, \fI4096m\fR).
+.TP
+.B GHIDRA_GUI_MAXMEM
+Override heap memory for GUI instances only.
+.TP
+.B GHIDRA_JAVA_OPTIONS
+Additional JVM arguments applied to all Ghidra instances.
+.TP
+.B GHIDRA_GUI_JAVA_OPTIONS
+Additional JVM arguments applied to GUI instances only.
+.SH FILES
+.TP
+.I /usr/lib/ghidra/
+Ghidra installation directory.
+.TP
+.I /usr/lib/ghidra/ghidraRun
+Upstream launcher script (symlinked from \fB/usr/bin/ghidra\fR).
+.TP
+.I $HOME/.ghidra/
+User project storage directory.
+.SH SEE ALSO
+.BR ghidra-headless (1),
+.BR java (1)
+.PP
+Ghidra documentation: \fI/usr/lib/ghidra/docs/\fR
+.br
+Getting Started: \fI/usr/lib/ghidra/docs/GettingStarted.html\fR
+.SH AUTHORS
+Ghidra was developed by the NSA Research Directorate.
+See \fIhttps://ghidra-sre.org/\fR for more information.
+.SH COPYRIGHT
+Copyright \(co 2019\-2026 National Security Agency.
+Licensed under the Apache License, Version 2.0.

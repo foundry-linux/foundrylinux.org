@@ -1,0 +1,92 @@
+.TH GHIDRA-HEADLESS 1 "May 2026" "Ghidra 12.1" "Reverse Engineering Tools"
+.SH NAME
+ghidra-headless \- Ghidra batch (non-GUI) analysis mode
+.SH SYNOPSIS
+.B ghidra-headless
+.I <project_location>
+.I <project_name>
+[\fB\-import\fR \fIfiles\fR|\fIdirs\fR]
+[\fB\-process\fR [\fIfile\fR]]
+[\fB\-preScript\fR \fIScriptName\fR [\fIargs\fR]]
+[\fB\-postScript\fR \fIScriptName\fR [\fIargs\fR]]
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B ghidra-headless
+runs Ghidra in headless (batch) mode without the GUI.  It is useful for
+automated analysis pipelines, CI integration, and scripting large sets of
+binaries.
+.PP
+Analysis scripts (Java or Jython) specified via
+.B \-preScript
+and
+.B \-postScript
+run against each imported or processed binary.  Results are stored in the
+Ghidra project at
+.IR project_location / project_name .gpr.
+.SH OPTIONS
+.TP
+.B \-import \fIfiles\fR|\fIdirs\fR
+Import the specified files or directory trees into the project before analysis.
+.TP
+.B \-process \fR[\fIfile\fR]
+Run analysis against already-imported files in the project.  If \fIfile\fR is
+omitted, all files in the project are processed.
+.TP
+.B \-preScript \fIScriptName\fR [\fIargs...\fR]
+Run \fIScriptName\fR before auto-analysis.
+.TP
+.B \-postScript \fIScriptName\fR [\fIargs...\fR]
+Run \fIScriptName\fR after auto-analysis.
+.TP
+.B \-scriptPath \fIpath\fR
+Colon-separated list of directories to search for scripts.
+.TP
+.B \-noanalysis
+Skip auto-analysis (import only).
+.TP
+.B \-overwrite
+Overwrite existing project files.
+.TP
+.B \-deleteProject
+Delete the project when the run is complete.
+.TP
+.B \-log \fIlogfile\fR
+Write application log to the specified file.
+.TP
+.B \-readOnly
+Open the project in read-only mode.
+.TP
+.B \-max-cpu \fIN\fR
+Limit the number of CPU cores used for analysis.
+.SH ENVIRONMENT
+.TP
+.B GHIDRA_MAXMEM
+Override the maximum JVM heap memory (e.g. \fI8G\fR, \fI4096m\fR).
+.TP
+.B GHIDRA_JAVA_OPTIONS
+Additional JVM arguments.
+.SH FILES
+.TP
+.I /usr/lib/ghidra/support/analyzeHeadless
+Upstream headless launcher (symlinked from \fB/usr/bin/ghidra-headless\fR).
+.SH EXAMPLES
+Import and analyse a binary, run a post-analysis script:
+.PP
+.RS
+.nf
+ghidra-headless /tmp/myproject MyProject \\
+    -import /path/to/binary.elf \\
+    -postScript ExportFunctions.py
+.fi
+.RE
+.SH SEE ALSO
+.BR ghidra (1),
+.BR java (1)
+.PP
+Headless analyser guide: \fI/usr/lib/ghidra/support/analyzeHeadlessREADME.html\fR
+.SH AUTHORS
+Ghidra was developed by the NSA Research Directorate.
+See \fIhttps://ghidra-sre.org/\fR for more information.
+.SH COPYRIGHT
+Copyright \(co 2019\-2026 National Security Agency.
+Licensed under the Apache License, Version 2.0.

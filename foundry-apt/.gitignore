@@ -8,5 +8,10 @@ packages/**/files
 packages/**/*.substvars
 packages/**/*.buildinfo
 packages/**/*.changes
+# dpkg-buildpackage staging dir: debian/<pkgname>/ (generated, never authored).
+# Negation patterns re-include the authored subdirs (man/, source/, patches/).
 packages/**/debian/*/
+!packages/**/debian/man/
+!packages/**/debian/source/
+!packages/**/debian/patches/
 packages/**/*.deb
