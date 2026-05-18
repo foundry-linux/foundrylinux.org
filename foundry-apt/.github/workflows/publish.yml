@@ -109,7 +109,7 @@ jobs:
           retention-days: 30
 
   smoke-install:
-    name: Smoke-install worldfoundry-engine-build-deps in Ubuntu 26.04
+    name: Smoke-install foundry-linux-retro-tools in Ubuntu 26.04
     needs: build-and-publish
     if: github.event_name == 'push'   # tag pushes only
     runs-on: ubuntu-latest
@@ -125,5 +125,5 @@ jobs:
           echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
             > /etc/apt/sources.list.d/foundry.list
           apt-get update -q
-          apt-cache show worldfoundry-engine-build-deps
-          apt-get install -y --no-install-recommends --download-only worldfoundry-engine-build-deps
+          apt-cache show foundry-linux-retro-tools
+          apt-get install -y --no-install-recommends --download-only foundry-linux-retro-tools
