@@ -54,7 +54,14 @@ for pkgdir in "$REPO_ROOT"/packages/*/; do
   [[ -f "$src_control" && -f "$src_changelog" ]] || continue
 
   homepage=$(awk '/^Homepage:/ {sub(/^Homepage: */,""); print; exit}' "$src_control" || true)
-  ver=$(awk 'NR==1 {if (match($0, /\(([^)]+)\)/, a)) print a[1]; exit}' "$src_changelog")
+  # dpkg-parsechangelog is the canonical way to read debian/changelog
+  # (works with mawk; gawk's match(..., a) does not).
+  if command -v dpkg-parsechangelog >/dev/null; then
+    ver=$(dpkg-parsechangelog -l "$src_changelog" -SVersion)
+  else
+    # Fallback for environments without dpkg-dev installed (e.g. local preview)
+    ver=$(sed -n '1s/^[^(]*(\([^)]*\)).*/\1/p' "$src_changelog")
+  fi
   if [[ -z "$ver" ]]; then
     echo "WARNING: $src_changelog missing version on line 1 — skipping $pkgdir" >&2
     continue
@@ -87,7 +94,19 @@ for i in "${!PKG_NAMES[@]}"; do
     deb_url="/pool/main/${L}/${name}/${name}_${ver}_all.deb"
     ver_cell="<a href=\"${deb_url}\">${ver}</a>"
   else
-    # Architecture may list multiple tokens (e.g. "amd64 arm64"). One sub-link per arch.
+    # Architecture: "any" means "build per host arch" — Debian's wildcard.
+    # The actual .debs in dist/ have concrete arch suffixes (amd64, arm64, …),
+    # so resolve "any" by looking at what's actually been built. Multi-token
+    # lists like "amd64 arm64" pass through verbatim.
+    if [[ "$arch" == "any" ]]; then
+      built=""
+      for f in "${REPO_ROOT}/dist/${name}_${ver}_"*.deb; do
+        [[ -f "$f" ]] || continue
+        a=$(basename "$f" .deb | sed "s/^${name}_${ver}_//")
+        built="${built}${built:+ }${a}"
+      done
+      arch="${built:-amd64}"  # fallback if dist/ is empty (e.g. local preview)
+    fi
     arch_links=""
     for a in $arch; do
       [[ -n "$arch_links" ]] && arch_links="${arch_links} "
