@@ -42,7 +42,7 @@ function App() {
   React.useEffect(() => {
     applyFont(t.font);
   }, [t.font]);
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Topbar, null), /* @__PURE__ */ React.createElement(Hero, { material: t.material, font: t.font, wordmark: t.wordmark }), /* @__PURE__ */ React.createElement(Kit, null), /* @__PURE__ */ React.createElement(Install, null), /* @__PURE__ */ React.createElement(Editions, null), /* @__PURE__ */ React.createElement(Foot, null), /* @__PURE__ */ React.createElement(TweaksPanel, { title: "Tweaks" }, /* @__PURE__ */ React.createElement(TweakSection, { label: "Wordmark" }, /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Topbar, null), /* @__PURE__ */ React.createElement("main", null, /* @__PURE__ */ React.createElement(Hero, { material: t.material, font: t.font, wordmark: t.wordmark }), /* @__PURE__ */ React.createElement(Kit, null), /* @__PURE__ */ React.createElement(Install, null), /* @__PURE__ */ React.createElement(Editions, null)), /* @__PURE__ */ React.createElement(Foot, null), /* @__PURE__ */ React.createElement(TweaksPanel, { title: "Tweaks" }, /* @__PURE__ */ React.createElement(TweakSection, { label: "Wordmark" }, /* @__PURE__ */ React.createElement(
     TweakRadio,
     {
       label: "Material",

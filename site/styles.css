@@ -21,7 +21,7 @@
   --hairline-strong: rgba(255, 255, 255, 0.16);
   --ink: rgba(235, 232, 226, 0.92);
   --ink-soft: rgba(200, 197, 190, 0.62);
-  --ink-faint: rgba(170, 167, 160, 0.4);
+  --ink-faint: rgba(170, 167, 160, 0.75);
 
   --font-wordmark: "Big Shoulders Display", "Impact", sans-serif;
   --font-body: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
@@ -489,6 +489,12 @@ body[data-bg="textured"] {
 }
 @media (max-width: 560px) {
   .kit-grid { grid-template-columns: repeat(2, 1fr); }
+  .kit-cell { padding: 18px 14px 20px; min-height: 0; }
+  .kit-icon { width: 36px; height: 36px; margin-bottom: 14px; }
+  .kit-name { font-size: 16px; }
+  .kit-role { font-size: 9px; letter-spacing: 0.15em; margin-bottom: 10px; }
+  .kit-desc { font-size: 11.5px; margin-bottom: 12px; }
+  .kit-meta { font-size: 9px; letter-spacing: 0.1em; }
 }
 
 .kit-cell {

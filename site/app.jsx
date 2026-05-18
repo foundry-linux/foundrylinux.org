@@ -46,10 +46,12 @@ function App() {
   return (
     <>
       <Topbar />
-      <Hero material={t.material} font={t.font} wordmark={t.wordmark} />
-      <Kit />
-      <Install />
-      <Editions />
+      <main>
+        <Hero material={t.material} font={t.font} wordmark={t.wordmark} />
+        <Kit />
+        <Install />
+        <Editions />
+      </main>
       <Foot />
 
       <TweaksPanel title="Tweaks">
