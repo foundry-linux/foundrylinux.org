@@ -133,26 +133,35 @@ task generate-index   # runs publish-local as a dep, then generates the page
 To customise branding for a new repo, edit `SITE_TITLE`, `SITE_URL`, and `GITHUB_URL` at
 the top of `scripts/generate-index.sh`.
 
-### Package-layout gotcha — three flavours, only two visible to the index
+### Package layout — canonical Debian source format only
 
-`generate-index.sh` parses `packages/*/DEBIAN/control` to build the table. A package
-in this repo can take one of three layouts:
+Every package in this repo uses the canonical **Debian source-package layout**:
 
-| Layout | `packages/<name>/` contents | Visible to index? |
-|---|---|---|
-| **Pure metapackage** | `DEBIAN/control` only | yes — that file *is* the metadata |
-| **Hand-rolled vendor** (xa65 today) | `build.sh` generates DEBIAN/control at build time inside a tmpdir | **no** unless you also stash a static `DEBIAN/control` for index display |
-| **Debhelper / dh_make** (preferred — see `/package` skill) | `build.sh` (thin wrapper) + `debian/{control,changelog,rules,...}` source-format tree | depends on whether `generate-index.sh` reads `debian/control` too |
+```
+packages/<name>/
+  debian/
+    control               # Source: + one or more Package: stanzas
+    changelog             # authoritative version source (dpkg-parsechangelog)
+    rules                 # one-line "%: dh $@" (executable)
+    source/format         # "3.0 (native)" for metapackages
+                          # "3.0 (quilt)" for vendored upstreams
+    copyright             # DEP-5 format
+    [patches/series]      # optional quilt patches for vendored upstreams
+    [watch]               # optional uscan tracker for vendored upstreams
+  [build.sh]              # only for vendored upstreams — fetches tarball,
+                          # overlays debian/, runs dpkg-buildpackage
+```
 
-Today the index generator only knows about the first layout. If you ship anything
-hand-rolled or debhelper-based, either:
+Both pure metapackages and vendored upstreams use this layout. The only difference is:
+- **Metapackages**: `3.0 (native)` source format, version like `1.0.1` (no Debian revision), no upstream tarball, no `build.sh`. `build-all.sh` handles them directly.
+- **Vendored upstreams** (`/package` skill generates these): `3.0 (quilt)` source format, version like `2.4.1-1foundry1` (upstream-revision), pinned `build.sh` wrapper that fetches + sha256-verifies the upstream tarball.
 
-1. Add a static `packages/<name>/DEBIAN/control` mirror (xa65 does this).
-2. Or update `scripts/generate-index.sh` to parse `debian/control` (recommended — strictly
-   more capable: it's the source-package format with multiple binary stanzas).
-
-The `/package` skill prefers debhelper-based packaging, so do (2) before adding the
-second debhelper-built package.
+Hand-rolled vendor (a `build.sh` that calls `dpkg-deb --build` directly with a static
+`DEBIAN/control`) is **no longer supported**. The deprecated `packages/xa65/`
+(`build.sh` only, uppercase `DEBIAN/control`) still builds and ships a `.deb` via its
+own `build.sh`, but it's not on the landing page — `generate-index.sh` only reads
+`debian/`. xa65 disappears entirely once the "Phase 0 configures foundry-apt as a
+source" TODO lands and Ubuntu universe's xa65 takes over.
 
 ## Step 6 — How users consume this repo
 

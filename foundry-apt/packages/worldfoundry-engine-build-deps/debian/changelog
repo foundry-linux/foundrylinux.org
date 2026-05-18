@@ -1,0 +1,7 @@
+worldfoundry-engine-build-deps (1.0.0) resolute; urgency=medium
+
+  * Migrated from manually-built DEBIAN/control to canonical debian/
+    source-package layout. No functional changes — same Depends,
+    Description.
+
+ -- World Foundry <packages@worldfoundry.org>  Mon, 18 May 2026 10:20:28 +0700

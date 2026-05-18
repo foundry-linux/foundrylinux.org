@@ -1,14 +1,19 @@
-Package: worldfoundry-android-dev
-Version: 1.0.0
-Architecture: all
-Maintainer: World Foundry <packages@worldfoundry.org>
+Source: worldfoundry-android-dev
 Section: metapackages
 Priority: optional
-Depends: openjdk-17-jdk,
+Maintainer: World Foundry <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://worldfoundry.org/develop/android/
+Rules-Requires-Root: no
+
+Package: worldfoundry-android-dev
+Architecture: all
+Depends: ${misc:Depends},
+ openjdk-17-jdk,
  adb,
  google-android-ndk-r26c-installer
 Recommends: android-sdk-platform-tools-common
-Homepage: https://worldfoundry.org/develop/android/
 Description: Android NDK + SDK toolchain for World Foundry mobile builds
  JDK 17, adb, and the Android NDK r26c — sufficient to cross-compile
  the World Foundry engine for arm64-v8a and armeabi-v7a Android

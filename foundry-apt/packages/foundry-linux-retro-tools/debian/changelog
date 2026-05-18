@@ -1,0 +1,16 @@
+foundry-linux-retro-tools (1.0.2) resolute; urgency=medium
+
+  * Promote f9dasm from Recommends to Depends — f9dasm now ships as a
+    real .deb from the Foundry APT repo (packages/f9dasm/, built via the
+    /package skill).
+  * Mention 6809 disassembly in the short description.
+
+ -- World Foundry <packages@worldfoundry.org>  Mon, 18 May 2026 10:30:00 +0000
+
+foundry-linux-retro-tools (1.0.1) resolute; urgency=medium
+
+  * Migrated from manually-built DEBIAN/control to canonical debian/
+    source-package layout. No functional changes — same Depends,
+    Recommends, Suggests, Description.
+
+ -- World Foundry <packages@worldfoundry.org>  Mon, 18 May 2026 10:20:28 +0700

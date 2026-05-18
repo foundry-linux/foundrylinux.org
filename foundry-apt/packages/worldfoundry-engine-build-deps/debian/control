@@ -1,10 +1,16 @@
-Package: worldfoundry-engine-build-deps
-Version: 1.0.0
-Architecture: all
-Maintainer: World Foundry <packages@worldfoundry.org>
+Source: worldfoundry-engine-build-deps
 Section: metapackages
 Priority: optional
-Depends: build-essential,
+Maintainer: World Foundry <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://worldfoundry.org/
+Rules-Requires-Root: no
+
+Package: worldfoundry-engine-build-deps
+Architecture: all
+Depends: ${misc:Depends},
+ build-essential,
  cmake (>= 3.22),
  libx11-dev,
  libgl1-mesa-dev,
@@ -17,7 +23,6 @@ Depends: build-essential,
  curl,
  wget,
  unzip
-Homepage: https://worldfoundry.org/
 Description: build dependencies for the World Foundry engine
  Pulls in everything required to compile the World Foundry C++17 engine
  (build_game.sh) and its vendored libraries (Jolt, miniaudio, zForth,

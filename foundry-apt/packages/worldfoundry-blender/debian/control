@@ -1,14 +1,19 @@
-Package: worldfoundry-blender
-Version: 1.0.0
-Architecture: all
-Maintainer: World Foundry <packages@worldfoundry.org>
+Source: worldfoundry-blender
 Section: metapackages
 Priority: optional
-Depends: blender (>= 4.2),
+Maintainer: World Foundry <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://worldfoundry.org/develop/blender/
+Rules-Requires-Root: no
+
+Package: worldfoundry-blender
+Architecture: all
+Depends: ${misc:Depends},
+ blender (>= 4.2),
  python3,
  worldfoundry-engine-build-deps
 Recommends: worldfoundry-blender-addon
-Homepage: https://worldfoundry.org/develop/blender/
 Description: Blender 4.2+ configured for World Foundry level authoring
  Pulls in Blender 4.2+ (Ubuntu 26.04 ships 5.0.1 in universe — no PPA
  needed; the snap is unsuitable because its sandbox blocks the

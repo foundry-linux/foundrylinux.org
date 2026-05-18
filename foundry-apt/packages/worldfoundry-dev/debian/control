@@ -1,10 +1,16 @@
-Package: worldfoundry-dev
-Version: 1.0.0
-Architecture: all
-Maintainer: World Foundry <packages@worldfoundry.org>
+Source: worldfoundry-dev
 Section: metapackages
 Priority: optional
-Depends: worldfoundry-engine-build-deps,
+Maintainer: World Foundry <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://worldfoundry.org/
+Rules-Requires-Root: no
+
+Package: worldfoundry-dev
+Architecture: all
+Depends: ${misc:Depends},
+ worldfoundry-engine-build-deps,
  worldfoundry-blender,
  foundry-linux-retro-tools,
  task,
@@ -14,7 +20,6 @@ Depends: worldfoundry-engine-build-deps,
 Recommends: code,
  worldfoundry-android-dev
 Suggests: claude-code
-Homepage: https://worldfoundry.org/
 Description: complete World Foundry game-development environment
  The top-level metapackage — installs everything required for World
  Foundry game development on Ubuntu-family 26.04: the engine build
