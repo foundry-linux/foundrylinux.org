@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Foundry Linux <packages@foundrylinux.org>
 Build-Depends: debhelper-compat (= 13),
  cmake,
+ pkg-config,
  yasm,
  libmpg123-dev,
  libvorbis-dev,
@@ -28,10 +29,9 @@ Description: Video-game audio decoder (CLI)
  mastering and analysis pipelines.
  .
  This package ships the vgmstream-cli command-line decoder built with the
- ffmpeg, mpg123, vorbis, opus, and speex backends. Bundled ATRAC9 / CELT /
- G.719 / G.722.1 codec support is disabled in this build (the upstream
- ext_libs/ vendored copies would trigger embedded-library lintian
- warnings); raise an issue if you need those formats.
+ ffmpeg, mpg123, vorbis, opus, speex, and G.722.1 (Siren 14) backends.
+ ATRAC9, FSB CELT, and G.719 are not built — their decoders are
+ Windows-only DLLs in ext_libs/ and cannot be compiled on Linux.
  .
  Plugins (Audacious, Winamp, foobar2000, XMPlay) and the vgmstream123
  libao player are intentionally not built — see the upstream README for

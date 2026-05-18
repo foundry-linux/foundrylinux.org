@@ -5,9 +5,14 @@
 #
 # Plugins (Audacious, V123, etc.) are disabled — they have heavyweight
 # runtime deps (libao, audacious-dev) we don't want to pull into the base
-# decoder package. Bundled codec libs in ext_libs/ (ATRAC9, CELT, G719,
-# G7221) are also disabled to avoid embedded-library lintian warnings;
-# the FFmpeg / MPG123 / Vorbis / Opus / Speex paths give wide coverage.
+# decoder package.
+#
+# ATRAC9, CELT, and G.719 are disabled because their decoders live in
+# ext_libs/ as Windows-only DLLs (.dll/.a); they can't be built on Linux.
+# G.722.1 (Siren 14) is intentionally KEPT ON — it is compiled from plain
+# C source in src/coding/libs/ (not a vendored binary), and the upstream
+# ships it enabled by default. Disabling it would silently break decoding
+# of files that use coding_G7221C.
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
@@ -30,7 +35,6 @@ override_dh_auto_configure:
 	    -DUSE_ATRAC9=OFF \
 	    -DUSE_CELT=OFF \
 	    -DUSE_G719=OFF \
-	    -DUSE_G7221=OFF \
 	    -DUSE_FFMPEG=ON \
 	    -DUSE_MPEG=ON \
 	    -DUSE_VORBIS=ON \

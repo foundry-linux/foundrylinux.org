@@ -1,3 +1,16 @@
+vgmstream (2083-1foundry2) resolute; urgency=medium
+
+  * Enable G.722.1 (Siren 14) codec — it is compiled from plain C source
+    in src/coding/libs/ (not a vendored Windows binary), and the upstream
+    enables it by default. Disabling it was incorrect and would silently
+    break decoding of files using coding_G7221C.
+  * Add pkg-config to Build-Depends (required by cmake's find_package).
+  * Correct package description: ATRAC9/CELT/G.719 are disabled because
+    their decoders are Windows-only DLLs; G.722.1 is now correctly listed
+    as enabled.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 18 May 2026 18:00:00 +0000
+
 vgmstream (2083-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of upstream r2083.
