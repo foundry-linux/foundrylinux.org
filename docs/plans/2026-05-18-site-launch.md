@@ -162,11 +162,17 @@ Add a new **"Pages path (plain static HTML)"** section documenting the no-Astro/
 
 ---
 
-## Verification
+## Verification — COMPLETE ✓
 
-1. `curl -I https://foundrylinux.org/` returns `HTTP/2 200` and `content-type: text/html`.
-2. `curl -fsSL https://foundrylinux.org/` contains `FOUNDRY LINUX`.
-3. `curl -I https://apt.foundrylinux.org/` still returns `HTTP/2 200` (no regression on APT domain).
+1. `curl -I https://foundrylinux.org/` → HTTP/2 200, content-type: text/html ✓
+2. `curl -fsSL https://foundrylinux.org/` → contains `FOUNDRY LINUX` ✓
+3. `curl -I https://apt.foundrylinux.org/` → HTTP/2 200 (no regression) ✓
+
+## Post-launch updates
+
+- Claude Design bundle imported (v0.2.0) — replaced plain text placeholder with React landing page
+- Brand domain corrected to `foundrylinux.org` (topbar) + `apt.foundrylinux.org` (install snippets) — v0.2.3
+- `apt.foundrylinux.org` index styled via shared `foundrylinux.org/styles.css` — v0.0.29
 
 ---
 

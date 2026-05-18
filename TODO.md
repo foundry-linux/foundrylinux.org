@@ -5,18 +5,19 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
-### Phase 1 — package the source-built retro tools
+### Phase 1 — package the source-built retro tools — COMPLETE ✓
 
-Phase 0's `install-foundry-linux-retro-tools.sh` source-built five tools into `~/opt/`. xa65 (Universe), f9dasm, libvgm, and vgmstream are now resolved via apt. Only ghidra remains as an open item. Use the `/package` skill — each new package needs `packages/<name>/debian/` + `build.sh`.
+All five source-built tools from Phase 0's `install-foundry-linux-retro-tools.sh` are now `.deb` packages in the live repo. CI is green. Phase 1 is done.
 
 **Rule, learned the hard way (2026-05-18):** *before* packaging any source-built tool, run `apt-cache policy <pkg>` on a fresh `ubuntu:26.04`. If Ubuntu universe ships it, just add it to the Phase 0 apt-install list and the metapackage `Depends:` — don't duplicate.
 
 - [x] ~~**xa65**~~ — retired. Ubuntu 26.04 universe ships `xa65 2.4.1-0.1build1`. `packages/xa65/` deleted; Phase 0 retro-tools script apt-installs xa65; `foundry-linux-retro-tools` `Depends: xa65` resolves to universe. See [`docs/plans/2026-05-18-retire-xa65.md`](docs/plans/2026-05-18-retire-xa65.md).
 - [x] **`/package` skill** ([plan](docs/plans/2026-05-18-package-skill.md)) — reusable Claude Code skill using `dh_make` + `debhelper` + `dpkg-buildpackage`. Iteratively refined through f9dasm, libvgm, and vgmstream packaging runs.
+- [x] **ghidra** — packaged and live; `foundry-linux-retro-tools` 1.0.5 `Depends: ghidra`. See done entry below.
 
 ### Site
 
-- [ ] **Flesh out foundrylinux.org** — placeholder (`foundrylinux.org` text only) is live; replace with real content once design is decided.
+- [ ] **Flesh out foundrylinux.org** — Claude Design landing page is live (v0.2.x); content passes as a real landing page but the design is still iterating. `tweaks-panel.jsx` still present — remove once design is finalised.
 
 ### Phase 2 — Distrobox image
 
@@ -33,12 +34,15 @@ Phase 0's `install-foundry-linux-retro-tools.sh` source-built five tools into `~
 
 ### Housekeeping
 
-- [ ] **Worldfoundry → foundry-linux metapackage rename.** `packages/worldfoundry-{android-dev,blender,dev,engine-build-deps}/` are legacy names. The distro is "Foundry Linux"; consider renaming the metapackages and/or shipping `foundry-linux-*` as aliases that `Depends:` on the WF ones.
+- [ ] **Worldfoundry → foundry-linux metapackage rename.** `worldfoundry-*` packages removed from `foundry-apt/` (they will live at `apt.worldfoundry.org` eventually). Remaining: audit any lingering `worldfoundry-*` references in scripts, README, CLAUDE.md.
 - [ ] **Fresh-VM retro-tools end-to-end test.** Run `install-foundry-linux-retro-tools.sh` on a clean Ubuntu 26.04 VM and confirm all tools are available (`ghidra`, `vgmstream-cli`, `f9dasm`, `vgm2wav`, `mame`, etc.).
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
 
 ## Done
 
+- 2026-05-18 — [apt-index-styling] `apt.foundrylinux.org` index now shares `foundrylinux.org/styles.css`; Space Grotesk + JetBrains Mono; ember orange accent; no duplicate CSS to maintain. Shipped as v0.0.29.
+- 2026-05-18 — [worldfoundry-apt-cleanup] `worldfoundry-{android-dev,blender,dev,engine-build-deps}` removed from `foundry-apt/` (moved to `apt.worldfoundry.org`); smoke test scoped to `apt-cache show`; CI green at v0.0.30.
+- 2026-05-18 — [site-launch] `foundrylinux.org` live on Cloudflare Pages via tag-push CI; Claude Design bundle imported; branding corrected; `import-claude-design` skill created. See [`docs/plans/2026-05-18-site-launch.md`](docs/plans/2026-05-18-site-launch.md).
 - 2026-05-18 — [drop-babel-standalone] Pre-compile `site/*.jsx` → `.js` via esbuild; switch to prod React CDN builds; drop 2.9 MB Babel standalone; update import-claude-design skill. See [`docs/plans/2026-05-18-drop-babel-standalone.md`](docs/plans/2026-05-18-drop-babel-standalone.md).
 - 2026-05-18 — [package-ghidra] 541 MB pre-built zip → lintian-clean `.deb` at `12.1-1foundry1`; ghidra + ghidra-headless in `/usr/bin`; retro-tools 1.0.5 now `Depends: ghidra`; sidecar stripped from Phase 0 install script.
 - 2026-05-18 — [package-vgmstream] 852 KB lintian-clean `.deb` at `2083-1foundry1`; cmake forced via `--buildsystem=cmake` (legacy Makefile coexists); `vgmstream-cli` statically linked to libvgmstream; retro-tools 1.0.4 now `Depends: vgmstream`.
