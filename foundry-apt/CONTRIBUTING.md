@@ -29,7 +29,7 @@ Every package in this repo uses the **canonical Debian source-package layout** �
     Source: foundry-linux-<thing>
     Section: metapackages
     Priority: optional
-    Maintainer: World Foundry <packages@worldfoundry.org>
+    Maintainer: Foundry Linux <packages@foundrylinux.org>
     Build-Depends: debhelper-compat (= 13)
     Standards-Version: 4.7.0
     Homepage: https://foundrylinux.org/
@@ -92,7 +92,7 @@ Maintainer-only:
 
 1. `git tag -s v1.0.X -m "..."` (signed tag).
 2. `git push origin v1.0.X`.
-3. Watch [the publish workflow](.github/workflows/publish.yml) — it builds, signs, syncs to R2, and smoke-installs `foundry-linux-dev` in a clean Ubuntu 26.04 container.
+3. Watch [the publish workflow](.github/workflows/publish.yml) — it builds, signs, syncs to R2, and smoke-checks `foundry-linux-retro-tools` (and all other packages) in a clean Ubuntu 26.04 container.
 4. If smoke-install fails, the apt repo is still uploaded — fix forward with `v1.0.X+1`, don't try to delete a published version.
 
 ## Licence

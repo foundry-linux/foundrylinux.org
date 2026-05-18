@@ -1,14 +1,8 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the worldfoundry-dev umbrella metapackage.
+# Phase 0 installer for the foundry-linux-dev umbrella.
 #
-# Composes the constituent per-metapackage installers in dependency order,
-# mirroring foundry-apt/packages/worldfoundry-dev/debian/control:
-#
-#   Depends: worldfoundry-engine-build-deps,
-#            worldfoundry-blender,
-#            foundry-linux-retro-tools,
-#            task,
-#            gnupg, ca-certificates, software-properties-common
+# Composes the constituent per-metapackage installers in dependency order:
+#   engine-build-deps, task, blender, retro-tools
 
 set -euo pipefail
 

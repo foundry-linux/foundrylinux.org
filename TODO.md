@@ -33,13 +33,12 @@ All five source-built tools from Phase 0's `install-foundry-linux-retro-tools.sh
 - [ ] **apt.worldfoundry.org Phase B** [deferred] — five `worldfoundry-*` metapackages + `worldfoundry-blender-addon`; remove worldfoundry-* from `foundry-apt/`.
 
 ### Housekeeping
-
-- [ ] **Worldfoundry → foundry-linux metapackage rename.** `worldfoundry-*` packages removed from `foundry-apt/` (they will live at `apt.worldfoundry.org` eventually). Remaining: audit any lingering `worldfoundry-*` references in scripts, README, CLAUDE.md.
 - [ ] **Fresh-VM retro-tools end-to-end test.** Run `install-foundry-linux-retro-tools.sh` on a clean Ubuntu 26.04 VM and confirm all tools are available (`ghidra`, `vgmstream-cli`, `f9dasm`, `vgm2wav`, `mame`, etc.).
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
 
 ## Done
 
+- 2026-05-18 — [worldfoundry-rename-cleanup] `worldfoundry-*` refs purged from Phase 0 install scripts, README, CONTRIBUTING, Taskfile, test harness; functional installs now use direct deps.
 - 2026-05-18 — [apt-index-styling] `apt.foundrylinux.org` index now shares `foundrylinux.org/styles.css`; Space Grotesk + JetBrains Mono; ember orange accent; no duplicate CSS to maintain. Shipped as v0.0.29.
 - 2026-05-18 — [worldfoundry-apt-cleanup] `worldfoundry-{android-dev,blender,dev,engine-build-deps}` removed from `foundry-apt/` (moved to `apt.worldfoundry.org`); smoke test scoped to `apt-cache show`; CI green at v0.0.30.
 - 2026-05-18 — [site-launch] `foundrylinux.org` live on Cloudflare Pages via tag-push CI; Claude Design bundle imported; branding corrected; `import-claude-design` skill created. See [`docs/plans/2026-05-18-site-launch.md`](docs/plans/2026-05-18-site-launch.md).

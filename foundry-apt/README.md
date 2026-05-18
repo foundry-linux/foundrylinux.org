@@ -10,7 +10,7 @@ curl -fsSL https://apt.foundrylinux.org/key.gpg \
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
   | sudo tee /etc/apt/sources.list.d/foundry.list
 sudo apt update
-sudo apt install worldfoundry-dev
+sudo apt install foundry-linux-retro-tools
 ```
 
 `resolute` is the suite name (Kubuntu 26.04 "Resolute Raccoon"). A `noble` alias covers 24.04.
@@ -19,11 +19,7 @@ sudo apt install worldfoundry-dev
 
 | Package | Pulls in | When you want it |
 |---|---|---|
-| **`worldfoundry-dev`** | everything below | Default — most contributors |
-| `worldfoundry-engine-build-deps` | build-essential, cmake, libx11, libgl, gdb, xxd, pkg-config, git | Just compiling the engine |
-| `worldfoundry-blender` | [Blender](https://www.blender.org/) 4.2+ + python3 + engine-build-deps | Authoring levels |
-| `foundry-linux-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm); Recommends [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) | Porting arcade ROMs |
-| `worldfoundry-android-dev` | JDK 17, adb, NDK r26c | Cross-compiling for Android (separate because ~3 GB) |
+| `foundry-linux-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) | Retro/arcade ROM tools |
 
 ## Vendored upstream packages
 
@@ -33,7 +29,7 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 |---|---|---|
 | `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | Motorola 6800/6809/6309 family disassembler. amd64. |
 
-Planned: [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm). See [`LICENSES-VENDORED.md`](LICENSES-VENDORED.md) for the running attribution list. Use the [`/package`](https://github.com/anthropics/claude-code) Claude Code skill to add new ones — it generates the Debian source tree via `dh_make` and wires it into this repo.
+See [`LICENSES-VENDORED.md`](LICENSES-VENDORED.md) for the running attribution list. Use the [`/package`](https://github.com/anthropics/claude-code) Claude Code skill to add new ones — it generates the Debian source tree via `dh_make` and wires it into this repo.
 
 Two upstreams we *don't* repackage:
 
@@ -79,7 +75,7 @@ foundry-apt/
 bash scripts/build-all.sh
 bash scripts/init-repo.sh       # → ~/.aptly/foundry repo
 bash scripts/publish-local.sh   # → ./public/ apt tree
-apt-cache depends worldfoundry-dev
+apt-cache depends foundry-linux-retro-tools
 ```
 
 ## Adding or upgrading a package
