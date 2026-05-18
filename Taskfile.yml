@@ -11,6 +11,11 @@ tasks:
     cmds:
       - task --list
 
+  md:
+    desc: "Preview a markdown file in the browser"
+    cmds:
+      - bash ../python-tui-lib/scripts/md-to-pdf.sh {{.CLI_ARGS}}
+
   sync:
     desc: "Sync foundry-apt/ to github.com/{{.GH_REPO}} and push"
     cmds:

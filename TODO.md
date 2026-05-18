@@ -19,6 +19,48 @@ All five source-built tools from Phase 0's `install-foundry-linux-retro-tools.sh
 
 - [ ] **Flesh out foundrylinux.org** — Claude Design landing page is live (v0.2.x); content passes as a real landing page but the design is still iterating. `tweaks-panel.jsx` still present — remove once design is finalised.
 
+### Navbar
+
+Motion graphics candidates for `site/embers.js`. Current: heat shimmer (traveling sine-wave `feDisplacementMap`). Previously tried and retired: breathe glow, grey pinstripes, shockwave rings, ember scatter, sword glint.
+
+**Thermal / forge**
+- [x] **Cooling bloom** ★7 — warm orange-white Gaussian luminance blob appears at random x, spreads outward, cools and fades. Purely photometric (no distortion). Like a struck piece of steel.
+- [ ] **Molten seam** — 1–2 px bright horizontal line (white-orange core, soft glow) traverses the bar once left→right. The bar is a slab of metal; the seam is a crack showing what's beneath.
+- [x] **Edge light** ★4 (bad clipping) — bottom edge of navbar (2–3 px) briefly brightens to near-white orange, spreads upward as a soft gradient, dims. Like looking at hot stock edge-on.
+
+**Mechanical / percussive**
+- [ ] **Anvil resonance** — single circular brightness ring expanding from a random point *within* the bar (not from below). One ring, very slow expansion, fades. The navbar surface is the anvil face.
+- [ ] **Steel flex** — the bar subtly bows: a slow vertical-only displacement wave passes through once, as if the bar is a thin plate flexing. Near-imperceptible at low amplitude.
+- [ ] **Weld flash** — at a random x, a 200–300 ms burst of blue-white overbrightness (welder's arc). No ramp-in: nothing → blinding dot → nothing. Brevity is the effect.
+
+**Retro / digital**
+- [ ] **Scanline roll** — a band of faint horizontal scanlines (2 px on / 2 px off, low opacity) drifts downward through the bar once. CRT monitor refresh. Connects to the MAME/arcade side of the brand.
+- [ ] **Bit corruption** — a traveling zone of mild pixel-level brightness jitter (canvas `ImageData`) sweeps left→right like a slow data error crossing a screen. Restrained glitch.
+- [ ] **Current flow** — extremely sparse, nearly invisible points drifting in one direction (organized, not random). DC current / electron drift visualization. Distinguish from ember scatter by directionality and faintness.
+
+**Abstract / mathematical**
+- [ ] **Interference rings** — two simultaneous circular wave systems from two random x positions; brightness adds at intersections (constructive interference). Wave-tank demo aesthetic.
+- [ ] **Grain pulse** — film grain (Gaussian-distributed per-pixel brightness noise via `ImageData`) ramps up ~0.5 s, holds briefly, fades. Organic, photographic.
+- [ ] **Chromatic slip** — R channel shifts 1 px left, B channel shifts 1 px right for 1–2 s, then snaps back. Near-invisible RGB split; felt more than seen. SVG `feOffset` + `feBlend`.
+- [ ] **Standing wave** — the bar behaves as a plucked string: a standing wave (fixed nodes, oscillating antinodes) appears across the full width at 3–5 wavelengths, then decays in amplitude like a struck string ringing out. Acoustic physics made visible.
+- [ ] **Magnetic field lines** — faint Bézier arcs (like iron filings around a bar magnet) materialize across the bar — curving from one end, looping over, curving back — fade in slowly, hold, dissolve. Cool-toned and mathematical; completely different character from every thermal/light effect.
+
+**Thermal / forge** (batch 2)
+- [ ] **Thermal gradient creep** — one edge of the bar is very subtly warm-tinted (faint orange haze); that warmth conducts slowly across to the other side over 3–4 s, then cools. Unlike cooling bloom (point source expanding outward), this is directional edge-to-edge conduction.
+- [ ] **Shadow pass** — the only subtractive effect in the list: a soft Gaussian shadow drifts across via `globalCompositeOperation = 'multiply'`, slightly darkening and desaturating as it passes. The absence of light rather than its presence; suggests something heavy moving overhead.
+
+**Mechanical / percussive** (batch 2)
+- [ ] **Mercury bead** — a single small bright specular dot (radial gradient, silvery-white, 4–6 px) rolls across the bottom of the bar end to end, leaving a brief luminous trail that fades immediately. Like a ball bearing rolling across a polished surface. One subject, tracking shot.
+- [ ] **Ferrofluid spikes** — along the bottom edge, 4–8 thin vertical spikes of varying heights (10–20 px) shoot upward simultaneously, hold ~200 ms, retract. Like ferrofluid snapping to a magnet. Canvas lines drawn from bottom up; distinctive silhouette behavior unlike anything else in the list.
+
+**Retro / digital** (batch 2)
+- [ ] **Letterpress ghost** — a watermark of "ANVIL" or a single glyph materializes at very low opacity (~0.05), holds, fades. No motion; purely the ghostly presence of something barely legible. Like a printing plate impression bleeding through the surface.
+- [ ] **Phosphor afterimage** — the navbar leaves a faint ghost copy at its previous painted position, drifts upward a few pixels, and dissolves over ~0.6 s. CRT phosphor persistence. The effect is temporal — the memory of where the bar just was.
+
+**Material / optical**
+- [ ] **Oil slick** — a very subtle iridescent sheen (desaturated spectral colors — pale blue, violet, green — at ~0.03 opacity) drifts slowly across the bar. Thin-film interference, like the surface of a freshly quenched blade or motor oil on water. Soft, continuous, never distracting.
+- [ ] **Spangle** — a brief overlay of delicate crystalline geometry (Voronoi cell edges, thin and bright) flashes onto the bar and fades. Like zinc spangle on galvanized steel: industrial, geometric, beautiful. Unique in revealing a mathematical structure rather than emitting or distorting light.
+
 ### Phase 2 — Distrobox image
 
 - [ ] Build `ghcr.io/foundry-linux/devbox:26.04` — Containerfile (Kubuntu/Ubuntu 26.04 base) + `apt.foundrylinux.org` configured + `foundry-linux-dev` preinstalled. GHCR workflow for tag-driven publish. Per proposal §"Channel 3 — OCI/container image".

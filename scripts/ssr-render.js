@@ -75,6 +75,7 @@ const page = `<!doctype html>
       setTimeout(function() { btn.lastChild.textContent = 'COPY'; }, 1400);
     });
   </script>
+  <script src="embers.js"></script>
 </body>
 </html>`;
 
