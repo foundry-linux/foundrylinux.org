@@ -62,6 +62,66 @@ tasks:
     cmds:
       - gh secret list --repo {{.GH_REPO}}
 
+  lighthouse:
+    desc: "Run Lighthouse against https://foundrylinux.org, RUNS=${RUNS:-3} runs, devtools throttling. Reports under /tmp/lh/latest/."
+    dir: "{{.ROOT_DIR}}"
+    cmds:
+      - |
+        set -euo pipefail
+        mkdir -p /tmp/lh/latest
+        RUNS=${RUNS:-3}
+
+        URLS=(
+          "https://foundrylinux.org/|home"
+        )
+        SLUGS=(); for pair in "${URLS[@]}"; do SLUGS+=( "${pair#*|}" ); done
+
+        for pair in "${URLS[@]}"; do
+          URL="${pair%|*}"; SLUG="${pair#*|}"
+          for RUN in $(seq 1 "$RUNS"); do
+            TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+            echo "[$TS] === ${SLUG} run ${RUN} ==="
+            npx --yes lighthouse@13.3.0 "$URL" \
+              --form-factor=mobile \
+              --throttling-method=devtools \
+              --chrome-flags="--headless=new --no-sandbox --disable-gpu" \
+              --quiet --output=json \
+              --output-path="/tmp/lh/latest/${SLUG}.run-${RUN}.report.json"
+          done
+        done
+        echo
+        echo "=== devtools / n=${RUNS} / scores per run ==="
+        printf "%-30s %-3s %-4s %-4s %-4s %-5s %-6s %-5s %s\n" "page" "run" "perf" "a11y" "bp" "fcp" "lcp" "tbt" "cls"
+        for SLUG in "${SLUGS[@]}"; do
+          for RUN in $(seq 1 "$RUNS"); do
+            jq -r --arg slug "$SLUG" --arg run "$RUN" '
+              [$slug, $run,
+               (.categories.performance.score*100|round|tostring),
+               (.categories.accessibility.score*100|round|tostring),
+               (.categories["best-practices"].score*100|round|tostring),
+               .audits["first-contentful-paint"].displayValue,
+               .audits["largest-contentful-paint"].displayValue,
+               .audits["total-blocking-time"].displayValue,
+               .audits["cumulative-layout-shift"].displayValue
+              ] | @tsv' "/tmp/lh/latest/${SLUG}.run-${RUN}.report.json"
+          done
+        done | column -t -s $'\t'
+        echo
+        if [ "$RUNS" -gt 1 ]; then
+          echo "=== Perf medians (n=${RUNS}) ==="
+        else
+          echo "=== Perf scores (n=1) ==="
+        fi
+        for SLUG in "${SLUGS[@]}"; do
+          PERF=()
+          for RUN in $(seq 1 "$RUNS"); do
+            PERF+=( "$(jq -r '(.categories.performance.score*100)|round' \
+              /tmp/lh/latest/${SLUG}.run-${RUN}.report.json)" )
+          done
+          MED=$(printf '%s\n' "${PERF[@]}" | sort -n | sed -n $(( (RUNS + 1) / 2 ))p)
+          printf "  %-30s  %d\n" "$SLUG" "$MED"
+        done
+
   site-build:
     desc: Compile site/*.jsx → site/*.js via esbuild (drops Babel standalone dep)
     dir: "{{.ROOT_DIR}}"
