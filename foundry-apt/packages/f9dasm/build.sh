@@ -55,6 +55,7 @@ if ! curl -fsI -o /dev/null https://github.com/; then
 fi
 
 WORKDIR=$(mktemp -d -t "${NAME}-build-XXXXXX")
+# shellcheck disable=SC2064  # expand $WORKDIR now so the trap captures the value
 trap "rm -rf '$WORKDIR'" EXIT
 
 echo "=== Fetching $UPSTREAM_URL ==="
