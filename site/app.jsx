@@ -1,6 +1,7 @@
 // FOUNDRY LINUX — foundrylinux.org
+import { Topbar, Hero, Kit, Install, Editions, Foot } from './sections.jsx';
 
-function App() {
+export function App() {
   return (
     <>
       <Topbar />
@@ -14,5 +15,3 @@ function App() {
     </>
   );
 }
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);

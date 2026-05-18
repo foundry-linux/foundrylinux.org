@@ -1,4 +1,10 @@
 // Page sections — Hero, Kit, Install, Editions, Footer
+import React from 'react';
+import {
+  FoundryMark, GearStackIcon, BigAnvilLogo, CopyIcon, DownloadIcon, ArrowRightIcon,
+  WorldFoundryIcon, BlenderIcon, MameIcon, F9dasmIcon, AssemblerIcon, LibvgmIcon, VgmstreamIcon,
+  AnvilEditionIcon, SpriteIcon, GamepadIcon, SparksIcon,
+} from './icons.jsx';
 
 function Topbar() {
   return (
@@ -358,4 +364,4 @@ function Foot() {
   );
 }
 
-Object.assign(window, { Topbar, Hero, Kit, Install, Editions, Foot });
+export { Topbar, Hero, Kit, Install, Editions, Foot };

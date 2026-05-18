@@ -129,12 +129,10 @@ tasks:
         done
 
   site-build:
-    desc: Compile site/*.jsx → site/*.js via esbuild
+    desc: SSR-render site/*.jsx → fully-static site/index.html (no React runtime)
     dir: "{{.ROOT_DIR}}"
     cmds:
-      - npx --yes esbuild site/icons.jsx    --platform=browser --outfile=site/icons.js
-      - npx --yes esbuild site/sections.jsx --platform=browser --outfile=site/sections.js
-      - npx --yes esbuild site/app.jsx      --platform=browser --outfile=site/app.js
+      - node scripts/ssr-render.js
 
   site-deploy:
     desc: "Deploy site/ to Cloudflare Pages (requires CLOUDFLARE_API_TOKEN)"

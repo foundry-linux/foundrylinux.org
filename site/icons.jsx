@@ -399,10 +399,10 @@ const GearStackIcon = () => (
   </svg>
 );
 
-Object.assign(window, {
+export {
   AnvilIcon, HammerIcon, SparksIcon,
   WorldFoundryIcon, BlenderIcon, MameIcon, F9dasmIcon, AssemblerIcon, LibvgmIcon, VgmstreamIcon,
   GamepadIcon, AnvilEditionIcon, SpriteIcon,
-  FoundryMark, DownloadIcon, CopyIcon, ArrowRightIcon,
+  BigAnvilLogo, FoundryMark, DownloadIcon, CopyIcon, ArrowRightIcon,
   ForgeSceneIcon, GearStackIcon,
-});
+};
