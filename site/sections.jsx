@@ -6,7 +6,7 @@ function Topbar({ wordmark }) {
       <div className="topbar">
         <div className="topbar-mark">
           <FoundryMark />
-          <b>apt.foundrylinux.org</b>
+          <b>foundrylinux.org</b>
         </div>
         <nav className="topbar-nav">
           <a href="#kit">The Kit</a>
@@ -222,12 +222,12 @@ function Install() {
             </div>
             <pre>
 <span className="step">① Trust the keyring</span>
-<span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://apt.foundrylinux.org/keyring.gpg</span> \
+<span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/keyring.gpg</span> \
   | <span className="ember">sudo tee</span> /etc/apt/keyrings/foundry.gpg &gt; /dev/null
 
 <span className="step">② Wire up the repository</span>
 <span className="ember">echo</span> <span className="str">"deb [signed-by=/etc/apt/keyrings/foundry.gpg] \
-  https://apt.foundrylinux.org stable main"</span> \
+  https://foundrylinux.org stable main"</span> \
   | <span className="ember">sudo tee</span> /etc/apt/sources.list.d/foundry.list
 
 <span className="step">③ Update and install</span>

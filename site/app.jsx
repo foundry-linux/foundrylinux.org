@@ -1,4 +1,4 @@
-// FOUNDRY LINUX — apt.foundrylinux.org
+// FOUNDRY LINUX — foundrylinux.org
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "material": "chrome",
