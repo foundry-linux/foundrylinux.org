@@ -119,7 +119,8 @@ jobs:
       - name: Install from the freshly-published repo
         run: |
           apt-get update -q
-          apt-get install -y curl gnupg ca-certificates
+          apt-get install -y curl gnupg ca-certificates software-properties-common
+          add-apt-repository -y universe
           curl -fsSL https://apt.foundrylinux.org/key.gpg \
             | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
           echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
