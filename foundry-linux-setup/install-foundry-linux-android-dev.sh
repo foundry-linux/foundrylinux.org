@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the foundry-linux-android-dev metapackage.
+# Phase 0 installer for the worldfoundry-android-dev metapackage.
 #
-# apt deps (from foundry-apt/packages/foundry-linux-android-dev/DEBIAN/control):
+# apt deps (from foundry-apt/packages/worldfoundry-android-dev/debian/control):
 #   openjdk-17-jdk adb google-android-ndk-r26c-installer
-#
-# Phase 1 collapse:
-#   run_sudo apt-get install -y foundry-linux-android-dev
 
 set -euo pipefail
 
@@ -50,12 +47,9 @@ else
     apt_update() { run_sudo apt-get update -q 2>&1 || echo "⚠ apt-get update had errors; continuing"; }
 fi
 
-step "Installing foundry-linux-android-dev (apt)"
+step "Installing worldfoundry-android-dev (apt)"
 info "Enabling multiverse (required for google-android-ndk-r26c-installer)"
 run_sudo add-apt-repository -y multiverse
 apt_update
-run_sudo apt-get install -y \
-    openjdk-17-jdk \
-    adb \
-    google-android-ndk-r26c-installer
+run_sudo apt-get install -y worldfoundry-android-dev
 ok "Android toolchain installed (JDK 17, adb, NDK r26c)"

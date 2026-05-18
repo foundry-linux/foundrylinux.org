@@ -1,0 +1,9 @@
+vgmstream (2083-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of upstream r2083.
+  * Source: https://github.com/vgmstream/vgmstream/archive/refs/tags/r2083.tar.gz
+  * Built via the /package skill (debhelper, cmake auto-detected by dh).
+  * Bundled ATRAC9 / CELT / G.719 / G.722.1 codecs disabled — see the
+    package description for rationale.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 18 May 2026 12:00:00 +0000

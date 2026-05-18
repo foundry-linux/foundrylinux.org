@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the foundry-linux-blender metapackage.
+# Phase 0 installer for the worldfoundry-blender metapackage.
 #
-# apt deps (from foundry-apt/packages/foundry-linux-blender/DEBIAN/control):
-#   blender (>=4.2) python3
+# apt deps (from foundry-apt/packages/worldfoundry-blender/debian/control):
+#   blender (>=4.2) python3 worldfoundry-engine-build-deps
 #
-# Blender addon registration (Recommends: foundry-linux-blender-addon) requires
+# Blender addon registration (Recommends: worldfoundry-blender-addon) requires
 # the WF engine repo to be cloned first. That step lives in setup-wf-workspace.sh
 # per docs/plans/2026-05-17-wf-workspace-setup.md.
-#
-# Phase 1 collapse:
-#   run_sudo apt-get install -y foundry-linux-blender
 
 set -euo pipefail
 
@@ -54,9 +51,9 @@ else
     apt_update() { run_sudo apt-get update -q 2>&1 || echo "⚠ apt-get update had errors; continuing"; }
 fi
 
-step "Installing foundry-linux-blender (apt)"
+step "Installing worldfoundry-blender (apt)"
 info "Enabling universe (Blender 5.0+ is in Ubuntu 26.04 universe — no PPA needed)"
 run_sudo add-apt-repository -y universe
 apt_update
-run_sudo apt-get install -y blender python3
+run_sudo apt-get install -y worldfoundry-blender
 ok "Blender installed"

@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the foundry-linux-engine-build-deps metapackage.
+# Phase 0 installer for the worldfoundry-engine-build-deps metapackage.
 #
 # Installs the apt packages listed in:
-#   foundry-apt/packages/foundry-linux-engine-build-deps/DEBIAN/control
-#
-# Phase 1 collapse: replace the apt-get install body with
-#   run_sudo apt-get install -y foundry-linux-engine-build-deps
-# once apt.foundrylinux.org is published.
+#   foundry-apt/packages/worldfoundry-engine-build-deps/debian/control
 
 set -euo pipefail
 
@@ -53,20 +49,7 @@ else
     apt_update() { run_sudo apt-get update -q 2>&1 || echo "⚠ apt-get update had errors; continuing"; }
 fi
 
-step "Installing foundry-linux-engine-build-deps (apt)"
+step "Installing worldfoundry-engine-build-deps (apt)"
 apt_update
-run_sudo apt-get install -y \
-    build-essential \
-    cmake \
-    libx11-dev \
-    libgl1-mesa-dev \
-    libglu1-mesa-dev \
-    gdb \
-    xxd \
-    python3 \
-    pkg-config \
-    git \
-    curl \
-    wget \
-    unzip
+run_sudo apt-get install -y worldfoundry-engine-build-deps
 ok "Engine build deps installed"

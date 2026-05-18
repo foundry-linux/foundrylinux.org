@@ -1,0 +1,221 @@
+.TH VGMSTREAM\-CLI 1 "2026-05-18" "vgmstream r2083" "User Commands"
+.SH NAME
+vgmstream\-cli \- decode streamed video\-game audio to WAV
+.SH SYNOPSIS
+.B vgmstream\-cli
+.RB [ \-o
+.IR outfile.wav ]
+.RI [ options ]
+.IR infile
+.RI [ infile " ...]"
+.SH DESCRIPTION
+.B vgmstream\-cli
+decodes streamed (prerecorded) video\-game audio in over 100 formats —
+container files such as
+.IR .adx ,
+.IR .aix ,
+.IR .at3 ,
+.IR .brstm ,
+.IR .bnsf ,
+.IR .gcm ,
+.IR .genh ,
+.IR .hca ,
+.IR .vag ,
+and many obscure single\-game codecs — and writes PCM WAV (or raw PCM to
+standard output) suitable for mastering, conversion, or analysis pipelines.
+.PP
+This Foundry Linux build links against the system FFmpeg, MPG123, Vorbis,
+Opus, and Speex libraries for wide codec coverage. The upstream\-vendored
+ATRAC9 / CELT / G.719 / G.722.1 codec backends are disabled — files
+exclusively in those formats will fail to decode; raise an issue if you
+need them.
+.SH OPTIONS
+.TP
+.BI \-o " outfile.wav"
+Name of the output
+.B .wav
+file. Defaults to
+.IR infile.wav .
+Wildcards in
+.IR outfile :
+.B ?s
+expands to the subsong number,
+.B ?n
+to the stream name,
+.B ?f
+to the input filename.
+.TP
+.B \-m
+Print metadata only; do not decode.
+.TP
+.B \-i
+Ignore looping information; play the whole stream once.
+.TP
+.BI \-l " N.n"
+Loop count. Default
+.BR 2.0 .
+.TP
+.BI \-f " N.n"
+Fade time in seconds after the loop count is reached. Default
+.BR 10.0 .
+.TP
+.BI \-d " N.n"
+Fade delay in seconds. Default
+.BR 0.0 .
+.TP
+.B \-F
+Don't fade after the loop count; play the remainder of the stream.
+.TP
+.B \-e
+Set end\-to\-end looping if the file has no loop points.
+.TP
+.B \-E
+Force end\-to\-end looping even if the file has real loop points.
+.TP
+.BI \-s " N"
+Select subsong
+.IR N ,
+if the format supports multiple subsongs.
+.TP
+.BI \-S " N"
+Select end subsong
+.IR N .
+Use
+.B 0
+to select all subsongs.
+.TP
+.B \-p
+Write to standard output instead of a file (for piping).
+.TP
+.B \-P
+Write to standard output even if stdout is a terminal.
+.TP
+.B \-c
+Loop forever, writing to standard output.
+.TP
+.B \-L
+Append an
+.B smpl
+chunk and create a looping WAV.
+.TP
+.B \-w
+Emit
+.B .wav
+in the original sample format rather than mixing to PCM16.
+.TP
+.B \-V
+Print version info and the list of supported extensions as JSON, then exit.
+.TP
+.B \-I
+Print the requested file's info as JSON.
+.TP
+.B \-h
+Print the full option list (including the extras below) and exit.
+.SH EXTRA OPTIONS
+These are exposed via
+.BR \-h
+and are intended for testing and tooling.
+.TP
+.BI \-2 " N"
+Output only the
+.IR N th
+(first is
+.BR 0 )
+set of stereo channels.
+.TP
+.B \-x
+Decode and print an
+.B adxencd
+command line to re\-encode as ADX.
+.TP
+.B \-g
+Decode and print an
+.B oggenc
+command line to re\-encode as OGG.
+.TP
+.B \-b
+Decode and print batch variable commands.
+.TP
+.B \-v
+Validate extensions (for extension testing).
+.TP
+.B \-r
+Reset and output a second file (for reset testing).
+.TP
+.BI \-k " N"
+Kill (seek)
+.I N
+samples before decoding (for seek testing).
+.B \-2
+seeks to the loop start,
+.B \-3
+to the loop end.
+.TP
+.BI \-K " N"
+Kill (seek) again to
+.I N
+samples before decoding (for seek testing).
+.TP
+.B \-t
+Print
+.B !tags
+found in
+.BR !tags.m3u .
+.TP
+.B \-T
+Print the title (for title testing).
+.TP
+.BI \-D " max-channels"
+Downmix to
+.IR max-channels
+(for plugin downmix testing).
+.TP
+.BI \-B " samples"
+Force a sample buffer size (for API testing).
+.TP
+.BI \-W " type"
+Force WAV output format.
+.B 1
+= PCM16,
+.B 2
+= PCM24,
+.B 3
+= PCM32,
+.B 4
+= float.
+.TP
+.B \-O
+Decode but don't write to file (for performance testing).
+.SH EXAMPLES
+Decode
+.I track.brstm
+to
+.IR track.wav :
+.IP
+.B vgmstream\-cli track.brstm
+.PP
+Decode subsong 3 of
+.IR album.fsb
+into a named output file:
+.IP
+.B vgmstream\-cli \-s 3 \-o album_3.wav album.fsb
+.PP
+Stream raw PCM to a pipe for further processing:
+.IP
+.B vgmstream\-cli \-p game.adx | sox \-t raw \-r 48000 \-e signed \-b 16 \-c 2 \- out.flac
+.SH FILES
+.TP
+.I /usr/share/doc/vgmstream/README.md.gz
+Full upstream documentation index.
+.SH SEE ALSO
+.BR sox (1),
+.BR ffmpeg (1)
+.SH AUTHORS
+.B vgmstream
+is developed by Adam Gashlin, Christopher Snowhill, bnnm, EdnessP,
+NicknineTheEagle, and many others. See
+.I /usr/share/doc/vgmstream/copyright
+for the full contributor list and license.
+.SH COPYRIGHT
+Distributed under the ISC\-style permission grant reproduced in
+.IR /usr/share/doc/vgmstream/copyright .

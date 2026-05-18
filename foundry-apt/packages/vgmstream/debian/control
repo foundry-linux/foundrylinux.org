@@ -1,0 +1,38 @@
+Source: vgmstream
+Section: sound
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ cmake,
+ yasm,
+ libmpg123-dev,
+ libvorbis-dev,
+ libspeex-dev,
+ libopus-dev,
+ libavcodec-dev,
+ libavformat-dev,
+ libavutil-dev,
+ libswresample-dev
+Standards-Version: 4.7.2
+Homepage: https://github.com/vgmstream/vgmstream
+Rules-Requires-Root: no
+
+Package: vgmstream
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Video-game audio decoder (CLI)
+ vgmstream is a library and command-line decoder for streamed (prerecorded)
+ video-game audio in over 100 formats — from typical game-engine container
+ files (.adx, .aix, .ahx, .at3, .brstm, .bnsf, .gcm, .genh, .hca, .vag, …)
+ to obscure single-game codecs. Output is PCM WAV (or stdout) suitable for
+ mastering and analysis pipelines.
+ .
+ This package ships the vgmstream-cli command-line decoder built with the
+ ffmpeg, mpg123, vorbis, opus, and speex backends. Bundled ATRAC9 / CELT /
+ G.719 / G.722.1 codec support is disabled in this build (the upstream
+ ext_libs/ vendored copies would trigger embedded-library lintian
+ warnings); raise an issue if you need those formats.
+ .
+ Plugins (Audacious, Winamp, foobar2000, XMPlay) and the vgmstream123
+ libao player are intentionally not built — see the upstream README for
+ instructions to source-build those.

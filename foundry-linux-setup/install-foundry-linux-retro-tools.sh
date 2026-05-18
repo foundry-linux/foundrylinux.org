@@ -3,16 +3,13 @@
 #
 # Installs the arcade reverse-engineering / 6502+Z80+68k+6809 porting toolchain:
 #
-#   apt (from foundry-apt/packages/foundry-linux-retro-tools/DEBIAN/control Depends):
+#   apt (from foundry-apt/packages/foundry-linux-retro-tools/debian/control Depends):
 #     mame mame-tools dasm cc65 z80dasm z80asm radare2 binwalk sox
-#     binutils-m68k-linux-gnu
+#     binutils-m68k-linux-gnu xa65 f9dasm libvgm
 #
-#   source-build sidecars (from the same DEBIAN/control Recommends — these aren't
-#   in current Ubuntu repos yet; foundry-apt CI will ship them as .debs in Phase 1):
+#   source-build sidecars (tools not yet in foundry-apt):
 #     ghidra      → ~/opt/ghidra-*/
-#     f9dasm      → ~/opt/f9dasm/
 #     vgmstream   → ~/opt/vgmstream/
-#     libvgm      → ~/opt/libvgm/
 #
 # What you get for the 6502 specifically:
 #   sim65   (from cc65)     — 6502 instruction-set simulator / unit-test runner
@@ -23,9 +20,8 @@
 #
 # See docs/investigations/2026-05-15-claude-arcade-tooling.md for the rationale.
 #
-# Phase 1 collapse: this entire script reduces to
-#   run_sudo apt-get install -y foundry-linux-retro-tools
-# once apt.foundrylinux.org is publishing the source-build sidecars as .debs.
+# Final collapse: this script reduces to just the apt-install once Ghidra and
+# vgmstream are packaged in foundry-apt (tracked in TODO.md).
 
 set -euo pipefail
 
@@ -37,7 +33,7 @@ Phase 0 installer for foundry-linux-retro-tools
 
 Installs the arcade reverse-engineering / 6502 / Z80 / 68k / 6809 porting
 toolchain (MAME, dasm, cc65 → sim65 + da65, z80dasm, radare2, xa65, etc.)
-plus source-built Ghidra / f9dasm / vgmstream / libvgm under ~/opt/.
+plus source-built Ghidra / vgmstream under ~/opt/ (not yet packaged in foundry-apt).
 
 Usage: $(basename "$0") [--dry-run|-n] [--apt-only] [--force] [-h|--help]
 
@@ -90,26 +86,15 @@ fi
 OPT_DIR="${HOME}/opt"
 
 # ----------------------------------------------------------------------------
-# Step 1: apt packages
+# Step 1: apt packages (via foundry-linux-retro-tools metapackage)
 # ----------------------------------------------------------------------------
 step "Installing foundry-linux-retro-tools (apt)"
 apt_update
-run_sudo apt-get install -y \
-    mame \
-    mame-tools \
-    dasm \
-    cc65 \
-    z80dasm \
-    z80asm \
-    radare2 \
-    binwalk \
-    sox \
-    binutils-m68k-linux-gnu \
-    xa65
-ok "Retro toolchain apt packages installed (sim65, da65, mame, radare2, dasm, z80dasm, xa65, ...)"
+run_sudo apt-get install -y foundry-linux-retro-tools
+ok "Retro toolchain apt packages installed (mame, sim65, da65, radare2, dasm, z80dasm, xa65, f9dasm, libvgm, ...)"
 
 if $APT_ONLY; then
-    info "--apt-only set — skipping source-build sidecars (Ghidra, f9dasm, vgmstream, libvgm)"
+    info "--apt-only set — skipping source-build sidecars (Ghidra, vgmstream)"
     exit 0
 fi
 
@@ -131,23 +116,6 @@ source_build_guard() {
     fi
     return 0
 }
-
-# --- f9dasm -----------------------------------------------------------------
-step "Building f9dasm (6809 disassembler)"
-if source_build_guard f9dasm "$OPT_DIR/f9dasm"; then
-    run git clone --depth 1 https://github.com/Arakula/f9dasm "$OPT_DIR/f9dasm"
-    run make -C "$OPT_DIR/f9dasm"
-    ok "f9dasm built — binary at $OPT_DIR/f9dasm/f9dasm"
-fi
-
-# --- libvgm -----------------------------------------------------------------
-step "Building libvgm (chip-register VGM library)"
-if source_build_guard libvgm "$OPT_DIR/libvgm"; then
-    run git clone --depth 1 https://github.com/ValleyBell/libvgm "$OPT_DIR/libvgm"
-    run cmake -S "$OPT_DIR/libvgm" -B "$OPT_DIR/libvgm/build"
-    run cmake --build "$OPT_DIR/libvgm/build" -j
-    ok "libvgm built — artifacts under $OPT_DIR/libvgm/build/"
-fi
 
 # --- vgmstream --------------------------------------------------------------
 step "Building vgmstream-cli (VGM/audio stream decoder)"
@@ -178,5 +146,5 @@ step "foundry-linux-retro-tools install complete"
 ok "6502: sim65, da65, mame, radare2, xa65"
 ok "Z80:  z80dasm, z80asm, mame, radare2"
 ok "68k:  m68k-linux-gnu-objdump, mame, radare2"
-ok "6809: ghidra, f9dasm, mame"
-ok "Audio: sox, vgmstream-cli, libvgm, mame -wavwrite"
+ok "6809: ghidra, f9dasm (apt), mame"
+ok "Audio: sox, vgmstream-cli, libvgm (apt), mame -wavwrite"

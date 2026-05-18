@@ -1,0 +1,41 @@
+#!/usr/bin/make -f
+# vgmstream's upstream CMakeLists has install() rules only inside `if(WIN32)`,
+# so cmake's --install target is a no-op on Linux. We bypass dh_auto_install
+# and copy the built binary into place manually.
+#
+# Plugins (Audacious, V123, etc.) are disabled — they have heavyweight
+# runtime deps (libao, audacious-dev) we don't want to pull into the base
+# decoder package. Bundled codec libs in ext_libs/ (ATRAC9, CELT, G719,
+# G7221) are also disabled to avoid embedded-library lintian warnings;
+# the FFmpeg / MPG123 / Vorbis / Opus / Speex paths give wide coverage.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+BUILD_DIR = obj-$(DEB_HOST_GNU_TYPE)
+
+%:
+	dh $@
+
+override_dh_autoreconf:
+	# vgmstream's configure.ac uses obsolete autoconf macros that break
+	# autoreconf on modern toolchains. We use the cmake build system instead.
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DBUILD_CLI=ON \
+	    -DBUILD_V123=OFF \
+	    -DBUILD_AUDACIOUS=OFF \
+	    -DUSE_ATRAC9=OFF \
+	    -DUSE_CELT=OFF \
+	    -DUSE_G719=OFF \
+	    -DUSE_G7221=OFF \
+	    -DUSE_FFMPEG=ON \
+	    -DUSE_MPEG=ON \
+	    -DUSE_VORBIS=ON \
+	    -DUSE_SPEEX=ON
+
+override_dh_auto_install:
+	install -D -m 0755 $(BUILD_DIR)/cli/vgmstream-cli \
+	    $(CURDIR)/debian/vgmstream/usr/bin/vgmstream-cli

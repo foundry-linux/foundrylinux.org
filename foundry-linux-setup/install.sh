@@ -168,6 +168,15 @@ check_sudo() {
 }
 
 # ============================================================================
+# Foundry apt source
+# ============================================================================
+setup_foundry_apt_source() {
+    local dry=()
+    $DRY_RUN && dry=(--dry-run)
+    FOUNDRY_LOG_FILE="$LOG_FILE" bash "$SCRIPT_DIR/setup-foundry-apt-source.sh" "${dry[@]}"
+}
+
+# ============================================================================
 # Per-metapackage dispatch
 # ============================================================================
 run_subscript() {
@@ -291,6 +300,7 @@ main() {
 
     check_distro
     check_sudo
+    setup_foundry_apt_source
     install_metapackages
     summary
 }

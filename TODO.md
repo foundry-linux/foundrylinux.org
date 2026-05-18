@@ -7,16 +7,15 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### Phase 1 — package the source-built retro tools
 
-Phase 0's `install-foundry-linux-retro-tools.sh` source-builds five tools into `~/opt/`. **One (xa65) turned out to already be in Ubuntu 26.04 universe** — see lesson below. The other four are still genuinely missing from Ubuntu, confirmed via `apt-cache policy` on a fresh `ubuntu:26.04`. Each one below needs `packages/<name>/{DEBIAN/control,build.sh}`.
+Phase 0's `install-foundry-linux-retro-tools.sh` source-built five tools into `~/opt/`. xa65 (Universe), f9dasm, and libvgm are now resolved via apt. The two below are still source-built sidecars. Use the `/package` skill — each new package needs `packages/<name>/debian/` + `build.sh`.
 
 **Rule, learned the hard way (2026-05-18):** *before* packaging any source-built tool, run `apt-cache policy <pkg>` on a fresh `ubuntu:26.04`. If Ubuntu universe ships it, just add it to the Phase 0 apt-install list and the metapackage `Depends:` — don't duplicate.
 
 - [x] ~~**xa65**~~ — retired. Ubuntu 26.04 universe ships `xa65 2.4.1-0.1build1`. `packages/xa65/` deleted; Phase 0 retro-tools script apt-installs xa65; `foundry-linux-retro-tools` `Depends: xa65` resolves to universe. See [`docs/plans/2026-05-18-retire-xa65.md`](docs/plans/2026-05-18-retire-xa65.md).
-- [ ] **`/package` skill** ([plan](docs/plans/2026-05-18-package-skill.md)) — generalize the xa65 packaging effort into a reusable user-level Claude Code skill. Use `dh_make` + `debhelper` + `dpkg-buildpackage` for Debian-policy-compliant packages with auto debug-strip, accurate `${shlibs:Depends}`, build hardening, DEP-5 copyright. **Use this skill to package the four below** instead of hand-rolling `build.sh` like xa65.
-- [ ] **libvgm** — chip-register VGM library ([github.com/ValleyBell/libvgm](https://github.com/ValleyBell/libvgm)). Confirmed not in Ubuntu universe.
-- [ ] **vgmstream** — VGM/audio stream decoder ([github.com/vgmstream/vgmstream](https://github.com/vgmstream/vgmstream)). Confirmed not in Ubuntu universe.
+- [ ] **`/package` skill** ([plan](docs/plans/2026-05-18-package-skill.md)) — reusable Claude Code skill using `dh_make` + `debhelper` + `dpkg-buildpackage`. Use for the two below.
+- [ ] **vgmstream** — VGM/audio stream decoder ([github.com/vgmstream/vgmstream](https://github.com/vgmstream/vgmstream)). Confirmed not in Ubuntu universe. Stub in `packages/vgmstream/`.
 - [ ] **ghidra** — NSA reverse-engineering suite (currently zip download). Confirmed not in Ubuntu universe. Heavyweight (~400 MB); may need a separate metapackage rather than bundling.
-- [ ] After all four ship: have `foundry-linux-retro-tools` Depends on them, then strip the source-build sidecars from `install-foundry-linux-retro-tools.sh` (also strip xa65's then). Plan rehearses this collapse in [`docs/plans/2026-05-17-per-metapackage-install-scripts.md`](docs/plans/2026-05-17-per-metapackage-install-scripts.md) §"Phase 1 collapse rehearsal".
+- [ ] After vgmstream and ghidra ship: add to `foundry-linux-retro-tools` `Depends:`, then strip remaining source-build sidecars from `install-foundry-linux-retro-tools.sh`.
 
 ### Phase 2 — Distrobox image
 
@@ -28,13 +27,14 @@ Phase 0's `install-foundry-linux-retro-tools.sh` source-builds five tools into `
 
 ### Housekeeping
 
-- [ ] **Phase 0 configures foundry-apt as an apt source.** `foundry-linux-setup/install.sh` (or a sibling `setup-foundry-apt-source.sh`) should add `https://apt.foundrylinux.org` to `sources.list.d`, import the signing key, and `apt-get update` — before any per-meta script runs. Unblocks stripping the Phase 0 source-build sidecars (`xa65`, then `f9dasm`, `libvgm`, etc., as each gets packaged). Pattern reference: `install-task.sh` (adds Cloudsmith apt repo for `task`).
 - [ ] **Worldfoundry → foundry-linux metapackage rename.** `packages/worldfoundry-{android-dev,blender,dev,engine-build-deps}/` are legacy names. The distro is "Foundry Linux"; consider renaming the metapackages and/or shipping `foundry-linux-*` as aliases that `Depends:` on the WF ones.
 - [ ] **Fresh-VM retro-tools end-to-end test.** Run `install-foundry-linux-retro-tools.sh` (not the metapackage) on a clean Ubuntu 26.04 VM and confirm all source-builds succeed + binaries appear at expected paths.
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
 
 ## Done
 
+- 2026-05-18 — [phase-0-foundry-apt-source] `setup-foundry-apt-source.sh` wired into `install.sh`; per-meta scripts collapsed to `apt install <metapackage>`; f9dasm + libvgm sidecars dropped.
+- 2026-05-18 — [package-libvgm] 678 KB lintian-clean `.deb` at `0.1+git20260406.d115188-1foundry1`; STATIC libs (upstream pre-stable, no SOVERSION); `/usr/bin/player` renamed to `vgm-player`; retro-tools 1.0.3 now `Depends: libvgm`.
 - 2026-05-18 — [live-test-manpage-assert] `test/run-test.sh` drops `dpkg.cfg.d/excludes`, mandoc-lints every `/usr/bin/<name>.1.gz`; caught real `PP-after-SH` WARNING in f9dasm 1foundry2 → bumped to 1foundry3.
 - 2026-05-18 — [package-f9dasm] first `/package` run; 50 KB debhelper-built `.deb` (4.5× smaller than xa65's hand-roll), `Depends: libc6 (>= 2.38)` resolved, retro-tools 1.0.2 now `Depends: f9dasm`.
 - 2026-05-18 — [version-deb-links] version numbers in apt index now link to `pool/main/...` `.deb`s; arch-specific code path ready for future arch-split packages.

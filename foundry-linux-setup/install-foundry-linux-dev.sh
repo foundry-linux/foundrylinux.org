@@ -1,17 +1,14 @@
 #!/usr/bin/env bash
-# Phase 0 installer for the foundry-linux-dev umbrella metapackage.
+# Phase 0 installer for the worldfoundry-dev umbrella metapackage.
 #
 # Composes the constituent per-metapackage installers in dependency order,
-# mirroring foundry-apt/packages/foundry-linux-dev/DEBIAN/control:
+# mirroring foundry-apt/packages/worldfoundry-dev/debian/control:
 #
-#   Depends: foundry-linux-engine-build-deps,
-#            foundry-linux-blender,
+#   Depends: worldfoundry-engine-build-deps,
+#            worldfoundry-blender,
 #            foundry-linux-retro-tools,
 #            task,
 #            gnupg, ca-certificates, software-properties-common
-#
-# Phase 1 collapse:
-#   run_sudo apt-get install -y foundry-linux-dev
 
 set -euo pipefail
 
