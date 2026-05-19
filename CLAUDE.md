@@ -23,7 +23,7 @@ foundry-linux-setup/
   install.sh                                 orchestrator: distro check, role dispatch, summary
   install-foundry-linux-engine-build-deps.sh  build-essential, cmake, libx11, libgl, gdb, xxd …
   install-foundry-linux-blender.sh            blender ≥4.2, python3
-  install-foundry-linux-retro-tools.sh        mame, cc65 (sim65+da65), dasm, radare2 + xa65/ghidra/f9dasm/vgmstream/libvgm source-builds → ~/opt/
+  install-foundry-linux-retro-tools.sh        apt-install of foundry-linux-retro-tools metapackage (mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream, ghidra)
   install-foundry-linux-android-dev.sh        openjdk-17-jdk, adb, NDK r26c
   install-task.sh                            go-task binary
   install-foundry-linux-dev.sh                orchestrator: calls the above in dependency order
