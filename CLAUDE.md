@@ -30,15 +30,11 @@ foundry-linux-setup/
   install-foundry-linux-engine-build-deps.sh   build-essential, cmake, libx11-dev, libgl/glu dev, gdb, xxd, python3, pkg-config, git, curl, wget, unzip (Ubuntu universe)
   install-foundry-linux-blender.sh             apt install worldfoundry-blender (apt.worldfoundry.org → Blender + wf-blender + blender-asset-finder)
   install-foundry-linux-retro-tools.sh         apt install foundry-linux-retro-tools (apt.foundrylinux.org → mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream, ghidra)
-  install-foundry-linux-android-dev.sh         openjdk-17-jdk, adb, google-android-ndk-r26c-installer (Ubuntu universe)
+  install-foundry-linux-android-development.sh apt install foundry-linux-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c; enables Ubuntu multiverse)
+  install-foundry-linux-ios-development.sh     apt install foundry-linux-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx install codemagic-cli-tools
   install-task.sh                              go-task (Cloudsmith)
   install-foundry-linux-dev.sh                 apt install worldfoundry-development (apt.worldfoundry.org umbrella — pulls cli + Blender + dev deps) + chains task + retro-tools
 ```
-
-`install.sh` dispatches by `--role`:
-- `engine-dev` — engine-build-deps + task + retro-tools (no Blender, no WF authoring tools)
-- `game-dev` — engine-build-deps + task + worldfoundry-blender + retro-tools
-- `both` / `maintainer` — calls `install-foundry-linux-dev.sh` (worldfoundry-development + task + retro-tools); maintainer also adds android-dev + clones the foundry-linux distro repos
 
 WF repo cloning, Rust install, and wftools build are **not** in these scripts — they live in `setup-wf-workspace.sh` (tracked in the WorldFoundry repo).
 

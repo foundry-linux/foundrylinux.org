@@ -225,7 +225,8 @@ install_metapackages() {
             $APT_ONLY     && dev_args+=(--apt-only)
             $FORCE        && dev_args+=(--force)
             run_subscript install-foundry-linux-dev.sh "${dev_args[@]}"
-            run_subscript install-foundry-linux-android-dev.sh "${dry[@]}"
+            run_subscript install-foundry-linux-android-development.sh "${dry[@]}"
+            run_subscript install-foundry-linux-ios-development.sh "${dry[@]}"
             if ! $DRY_RUN; then
                 clone_foundry_repos
             else

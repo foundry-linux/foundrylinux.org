@@ -1,0 +1,31 @@
+Source: foundry-linux-ios-development
+Section: metapackages
+Priority: optional
+Maintainer: World Foundry <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-linux-ios-development
+Architecture: all
+Depends: ${misc:Depends},
+ libimobiledevice-utils,
+ ideviceinstaller,
+ usbmuxd,
+ ifuse
+Description: iOS device tools for Foundry Linux contributors
+ Metapackage that installs Linux-side tooling for WorldFoundry iOS
+ development. The iOS build itself runs on macOS via Codemagic cloud CI
+ (codemagic.io); this package covers the device-communication side on Linux:
+ .
+   * libimobiledevice-utils — query, backup, and manage iOS devices over USB
+   * ideviceinstaller       — sideload .ipa files to a connected device
+   * usbmuxd                — USB multiplexing daemon (required by the above)
+   * ifuse                  — mount iPhone/iPod filesystem via FUSE
+ .
+ The companion install script (install-foundry-linux-ios-development.sh)
+ also installs the Codemagic CLI tools via pipx — these provide the
+ app-store-connect(1) command for App Store Connect API access and build
+ artifact management. The pipx install can't be expressed here as a
+ Depends: because codemagic-cli-tools is pip-only, not in any apt source.

@@ -1,0 +1,9 @@
+foundry-linux-android-development (1.0.0) resolute; urgency=medium
+
+  * Initial release. Metapackage for the apt-available Android development
+    toolchain — openjdk-17-jdk, adb, google-android-ndk-r26c-installer.
+    Completes the per-metapackage pattern; Phase 0's
+    install-foundry-linux-android-development.sh now routes through this
+    metapackage rather than installing constituent packages directly.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 20 May 2026 04:00:00 +0000

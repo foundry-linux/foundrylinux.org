@@ -1,0 +1,10 @@
+foundry-linux-ios-development (1.0.0) resolute; urgency=medium
+
+  * Initial release. Metapackage for the Linux-side iOS development
+    toolchain — libimobiledevice-utils, ideviceinstaller, usbmuxd,
+    ifuse. The actual iOS build runs on macOS via Codemagic; this
+    package covers the device-communication side. The companion
+    install script also pipx-installs codemagic-cli-tools (pip-only,
+    inexpressible as a Depends:).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 20 May 2026 04:00:00 +0000
