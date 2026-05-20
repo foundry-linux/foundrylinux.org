@@ -28,8 +28,14 @@ bash "$REPO/foundry-linux-setup/install-foundry-linux-retro-tools.sh"
 
 # --- 4. verify each tool ----------------------------------------
 # debian/control Depends: → list of packages → invocation per package.
-# Signal-terminated (rc >= 128) is the only failure mode: lots of CLI tools
-# exit non-zero on --help or no-args usage and that's fine.
+# Failure modes: signal-terminated (rc >= 128), "command not found" (127),
+# "not executable" (126). Other non-zero exits are accepted — lots of CLI
+# tools exit non-zero on --help or no-args usage and that's fine.
+#
+# Add /usr/games to PATH: Debian convention puts game binaries (mame, etc.)
+# there. Real desktop sessions get it via /etc/profile.d/, but a minimal
+# container's default PATH doesn't include it.
+export PATH="$PATH:/usr/games"
 declare -A TOOL_CHECKS=(
     [mame]="mame -version"
     [mame-tools]="chdman --help"
@@ -80,8 +86,13 @@ for dep in "${DEPS[@]}"; do
         pass=$((pass + 1))
     else
         rc=$?
-        if (( rc >= 128 )); then
-            echo "  ✗ $dep (signal $((rc - 128)))"
+        case $rc in
+            126) reason="not executable" ;;
+            127) reason="command not found" ;;
+            *)   if (( rc >= 128 )); then reason="signal $((rc - 128))"; else reason=""; fi ;;
+        esac
+        if [[ -n $reason ]]; then
+            echo "  ✗ $dep ($reason)"
             echo "$out" | sed 's/^/      /'
             fail=$((fail + 1))
         else

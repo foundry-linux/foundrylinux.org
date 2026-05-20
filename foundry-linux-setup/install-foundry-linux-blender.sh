@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
-# Phase 0 installer for Blender. Installs blender + python3 from Ubuntu 26.04 universe.
+# Phase 0 installer for the WorldFoundry Blender stack.
+#
+# Installs the `worldfoundry-blender` metapackage from apt.worldfoundry.org,
+# which transitively pulls:
+#   - blender (Ubuntu 26.04 universe, ≥4.2)
+#   - wf-blender (the World Foundry level-editor add-on)
+#   - blender-asset-finder (CC0 asset search/download add-on)
+#
+# The two add-ons can be enabled in Blender via the post-install wrappers
+# wf-blender-install(1) and blender-asset-finder-install(1).
 
 set -euo pipefail
 
@@ -9,13 +18,15 @@ for arg in "$@"; do
             cat <<EOF
 Phase 0 installer for foundry-linux-blender
 
-Installs Blender 4.2+ via apt. Blender addon registration is handled
-separately by setup-wf-workspace.sh (requires the engine repo to be cloned).
+Installs worldfoundry-blender from apt.worldfoundry.org — Blender 4.2+ plus
+the WorldFoundry Blender add-on (wf-blender) and the asset-finder add-on
+(blender-asset-finder). Add-on registration into Blender is handled by the
+per-add-on -install wrappers shipped inside each .deb.
 
 Usage: $(basename "$0") [--dry-run|-n] [-h|--help]
 
 Options:
-  -n, --dry-run   Print apt commands without executing
+  -n, --dry-run   Print commands without executing
   -h, --help      Show this help and exit
 EOF
             exit 0
@@ -44,9 +55,12 @@ else
     apt_update() { run_sudo apt-get update -q 2>&1 || echo "⚠ apt-get update had errors; continuing"; }
 fi
 
-step "Installing Blender"
-info "Enabling universe (Blender 5.0+ is in Ubuntu 26.04 universe — no PPA needed)"
-run_sudo add-apt-repository -y universe
+step "Configuring apt.worldfoundry.org"
+dry=()
+$DRY_RUN && dry=(--dry-run)
+FOUNDRY_LOG_FILE="${FOUNDRY_LOG_FILE:-}" bash "$SCRIPT_DIR/setup-worldfoundry-apt-source.sh" "${dry[@]}"
+
+step "Installing worldfoundry-blender"
 apt_update
-run_sudo apt-get install -y blender python3
-ok "Blender installed"
+run_sudo apt-get install -y worldfoundry-blender
+ok "worldfoundry-blender installed (Blender + wf-blender + blender-asset-finder)"
