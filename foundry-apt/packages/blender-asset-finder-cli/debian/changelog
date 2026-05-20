@@ -1,0 +1,9 @@
+blender-asset-finder-cli (0.1.0+git0a19d26c-1foundry1) stable; urgency=medium
+
+  * Renamed from wf-asset → blender-asset-finder-cli; moved to
+    apt.foundrylinux.org alongside the blender-asset-finder Blender
+    add-on it pairs with.
+  * Binary renamed: /usr/bin/wf-asset → /usr/bin/blender-asset-finder-cli.
+  * Install tree: /usr/share/wf-asset/ → /usr/share/blender-asset-finder-cli/.
+
+ -- WorldFoundry Packages <packages@worldfoundry.org>  Wed, 20 May 2026 12:00:00 +0000

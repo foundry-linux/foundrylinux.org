@@ -1,0 +1,73 @@
+.TH BLENDER-ASSET-FINDER-INSTALL 1 "May 2026" "blender-asset-finder 0.2.0" ""
+.SH NAME
+blender-asset-finder-install \- install the Asset Finder add-on into Blender 4.2+
+.SH SYNOPSIS
+.B blender-asset-finder-install
+[\fB\-\-blender\fR \fIPATH\fR]
+[\fB\-\-repo\fR \fINAME\fR]
+[\fB\-\-no\-enable\fR]
+.br
+.B blender-asset-finder-install
+\fB\-h\fR | \fB\-\-help\fR
+.SH DESCRIPTION
+.B blender-asset-finder-install
+installs the Blender Asset Finder extension zip shipped under
+.IR /usr/share/blender-asset-finder/
+into the calling user's Blender 4.2+ extension repository, and enables
+the add-on by default.
+.PP
+The add-on searches and downloads 3D assets from multiple online
+repositories (Polyhaven, Kenney, AmbientCG, Quaternius, OpenGameArt,
+Sketchfab) directly inside Blender, with per-blend licence-policy
+filtering and provenance tracking. Distinct from Blender's built-in
+\fIAsset Browser\fR (which is a local asset-library manager): this
+add-on's distinguishing feature is the multi-provider online search
+and on-demand download.
+.SH OPTIONS
+.TP
+.BR \-\-blender " " \fIPATH\fR
+Path to the Blender executable.
+Default: the
+.B blender
+on
+.BR $PATH .
+.TP
+.BR \-\-repo " " \fINAME\fR
+Blender extension repository to install into.
+Default:
+.BR user_default .
+.TP
+.B \-\-no\-enable
+Install the extension but do not enable it.
+.TP
+.BR \-h ", " \-\-help
+Show usage and exit.
+.SH FILES
+.TP
+.I /usr/share/blender-asset-finder/blender_asset_finder-<version>.zip
+The Blender extension archive shipped by the blender-asset-finder package.
+.SH EXIT STATUS
+.TP
+.B 0
+Extension installed successfully.
+.TP
+.B 1
+No extension zip found, or Blender not on
+.BR $PATH .
+.TP
+.B 2
+Invalid command-line argument.
+.SH SEE ALSO
+.BR blender (1),
+.BR blender-asset-finder-cli (1)
+.PP
+The
+.BR blender-asset-finder-cli (1)
+CLI shares its provider library with this add-on; both are useful
+front-ends to the same search/download backend.
+.SH AUTHORS
+WorldFoundry Packages <packages@worldfoundry.org>.
+.SH COPYRIGHT
+Copyright \(co 2026 World Foundry contributors. Released under the
+GNU General Public License version 2 or (at your option) any later
+version.

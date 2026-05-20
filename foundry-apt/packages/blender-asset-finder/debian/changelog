@@ -1,0 +1,17 @@
+blender-asset-finder (0.2.0+git0a19d26c-2foundry1) stable; urgency=medium
+
+  * Moved to apt.foundrylinux.org (was apt.worldfoundry.org).
+  * CLI companion renamed wf-asset → blender-asset-finder-cli.
+
+ -- WorldFoundry Packages <packages@worldfoundry.org>  Wed, 20 May 2026 12:00:00 +0000
+
+blender-asset-finder (0.2.0+git0a19d26c-1foundry1) stable; urgency=medium
+
+  * Initial WorldFoundry packaging of the Blender Asset Finder
+    extension — multi-provider online 3D asset search/download
+    (wftools/blender_asset_finder/ at github.com:wbniv/WorldFoundry
+    @ 0a19d26c).
+  * Generic Blender add-on; not WorldFoundry-specific. Pairs with the
+    blender-asset-finder-cli(1) CLI which shares its provider library.
+
+ -- WorldFoundry Packages <packages@worldfoundry.org>  Tue, 19 May 2026 12:30:00 +0000

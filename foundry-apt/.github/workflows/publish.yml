@@ -45,7 +45,8 @@ jobs:
               apt-get update -q
               apt-get install -y --no-install-recommends \
                 build-essential debhelper dpkg-dev devscripts fakeroot lintian \
-                curl ca-certificates pkg-config sudo
+                curl ca-certificates pkg-config sudo \
+                zip python3
               bash scripts/build-all.sh
             '
 
@@ -149,3 +150,5 @@ jobs:
           apt-cache show vgmstream
           apt-cache show ghidra
           apt-cache show libvgm
+          apt-cache show blender-asset-finder
+          apt-cache show blender-asset-finder-cli

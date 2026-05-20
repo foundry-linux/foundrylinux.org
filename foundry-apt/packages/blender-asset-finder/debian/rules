@@ -1,0 +1,44 @@
+#!/usr/bin/make -f
+#
+# blender-asset-finder — pure-Python Blender 4.2+ extension repack.
+#
+# Build flow:
+#   1. dh_auto_build  → zip wftools/blender_asset_finder/ contents into
+#                       blender_asset_finder-<ver>.zip (Blender expects
+#                       a flat archive with blender_manifest.toml at the
+#                       zip root).
+#   2. dh_auto_install → drop the zip at /usr/share/blender-asset-finder/
+#                        and the wrapper at /usr/bin/.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+UPSTREAM_VERSION = 0.2.0
+
+NAME    = blender-asset-finder
+SRC_DIR = wftools/blender_asset_finder
+EXT_ZIP = blender_asset_finder-$(UPSTREAM_VERSION).zip
+SHARE   = $(CURDIR)/debian/$(NAME)/usr/share/blender-asset-finder
+BIN     = $(CURDIR)/debian/$(NAME)/usr/bin
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# Strip upstream excludes (matches blender_manifest.toml
+	# paths_exclude_pattern), then zip flat at the archive root so
+	# Blender's `extension install-file` finds blender_manifest.toml
+	# at the top of the zip.
+	find $(SRC_DIR) -type d -name __pycache__ -exec rm -rf {} +
+	rm -f $(SRC_DIR)/*.zip $(SRC_DIR)/*.log
+	cd $(SRC_DIR) && zip -qr $(CURDIR)/$(EXT_ZIP) .
+
+	# Sanity check: zip must contain blender_manifest.toml at root.
+	unzip -l $(CURDIR)/$(EXT_ZIP) | grep -q "^.*blender_manifest.toml$$"
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	install -D -m 0644 $(CURDIR)/$(EXT_ZIP) $(SHARE)/$(EXT_ZIP)
+	rm -f $(CURDIR)/$(EXT_ZIP)
+	install -D -m 0755 debian/blender-asset-finder-install.sh \
+	    $(BIN)/blender-asset-finder-install

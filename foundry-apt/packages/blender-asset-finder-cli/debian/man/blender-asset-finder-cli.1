@@ -1,0 +1,98 @@
+.TH BLENDER-ASSET-FINDER-CLI 1 "May 2026" "blender-asset-finder-cli 0.1.0" "Foundry Linux"
+.SH NAME
+blender-asset-finder-cli \- search and download CC0-licensed 3D assets from supported providers
+.SH SYNOPSIS
+.B blender-asset-finder-cli search
+\fIQUERY\fR
+[\fB\-\-provider\fR \fIa,b,c\fR]
+[\fB\-\-limit\fR \fIN\fR]
+.br
+.B blender-asset-finder-cli download
+\fIprovider/asset-id\fR
+[\fB\-\-dest\fR \fIPATH\fR]
+.br
+.B blender-asset-finder-cli policy show
+[\fB\-\-blend-dir\fR \fIPATH\fR]
+.br
+.B blender-asset-finder-cli providers list
+.SH DESCRIPTION
+.B blender-asset-finder-cli
+is the command-line companion to the
+.BR blender-asset-finder (1)
+Blender add-on. It searches and downloads 3D assets from supported
+repositories
+\(em Polyhaven, Kenney, AmbientCG, Quaternius, OpenGameArt, Sketchfab
+\(em and filters results by per-blend-directory licence policy.
+.PP
+The same provider library powers the blender-asset-finder Blender add-on
+(shipped separately); both front-ends share their search/download logic.
+This package bundles its own copy of the library so it has no runtime
+dependency on the Blender add-on being installed.
+.SH SUBCOMMANDS
+.TP
+.B search \fIQUERY\fR
+Search across providers; filter results by the active licence policy
+and print a one-per-line list of `provider/asset-id  title  licence`.
+.TP
+.B download \fIprovider/asset-id\fR
+Download a specific asset to the destination directory (default:
+the current directory's `assets/` subdir if one exists, else `.`).
+.TP
+.B policy show
+Show the active licence policy. With \fB\-\-blend\-dir\fR, resolve
+the policy file (\fIlicence_policy.toml\fR) relative to that
+directory. Without it, falls back to a CC0-only default.
+.TP
+.B providers list
+Print the names of all supported providers.
+.SH OPTIONS
+.TP
+.BI \-\-provider " a,b,c"
+Restrict
+.B search
+to the comma-separated list of providers. Default: all enabled
+providers.
+.TP
+.BI \-\-limit " N"
+Cap result count at N (default: 20).
+.TP
+.BI \-\-dest " PATH"
+Download destination directory.
+.SH ENVIRONMENT
+.TP
+.B WF_SKETCHFAB_API_KEY
+API token for the Sketchfab provider. Required for Sketchfab
+.B search / download
+to function.
+.SH FILES
+.TP
+.I /usr/share/blender-asset-finder-cli/wf_asset.py
+The CLI source.
+.TP
+.I /usr/share/blender-asset-finder-cli/blender_asset_finder/providers.py
+The shared search/download library — identical to the file the
+blender-asset-finder Blender add-on uses (the deb ships its own copy).
+.TP
+.I /usr/share/blender-asset-finder-cli/blender_asset_finder/*_catalog.json
+Provider catalogs (Kenney + Quaternius use prebuilt catalogs because
+neither has a search API).
+.SH EXIT STATUS
+.TP
+.B 0
+Command succeeded.
+.TP
+.B 1
+Bad arguments, provider error, or download failure.
+.SH SEE ALSO
+.BR blender-asset-finder-install (1),
+.BR blender (1)
+.PP
+.UR https://github.com/wbniv/WorldFoundry
+.UE
+.SH AUTHORS
+World Foundry contributors. Debian packaging by WorldFoundry Packages
+<packages@worldfoundry.org>.
+.SH COPYRIGHT
+Copyright \(co 2001-2026 World Foundry contributors. Released under the
+GNU General Public License version 2 or (at your option) any later
+version.

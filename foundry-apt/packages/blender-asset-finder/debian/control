@@ -1,0 +1,30 @@
+Source: blender-asset-finder
+Section: graphics
+Priority: optional
+Maintainer: WorldFoundry Packages <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13), zip
+Standards-Version: 4.7.0
+Homepage: https://github.com/wbniv/WorldFoundry
+Rules-Requires-Root: no
+
+Package: blender-asset-finder
+Architecture: all
+Depends: ${misc:Depends}, python3
+Recommends: blender (>= 4.2.0)
+Description: search/download 3D assets from online repos, in Blender
+ A Blender 4.2+ extension that searches and downloads 3D assets from
+ multiple licence-aware online repositories — Polyhaven, Kenney,
+ AmbientCG, Quaternius, OpenGameArt, Sketchfab — and imports them
+ directly into the active scene. Filters results by per-blend
+ licence policy with provenance tracking via a manifest.json
+ written alongside each download.
+ .
+ Distinct from Blender's built-in Asset Browser (which is a local
+ asset-library manager): this addon's distinguishing feature is the
+ multi-provider online search and on-demand download. Pairs with the
+ blender-asset-finder-cli(1) for shell-based use of the same provider library.
+ .
+ This package ships the addon as a Blender 4.2+ extension zip under
+ /usr/share/blender-asset-finder/ plus a blender-asset-finder-install
+ command that drops the extension into the user's Blender config and
+ enables it.

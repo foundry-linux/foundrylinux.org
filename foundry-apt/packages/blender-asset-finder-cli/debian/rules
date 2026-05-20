@@ -1,0 +1,46 @@
+#!/usr/bin/make -f
+#
+# blender-asset-finder-cli — CLI companion to the blender-asset-finder add-on.
+#
+# No compile step. The deb is a file-copy:
+#
+#   /usr/share/blender-asset-finder-cli/
+#   ├── wf_asset.py                              (the CLI, unmodified)
+#   └── blender_asset_finder/                    (path expected by
+#       ├── providers.py                          wf_asset.py's sys.path
+#       ├── kenney_catalog.json                   injection — the file's
+#       └── quaternius_catalog.json               sys.path.insert appends
+#                                                 ".../blender_asset_finder")
+#   /usr/bin/blender-asset-finder-cli            (2-line wrapper:
+#                                                  exec python3
+#                                                    /usr/share/blender-asset-finder-cli/
+#                                                       wf_asset.py "$@")
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+NAME       = blender-asset-finder-cli
+SHARE_DIR  = $(CURDIR)/debian/$(NAME)/usr/share/blender-asset-finder-cli
+BIN_DIR    = $(CURDIR)/debian/$(NAME)/usr/bin
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# Pure Python — nothing to build.
+
+override_dh_auto_test:
+	# Smoke check: providers list must load without ModuleNotFoundError.
+	python3 wftools/wf_asset.py providers list > /dev/null
+
+override_dh_auto_install:
+	# Source files → /usr/share/blender-asset-finder-cli/. The wf_asset.py
+	# CLI does a sys.path.insert relative to its own location, so we
+	# preserve the blender_asset_finder/ subdir layout on disk.
+	install -d $(SHARE_DIR)/blender_asset_finder
+	install -m 0644 wftools/wf_asset.py                                    $(SHARE_DIR)/
+	install -m 0644 wftools/blender_asset_finder/providers.py              $(SHARE_DIR)/blender_asset_finder/
+	install -m 0644 wftools/blender_asset_finder/kenney_catalog.json       $(SHARE_DIR)/blender_asset_finder/
+	install -m 0644 wftools/blender_asset_finder/quaternius_catalog.json   $(SHARE_DIR)/blender_asset_finder/
+
+	# /usr/bin wrapper.
+	install -D -m 0755 debian/blender-asset-finder-cli.sh $(BIN_DIR)/blender-asset-finder-cli

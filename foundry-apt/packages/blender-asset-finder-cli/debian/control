@@ -1,0 +1,25 @@
+Source: blender-asset-finder-cli
+Section: utils
+Priority: optional
+Maintainer: WorldFoundry Packages <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13), python3
+Standards-Version: 4.7.0
+Homepage: https://github.com/wbniv/WorldFoundry
+Rules-Requires-Root: no
+
+Package: blender-asset-finder-cli
+Architecture: all
+Depends: ${misc:Depends}, python3 (>= 3.10)
+Description: CLI companion to the blender-asset-finder Blender add-on
+ Command-line front-end to the blender-asset-finder asset-provider
+ library — searches and downloads 3D assets from supported
+ CC0/licensed repositories (Polyhaven, Kenney, AmbientCG, Quaternius,
+ OpenGameArt, Sketchfab) and filters results by per-blend-directory
+ licence policy.
+ .
+ Subcommands: `search`, `download`, `policy`, `providers`.
+ .
+ The same provider library powers the blender-asset-finder Blender
+ add-on (shipped separately); both front-ends share their search/download
+ logic. This package bundles its own copy of that library so it has
+ no runtime dependency on the add-on being installed.
