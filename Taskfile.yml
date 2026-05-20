@@ -28,7 +28,10 @@ tasks:
         git archive HEAD -- {{.SRC_DIR}}/ \
           | tar --strip-components=1 -x -C {{.WORK_DIR}}/
         cd {{.WORK_DIR}}
-        if git diff --quiet && git diff --cached --quiet; then
+        # `git diff` only sees modified files, not new untracked dirs — `git
+        # status --porcelain` covers both. Without this fix, adding a brand-new
+        # package directory silently bailed out as "nothing to sync".
+        if [[ -z "$(git status --porcelain)" ]]; then
           echo "Nothing to sync — remote is already up to date."
           exit 0
         fi
