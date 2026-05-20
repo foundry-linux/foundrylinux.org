@@ -6,7 +6,8 @@
 #   bash test/run-test.sh                              # all packages, full install
 #   bash test/run-test.sh --download-only              # resolution check only
 #   bash test/run-test.sh --package foundry-linux-retro-tools
-#   bash test/run-test.sh --version 24.04              # Ubuntu version (default: 26.04)
+#
+# Base: ubuntu:26.04 (the only release we support).
 
 set -euo pipefail
 

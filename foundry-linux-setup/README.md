@@ -16,7 +16,7 @@ bash install.sh
 
 ## What it does
 
-1. **Detects** Ubuntu-family 26.04 (warns on 24.04, errors on others — bypass with `--force`)
+1. **Detects** Ubuntu-family 26.04 LTS (errors on any other release — bypass with `--force`, untested)
 2. **Installs apt packages** matching [`Taskfile.yml`'s `dev-setup`](../Taskfile.yml) target (build-essential, cmake, libx11-dev, libgl1-mesa-dev, etc.) plus a few helpers (curl, gnupg, software-properties-common)
 3. **Installs [task](https://taskfile.dev/)** (WF's primary command runner) to `~/.local/bin/`
 4. **Installs Rust** via [rustup](https://rustup.rs/) + [maturin](https://www.maturin.rs/) (for the `wf_core.so` Blender addon build)
@@ -44,7 +44,6 @@ The installer prompts (or accepts `--role`) for one of these:
 
 ```
 --role ROLE       Install role (play, game-dev, engine-dev, both, maintainer)
---allow-24.04     Allow Ubuntu/Kubuntu 24.04 (default: 26.04 only)
 --skip-rust       Skip Rust toolchain
 --skip-blender    Skip Blender addon
 --skip-clone      Skip cloning WF repos
@@ -64,15 +63,15 @@ It's the **only** path where Foundry Linux compiles tooling on the user's machin
 
 The repo includes:
 
-- **`test/Dockerfile.ubuntu24.04`** + **`test/Dockerfile.ubuntu26.04`** — minimal images for testing the script end-to-end in CI without burning real VMs
-- **`test/run-test.sh`** — runs `install.sh --dry-run` inside each test image; can be extended for real-install testing once Docker-in-Docker is wired up
+- **`test/Dockerfile.ubuntu26.04`** — minimal image for testing the script end-to-end in CI without burning a real VM
+- **`test/run-test.sh`** — runs `install.sh --dry-run` inside the test image; extends to a real install with `--real`
 - **`.github/workflows/test.yml`** — GitHub Actions runs the dry-run tests on every push
 
 Test locally:
 
 ```bash
-bash test/run-test.sh                    # dry-run on both Ubuntu versions
-bash test/run-test.sh --real             # full install test (slow, ~5–10 min per image)
+bash test/run-test.sh                    # dry-run on Ubuntu 26.04
+bash test/run-test.sh --real             # full install test (slow, ~5–10 min)
 ```
 
 ## Repo structure
@@ -83,12 +82,11 @@ foundry-linux-setup/
   README.md                 This file
   LICENSE                   GPL-2 (matches the WF engine licence)
   test/
-    Dockerfile.ubuntu24.04
     Dockerfile.ubuntu26.04
     run-test.sh
   .github/
     workflows/
-      test.yml              CI: dry-run install on Ubuntu 24.04 + 26.04
+      test.yml              CI: dry-run install on Ubuntu 26.04
 ```
 
 ## Hosting

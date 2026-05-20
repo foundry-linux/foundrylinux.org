@@ -12,20 +12,34 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install build deps
+      - name: Install runner-side deps
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y \
-            shellcheck \
-            build-essential debhelper dpkg-dev devscripts fakeroot lintian
+          sudo apt-get install -y shellcheck
 
       - name: shellcheck scripts
         run: |
           shellcheck scripts/*.sh
           find packages -name '*.sh' -exec shellcheck {} +
 
-      - name: Build all .debs
-        run: bash scripts/build-all.sh
+      - name: Build all .debs in ubuntu:26.04 (our distribution base)
+        # .debs must be built against 26.04's libraries so dpkg-shlibdeps
+        # resolves the correct sonames — see publish.yml for the full
+        # rationale.
+        run: |
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ubuntu:26.04 \
+            bash -c '
+              set -euo pipefail
+              apt-get update -q
+              apt-get install -y --no-install-recommends \
+                build-essential debhelper dpkg-dev devscripts fakeroot lintian \
+                curl ca-certificates pkg-config sudo
+              bash scripts/build-all.sh
+            '
 
       - name: Verify all .debs
         run: |

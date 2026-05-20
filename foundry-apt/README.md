@@ -13,7 +13,7 @@ sudo apt update
 sudo apt install foundry-linux-retro-tools
 ```
 
-`resolute` is the suite name (Kubuntu 26.04 "Resolute Raccoon"). A `noble` alias covers 24.04.
+`resolute` is the suite name — Kubuntu 26.04 LTS "Resolute Raccoon", the only supported base.
 
 ## Metapackages
 

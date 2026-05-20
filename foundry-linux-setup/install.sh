@@ -11,8 +11,10 @@
 #   curl -fsSL https://install.foundry-linux.org/install.sh | bash
 #   bash install.sh                             # local
 #   bash install.sh --role game-dev             # specify role
-#   bash install.sh --role both --allow-24.04   # allow Ubuntu 24.04
 #   bash install.sh --dry-run                   # print plan, don't execute
+#
+# Base: Ubuntu 26.04 LTS ("Resolute Raccoon") only — no other release is
+# supported. --force exists as a panic-button override, not a path.
 #
 # Roles (control which metapackages are installed):
 #   play       — just play games (no dev tools; needs a runtime metapackage, coming later)
@@ -30,14 +32,12 @@ set -euo pipefail
 # Configuration
 # ============================================================================
 SUPPORTED_RELEASE="26.04"
-LEGACY_RELEASE="24.04"
 LOG_FILE="${HOME}/.local/state/foundry-install.log"
 FOUNDRY_GITHUB_ORG="foundry-linux"
 FOUNDRY_REPOS=(foundry-linux-setup foundry-apt foundry-devbox foundry-linux-iso foundry-docs foundry-linux-branding)
 
 # Defaults (overridable via flags)
 ROLE="both"
-ALLOW_LEGACY=false
 SKIP_BLENDER=false
 SKIP_RETRO=false
 APT_ONLY=false
@@ -56,7 +56,6 @@ parse_args() {
         case "$1" in
             --role)         shift; ROLE="$1" ;;
             --role=*)       ROLE="${1#*=}" ;;
-            --allow-24.04|"--allow-${LEGACY_RELEASE}") ALLOW_LEGACY=true ;;
             --skip-blender) SKIP_BLENDER=true ;;
             --skip-retro)   SKIP_RETRO=true ;;
             --apt-only)     APT_ONLY=true ;;
@@ -84,10 +83,11 @@ after this script completes.
 
 Usage: $(basename "$0") [OPTIONS]
 
+Base: Ubuntu 26.04 LTS ("Resolute Raccoon") only.
+
 Options:
   --role ROLE       Install role: play, game-dev, engine-dev, both, maintainer
                     (default: both)
-  --allow-24.04     Allow installation on Ubuntu/Kubuntu 24.04 (default: 26.04)
   --skip-blender    Skip foundry-linux-blender install
   --skip-retro      Skip foundry-linux-retro-tools install (saves ~400 MB for Ghidra)
   --apt-only        Forwarded to retro-tools: skip source-build sidecars
@@ -98,7 +98,6 @@ Options:
 Examples:
   curl -fsSL https://install.foundry-linux.org/install.sh | bash
   bash install.sh --role engine-dev
-  bash install.sh --role engine-dev --allow-24.04
   bash install.sh --dry-run --role both
   bash install.sh --role game-dev --apt-only   # fast path, no Ghidra
 
@@ -133,18 +132,11 @@ check_distro() {
         "$SUPPORTED_RELEASE")
             ok "Ubuntu-family $SUPPORTED_RELEASE detected — supported"
             ;;
-        "$LEGACY_RELEASE")
-            if $ALLOW_LEGACY; then
-                warn "Ubuntu-family $LEGACY_RELEASE (legacy) — proceeding (--allow-${LEGACY_RELEASE})"
-            else
-                die "Ubuntu-family $LEGACY_RELEASE is legacy. Use --allow-${LEGACY_RELEASE} to proceed (some packages may be older versions)."
-            fi
-            ;;
         *)
             if $FORCE; then
                 warn "Ubuntu-family ${VERSION_ID:-unknown} — untested but --force is set"
             else
-                die "Unsupported release: ${VERSION_ID:-unknown}. Use --force to override."
+                die "Unsupported release: ${VERSION_ID:-unknown}. Foundry Linux targets Ubuntu $SUPPORTED_RELEASE LTS only. Use --force to override (untested)."
             fi
             ;;
     esac
@@ -290,7 +282,7 @@ EOF
 main() {
     parse_args "$@"
     init_logging
-    log_to_file "Args: ROLE=$ROLE ALLOW_LEGACY=$ALLOW_LEGACY SKIP_BLENDER=$SKIP_BLENDER SKIP_RETRO=$SKIP_RETRO APT_ONLY=$APT_ONLY FORCE=$FORCE DRY_RUN=$DRY_RUN"
+    log_to_file "Args: ROLE=$ROLE SKIP_BLENDER=$SKIP_BLENDER SKIP_RETRO=$SKIP_RETRO APT_ONLY=$APT_ONLY FORCE=$FORCE DRY_RUN=$DRY_RUN"
 
     echo
     echo "${BOLD}${BLUE}Foundry Linux setup script${RESET} (Phase 0)"

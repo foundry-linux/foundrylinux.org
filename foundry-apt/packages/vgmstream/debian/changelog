@@ -1,3 +1,16 @@
+vgmstream (2083-1foundry4) resolute; urgency=medium
+
+  * No source changes — re-issue of 1foundry3 after fixing the CI build
+    environment. 1foundry3 was supposed to pick up 26.04's ffmpeg 8 /
+    libavcodec62, but publish.yml builds .debs on the GitHub-hosted
+    noble (24.04) runner, not in ubuntu:26.04 — so dpkg-shlibdeps still
+    pinned to libavcodec60. publish.yml now wraps `scripts/build-all.sh`
+    in `docker run ubuntu:26.04`, which is the only base we support.
+    ${shlibs:Depends} re-resolves to libavcodec62 / libavformat62 /
+    libavutil60 as confirmed by a local rebuild on 2026-05-20.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 20 May 2026 03:41:13 +0000
+
 vgmstream (2083-1foundry3) resolute; urgency=medium
 
   * Rebuild against Ubuntu 26.04's ffmpeg 8 / libavcodec62. The earlier
@@ -6,7 +19,8 @@ vgmstream (2083-1foundry3) resolute; urgency=medium
     foundry-linux-retro-tools unresolvable on freshly-pulled 26.04
     boxes. Caught by foundry-linux-setup/test/test-retro-tools-e2e.sh.
     No source changes — ${shlibs:Depends} auto-resolves to the new
-    sonames at build time.
+    sonames at build time. (1foundry3 turned out to be a no-op because
+    CI was still building on noble — see 1foundry4 above.)
 
  -- Foundry Linux <packages@foundrylinux.org>  Wed, 20 May 2026 03:19:21 +0000
 

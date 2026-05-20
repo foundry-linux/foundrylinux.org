@@ -21,27 +21,16 @@ jobs:
           shellcheck install.sh test/run-test.sh
 
   dry-run:
-    name: Dry-run on ${{ matrix.ubuntu }}
+    name: Dry-run on Ubuntu 26.04
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ubuntu: ['24.04', '26.04']
     steps:
       - uses: actions/checkout@v4
       - name: Build test image
         working-directory: foundry-linux-setup
-        run: |
-          docker build -f test/Dockerfile.ubuntu${{ matrix.ubuntu }} \
-                       -t foundry-test:${{ matrix.ubuntu }} .
+        run: docker build -f test/Dockerfile.ubuntu26.04 -t foundry-test:26.04 .
       - name: Dry-run install
         working-directory: foundry-linux-setup
-        run: |
-          if [ "${{ matrix.ubuntu }}" = "24.04" ]; then
-            docker run --rm foundry-test:${{ matrix.ubuntu }} --dry-run --allow-24.04
-          else
-            docker run --rm foundry-test:${{ matrix.ubuntu }} --dry-run
-          fi
+        run: docker run --rm foundry-test:26.04 --dry-run
 
   full-install:
     name: Full install on Ubuntu 26.04 (engine-dev, skip-clone)

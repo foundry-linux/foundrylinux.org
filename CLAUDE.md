@@ -76,10 +76,10 @@ bash foundry-linux-setup/install.sh --role engine-dev --dry-run
 bash foundry-linux-setup/install-foundry-linux-retro-tools.sh --dry-run
 bash foundry-linux-setup/install-foundry-linux-retro-tools.sh --apt-only   # skip ~/opt/ source-builds
 
-# Docker test harness (requires docker)
-bash foundry-linux-setup/test/run-test.sh                  # dry-run, Ubuntu 24.04 + 26.04
+# Docker test harness (requires docker; Ubuntu 26.04 LTS is the only target)
+bash foundry-linux-setup/test/run-test.sh                  # dry-run
 bash foundry-linux-setup/test/run-test.sh --real           # full install (slow, needs network)
-bash foundry-linux-setup/test/run-test.sh --version 26.04 --real
+bash foundry-linux-setup/test/test-retro-tools-e2e.sh      # fresh-VM retro-tools install + tool-invocation
 ```
 
 To release Phase 1: `git tag v1.0.1 && git push origin v1.0.1` — the publish workflow builds, signs, and syncs to R2 automatically.

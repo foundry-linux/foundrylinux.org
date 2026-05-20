@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Test harness for foundry-linux-setup/install.sh.
-# Runs the installer in disposable Docker containers across Ubuntu versions.
+# Runs the installer in disposable Docker containers against Ubuntu 26.04 LTS.
 #
 # Usage:
-#   bash test/run-test.sh              # dry-run on Ubuntu 24.04 + 26.04
+#   bash test/run-test.sh              # dry-run on Ubuntu 26.04
 #   bash test/run-test.sh --real       # full install test (slow)
 #   bash test/run-test.sh --version 26.04 --real
 
@@ -12,7 +12,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 REAL=false
-VERSIONS=(24.04 26.04)
+VERSIONS=(26.04)
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -49,23 +49,13 @@ for v in "${VERSIONS[@]}"; do
 
     echo
     echo "=== Testing $tag (dry-run) ==="
-    if [[ "$v" == "24.04" ]]; then
-        # 24.04 needs --allow-24.04
-        docker run --rm "$tag" --dry-run --allow-24.04 || { fail=1; continue; }
-    else
-        docker run --rm "$tag" --dry-run || { fail=1; continue; }
-    fi
+    docker run --rm "$tag" --dry-run || { fail=1; continue; }
 
     if $REAL; then
         echo
-        echo "=== Testing $tag (real install, no network optional) ==="
-        # Real install runs the full apt + rustup + clone path.
-        # Network access is required for rustup + git clone + apt update.
-        if [[ "$v" == "24.04" ]]; then
-            docker run --rm "$tag" --role engine-dev --allow-24.04 --skip-clone --skip-blender || { fail=1; continue; }
-        else
-            docker run --rm "$tag" --role engine-dev --skip-clone --skip-blender || { fail=1; continue; }
-        fi
+        echo "=== Testing $tag (real install) ==="
+        # Network access is required for apt update + clones.
+        docker run --rm "$tag" --role engine-dev --skip-clone --skip-blender || { fail=1; continue; }
     fi
 done
 

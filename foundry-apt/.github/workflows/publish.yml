@@ -20,15 +20,34 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install build deps + aptly
+      - name: Install runner-side deps (aptly, signing, R2 sync)
+        # These run on the GitHub-hosted host — they only touch metadata that
+        # already exists (aptly, gnupg) or move bytes around (rclone). They do
+        # NOT build any .deb, so they can stay on the host runner's noble.
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y \
-            aptly gnupg rclone \
-            build-essential debhelper dpkg-dev devscripts fakeroot lintian
+          sudo apt-get install -y aptly gnupg rclone
 
-      - name: Build all .debs
-        run: bash scripts/build-all.sh
+      - name: Build all .debs in ubuntu:26.04 (our distribution base)
+        # All .debs MUST be built inside ubuntu:26.04 so that ${shlibs:Depends}
+        # resolves to 26.04's library sonames (libavcodec62, etc.). Building on
+        # the host (noble/24.04) silently pins to ffmpeg-6 sonames and ships an
+        # uninstallable artifact — caught by the retro-tools E2E test on
+        # 2026-05-20 (see docs/plans/2026-05-20-vgmstream-libavcodec62-rebuild.md).
+        run: |
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ubuntu:26.04 \
+            bash -c '
+              set -euo pipefail
+              apt-get update -q
+              apt-get install -y --no-install-recommends \
+                build-essential debhelper dpkg-dev devscripts fakeroot lintian \
+                curl ca-certificates pkg-config sudo
+              bash scripts/build-all.sh
+            '
 
       - name: Initialise aptly repo
         run: bash scripts/init-repo.sh

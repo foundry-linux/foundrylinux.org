@@ -20,13 +20,19 @@ Depends: libavcodec60 (>= 7:6.0), libavformat60 (>= 7:6.0), libavutil58 (>= 7:6.
 
 ## Approach
 
-The control file uses `${shlibs:Depends}` — Debian's auto-resolver against the build host's installed libraries. So the fix is purely a rebuild in a current `ubuntu:26.04` container; no source changes beyond a changelog entry are needed.
+The control file uses `${shlibs:Depends}` — Debian's auto-resolver against the build host's installed libraries. The first attempt was a changelog-only bump to `2083-1foundry3` (v0.0.34, 2026-05-20), under the assumption that CI builds inside `ubuntu:26.04`.
 
-1. Append a `2083-1foundry3` changelog entry noting the ffmpeg 8 / libavcodec62 rebuild.
-2. Sync `foundry-apt/` to the `foundry-linux/foundry-apt` remote (`task sync`).
-3. Tag the next release (`task release TAG=v0.0.31` — confirm next tag with `gh release list`).
-4. CI builds in `ubuntu:26.04`, which now resolves shlibs to libav*62.
-5. Wait for the published `.deb` to land on R2, then re-run `bash foundry-linux-setup/test/test-retro-tools-e2e.sh`.
+**That assumption was wrong.** Inspecting `.github/workflows/publish.yml` after v0.0.34 republished 1foundry3 with the *same* broken sonames revealed that the `build-and-publish` job runs on `runs-on: ubuntu-latest` with **no container directive** — i.e. directly on the GitHub-hosted noble (24.04) runner. Apt installed `libavcodec60 7:6.1.1-3ubuntu5` from `noble/universe`, dpkg-shlibdeps pinned to `libavcodec60`, the .deb was uninstallable on 26.04 — same defect as 1foundry2. Only the smoke-install job uses `container: ubuntu:26.04`, and that one only runs `apt-cache show` (which doesn't catch unmet dependencies).
+
+This is the silent failure mode `feedback_build_in_containers.md` warned about: host deps satisfy Build-Depends invisibly and CI ships a broken artifact.
+
+**Real fix:** wrap the `Build all .debs` step in `docker run ubuntu:26.04`, so `dpkg-buildpackage` runs against 26.04's libs and `${shlibs:Depends}` resolves to libav*62.
+
+1. Modify `.github/workflows/publish.yml`'s "Build all .debs" step to run inside `ubuntu:26.04` via `docker run -v "$PWD:/work" -w /work`. The container installs the cross-cutting build deps (build-essential, debhelper, dpkg-dev, devscripts, fakeroot, lintian, sudo, curl, ca-certificates, pkg-config); each package's `build.sh` continues to install its own specific deps (`cmake`, `yasm`, ffmpeg-dev, etc.) inside the same container.
+2. Bump vgmstream changelog to `2083-1foundry4` so the new build is identifiable as the actually-fixed one.
+3. Sync `foundry-apt/` to remote and tag `v0.0.35`.
+4. Wait for CI; verify libavcodec62 sonames in the published Packages file.
+5. Re-run the e2e test.
 
 ## Verification
 
