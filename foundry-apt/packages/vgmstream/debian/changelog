@@ -1,3 +1,15 @@
+vgmstream (2083-1foundry3) resolute; urgency=medium
+
+  * Rebuild against Ubuntu 26.04's ffmpeg 8 / libavcodec62. The earlier
+    ffmpeg-6 sonames (libavcodec60, libavformat60, libavutil58) were
+    SRU'd out of 26.04 since 1foundry2 was built on 2026-05-18, leaving
+    foundry-linux-retro-tools unresolvable on freshly-pulled 26.04
+    boxes. Caught by foundry-linux-setup/test/test-retro-tools-e2e.sh.
+    No source changes — ${shlibs:Depends} auto-resolves to the new
+    sonames at build time.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 20 May 2026 03:19:21 +0000
+
 vgmstream (2083-1foundry2) resolute; urgency=medium
 
   * Enable G.722.1 (Siren 14) codec — it is compiled from plain C source
