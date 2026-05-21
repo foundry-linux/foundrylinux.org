@@ -15,6 +15,8 @@
 
 # shellcheck shell=bash
 
+set -euo pipefail
+
 : "${DRY_RUN:=false}"
 : "${LOG_FILE:=${FOUNDRY_LOG_FILE:-${HOME}/.local/state/foundry-install.log}}"
 
@@ -77,4 +79,40 @@ init_logging() {
     : > "$LOG_FILE"
     LOG_FILE_INITIALISED=1
     log_to_file "Foundry Linux install — started ($(basename "${0:-shell}"))"
+}
+
+# Resolve foundry-setup/ (directory containing lib.sh) so helpers can locate
+# sibling setup scripts regardless of which install-foundry-*.sh sourced lib.sh.
+FOUNDRY_SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Enable Ubuntu multiverse component. Idempotent — no-op if already enabled.
+# Required for: foundry-emulators-vintage (vice/atari800/fbzx), foundry-game-
+# reimplementations (vcmi/openrct2/...), foundry-android-development (NDK),
+# foundry-atelier (transitively).
+enable_multiverse() {
+    log_to_file "CHECK multiverse component"
+    if grep -hsE '^(deb |Components:)' /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null \
+        | grep -qw multiverse; then
+        info "Ubuntu multiverse already enabled"
+        return 0
+    fi
+    log_to_file "SUDO  add-apt-repository -y multiverse"
+    if $DRY_RUN; then
+        echo "  ${YELLOW}[dry-run]${RESET} sudo add-apt-repository -y multiverse"
+    else
+        sudo add-apt-repository -y multiverse
+    fi
+}
+
+# Wire up apt.worldfoundry.org as an apt source. Idempotent.
+# Required for: foundry-anvil, foundry-sprite, foundry-atelier (cross-Depend
+# on worldfoundry / worldfoundry-blender / worldfoundry-development).
+setup_worldfoundry_source() {
+    if [[ -f /etc/apt/sources.list.d/worldfoundry.list ]]; then
+        info "WorldFoundry apt source already configured"
+        return 0
+    fi
+    local dry=()
+    $DRY_RUN && dry=(--dry-run)
+    FOUNDRY_LOG_FILE="$LOG_FILE" bash "$FOUNDRY_SETUP_DIR/setup-worldfoundry-apt-source.sh" "${dry[@]}"
 }

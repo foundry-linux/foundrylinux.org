@@ -17,11 +17,18 @@
 # supported. --force exists as a panic-button override, not a path.
 #
 # Roles (control which metapackages are installed):
-#   play       — just play games (no dev tools; needs a runtime metapackage, coming later)
-#   game-dev   — author WF games (engine-build-deps + blender + retro-tools + task)
-#   engine-dev — hack on the engine (engine-build-deps + retro-tools + task; no blender)
-#   both       — game-dev + engine-dev (default; installs foundry-dev umbrella)
-#   maintainer — both + android-dev + foundry distro repos
+#
+#   Phase 2 nested editions (preferred — see docs/plans/2026-05-21-phase-2-devbox-image.md):
+#     anvil      — base layer; WF stack + retro-tools + light emulators + game frameworks
+#     sprite     — anvil + heavy graphics + audio (krita, gimp, ardour, trackers, …)
+#     atelier    — sprite + everything else (ROM-bundled emulators, free games, mobile dev)
+#
+#   Legacy roles (kept for back-compat with pre-edition installs):
+#     play       — just play games (no dev tools; needs a runtime metapackage, coming later)
+#     game-dev   — author WF games (engine-build-deps + blender + retro-tools + task)
+#     engine-dev — hack on the engine (engine-build-deps + retro-tools + task; no blender)
+#     both       — game-dev + engine-dev (default; installs foundry-dev umbrella)
+#     maintainer — both + android-dev + foundry distro repos
 #
 # Idempotent: safe to re-run.
 # Logs to: ~/.local/state/foundry-install.log
@@ -68,8 +75,9 @@ parse_args() {
     done
 
     case "$ROLE" in
+        anvil|sprite|atelier) ;;
         play|game-dev|engine-dev|both|maintainer) ;;
-        *) die "Invalid role: '$ROLE' (must be play, game-dev, engine-dev, both, or maintainer)" ;;
+        *) die "Invalid role: '$ROLE' (must be anvil, sprite, atelier, play, game-dev, engine-dev, both, or maintainer)" ;;
     esac
 }
 
@@ -86,10 +94,13 @@ Usage: $(basename "$0") [OPTIONS]
 Base: Ubuntu 26.04 LTS ("Resolute Raccoon") only.
 
 Options:
-  --role ROLE       Install role: play, game-dev, engine-dev, both, maintainer
+  --role ROLE       Install role. Phase 2 nested editions (preferred):
+                      anvil, sprite, atelier
+                    Legacy roles (back-compat):
+                      play, game-dev, engine-dev, both, maintainer
                     (default: both)
-  --skip-blender    Skip foundry-blender install
-  --skip-retro      Skip foundry-retro-tools install (saves ~400 MB for Ghidra)
+  --skip-blender    Skip foundry-blender install (legacy roles only)
+  --skip-retro      Skip foundry-retro-tools install (legacy roles only)
   --apt-only        Forwarded to retro-tools: skip source-build sidecars
   --force           Bypass distro/version checks (use at own risk)
   -n, --dry-run     Print the plan without executing anything
@@ -97,9 +108,10 @@ Options:
 
 Examples:
   curl -fsSL https://install.foundry-linux.org/install.sh | bash
-  bash install.sh --role engine-dev
-  bash install.sh --dry-run --role both
-  bash install.sh --role game-dev --apt-only   # fast path, no Ghidra
+  bash install.sh --role anvil                 # Phase 2 base edition
+  bash install.sh --role atelier               # Phase 2 full kit (~10 GB)
+  bash install.sh --role engine-dev            # legacy
+  bash install.sh --dry-run --role anvil
 
 The script logs to: $LOG_FILE
 Per-metapackage installers live next to this script as install-<name>.sh.
@@ -181,11 +193,34 @@ run_subscript() {
     FOUNDRY_LOG_FILE="$LOG_FILE" bash "$path" "$@"
 }
 
+install_edition() {
+    # Phase 2 nested editions — author the same on bare-metal as the
+    # devbox image. anvil/sprite/atelier all cross-Depend on apt.worldfoundry.org;
+    # atelier additionally needs multiverse for ROM-bundled emulators + game
+    # reimplementations + the Android NDK.
+    local edition="$1"
+    setup_worldfoundry_source
+    if [[ "$edition" == "atelier" ]]; then
+        enable_multiverse
+    fi
+    apt_update
+    step "Installing foundry-$edition"
+    if $DRY_RUN; then
+        echo "  ${YELLOW}[dry-run]${RESET} sudo apt-get install -y foundry-$edition"
+    else
+        sudo apt-get install -y "foundry-$edition"
+    fi
+    ok "foundry-$edition installed"
+}
+
 install_metapackages() {
     local dry=()
     $DRY_RUN && dry=(--dry-run)
 
     case "$ROLE" in
+        anvil|sprite|atelier)
+            install_edition "$ROLE"
+            ;;
         play)
             warn "Role 'play': no runtime metapackage yet — nothing to install via apt"
             ;;

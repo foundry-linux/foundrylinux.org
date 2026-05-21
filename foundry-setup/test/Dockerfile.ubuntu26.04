@@ -13,8 +13,10 @@ RUN useradd -m -s /bin/bash -G sudo tester \
 USER tester
 WORKDIR /home/tester
 
-COPY --chown=tester:tester install.sh /home/tester/install.sh
-RUN chmod +x /home/tester/install.sh
+# Copy the whole foundry-setup/ tree so install.sh can source lib.sh and
+# dispatch to the per-metapackage scripts and source-wiring helpers.
+COPY --chown=tester:tester . /home/tester/foundry-setup/
+RUN chmod +x /home/tester/foundry-setup/*.sh
 
-ENTRYPOINT ["bash", "/home/tester/install.sh"]
+ENTRYPOINT ["bash", "/home/tester/foundry-setup/install.sh"]
 CMD ["--help"]
