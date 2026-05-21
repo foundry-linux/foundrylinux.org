@@ -79,6 +79,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ## Done
 
+- 2026-05-22 — [drop-linux-from-package-names] `foundry-linux-*` → `foundry-*` across packages, install scripts, and `foundry-linux-setup/` dir; landed in 433a07b, shipped via foundry-apt v0.0.41, live R2 index serves only new names. See [plan](docs/plans/2026-05-21-drop-linux-from-package-names.md).
 - 2026-05-21 — [retro-tools-e2e-test] `test-retro-tools-e2e.sh` (docker-based) installs metapackage in fresh ubuntu:26.04 + verifies all 15 tools invoke; 15/15 pass. VM not needed for this.
 - 2026-05-18 — [worldfoundry-rename-cleanup] `worldfoundry-*` refs purged from Phase 0 install scripts, README, CONTRIBUTING, Taskfile, test harness; functional installs now use direct deps.
 - 2026-05-18 — [apt-index-styling] `apt.foundrylinux.org` index now shares `foundrylinux.org/styles.css`; Space Grotesk + JetBrains Mono; ember orange accent; no duplicate CSS to maintain. Shipped as v0.0.29.

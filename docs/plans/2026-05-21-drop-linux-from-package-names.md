@@ -1,7 +1,7 @@
 ---
 title: Drop "linux" from foundry-linux-* package and script names
 date: 2026-05-21
-status: planned
+status: done
 ---
 
 # Drop `linux` from `foundry-linux-*` package and script names
@@ -162,3 +162,56 @@ git ls-files | grep -Ev '^(foundry-apt/packages/.*/debian/changelog|scripts/rena
    bash foundry-setup/install-foundry-retro-tools.sh --dry-run
    ```
    PASS = no missing-file errors; install plan references the new package names only.
+
+---
+
+## Verification results (2026-05-22)
+
+Rename landed in `433a07b refactor(rename): drop "linux" infix from foundry-linux-* package names` and shipped end-to-end via foundry-apt tag `v0.0.41`.
+
+### 1. Diff sanity — PASS
+
+```
+$ git show --stat 433a07b | head -3
+commit 433a07be4c2afaa55c5b5c023f44e43dca589ee1
+Author: Will Norris <will@biohack.net>
+Date:   Thu May 21 15:51:07 2026 +0700
+```
+
+Every remaining `foundry-linux-` reference in tracked content is either (a) historical changelog continuity (vgmstream/libvgm/retro-tools/android/ios changelogs — required by Debian convention), (b) the rename script itself (`scripts/rename-drop-linux.sh`, committed for history per the plan), or (c) `Taskfile.yml:29` which is a `caught 2026-05-21` postmortem comment about the rename, not a live reference. `.history/` snapshots are excluded.
+
+### 2. Every package builds — PASS (via CI)
+
+```
+$ gh run list --repo foundry-linux/foundry-apt --workflow publish.yml --limit 1
+completed  success  v0.0.41  Build, sign, and publish APT repo  9m45s
+```
+
+### 3. Renamed package structure — PASS
+
+```
+$ grep -E "^(Source|Package): " foundry-apt/packages/foundry-retro-tools/debian/control
+Source: foundry-retro-tools
+Package: foundry-retro-tools
+```
+
+### 4. Old name is gone from the live index — PASS
+
+```
+$ curl -s https://apt.foundrylinux.org/dists/resolute/main/binary-amd64/Packages.gz \
+    | gunzip | grep -E "^Package: foundry-linux-"
+(empty)
+```
+
+Live index serves `foundry-android-development`, `foundry-anvil`, `foundry-art`, `foundry-atelier`, `foundry-daw`, `foundry-emulators*`, `foundry-free-games`, `foundry-game-frameworks`, `foundry-game-reimplementations`, `foundry-image-cli`, `foundry-ios-development`, `foundry-pixel-art`, `foundry-retro-tools`, `foundry-sprite`, `foundry-trackers` — no `foundry-linux-*` left.
+
+### 5. Setup script smoke test — PASS
+
+```
+$ bash foundry-setup/install-foundry-retro-tools.sh --dry-run
+━━━ Installing foundry-retro-tools (apt) ━━━
+  [dry-run] sudo apt-get update -q
+  [dry-run] sudo apt-get install -y foundry-retro-tools
+```
+
+Top-level `install.sh --dry-run` exits 1 on the dev host (Ubuntu 25.10) at the `Unsupported release: 25.10` distro check — unrelated to the rename; expected behavior.
