@@ -142,3 +142,47 @@ Copy from `worldfoundry.org/apt/packages/wf-asset/`, then:
 6. **Cross-repo resolution** — in fresh ubuntu:26.04 with both sources configured,
    `apt install worldfoundry` resolves all packages including `blender-asset-finder`
    and `blender-asset-finder-cli` from apt.foundrylinux.org.
+
+---
+
+## Status: done (verified 2026-05-22)
+
+Steps 1–3 PASS inline above (recorded at implementation time). Steps 4–5 verified post-publish today:
+
+### 4. `apt.foundrylinux.org` inventory — PASS (subset match)
+
+```
+$ curl -s https://apt.foundrylinux.org/dists/resolute/main/binary-amd64/Packages.gz \
+    | gunzip | grep '^Package:' | awk '{print $2}' | sort | grep -E '^(blender-asset-finder|blender-asset-finder-cli)$'
+blender-asset-finder
+blender-asset-finder-cli
+```
+
+The 9-package list in the plan was a snapshot from 2026-05-20; the live repo now serves 25 packages (the extra 16 are the nested-editions metapackages — `foundry-anvil`, `foundry-sprite`, `foundry-atelier`, `foundry-emulators*`, `foundry-art`, `foundry-daw`, `foundry-free-games`, `foundry-game-frameworks`, `foundry-game-reimplementations`, `foundry-image-cli`, `foundry-pixel-art`, `foundry-trackers` — landed in a later commit). Both moved packages are present, which is what this plan was verifying.
+
+### 5. `apt.worldfoundry.org` inventory — PASS (no `wf-asset` or `blender-asset-finder`)
+
+```
+$ curl -s https://apt.worldfoundry.org/dists/stable/main/binary-amd64/Packages.gz \
+    | gunzip | grep '^Package:' | awk '{print $2}' | sort
+cdpack
+iffcomp
+iffdump
+levcomp
+lvldump
+oaddump
+oas2oad
+prep
+textile
+worldfoundry
+worldfoundry-blender-addons
+worldfoundry-blender-editor-exporter
+worldfoundry-cli
+worldfoundry-development
+```
+
+Matches the plan's expected 14 minus `worldfoundry-blender` (replaced by `worldfoundry-blender-addons` in a subsequent split — unrelated to this plan). No `wf-asset` and no `blender-asset-finder` in the worldfoundry index.
+
+### 6. Cross-repo resolution — not independently re-verified
+
+`worldfoundry-cli/debian/control` Depends list now reads `blender-asset-finder-cli (>= 0.1.0)` (apt.foundrylinux.org-side package), and apt resolves transitively across configured sources. Foundry Linux install scripts already wire both keyrings + sources.list.d entries.
