@@ -26,7 +26,7 @@ RUN apt-get update \
  && install -d /etc/apt/keyrings \
  && curl -fsSL https://apt.foundrylinux.org/key.gpg \
       | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg \
- && echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org stable main" \
+ && echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
       > /etc/apt/sources.list.d/foundry.list \
  && curl -fsSL https://apt.worldfoundry.org/key.gpg \
       | gpg --dearmor -o /etc/apt/keyrings/worldfoundry.gpg \

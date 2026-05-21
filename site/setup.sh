@@ -21,7 +21,7 @@ if [[ ! -f /etc/apt/sources.list.d/foundry.list ]]; then
   sudo install -d /etc/apt/keyrings
   curl -fsSL https://apt.foundrylinux.org/key.gpg \
     | sudo gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
-  echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org stable main" \
+  echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
     | sudo tee /etc/apt/sources.list.d/foundry.list > /dev/null
 else
   echo "✓ apt.foundrylinux.org already configured"
