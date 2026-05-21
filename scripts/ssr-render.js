@@ -49,7 +49,7 @@ const page = `<!doctype html>
   <script>
     /* Copy button — replaces the React useState handler */
     document.querySelector('.copy').addEventListener('click', function() {
-      navigator.clipboard?.writeText('sudo apt install foundry-base');
+      navigator.clipboard?.writeText('sudo apt install foundry-anvil');
       this.lastChild.textContent = 'COPIED';
       var btn = this;
       setTimeout(function() { btn.lastChild.textContent = 'COPY'; }, 1400);

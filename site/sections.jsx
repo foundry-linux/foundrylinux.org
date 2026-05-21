@@ -33,7 +33,7 @@ function Topbar() {
 function Hero() {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
-    navigator.clipboard?.writeText("sudo apt install foundry-base");
+    navigator.clipboard?.writeText("sudo apt install foundry-anvil");
     setCopied(true);
     setTimeout(() => setCopied(false), 1400);
   };
@@ -66,7 +66,7 @@ function Hero() {
 
         <div className="apt-command">
           <span className="prompt">$</span>
-          <span className="cmd">sudo apt install foundry-base</span>
+          <span className="cmd">sudo apt install foundry-anvil</span>
           <button className="copy" onClick={copy}>
             <CopyIcon />{copied ? "COPIED" : "COPY"}
           </button>
@@ -223,20 +223,15 @@ function Install() {
               <div className="dots"><i /><i /><i /></div>
             </div>
             <pre>
-<span className="step">① Trust the keyring</span>
-<span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://apt.foundrylinux.org/keyring.gpg</span> \
-  | <span className="ember">sudo tee</span> /etc/apt/keyrings/foundry.gpg &gt; /dev/null
+<span className="step">① Add the Foundry archive</span>
+<span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>
 
-<span className="step">② Wire up the repository</span>
-<span className="ember">echo</span> <span className="str">"deb [signed-by=/etc/apt/keyrings/foundry.gpg] \
-  https://apt.foundrylinux.org stable main"</span> \
-  | <span className="ember">sudo tee</span> /etc/apt/sources.list.d/foundry.list
+<span className="step">② Install</span>
+<span className="ember">sudo apt install</span> foundry-anvil
 
-<span className="step">③ Update and install</span>
-<span className="ember">sudo apt update</span> &amp;&amp; <span className="ember">sudo apt install</span> foundry-base
-
-<span className="cmt"># or pick à la carte:</span>
-<span className="ember">sudo apt install</span> world-foundry blender-foundry mame 65ax libvgm
+<span className="cmt"># or pick a different edition:</span>
+<span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>
+<span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~10 GB)</span>
             </pre>
           </div>
 
