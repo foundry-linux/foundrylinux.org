@@ -1,3 +1,14 @@
+foundry-game-frameworks (1.0.1) resolute; urgency=medium
+
+  * Drop love (LÖVE 2D Lua game engine) from Depends. Ubuntu 26.04's
+    love 11.5-3 package has a broken postinst — update-alternatives is
+    called with a man-page path that does not exist, failing
+    dpkg --configure and blocking any metapackage that hard-Depends on
+    it. Verified standalone with `apt install love` in a fresh
+    ubuntu:26.04 container. Will be re-added once Ubuntu fixes love.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 22 May 2026 01:35:00 +0700
+
 foundry-game-frameworks (1.0.0) resolute; urgency=medium
 
   * Initial release. Part of the Phase 2 nested-editions hierarchy

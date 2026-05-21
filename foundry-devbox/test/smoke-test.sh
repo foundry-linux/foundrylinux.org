@@ -23,8 +23,8 @@ TOOLS=(
     dosbox-x hatari fs-uae openmsx
     # foundry-emulators-consoles
     fceux mednafen stella scummvm frotz desmume
-    # foundry-game-frameworks
-    tiled love sdl2-config sdl3-config glslangValidator spirv-cross spirv-val
+    # foundry-game-frameworks (love is upstream-broken on Ubuntu 26.04; tracked, not preinstalled)
+    tiled sdl2-config sdl3-config glslangValidator spirv-cross spirv-val
     # foundry-image-cli
     magick gm
     # Cloudsmith task

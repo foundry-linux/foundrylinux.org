@@ -58,7 +58,7 @@ jobs:
               cdpack iffcomp levcomp \
               dosbox-x scummvm fceux mednafen stella hatari fs-uae \
               openmsx frotz desmume \
-              tiled love sdl2-config sdl3-config \
+              tiled sdl2-config sdl3-config \
               glslangValidator spirv-cross spirv-val \
               magick gm; do
             docker run --rm \

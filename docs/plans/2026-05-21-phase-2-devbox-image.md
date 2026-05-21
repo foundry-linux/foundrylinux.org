@@ -22,7 +22,7 @@
   **Tier 0 — composable sub-metapackages (6):**
   - `foundry-emulators-computers` — vintage home-computer emulators that do NOT bundle non-redistributable ROMs in the .deb (universe-only): `dosbox-x`, `hatari`, `fs-uae`, `openmsx`, `openmsx-data`. (`vice`, `atari800`, `fbzx` ship Commodore/Atari/Sinclair ROMs inside the .deb — those live in the opt-in `foundry-emulators-vintage` metapackage so we don't redistribute non-redistributable ROMs in a publicly-pulled image.)
   - `foundry-emulators-consoles` — light console/handheld + adventure-engine emulators (universe): `fceux`, `mednafen`, `stella`, `desmume`, `scummvm`, `frotz`
-  - `foundry-game-frameworks` — 2D/3D game-dev frameworks + headers: `tiled`, `love`, `libsdl2-dev`, `libsdl3-dev`, `libsfml-dev`, `liballegro5-dev`, `libtcod-dev`, `glslang-tools`, `spirv-cross`, `spirv-tools`
+  - `foundry-game-frameworks` — 2D/3D game-dev frameworks + headers: `tiled`, `libsdl2-dev`, `libsdl3-dev`, `libsfml-dev`, `liballegro5-dev`, `libtcod-dev`, `glslang-tools`, `spirv-cross`, `spirv-tools` (LÖVE 2D engine `love` is excluded — Ubuntu 26.04's `love` 11.5-3 has a broken postinst; will be re-added once upstream fixes it)
   - `foundry-trackers` — chiptune/module trackers: `milkytracker`, `schism`, `furnace`, `openmpt123`
   - `foundry-pixel-art` — pixel-art paint: `mtpaint`, `grafx2`
   - `foundry-image-cli` — image CLI: `imagemagick`, `graphicsmagick`
@@ -177,7 +177,7 @@ RUN apt-get update \
 #     │                                 sox binutils-m68k-linux-gnu xa65 f9dasm libvgm vgmstream ghidra
 #     ├── foundry-emulators-computers = dosbox-x hatari fs-uae openmsx openmsx-data
 #     ├── foundry-emulators-consoles  = fceux mednafen stella desmume scummvm frotz
-#     ├── foundry-game-frameworks     = tiled love libsdl2-dev libsdl3-dev libsfml-dev
+#     ├── foundry-game-frameworks     = tiled libsdl2-dev libsdl3-dev libsfml-dev
 #     │                                 liballegro5-dev libtcod-dev glslang-tools spirv-cross spirv-tools
 #     ├── foundry-image-cli           = imagemagick graphicsmagick
 #     ├── task                          (resolved directly from the Cloudsmith repo configured in Layer 1)
@@ -263,7 +263,7 @@ jobs:
               cdpack iffcomp levcomp \
               dosbox-x scummvm fceux mednafen stella hatari fs-uae \
               openmsx frotz desmume \
-              tiled love sdl2-config sdl3-config \
+              tiled sdl2-config sdl3-config \
               glslangValidator spirv-cross spirv-val \
               magick gm; do
             docker run --rm -e PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/usr/games:/bin:/sbin \
@@ -305,7 +305,7 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
    ```
    bash foundry-devbox/test/smoke-test.sh
    ```
-   Expected: prints `✓ <tool>` for each foundry-anvil tool — Foundry stack: `mame`, `chdman`, `ghidra`, `ghidra-headless`, `blender`, `vgmstream-cli`, `f9dasm`, `vgm-player`, `vgm2wav`, `task`, `cdpack`, `iffcomp`, `levcomp`; universe emulators: `dosbox-x`, `scummvm`, `fceux`, `mednafen`, `stella`, `hatari`, `fs-uae`, `openmsx`, `frotz`, `desmume`; game-dev frameworks: `tiled`, `love`, `sdl2-config`, `sdl3-config`; shader/image: `glslangValidator`, `spirv-cross`, `spirv-val`, `magick`, `gm`. Final line "N/N tools verified" with N≈30. (Sprite/atelier tools — trackers, pixel-art, krita, ardour, dolphin, etc. — are NOT in the image and not smoke-tested.)
+   Expected: prints `✓ <tool>` for each foundry-anvil tool — Foundry stack: `mame`, `chdman`, `ghidra`, `ghidra-headless`, `blender`, `vgmstream-cli`, `f9dasm`, `vgm-player`, `vgm2wav`, `task`, `cdpack`, `iffcomp`, `levcomp`; universe emulators: `dosbox-x`, `scummvm`, `fceux`, `mednafen`, `stella`, `hatari`, `fs-uae`, `openmsx`, `frotz`, `desmume`; game-dev frameworks: `tiled`, `sdl2-config`, `sdl3-config`; shader/image: `glslangValidator`, `spirv-cross`, `spirv-val`, `magick`, `gm`. Final line "N/N tools verified" with N≈30. (Sprite/atelier tools — trackers, pixel-art, krita, ardour, dolphin, etc. — are NOT in the image and not smoke-tested.)
 
 3. **Sync to the mirror remote.**
    ```
@@ -331,7 +331,7 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
 
 6. **Universe game-dev additions usable.**
    ```
-   distrobox enter foundry-test -- bash -c 'dosbox-x -version; tiled --version; love --version 2>&1 | head -1; sdl2-config --version; glslangValidator --version | head -1; magick -version | head -1'
+   distrobox enter foundry-test -- bash -c 'dosbox-x -version; tiled --version; sdl2-config --version; glslangValidator --version | head -1; magick -version | head -1'
    ```
    Expected: each emits a recognisable version banner; non-zero exits are OK as long as the binary launches.
 
@@ -607,7 +607,7 @@ Each metapackage is a tiny native source-package tree at `foundry-apt/packages/f
 
 1. `foundry-emulators-computers` — Depends: `dosbox-x hatari fs-uae openmsx openmsx-data`
 2. `foundry-emulators-consoles` — Depends: `fceux mednafen stella desmume scummvm frotz`
-3. `foundry-game-frameworks` — Depends: `tiled love libsdl2-dev libsdl3-dev libsfml-dev liballegro5-dev libtcod-dev glslang-tools spirv-cross spirv-tools`
+3. `foundry-game-frameworks` — Depends: `tiled libsdl2-dev libsdl3-dev libsfml-dev liballegro5-dev libtcod-dev glslang-tools spirv-cross spirv-tools` (love excluded — broken upstream on 26.04)
 4. `foundry-trackers` — Depends: `milkytracker schism furnace openmpt123`
 5. `foundry-pixel-art` — Depends: `mtpaint grafx2`
 6. `foundry-image-cli` — Depends: `imagemagick graphicsmagick`
