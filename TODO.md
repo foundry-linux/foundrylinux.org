@@ -75,11 +75,11 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 - [ ] **apt.worldfoundry.org Phase B** [deferred] — five `worldfoundry-*` metapackages + `worldfoundry-blender-addon`; remove worldfoundry-* from `foundry-apt/`.
 
 ### Housekeeping
-- [ ] **Fresh-VM retro-tools end-to-end test.** Run `install-foundry-linux-retro-tools.sh` on a clean Ubuntu 26.04 VM and confirm all tools are available (`ghidra`, `vgmstream-cli`, `f9dasm`, `vgm2wav`, `mame`, etc.).
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
 
 ## Done
 
+- 2026-05-21 — [retro-tools-e2e-test] `test-retro-tools-e2e.sh` (docker-based) installs metapackage in fresh ubuntu:26.04 + verifies all 15 tools invoke; 15/15 pass. VM not needed for this.
 - 2026-05-18 — [worldfoundry-rename-cleanup] `worldfoundry-*` refs purged from Phase 0 install scripts, README, CONTRIBUTING, Taskfile, test harness; functional installs now use direct deps.
 - 2026-05-18 — [apt-index-styling] `apt.foundrylinux.org` index now shares `foundrylinux.org/styles.css`; Space Grotesk + JetBrains Mono; ember orange accent; no duplicate CSS to maintain. Shipped as v0.0.29.
 - 2026-05-18 — [worldfoundry-apt-cleanup] `worldfoundry-{android-dev,blender,dev,engine-build-deps}` removed from `foundry-apt/` (moved to `apt.worldfoundry.org`); smoke test scoped to `apt-cache show`; CI green at v0.0.30.
