@@ -2,7 +2,7 @@
 
 ## Context
 
-The `smoke-install` job in `.github/workflows/publish.yml` (in `foundry-linux/foundry-apt`) fails when trying to install `foundry-linux-retro-tools` because `vgmstream` (one of its `Depends:`) requires `libavcodec60 (>= 7:6.0)`, which doesn't exist in Ubuntu 26.04 — ffmpeg was bumped and `libavcodec60` was replaced by `libavcodec61`. The smoke test cannot resolve transitive system deps we don't control.
+The `smoke-install` job in `.github/workflows/publish.yml` (in `foundry-linux/foundry-apt`) fails when trying to install `foundry-retro-tools` because `vgmstream` (one of its `Depends:`) requires `libavcodec60 (>= 7:6.0)`, which doesn't exist in Ubuntu 26.04 — ffmpeg was bumped and `libavcodec60` was replaced by `libavcodec61`. The smoke test cannot resolve transitive system deps we don't control.
 
 **Root cause diagnosis:** `libavcodec60` simply doesn't exist in Ubuntu 26.04, even with `universe` enabled. Enabling universe was attempted (v0.0.28) but didn't resolve it. The correct fix is to scope the smoke test to what we actually control: verifying our packages are properly indexed and the GPG key works.
 
@@ -24,7 +24,7 @@ Replace `apt-get install --download-only` with `apt-cache show` for each publish
           echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
             > /etc/apt/sources.list.d/foundry.list
           apt-get update -q
-          apt-cache show foundry-linux-retro-tools
+          apt-cache show foundry-retro-tools
           apt-cache show f9dasm
           apt-cache show vgmstream
           apt-cache show ghidra

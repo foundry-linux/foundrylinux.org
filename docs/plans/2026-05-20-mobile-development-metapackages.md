@@ -1,10 +1,10 @@
-# Plan: `foundry-linux-android-development` + `foundry-linux-ios-development` metapackages
+# Plan: `foundry-android-development` + `foundry-ios-development` metapackages
 
 ## Context
 
 Two mobile-dev metapackages to add to `apt.foundrylinux.org` (`foundrylinux.org/foundry-apt/`):
 
-**Android:** `install-foundry-linux-android-development.sh` currently does a direct `apt install
+**Android:** `install-foundry-android-development.sh` currently does a direct `apt install
 openjdk-17-jdk adb google-android-ndk-r26c-installer` without a backing metapackage — the last
 install script without one. All three deps are in Ubuntu multiverse/universe. Adding the
 metapackage completes the pattern every other install script already follows.
@@ -16,8 +16,8 @@ tooling only. Four device-communication packages (`libimobiledevice-utils`, `ide
 
 `codemagic-cli-tools` (Codemagic's Python CLI for App Store Connect, code signing, and artifact
 management) is pip-only — not in any apt source — so it cannot be a `Depends:` in the deb.
-Instead, the **Phase 0 install script** (`install-foundry-linux-ios-development.sh`, a new file)
-handles it: the script does `apt install foundry-linux-ios-development` for the apt packages,
+Instead, the **Phase 0 install script** (`install-foundry-ios-development.sh`, a new file)
+handles it: the script does `apt install foundry-ios-development` for the apt packages,
 then `pipx install codemagic-cli-tools` as a second step. This two-layer split (metapackage for
 apt deps, install script for the rest) is the same pattern used by the android script, which
 separately enables multiverse for the NDK — something also inexpressible in a `Depends:`.
@@ -27,24 +27,24 @@ Both packages get added to the `maintainer` role in `install.sh`.
 ## Target shapes
 
 ```
-foundry-linux-android-development  (1.0.0)   ← apt.foundrylinux.org
+foundry-android-development  (1.0.0)   ← apt.foundrylinux.org
 └─ Depends: openjdk-17-jdk, adb, google-android-ndk-r26c-installer
    (google-android-ndk-r26c-installer is in Ubuntu multiverse)
 
-foundry-linux-ios-development  (1.0.0)       ← apt.foundrylinux.org
+foundry-ios-development  (1.0.0)       ← apt.foundrylinux.org
 └─ Depends: libimobiledevice-utils, ideviceinstaller, usbmuxd, ifuse
    (all Ubuntu universe; Codemagic CLI tools installed separately via pipx)
 ```
 
 ## Files to create / modify
 
-### New: `foundry-apt/packages/foundry-linux-android-development/debian/` (5 files)
+### New: `foundry-apt/packages/foundry-android-development/debian/` (5 files)
 
-Reference: `foundry-apt/packages/foundry-linux-retro-tools/debian/` — identical structure.
+Reference: `foundry-apt/packages/foundry-retro-tools/debian/` — identical structure.
 
 **control:**
 ```
-Source: foundry-linux-android-development
+Source: foundry-android-development
 Section: metapackages
 Priority: optional
 Maintainer: World Foundry <packages@worldfoundry.org>
@@ -53,7 +53,7 @@ Standards-Version: 4.7.0
 Homepage: https://foundrylinux.org/
 Rules-Requires-Root: no
 
-Package: foundry-linux-android-development
+Package: foundry-android-development
 Architecture: all
 Depends: ${misc:Depends}, openjdk-17-jdk, adb, google-android-ndk-r26c-installer
 Description: Android development tools for Foundry Linux contributors
@@ -76,18 +76,18 @@ Description: Android development tools for Foundry Linux contributors
  Gradle 8.9 is vendored in the WorldFoundry repo (gradlew wrapper).
 ```
 
-**changelog:** 1.0.0 initial entry (same style as foundry-linux-retro-tools)
+**changelog:** 1.0.0 initial entry (same style as foundry-retro-tools)
 **copyright:** GPL-2.0-or-later, packaging © World Foundry
 **rules:** `%: dh $@`
 **source/format:** `3.0 (native)`
 
-### New: `foundry-apt/packages/foundry-linux-ios-development/debian/` (5 files)
+### New: `foundry-apt/packages/foundry-ios-development/debian/` (5 files)
 
 Same structure as above.
 
 **control:**
 ```
-Source: foundry-linux-ios-development
+Source: foundry-ios-development
 Section: metapackages
 Priority: optional
 Maintainer: World Foundry <packages@worldfoundry.org>
@@ -96,7 +96,7 @@ Standards-Version: 4.7.0
 Homepage: https://foundrylinux.org/
 Rules-Requires-Root: no
 
-Package: foundry-linux-ios-development
+Package: foundry-ios-development
 Architecture: all
 Depends: ${misc:Depends}, libimobiledevice-utils, ideviceinstaller, usbmuxd, ifuse
 Description: iOS device tools for Foundry Linux contributors
@@ -109,46 +109,46 @@ Description: iOS device tools for Foundry Linux contributors
    * usbmuxd                 — USB multiplexing daemon (required by the above)
    * ifuse                   — mount iPhone/iPod filesystem via FUSE
  .
- The install script (install-foundry-linux-ios-development.sh) also installs
+ The install script (install-foundry-ios-development.sh) also installs
  the Codemagic CLI tools via pipx — these provide the app-store-connect(1)
  command for App Store Connect API access and build artifact management.
 ```
 
-### New: `foundry-linux-setup/install-foundry-linux-ios-development.sh`
+### New: `foundry-setup/install-foundry-ios-development.sh`
 
-Pattern: mirrors `install-foundry-linux-android-development.sh`.
+Pattern: mirrors `install-foundry-android-development.sh`.
 
 Steps:
 1. `set -euo pipefail`, `--help` / `--dry-run` handling via `lib.sh`
 2. Call `setup-foundry-apt-source.sh` — wire apt.foundrylinux.org
-3. `apt install foundry-linux-ios-development` — device tools
+3. `apt install foundry-ios-development` — device tools
 4. `pipx install codemagic-cli-tools` — Codemagic CLI (pip-only, not in apt)
 
-### Modify: `foundry-linux-setup/install-foundry-linux-android-development.sh`
+### Modify: `foundry-setup/install-foundry-android-development.sh`
 
 Replace the direct `apt-get install openjdk-17-jdk adb google-android-ndk-r26c-installer` block with:
 1. Call `setup-foundry-apt-source.sh`
 2. `add-apt-repository multiverse -y` (needed for NDK)
-3. `apt install foundry-linux-android-development`
+3. `apt install foundry-android-development`
 
-### Modify: `foundry-linux-setup/install.sh`
+### Modify: `foundry-setup/install.sh`
 
-Add `install-foundry-linux-ios-development.sh` to the `maintainer` role block, after the existing `install-foundry-linux-android-development.sh` call (~line 228).
+Add `install-foundry-ios-development.sh` to the `maintainer` role block, after the existing `install-foundry-android-development.sh` call (~line 228).
 
 ### Modify: `CLAUDE.md`
 
 Update the script table:
-- android-development line: `apt install foundry-linux-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c)`
-- Add ios-development line: `apt install foundry-linux-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx codemagic-cli-tools`
+- android-development line: `apt install foundry-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c)`
+- Add ios-development line: `apt install foundry-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx codemagic-cli-tools`
 
 ## Implementation steps
 
-1. Scaffold `foundry-apt/packages/foundry-linux-android-development/debian/` (5 files).
-2. Scaffold `foundry-apt/packages/foundry-linux-ios-development/debian/` (5 files).
+1. Scaffold `foundry-apt/packages/foundry-android-development/debian/` (5 files).
+2. Scaffold `foundry-apt/packages/foundry-ios-development/debian/` (5 files).
 3. `task foundry-apt:build` — expect 2 new debs in dist/.
 4. Lintian both debs — expect empty output each.
-5. Write `foundry-linux-setup/install-foundry-linux-ios-development.sh`.
-6. Update `install-foundry-linux-android-development.sh` to route through the metapackage.
+5. Write `foundry-setup/install-foundry-ios-development.sh`.
+6. Update `install-foundry-android-development.sh` to route through the metapackage.
 7. Add ios-development to `maintainer` role in `install.sh`.
 8. Update CLAUDE.md script table.
 9. Commit, push, bump foundry-apt tag → CI publishes.
@@ -157,8 +157,8 @@ Update the script table:
 
 1. **Both debs build.**
    ```
-   ls foundry-apt/dist/foundry-linux-android-development_1.0.0_all.deb
-   ls foundry-apt/dist/foundry-linux-ios-development_1.0.0_all.deb
+   ls foundry-apt/dist/foundry-android-development_1.0.0_all.deb
+   ls foundry-apt/dist/foundry-ios-development_1.0.0_all.deb
    ```
 
 2. **Both lintian-clean.**
@@ -172,12 +172,12 @@ Update the script table:
 
 5. **Script dry-runs correct.**
    ```
-   bash foundry-linux-setup/install-foundry-linux-android-development.sh --dry-run
-   bash foundry-linux-setup/install-foundry-linux-ios-development.sh --dry-run
-   bash foundry-linux-setup/install.sh --role maintainer --dry-run
+   bash foundry-setup/install-foundry-android-development.sh --dry-run
+   bash foundry-setup/install-foundry-ios-development.sh --dry-run
+   bash foundry-setup/install.sh --role maintainer --dry-run
    ```
-   Android: shows `foundry-linux-android-development` (not bare package names).
-   iOS: shows `foundry-linux-ios-development` + `pipx install codemagic-cli-tools`.
+   Android: shows `foundry-android-development` (not bare package names).
+   iOS: shows `foundry-ios-development` + `pipx install codemagic-cli-tools`.
    Maintainer: both scripts appear in the chain.
 
 6. **Complete package inventory — `apt.foundrylinux.org`** (after publish):
@@ -188,9 +188,9 @@ Update the script table:
    Expected (6 packages):
    ```
    f9dasm
-   foundry-linux-android-development
-   foundry-linux-ios-development
-   foundry-linux-retro-tools
+   foundry-android-development
+   foundry-ios-development
+   foundry-retro-tools
    ghidra
    libvgm
    vgmstream

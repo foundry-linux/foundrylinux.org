@@ -4,7 +4,7 @@
 
 `blender-asset-finder` (the Blender add-on) and `wf-asset` (the CLI front-end) are not
 WorldFoundry-specific — they work with any Blender project or asset workflow. Both belong
-in `apt.foundrylinux.org` alongside `foundry-linux-retro-tools`.
+in `apt.foundrylinux.org` alongside `foundry-retro-tools`.
 
 `wf-asset` gets renamed to `blender-asset-finder-cli` to make the relationship with the
 add-on obvious: same provider library, two UIs (Blender add-on vs. shell).
@@ -108,9 +108,9 @@ Copy from `worldfoundry.org/apt/packages/wf-asset/`, then:
    blender-asset-finder
    blender-asset-finder-cli
    f9dasm
-   foundry-linux-android-development
-   foundry-linux-ios-development
-   foundry-linux-retro-tools
+   foundry-android-development
+   foundry-ios-development
+   foundry-retro-tools
    ghidra
    libvgm
    vgmstream

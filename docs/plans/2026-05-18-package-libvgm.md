@@ -7,7 +7,7 @@
 
 ## Goal
 
-Replace the `~/opt/libvgm/` source-build sidecar in `install-foundry-linux-retro-tools.sh` with a real `.deb` shipped from `apt.foundrylinux.org`. Promote `libvgm` from `Recommends:` to `Depends:` on the `foundry-linux-retro-tools` metapackage so that `apt install foundry-linux-retro-tools` pulls in `vgm-player` + `vgm2wav` and the libvgm static libraries + headers + CMake config.
+Replace the `~/opt/libvgm/` source-build sidecar in `install-foundry-retro-tools.sh` with a real `.deb` shipped from `apt.foundrylinux.org`. Promote `libvgm` from `Recommends:` to `Depends:` on the `foundry-retro-tools` metapackage so that `apt install foundry-retro-tools` pulls in `vgm-player` + `vgm2wav` and the libvgm static libraries + headers + CMake config.
 
 ## Constraints from the skill
 
@@ -167,12 +167,12 @@ Specify "-" as output file to write to stdout.
 
 ### Step 6 — Wired into the metapackage
 
-- `foundry-apt/packages/foundry-linux-retro-tools/debian/control` — `libvgm` moved from `Recommends:` to `Depends:`.
-- `foundry-apt/packages/foundry-linux-retro-tools/debian/changelog` — bumped to `1.0.3`.
+- `foundry-apt/packages/foundry-retro-tools/debian/control` — `libvgm` moved from `Recommends:` to `Depends:`.
+- `foundry-apt/packages/foundry-retro-tools/debian/changelog` — bumped to `1.0.3`.
 - `foundry-apt/scripts/build-all.sh` picks the new package up automatically (no changes needed — it iterates `packages/*/`).
 
 ## Open follow-ups (not in scope here)
 
-- **Phase 0 sidecar collapse.** `install-foundry-linux-retro-tools.sh` still source-builds libvgm under `~/opt/libvgm/`. Strip that sidecar once `apt.foundrylinux.org` is configured as an apt source by `install.sh` (see TODO §"Housekeeping" — "Phase 0 configures foundry-apt as an apt source").
+- **Phase 0 sidecar collapse.** `install-foundry-retro-tools.sh` still source-builds libvgm under `~/opt/libvgm/`. Strip that sidecar once `apt.foundrylinux.org` is configured as an apt source by `install.sh` (see TODO §"Housekeeping" — "Phase 0 configures foundry-apt as an apt source").
 - **Re-evaluate SHARED packaging when upstream cuts a 1.0.** If `CMakeLists.txt` adds `SOVERSION`/`VERSION` on the `vgm-*` targets, split into `libvgm0` / `libvgm-dev` / `libvgm-utils` packages following Debian shared-library policy.
 - **Bump cadence.** Until upstream cuts a release, periodic master-tip bumps (every few months) keep the package current; the bump procedure is in `build.sh`'s header comment.

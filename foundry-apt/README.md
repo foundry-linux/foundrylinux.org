@@ -10,7 +10,7 @@ curl -fsSL https://apt.foundrylinux.org/key.gpg \
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
   | sudo tee /etc/apt/sources.list.d/foundry.list
 sudo apt update
-sudo apt install foundry-linux-retro-tools
+sudo apt install foundry-retro-tools
 ```
 
 `resolute` is the suite name — Kubuntu 26.04 LTS "Resolute Raccoon", the only supported base.
@@ -19,7 +19,7 @@ sudo apt install foundry-linux-retro-tools
 
 | Package | Pulls in | When you want it |
 |---|---|---|
-| `foundry-linux-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) | Retro/arcade ROM tools |
+| `foundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) | Retro/arcade ROM tools |
 
 ## Vendored upstream packages
 
@@ -33,8 +33,8 @@ See [`LICENSES-VENDORED.md`](LICENSES-VENDORED.md) for the running attribution l
 
 Two upstreams we *don't* repackage:
 
-- [`task`](https://taskfile.dev) — official Cloudsmith apt repo covers it; Phase 0's `foundry-linux-setup/install-task.sh` configures the repo directly.
-- [`xa65`](https://www.floodgap.com/retrotech/xa/) — Ubuntu 26.04 universe ships it as `xa65 2.4.1-0.1build1`; foundry-linux-retro-tools `Depends:` it from there.
+- [`task`](https://taskfile.dev) — official Cloudsmith apt repo covers it; Phase 0's `foundry-setup/install-task.sh` configures the repo directly.
+- [`xa65`](https://www.floodgap.com/retrotech/xa/) — Ubuntu 26.04 universe ships it as `xa65 2.4.1-0.1build1`; foundry-retro-tools `Depends:` it from there.
 
 ## Repo layout
 
@@ -75,7 +75,7 @@ foundry-apt/
 bash scripts/build-all.sh
 bash scripts/init-repo.sh       # → ~/.aptly/foundry repo
 bash scripts/publish-local.sh   # → ./public/ apt tree
-apt-cache depends foundry-linux-retro-tools
+apt-cache depends foundry-retro-tools
 ```
 
 ## Adding or upgrading a package
@@ -109,7 +109,7 @@ To release: `task bump` (auto-tags the next patch version) — the [publish work
 ## Hosting
 
 - **APT repo:** [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/) (10 GB free tier, zero egress) → `apt.foundrylinux.org`
-- **Signing key:** GPG key in GitHub Actions secrets (CI use), backed up to a private `foundry-linux-secrets` R2 bucket for disaster recovery. No AWS account required.
+- **Signing key:** GPG key in GitHub Actions secrets (CI use), backed up to a private `foundry-secrets` R2 bucket for disaster recovery. No AWS account required.
 
 Detailed setup in [`docs/infra-setup.md`](docs/infra-setup.md).
 

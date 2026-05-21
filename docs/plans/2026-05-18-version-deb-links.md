@@ -14,7 +14,7 @@ Aptly publishes packages into a deterministic pool path:
 /pool/main/<first-letter-of-name>/<name>/<name>_<version>_<arch>.deb
 ```
 
-All metapackages (`foundry-linux-retro-tools`, `worldfoundry-*`) use `Architecture: all`, so their URLs are stable and unambiguous. The vendored `task` package has arch-specific debs (amd64, arm64) and needs special handling.
+All metapackages (`foundry-retro-tools`, `worldfoundry-*`) use `Architecture: all`, so their URLs are stable and unambiguous. The vendored `task` package has arch-specific debs (amd64, arm64) and needs special handling.
 
 ## Approach
 
@@ -69,7 +69,7 @@ Substituted the live deploy at <https://apt.foundrylinux.org/> for the local ser
 
 ```
 $ curl -sSL https://apt.foundrylinux.org/ | grep -oE 'href="/pool/main/[^"]+\.deb"' | sort -u
-href="/pool/main/f/foundry-linux-retro-tools/foundry-linux-retro-tools_1.0.0_all.deb"
+href="/pool/main/f/foundry-retro-tools/foundry-retro-tools_1.0.0_all.deb"
 href="/pool/main/w/worldfoundry-android-dev/worldfoundry-android-dev_1.0.0_all.deb"
 href="/pool/main/w/worldfoundry-blender/worldfoundry-blender_1.0.0_all.deb"
 href="/pool/main/w/worldfoundry-dev/worldfoundry-dev_1.0.0_all.deb"
@@ -81,7 +81,7 @@ href="/pool/main/w/worldfoundry-engine-build-deps/worldfoundry-engine-build-deps
 ### Step 4 — link resolves to a real `.deb`
 
 ```
-$ curl -sI https://apt.foundrylinux.org/pool/main/f/foundry-linux-retro-tools/foundry-linux-retro-tools_1.0.0_all.deb | head -2
+$ curl -sI https://apt.foundrylinux.org/pool/main/f/foundry-retro-tools/foundry-retro-tools_1.0.0_all.deb | head -2
 HTTP/2 200
 content-type: application/vnd.debian.binary-package
 ```

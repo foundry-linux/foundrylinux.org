@@ -145,7 +145,7 @@ jobs:
           echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
             > /etc/apt/sources.list.d/foundry.list
           apt-get update -q
-          apt-cache show foundry-linux-retro-tools
+          apt-cache show foundry-retro-tools
           apt-cache show f9dasm
           apt-cache show vgmstream
           apt-cache show ghidra

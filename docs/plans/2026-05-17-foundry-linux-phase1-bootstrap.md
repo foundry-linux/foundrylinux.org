@@ -19,7 +19,7 @@ self-describing.
 
 ## Step 1b — Create the Cloudflare operator API token
 
-Create the `foundry-linux-operator` token manually at
+Create the `foundry-operator` token manually at
 <https://dash.cloudflare.com/profile/api-tokens> (one unavoidable manual step — no API path for
 creating the first credential). The script prompts for the token value if `CF_API_TOKEN` is not
 already exported; `CF_ACCOUNT_ID` and `CF_ZONE_ID` are fetched automatically via the API.
@@ -158,7 +158,7 @@ apt-get install -y --no-install-recommends task
 - [x] Domain decided — `apt.foundrylinux.org`
 - [x] `foundry-linux` GitHub org created
 - [x] `foundry-linux/foundry-apt` GitHub repo created and pushed
-- [x] Cloudflare operator token `foundry-linux-operator` created with correct permissions
+- [x] Cloudflare operator token `foundry-operator` created with correct permissions
 - [x] GPG signing key generated (`packages@foundrylinux.org`, 4096-bit RSA, 2-year expiry)
 - [x] `GPG_PRIVATE_KEY` secret set on `foundry-linux/foundry-apt`
 - [x] Local copy of private key shredded

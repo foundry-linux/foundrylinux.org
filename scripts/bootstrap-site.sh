@@ -17,7 +17,7 @@ GH_REPO="foundry-linux/foundrylinux.org"
 PAGES_PROJECT="foundrylinux-org"
 CUSTOM_DOMAIN="foundrylinux.org"
 CI_TOKEN_NAME="foundrylinux-site-ci"
-BOOTSTRAP_CACHE="/tmp/foundry-linux-bootstrap.env"
+BOOTSTRAP_CACHE="/tmp/foundry-bootstrap.env"
 
 DRY_RUN=false
 
@@ -104,7 +104,7 @@ if ! $DRY_RUN; then
         err ""
         err "Add 'Pages Write' (Account scope) to your operator token:"
         err "  https://dash.cloudflare.com/profile/api-tokens"
-        err "  Find '${CF_OPERATOR_TOKEN_NAME:-foundry-linux-operator}', click Edit, add:"
+        err "  Find '${CF_OPERATOR_TOKEN_NAME:-foundry-operator}', click Edit, add:"
         err "    Account | Pages Write"
         err ""
         err "Or create a dedicated Pages token and export CF_API_TOKEN=<new-token>, then re-run."

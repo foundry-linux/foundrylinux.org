@@ -13,7 +13,7 @@ There are **two distinct APT repositories** in the Foundry/WorldFoundry universe
 | **`apt.worldfoundry.org`** | ✅ live (Cloudflare R2, signed) | WorldFoundry game-authoring tooling (CLIs + Blender add-ons + umbrella metapackages) |
 | **`apt.foundrylinux.org`** | 🚧 planned — source tree in `foundry-apt/` | Broader Foundry Linux distro packages (vendored upstreams + dev metapackages) |
 
-Plus **Phase 0** bash installer scripts in `foundry-linux-setup/` that bridge "stock Ubuntu" to "WF-ready dev box" until the Phase 1 APT repos cover everything.
+Plus **Phase 0** bash installer scripts in `foundry-setup/` that bridge "stock Ubuntu" to "WF-ready dev box" until the Phase 1 APT repos cover everything.
 
 This document inventories **all three** so we can see what's shipped, what's drafted, and where the gaps are.
 
@@ -84,7 +84,7 @@ Lives in this repo as `foundry-apt/packages/<name>/debian/` (canonical Debian so
 
 ### Metapackage
 
-**`foundry-linux-retro-tools`** — 1.0.5 — `all` — section `metapackages`
+**`foundry-retro-tools`** — 1.0.5 — `all` — section `metapackages`
 Maintainer: World Foundry `<packages@worldfoundry.org>`
 Depends: `mame`, `mame-tools`, `dasm`, `cc65`, `z80dasm`, `z80asm`, `radare2`, `binwalk`, `sox`, `binutils-m68k-linux-gnu`, `xa65`, `f9dasm`, `libvgm`, `vgmstream`, `ghidra`
 Suggests: `java-common`
@@ -102,18 +102,18 @@ Arcade reverse-engineering + 6502/Z80/68k/6809 porting toolchain.
 
 ---
 
-## Phase 0: `foundry-linux-setup/` installer scripts
+## Phase 0: `foundry-setup/` installer scripts
 
 Bash installers that run on stock Ubuntu — each is the apt-expansion of one would-be metapackage. All have `set -euo pipefail`, `-h/--help` short-circuit, lib.sh sourcing + inline shim fallback, `--dry-run` support.
 
 | Script | Apt-installs | Eventual Phase 1 target |
 |---|---|---|
-| `install-foundry-linux-engine-build-deps.sh` | `build-essential`, `cmake`, `libx11-dev`, `libgl1-mesa-dev`, `libglu1-mesa-dev`, `gdb`, `xxd`, `python3`, `pkg-config`, `git`, `curl`, `wget`, `unzip` | overlaps with live `worldfoundry-development`'s engine deps; no separate `.deb` planned in either repo |
-| `install-foundry-linux-blender.sh` | `blender`, `python3` | satisfied by Ubuntu universe + live `worldfoundry-blender` |
-| `install-foundry-linux-retro-tools.sh` | `mame`, `mame-tools`, `dasm`, `cc65`, `z80dasm`, `z80asm`, `radare2`, `binwalk`, `sox`, `binutils-m68k-linux-gnu`, `xa65`, `f9dasm`, `libvgm`, `vgmstream`, `ghidra` | `apt.foundrylinux.org` `foundry-linux-retro-tools` 1.0.5 |
-| `install-foundry-linux-android-dev.sh` | `openjdk-17-jdk`, `adb`, `google-android-ndk-r26c-installer` | no `.deb` planned; covered by `worldfoundry-development` Suggests |
+| `install-foundry-engine-build-deps.sh` | `build-essential`, `cmake`, `libx11-dev`, `libgl1-mesa-dev`, `libglu1-mesa-dev`, `gdb`, `xxd`, `python3`, `pkg-config`, `git`, `curl`, `wget`, `unzip` | overlaps with live `worldfoundry-development`'s engine deps; no separate `.deb` planned in either repo |
+| `install-foundry-blender.sh` | `blender`, `python3` | satisfied by Ubuntu universe + live `worldfoundry-blender` |
+| `install-foundry-retro-tools.sh` | `mame`, `mame-tools`, `dasm`, `cc65`, `z80dasm`, `z80asm`, `radare2`, `binwalk`, `sox`, `binutils-m68k-linux-gnu`, `xa65`, `f9dasm`, `libvgm`, `vgmstream`, `ghidra` | `apt.foundrylinux.org` `foundry-retro-tools` 1.0.5 |
+| `install-foundry-android-dev.sh` | `openjdk-17-jdk`, `adb`, `google-android-ndk-r26c-installer` | no `.deb` planned; covered by `worldfoundry-development` Suggests |
 | `install-task.sh` | `task` (Cloudsmith repo) | N/A — upstream-owned |
-| `install-foundry-linux-dev.sh` | umbrella: engine-build-deps → task → blender → retro-tools | overlaps with live `worldfoundry-development` |
+| `install-foundry-dev.sh` | umbrella: engine-build-deps → task → blender → retro-tools | overlaps with live `worldfoundry-development` |
 
 ---
 
@@ -134,7 +134,7 @@ Bash installers that run on stock Ubuntu — each is the apt-expansion of one wo
                                               ▼
                 ┌──────────────────────────── apt.foundrylinux.org (planned) ────────────────────────┐
                 │                                                                                     │
-                │  foundry-linux-retro-tools ──► xa65, f9dasm, libvgm, vgmstream, ghidra, mame, …    │
+                │  foundry-retro-tools ──► xa65, f9dasm, libvgm, vgmstream, ghidra, mame, …    │
                 │                                                                                     │
                 │  (vendored: f9dasm, ghidra, libvgm, vgmstream)                                     │
                 │                                                                                     │
@@ -158,7 +158,7 @@ The two repos are deliberately separate: `apt.worldfoundry.org` ships the WF aut
 
 ## See also
 
-- [`2026-05-16-foundry-linux-distro-proposal.md`](2026-05-16-foundry-linux-distro-proposal.md) — strategic rationale, four delivery channels, Phases 2 (Distrobox) and 3 (ISO).
+- [`2026-05-16-foundry-distro-proposal.md`](2026-05-16-foundry-distro-proposal.md) — strategic rationale, four delivery channels, Phases 2 (Distrobox) and 3 (ISO).
 - [`docs/plans/2026-05-18-retire-xa65.md`](../plans/2026-05-18-retire-xa65.md) — drop xa65 from the retro-tools Depends (in progress).
 - [`docs/plans/2026-05-18-worldfoundry-apt-repo.md`](../plans/2026-05-18-worldfoundry-apt-repo.md) — publishing pipeline for `apt.worldfoundry.org`.
 - [`CLAUDE.md`](../../CLAUDE.md) §Conventions — authoring rules in one screen.

@@ -81,11 +81,11 @@ fi
     bash foundry-apt/test/run-test.sh --download-only 2>&1 | grep "Testing:"
     ```
 
-    Expect: seven lines — `f9dasm`, `foundry-linux-retro-tools`, `worldfoundry-{android-dev,blender,dev,engine-build-deps}`, `xa65`. (vs. current behavior: just `xa65`.)
+    Expect: seven lines — `f9dasm`, `foundry-retro-tools`, `worldfoundry-{android-dev,blender,dev,engine-build-deps}`, `xa65`. (vs. current behavior: just `xa65`.)
 
     ```
     === Testing: apt-get install f9dasm ===
-    === Testing: apt-get install foundry-linux-retro-tools ===
+    === Testing: apt-get install foundry-retro-tools ===
     === Testing: apt-get install worldfoundry-android-dev ===
     === Testing: apt-get install worldfoundry-blender ===
     === Testing: apt-get install worldfoundry-dev ===

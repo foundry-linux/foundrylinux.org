@@ -1,0 +1,50 @@
+name: install.sh tests
+
+on:
+  push:
+    paths:
+      - 'foundry-setup/**'
+      - '.github/workflows/foundry-setup-test.yml'
+  pull_request:
+    paths:
+      - 'foundry-setup/**'
+
+jobs:
+  shellcheck:
+    name: shellcheck install.sh
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run shellcheck
+        run: |
+          cd foundry-setup
+          shellcheck install.sh test/run-test.sh
+
+  dry-run:
+    name: Dry-run on Ubuntu 26.04
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build test image
+        working-directory: foundry-setup
+        run: docker build -f test/Dockerfile.ubuntu26.04 -t foundry-test:26.04 .
+      - name: Dry-run install
+        working-directory: foundry-setup
+        run: docker run --rm foundry-test:26.04 --dry-run
+
+  full-install:
+    name: Full install on Ubuntu 26.04 (engine-dev, skip-clone)
+    runs-on: ubuntu-latest
+    needs: dry-run
+    # Only run on main / tagged releases; full-install is slow (~5–10 min)
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Ubuntu 26.04 test image
+        working-directory: foundry-setup
+        run: docker build -f test/Dockerfile.ubuntu26.04 -t foundry-test:26.04 .
+      - name: Full install (skip clone + blender to keep it self-contained)
+        working-directory: foundry-setup
+        run: |
+          docker run --rm foundry-test:26.04 \
+            --role engine-dev --skip-clone --skip-blender

@@ -8,7 +8,7 @@ Thanks for considering a contribution! This repo is the signed [APT repo](https:
 |---|---|
 | **Bug fixes** | A metapackage `Depends:` line references the wrong package; CI runs out of disk; sign.sh fails on a key with a passphrase. |
 | **New vendored upstream packages** | A new tool we want shipped (`vgmstream`, `libvgm`, Ghidraâ€¦) or a bump of an existing one (`f9dasm`). Each goes through the [`/package`](#) Claude Code skill which generates the Debian source-package tree. |
-| **New metapackages** | A focused bundle (e.g. `foundry-linux-shaders-dev`) that pulls in a curated set of system deps. |
+| **New metapackages** | A focused bundle (e.g. `foundry-shaders-dev`) that pulls in a curated set of system deps. |
 | **CI hardening** | shellcheck-clean scripts; arm64 build matrix; a `--dry-run` mode for sign.sh that uses a throwaway GPG key. |
 
 ## Workflow
@@ -22,11 +22,11 @@ Every package in this repo uses the **canonical Debian source-package layout** â
 
 ## Adding a metapackage
 
-1. `mkdir -p packages/foundry-linux-<thing>/debian/source`
+1. `mkdir -p packages/foundry-<thing>/debian/source`
 2. Create `debian/control`:
 
     ```
-    Source: foundry-linux-<thing>
+    Source: foundry-<thing>
     Section: metapackages
     Priority: optional
     Maintainer: Foundry Linux <packages@foundrylinux.org>
@@ -35,7 +35,7 @@ Every package in this repo uses the **canonical Debian source-package layout** â
     Homepage: https://foundrylinux.org/
     Rules-Requires-Root: no
 
-    Package: foundry-linux-<thing>
+    Package: foundry-<thing>
     Architecture: all
     Depends: ${misc:Depends},
      <your-deps-here>
@@ -43,7 +43,7 @@ Every package in this repo uses the **canonical Debian source-package layout** â
      <multi-line description, each continuation line begins with single space>
     ```
 
-3. Create `debian/changelog` (use `dch --create -v 1.0.0 -D resolute --package foundry-linux-<thing>`, or hand-write the first entry).
+3. Create `debian/changelog` (use `dch --create -v 1.0.0 -D resolute --package foundry-<thing>`, or hand-write the first entry).
 4. Create `debian/rules` (executable, mode 0755):
 
     ```make
@@ -60,7 +60,7 @@ Every package in this repo uses the **canonical Debian source-package layout** â
 
 6. Create `debian/copyright` (DEP-5 format â€” see existing metapackages for the MIT-for-packaging boilerplate).
 7. `task build` to verify it builds; `task verify` to inspect the produced `.deb`.
-8. Update `packages/foundry-linux-dev/debian/control` if the new package should be pulled in by the top-level metapackage.
+8. Update `packages/foundry-dev/debian/control` if the new package should be pulled in by the top-level metapackage.
 9. Mention it in `README.md`'s table.
 
 ## Adding a vendored upstream package
@@ -92,7 +92,7 @@ Maintainer-only:
 
 1. `git tag -s v1.0.X -m "..."` (signed tag).
 2. `git push origin v1.0.X`.
-3. Watch [the publish workflow](.github/workflows/publish.yml) â€” it builds, signs, syncs to R2, and smoke-checks `foundry-linux-retro-tools` (and all other packages) in a clean Ubuntu 26.04 container.
+3. Watch [the publish workflow](.github/workflows/publish.yml) â€” it builds, signs, syncs to R2, and smoke-checks `foundry-retro-tools` (and all other packages) in a clean Ubuntu 26.04 container.
 4. If smoke-install fails, the apt repo is still uploaded â€” fix forward with `v1.0.X+1`, don't try to delete a published version.
 
 ## Licence

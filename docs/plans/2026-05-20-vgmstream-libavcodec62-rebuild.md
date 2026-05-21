@@ -14,7 +14,7 @@ The retro-tools E2E test (`docs/plans/2026-05-20-retro-tools-e2e-test.md`) caugh
 Depends: libavcodec60 (>= 7:6.0), libavformat60 (>= 7:6.0), libavutil58 (>= 7:6.0), …
 ```
 
-…but Ubuntu 26.04 now ships **libavcodec62 / libavformat62 / libavutil60** (`ffmpeg 8.0.1-3ubuntu2`, from `resolute/universe`). The pre-ffmpeg-8 sonames were SRU'd out, leaving `foundry-linux-retro-tools` unresolvable on any freshly-pulled 26.04 box.
+…but Ubuntu 26.04 now ships **libavcodec62 / libavformat62 / libavutil60** (`ffmpeg 8.0.1-3ubuntu2`, from `resolute/universe`). The pre-ffmpeg-8 sonames were SRU'd out, leaving `foundry-retro-tools` unresolvable on any freshly-pulled 26.04 box.
 
 `1foundry2` was built on 2026-05-18 — Ubuntu's ffmpeg bump to 8 has shipped since then, invalidating the pinned shlib deps.
 
@@ -38,4 +38,4 @@ This is the silent failure mode `feedback_build_in_containers.md` warned about: 
 
 1. After tag push: `gh run watch` until publish.yml is green.
 2. `curl -fsSL https://apt.foundrylinux.org/dists/resolute/main/binary-amd64/Packages | awk '/^Package: vgmstream$/,/^$/' | grep '^Depends:'` shows `libavcodec62` (not 60).
-3. `bash foundry-linux-setup/test/test-retro-tools-e2e.sh` passes end-to-end with `Results: 15 passed, 0 failed`.
+3. `bash foundry-setup/test/test-retro-tools-e2e.sh` passes end-to-end with `Results: 15 passed, 0 failed`.

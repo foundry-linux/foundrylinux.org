@@ -5,7 +5,7 @@
 
 ## Context
 
-f9dasm is the 6800/6801/6802/6803/6808/6809/6301/6303/6309 disassembler in the Phase 0 retro-tools source-build sidecar set ([`foundry-linux-setup/install-foundry-linux-retro-tools.sh:145-151`](../../foundry-linux-setup/install-foundry-linux-retro-tools.sh)). Of the four source-built tools still needing to ship as `.deb`s (f9dasm, libvgm, vgmstream, ghidra), f9dasm is the simplest: four single-file C programs, ~270 KB total source, tiny Makefile, no native deps beyond libc.
+f9dasm is the 6800/6801/6802/6803/6808/6809/6301/6303/6309 disassembler in the Phase 0 retro-tools source-build sidecar set ([`foundry-setup/install-foundry-retro-tools.sh:145-151`](../../foundry-setup/install-foundry-retro-tools.sh)). Of the four source-built tools still needing to ship as `.deb`s (f9dasm, libvgm, vgmstream, ghidra), f9dasm is the simplest: four single-file C programs, ~270 KB total source, tiny Makefile, no native deps beyond libc.
 
 This is **the first run** of the new [`/package` skill](2026-05-18-package-skill.md). Goals: prove the skill end-to-end, and ship a debhelper-built `.deb` that beats the hand-rolled xa65 packaging on every dimension (size, hardening, `${shlibs:Depends}`, source-package availability) — see the skill's "Why debhelper" comparison.
 
@@ -53,8 +53,8 @@ If this run goes cleanly, the xa65 cleanup TODO (TODO.md line 14) gets simpler: 
 | `foundry-apt/packages/f9dasm/debian/source/format` | **new** — `3.0 (quilt)` |
 | `foundry-apt/packages/f9dasm/debian/watch` | **new** — version=4, GitHub tags pattern, matches `V?@ANY_VERSION@` |
 | `foundry-apt/packages/f9dasm/debian/patches/series` | **new** — empty placeholder |
-| `foundry-apt/packages/foundry-linux-retro-tools/DEBIAN/control` | **edit** — promote `f9dasm` from `Recommends:` → `Depends:`; bump `Version: 1.0.1` → `1.0.2` |
-| `foundry-linux-setup/install-foundry-linux-retro-tools.sh` | **defer** — the f9dasm source-build block (lines 145-151) stays for now. Stripping it is blocked on the "Phase 0 configures foundry-apt as a source" TODO, same as the xa65 cleanup. |
+| `foundry-apt/packages/foundry-retro-tools/DEBIAN/control` | **edit** — promote `f9dasm` from `Recommends:` → `Depends:`; bump `Version: 1.0.1` → `1.0.2` |
+| `foundry-setup/install-foundry-retro-tools.sh` | **defer** — the f9dasm source-build block (lines 145-151) stays for now. Stripping it is blocked on the "Phase 0 configures foundry-apt as a source" TODO, same as the xa65 cleanup. |
 | `TODO.md` | **edit** — flip line 16 to `[x]`; promote to done section |
 
 `foundry-apt/scripts/build-all.sh` already discovers `packages/*/build.sh` — no change needed.
@@ -106,7 +106,7 @@ override_dh_auto_install:
     $ bash scripts/build-all.sh
     ...
     OK   dist/f9dasm_1.83-1foundry1_amd64.deb  (50426 bytes)
-    OK   dist/foundry-linux-retro-tools_1.0.2_all.deb  (~2.2K)
+    OK   dist/foundry-retro-tools_1.0.2_all.deb  (~2.2K)
     OK   dist/worldfoundry-*  (×4)
     OK   dist/xa65_2.4.1-1foundry1_amd64.deb  (228058 bytes)
 
@@ -209,10 +209,10 @@ override_dh_auto_install:
     task build && task verify
     ```
 
-    Expect: `dist/foundry-linux-retro-tools_1.0.2_all.deb` exists; `dpkg-deb -I` shows `f9dasm` in `Depends:` (not `Recommends:`); `f9dasm` removed from `Recommends:`.
+    Expect: `dist/foundry-retro-tools_1.0.2_all.deb` exists; `dpkg-deb -I` shows `f9dasm` in `Depends:` (not `Recommends:`); `f9dasm` removed from `Recommends:`.
 
     ```
-    $ dpkg-deb -I dist/foundry-linux-retro-tools_1.0.2_all.deb
+    $ dpkg-deb -I dist/foundry-retro-tools_1.0.2_all.deb
      Version: 1.0.2
      Depends: mame, mame-tools, dasm, cc65, z80dasm, z80asm, radare2,
               binwalk, sox, binutils-m68k-linux-gnu, xa65, f9dasm
@@ -227,7 +227,7 @@ override_dh_auto_install:
     task apt-test 2>&1 | grep -A3 f9dasm
     ```
 
-    Expect: `apt-cache depends foundry-linux-retro-tools` lists `f9dasm` under Depends (resolved from `./public/`), and `apt-cache policy f9dasm` shows the local repo as the candidate.
+    Expect: `apt-cache depends foundry-retro-tools` lists `f9dasm` under Depends (resolved from `./public/`), and `apt-cache policy f9dasm` shows the local repo as the candidate.
 
     (Equivalent run via docker since `task apt-test` requires host sudo; aptly publish + apt-cache inside a fresh `ubuntu:26.04`.)
 
@@ -240,7 +240,7 @@ override_dh_auto_install:
          1.83-1foundry1 500
             500 file:/work/public resolute/main amd64 Packages
 
-    $ apt-cache depends foundry-linux-retro-tools | grep -E '(Depends|Recommends):'
+    $ apt-cache depends foundry-retro-tools | grep -E '(Depends|Recommends):'
       Depends: mame
       Depends: mame-tools
       Depends: dasm
@@ -263,7 +263,7 @@ override_dh_auto_install:
 ## Out of scope
 
 - arm64 build (defer until any of the four sidecars needs it; cross-build via `gcc-aarch64-linux-gnu` follows the same pattern that xa65's plan deferred).
-- Stripping the Phase 0 source-build block from `install-foundry-linux-retro-tools.sh` (blocked on the "Phase 0 configures foundry-apt as a source" TODO).
+- Stripping the Phase 0 source-build block from `install-foundry-retro-tools.sh` (blocked on the "Phase 0 configures foundry-apt as a source" TODO).
 - Adding an upstream man page (file a PR to Arakula/f9dasm later; accept `binary-without-manpage` warnings for now).
 - Shipping the `sample.zip` example .inf directives (low-value bloat; reachable from upstream).
 - libvgm, vgmstream, ghidra (`/package` runs of their own; tracked in TODO.md).

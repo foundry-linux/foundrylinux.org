@@ -1,0 +1,33 @@
+Source: foundry-android-development
+Section: metapackages
+Priority: optional
+Maintainer: World Foundry <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-android-development
+Architecture: all
+Depends: ${misc:Depends},
+ openjdk-17-jdk,
+ adb,
+ google-android-ndk-r26c-installer
+Description: Android development tools for Foundry Linux contributors
+ Metapackage that installs the apt-available Android toolchain needed
+ to build and deploy WorldFoundry to Android devices:
+ .
+   * openjdk-17-jdk                    — Java 17, required by Gradle
+   * adb                               — Android Debug Bridge
+   * google-android-ndk-r26c-installer — NDK r26c (26.2.11394342),
+                                         installed to /usr/lib/android-sdk/ndk/
+ .
+ Note: google-android-ndk-r26c-installer is in Ubuntu multiverse. Enable
+ it first with: sudo add-apt-repository multiverse
+ .
+ After installing, bootstrap the Android SDK from the WorldFoundry source
+ tree (platforms;android-34, build-tools;34.0.0, cmake;3.22.1):
+ .
+   task android-sdk-install
+ .
+ Gradle 8.9 is vendored in the WorldFoundry repo (gradlew wrapper).

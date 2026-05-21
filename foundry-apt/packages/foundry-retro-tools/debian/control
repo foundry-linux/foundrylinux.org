@@ -1,0 +1,35 @@
+Source: foundry-retro-tools
+Section: metapackages
+Priority: optional
+Maintainer: World Foundry <packages@worldfoundry.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-retro-tools
+Architecture: all
+Depends: ${misc:Depends},
+ mame,
+ mame-tools,
+ dasm,
+ cc65,
+ z80dasm,
+ z80asm,
+ radare2,
+ binwalk,
+ sox,
+ binutils-m68k-linux-gnu,
+ xa65,
+ f9dasm,
+ libvgm,
+ vgmstream,
+ ghidra
+Suggests: java-common
+Description: arcade reverse-engineering and porting toolchain
+ Tooling for porting classic arcade ROMs to the World Foundry engine:
+ MAME (debugger + tools), 6502/Z80/68k/6809 disassemblers and assemblers,
+ radare2, binwalk, sox (audio conversion), xa65 6502 cross-assembler,
+ f9dasm 6800/6809/6309 disassembler, libvgm (vgm-player + vgm2wav for
+ chip-register VGM playback and rendering), vgmstream-cli (100+ game audio
+ formats decoded to WAV), ghidra (NSA SRE framework for binary analysis).

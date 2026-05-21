@@ -31,13 +31,13 @@ World Foundry has a complex, layered toolchain: C++17 engine, Rust asset compile
 | Phase | Channel | Effort | Use case |
 |-------|---------|--------|----------|
 | 0 | **Setup script** (`curl … \| bash`) on vanilla Kubuntu 26.04 (or any Ubuntu-family 26.04) | days | Get developers unblocked immediately on whatever they're already running |
-| 1 | **APT repo** (signed, hosted on [Cloudflare R2](https://www.cloudflare.com/products/r2/)) + **`foundry-linux-dev` metapackage** | 1–2 weeks | Reproducible installs, upgrade path, deps tracked by `apt` |
+| 1 | **APT repo** (signed, hosted on [Cloudflare R2](https://www.cloudflare.com/products/r2/)) + **`foundry-dev` metapackage** | 1–2 weeks | Reproducible installs, upgrade path, deps tracked by `apt` |
 | 2 | **[OCI](https://opencontainers.org/) image** (`ghcr.io/foundry-linux/devbox`) + [Distrobox](https://distrobox.it/) recipe | 1–2 weeks | "Dedicated workstation" use case via container on any host (Linux/macOS/Windows-WSL) |
 | 3 | **Foundry Linux ISO** (Ubuntu remix built with [`live-build`](https://wiki.debian.org/DebianLive) or [`cubic`](https://launchpad.net/cubic)) | 1–2 months | The full distro experience: bootable USB, hands-on installer, branded desktop |
 
 Each phase reuses the previous one's artifacts:
 - The metapackage in Phase 1 just `apt install`s what the script in Phase 0 already curates.
-- The OCI image in Phase 2 is a `Dockerfile FROM kubuntu:26.04` (or `FROM ubuntu:26.04` + install Plasma seed) `RUN apt install foundry-linux-dev` plus the workstation conveniences.
+- The OCI image in Phase 2 is a `Dockerfile FROM kubuntu:26.04` (or `FROM ubuntu:26.04` + install Plasma seed) `RUN apt install foundry-dev` plus the workstation conveniences.
 - The ISO in Phase 3 is a live-build seed that pulls from the same APT repo and bakes in the same metapackage.
 
 This keeps one source of truth (the metapackage's dependency list) across all four channels.
@@ -119,7 +119,7 @@ flowchart LR
 | Relationship | Mechanism |
 |---|---|
 | ISO/qcow2/OVA/box → Foundry Linux instance | Boot or hypervisor import |
-| APT repo → any Ubuntu-family 26.04 (Ubuntu, Kubuntu, Pop!_OS, Mint, MATE, etc.) | `apt install foundry-linux-dev` |
+| APT repo → any Ubuntu-family 26.04 (Ubuntu, Kubuntu, Pop!_OS, Mint, MATE, etc.) | `apt install foundry-dev` |
 | Engine binary on host → per-game containers | Read-only bind mount at `/opt/wf-engine` (one build, used by all games) |
 | `~/Roms/` on host → all containers | Read-only bind mount (user owns the ROMs once, every container sees them) |
 | Per-game container → host | Distrobox manages GUI passthrough, controller input, audio (PipeWire socket), GPU |
@@ -314,19 +314,19 @@ gdb xxd python3 git curl wget unzip pkg-config
 All in Kubuntu 26.04's default repos (inherited from Ubuntu 26.04) at versions WF needs (gcc-13+ is the default; no backport PPA required). Vendored in-tree (no system deps): Jolt 5.5.0, miniaudio 0.11.25, TinySoundFont, zForth, Lua 5.4.8, QuickJS, JerryScript, WAMR, Wren, cpp-httplib, Fennel.
 
 ### Rust toolchain
-**Most users don't need a Rust toolchain installed.** The WF Rust artifacts (iffcomp-rs, levcomp-rs, textile-rs, chargrab-rs, wf_py → `wf_core.so`) are built in our CI, packaged as `.deb`s (`wftools`, `foundry-linux-blender-addon`), and shipped via the APT repo. `apt install foundry-linux-dev` gets a user every prebuilt binary they need.
+**Most users don't need a Rust toolchain installed.** The WF Rust artifacts (iffcomp-rs, levcomp-rs, textile-rs, chargrab-rs, wf_py → `wf_core.so`) are built in our CI, packaged as `.deb`s (`wftools`, `foundry-blender-addon`), and shipped via the APT repo. `apt install foundry-dev` gets a user every prebuilt binary they need.
 
 `rustup` + `maturin` are only installed by the `worldfoundry-engine-dev` metapackage, for users who want to hack on the engine or the wftools themselves. Pinned to a known-good rustc (currently 1.78+ for `pyo3 0.22`).
 
 ### Blender 4.2 + WF addon
-Blender 4.2 from the Blender PPA (snap is purged per the packaging policy; flatpak too). The `wf_blender` extension is shipped as `foundry-linux-blender-addon.deb`, which drops the prebuilt `wf_core.so` into the correct Blender extensions directory. **The addon installs via `apt install foundry-linux-blender-addon`, not via a local maturin build.** Users hacking on the addon itself can override with `task blender-install` from a local checkout.
+Blender 4.2 from the Blender PPA (snap is purged per the packaging policy; flatpak too). The `wf_blender` extension is shipped as `foundry-blender-addon.deb`, which drops the prebuilt `wf_core.so` into the correct Blender extensions directory. **The addon installs via `apt install foundry-blender-addon`, not via a local maturin build.** Users hacking on the addon itself can override with `task blender-install` from a local checkout.
 
 ### Retro porting tooling (from `docs/investigations/2026-05-15-claude-arcade-tooling.md`)
 **apt:** `mame mame-tools dasm cc65 z80dasm z80asm radare2 binwalk sox binutils-m68k-linux-gnu`
 **Under `/opt`, pre-vendored as `.deb`s in our APT repo:** Ghidra (~400 MB), f9dasm, vgmstream, libvgm
 **Built by us, packaged, hosted:** xa65 (not packaged for Ubuntu, so we build it in CI from the upstream GPL-2 source, produce a `.deb`, sign it, and host it in our R2 APT repo). End users always get a prebuilt `.deb` from `apt install xa65`; no `make` or `cargo build` ever runs on a user's machine for tooling.
 
-### Android dev (optional, in `foundry-linux-android-dev` separate metapackage)
+### Android dev (optional, in `foundry-android-dev` separate metapackage)
 `openjdk-17-jdk adb google-android-ndk-r26c-installer`
 
 **Supported Android form factors** (all built from the same Android NDK toolchain — what varies is app-side config like manifest entries, banner art, and input handling, not the tooling):
@@ -336,7 +336,7 @@ Blender 4.2 from the Blender PPA (snap is purged per the packaging policy; flatp
 - **[Wear OS](https://wearos.google.com/)** — Android-based smartwatches; theoretically supported by the NDK but game/engine relevance is low (small screens, limited input). Not a v1 priority
 - **[Android Auto](https://www.android.com/auto/)** — in-car infotainment; not a game-engine target
 
-The `foundry-linux-android-dev` metapackage covers the toolchain for all of these; per-form-factor adjustments (manifest, art, input) happen in the game project's Android assets, not in our metapackage.
+The `foundry-android-dev` metapackage covers the toolchain for all of these; per-form-factor adjustments (manifest, art, input) happen in the game project's Android assets, not in our metapackage.
 
 ### iOS dev (optional, in `worldfoundry-ios-dev` separate metapackage)
 [Codemagic CLI](https://docs.codemagic.io/cli/codemagic-cli-tools/), [`ios-deploy`](https://github.com/ios-control/ios-deploy), [`libimobiledevice`](https://libimobiledevice.org/), [`sourcekit-lsp`](https://github.com/swiftlang/sourcekit-lsp), [`swiftlint`](https://github.com/realm/SwiftLint), iOS asset prep tools.
@@ -354,7 +354,7 @@ The `foundry-linux-android-dev` metapackage covers the toolchain for all of thes
     | **Author a game** | `wf-games` (shallow + blobless) | **~5–10 MB** |
     | **Hack on the engine** | `WorldFoundry.2026-new-level` (shallow + blobless + sparse-checkout excluding `engine/vendor/`) | **~15–25 MB** |
     | **Both of the above** | both, same flags | **~20–35 MB** |
-    | **Maintain the distro** | adds `foundry-linux-setup`, `foundry-apt`, `foundry-devbox`, `foundry-linux-iso`, `foundry-docs` (same flags) | **~25–50 MB** |
+    | **Maintain the distro** | adds `foundry-setup`, `foundry-apt`, `foundry-devbox`, `foundry-iso`, `foundry-docs` (same flags) | **~25–50 MB** |
 
     Even the maxed-out distro-maintainer default is well under the previous 230 MB full-history figure — a ~80% reduction — because of three Git-level tricks layered together:
 
@@ -372,7 +372,7 @@ The `foundry-linux-android-dev` metapackage covers the toolchain for all of thes
 - Live ISO kiosk mode skips this step entirely (live-mode users aren't contributors).
 - Claude Code CLI (`@anthropic-ai/claude-code` via npm) — given the WF workflow's deep Claude integration
 - **Podman + Distrobox** preconfigured for the per-game container workflow (see "Engine dev vs game dev" below). Both apt-installable on Kubuntu/Ubuntu 26.04; Podman is rootless and daemonless, the right choice over Docker for this use case.
-- **`wf-game-create`** scaffolding tool (ships in `foundry-linux-dev`) — one command spawns a Distrobox container preloaded with the WF tooling and a game project skeleton.
+- **`wf-game-create`** scaffolding tool (ships in `foundry-dev`) — one command spawns a Distrobox container preloaded with the WF tooling and a game project skeleton.
 - **[`btop`](https://github.com/aristocratos/btop)** — game devs watch CPU/RAM during builds and gameplay constantly; a TUI process monitor is a near-zero-cost upgrade over the GNOME GUI for that workflow. Picked over `htop` for the richer per-core graphs, GPU temp display (NVIDIA + AMD), Disk I/O graphs, and the polished UI — game devs care about all of those.
 - **`mpv`** — better than Totem for frame-by-frame video analysis of MAME reference captures, in-engine screen recordings, animation reference clips. Totem stays for general media playback.
 - **[Steam client](https://store.steampowered.com/about/)** — preinstalled from Valve's apt repo. See the "Steam release builds" section for the full rationale (dev testing + live-ISO player UX). ~500 MB including i386 multiarch.
@@ -387,7 +387,7 @@ The `foundry-linux-android-dev` metapackage covers the toolchain for all of thes
 
 <img src="wflogo.png" alt="World Foundry" style="border-radius:0"/>
 
-[Calamares](https://calamares.io/) is heavily themeable via a clean branding-module system, so the install experience and the boot chrome can be fully WF-branded without forking the installer itself. All branding assets live in a separate repo (`github.com/foundry-linux/foundry-linux-branding`) and ship as a `calamares-settings-foundry-linux` deb (Calamares convention) that the ISO build installs at image time — designers can iterate on branding without touching live-build or ISO infrastructure.
+[Calamares](https://calamares.io/) is heavily themeable via a clean branding-module system, so the install experience and the boot chrome can be fully WF-branded without forking the installer itself. All branding assets live in a separate repo (`github.com/foundry-linux/foundry-branding`) and ship as a `calamares-settings-foundry-linux` deb (Calamares convention) that the ISO build installs at image time — designers can iterate on branding without touching live-build or ISO infrastructure.
 
 **During the install itself (Calamares surfaces):**
 - **[QML slideshow](https://github.com/calamares/calamares/wiki/Develop-Branding#qml-slideshow)** — the rotating panel that plays while files copy. Biggest brand surface: a QML file referencing PNG/JPG slide images. Showcases WF games, Blender workflow, retro-porting capabilities, community pointers. (QML is more flexible than the HTML format ubiquity used — animations, transitions, interactivity if we want them.)
@@ -427,7 +427,7 @@ The `foundry-linux-android-dev` metapackage covers the toolchain for all of thes
 
 ### Channel 0: setup script
 
-**Repo:** `github.com/foundry-linux/foundry-linux-setup`
+**Repo:** `github.com/foundry-linux/foundry-setup`
 **URL:** `https://foundrylinux.org/install.sh` (a Cloudflare Pages redirect to the raw GitHub script)
 **Usage:** `curl -fsSL https://foundrylinux.org/install.sh | sudo bash`
 
@@ -450,12 +450,12 @@ What the new `install.sh` adds on top:
 1. Detects Kubuntu/Ubuntu 26.04 (warns on 24.04 with a `--allow-24.04` override for legacy hosts; errors on other distros with `--force`)
 2. Adds our APT repo (Phase 1+) — or, in pure Phase 0 (before the APT repo exists), runs the inline `task dev-setup` apt list + a one-shot local build of wftools/wf_core.so. **Phase 0's local-build path is the only time Foundry Linux's official path ever compiles tooling on a user machine, and exists solely so we can ship something before the APT repo is up.** Phase 1 deprecates it.
 3. Clones the role-appropriate WF repos into `~/Projects/` using shallow + blobless partial clones (`--depth 1 --filter=blob:none`) and sparse checkout to exclude `engine/vendor/`. Welcome-app role chooser drives which repos get cloned (see "Distro composition / Branding"); defaults are ~5–25 MB depending on role, ~80% smaller than a naive full clone. `wf-clone`, `wf-vendor-fetch`, `wf-deepen` handle every "I need more" case. Live ISO kiosk mode skips this step.
-4. From Phase 1 onward: `apt install foundry-linux-dev` does everything. No `cargo build`, no `maturin`, no `cmake` runs on the user's machine.
+4. From Phase 1 onward: `apt install foundry-dev` does everything. No `cargo build`, no `maturin`, no `cmake` runs on the user's machine.
 5. Logs everything to `/var/log/foundry-install.log` for diagnostics
 
 **Idempotent.** Safe to re-run for upgrades. The Phase 0 timeline is "days" only because of testing on clean VMs across NVIDIA + AMD + Intel GPUs — the script logic itself is hours of work, since the canonical install commands already live in the repo.
 
-**Phase 1 transition note:** once the APT repo ships, the install.sh script collapses to ~20 lines (add APT repo, `apt install foundry-linux-dev`, optionally git-clone). The wrapper exists mostly to give users a single-command-from-curl onboarding instead of a four-step manual apt-repo-add ritual.
+**Phase 1 transition note:** once the APT repo ships, the install.sh script collapses to ~20 lines (add APT repo, `apt install foundry-dev`, optionally git-clone). The wrapper exists mostly to give users a single-command-from-curl onboarding instead of a four-step manual apt-repo-add ritual.
 
 ### Channel 1: APT repo + metapackage
 
@@ -474,8 +474,8 @@ What the new `install.sh` adds on top:
 apt.foundrylinux.org/            # R2 bucket, S3-compatible
   pool/                         # the actual .deb files
     main/
-      w/foundry-linux-dev/
-      w/foundry-linux-blender-addon/  # prebuilt wf_core.so via CI + maturin
+      w/foundry-dev/
+      w/foundry-blender-addon/  # prebuilt wf_core.so via CI + maturin
       w/wftools/                # prebuilt iffcomp, levcomp, textile, chargrab binaries from CI
       w/wf-launcher/            # prebuilt SDL/GTK4 launcher app
       w/task/                   # vendored from go-task/task
@@ -495,40 +495,40 @@ apt.foundrylinux.org/            # R2 bucket, S3-compatible
 
 | Metapackage | Pulls in | Use case | Phase |
 |---|---|---|---|
-| **`foundry-linux-dev`** | All of: `worldfoundry-game-dev` + `worldfoundry-engine-dev` + `foundry-linux-retro-tools` + `worldfoundry-launcher` (and transitively, everything below) | "Just give me the whole WF stack" — the default for engine + game devs alike | **Phase 1** |
-| `worldfoundry-game-dev` | `foundry-linux-blender` + engine binary (`wf_game`) + `wf-launcher` + `wf-game-create` + asset compilers (iffcomp, levcomp, textile, chargrab) — **no compilers / toolchains** (those are in `worldfoundry-engine-dev`) | Game authors who use the engine binary; don't compile the engine themselves | Phase 1 |
-| `worldfoundry-engine-dev` | `foundry-linux-engine-build-deps` + `rustup` + [`maturin`](https://www.maturin.rs/) + arm64 cross-toolchain (`gcc-aarch64-linux-gnu`) + [`qemu-user-static`](https://packages.ubuntu.com/noble/qemu-user-static) | Engine + wftools hackers who need to build from source and cross-test arm64 | Phase 1 |
-| `foundry-linux-engine-build-deps` | `build-essential`, `cmake`, `libx11-dev`, `libgl1-mesa-dev`, `libglu1-mesa-dev`, `gdb`, `xxd`, `pkg-config`, `python3` | Bare-minimum to compile the engine from source; subset of `worldfoundry-engine-dev` | Phase 1 |
-| `foundry-linux-blender` | [Blender 4.2 from PPA](https://launchpad.net/~thomas-schiex/+archive/ubuntu/blender) + `foundry-linux-blender-addon` (prebuilt `wf_core.so`) + curated Blender extension bundle | Just the Blender side of the stack | Phase 1 |
-| `foundry-linux-blender-addon` | The `wf_blender` extension as a single `.deb` (built in CI via [`maturin`](https://www.maturin.rs/), ships prebuilt `wf_core.so`) | Sub-component; not usually installed directly — pulled in by `foundry-linux-blender` and `worldfoundry-game-dev` | Phase 1 |
-| `foundry-linux-retro-tools` | [`mame`](https://www.mamedev.org/), `mame-tools`, [`dasm`](https://dasm-assembler.github.io/), [`cc65`](https://cc65.github.io/), [`z80dasm`](https://www.tablix.org/~avian/blog/articles/z80dasm/), `z80asm`, [`radare2`](https://rada.re/), [`binwalk`](https://github.com/ReFirmLabs/binwalk), [`sox`](https://sox.sourceforge.net/), `binutils-m68k-linux-gnu` (apt) + [Ghidra](https://ghidra-sre.org/), [f9dasm](https://github.com/Arakula/f9dasm), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm), [xa65](https://www.floodgap.com/retrotech/xa/) (our R2 repo) | Retro porting / ROM archaeology bundle | Phase 1 |
-| `foundry-linux-android-dev` | `openjdk-17-jdk`, `adb`, `google-android-ndk-r26c-installer` | Optional, for Android targets (phones, tablets, Android TV/Google TV, Chromecast with Google TV) | Phase 1 |
+| **`foundry-dev`** | All of: `worldfoundry-game-dev` + `worldfoundry-engine-dev` + `foundry-retro-tools` + `worldfoundry-launcher` (and transitively, everything below) | "Just give me the whole WF stack" — the default for engine + game devs alike | **Phase 1** |
+| `worldfoundry-game-dev` | `foundry-blender` + engine binary (`wf_game`) + `wf-launcher` + `wf-game-create` + asset compilers (iffcomp, levcomp, textile, chargrab) — **no compilers / toolchains** (those are in `worldfoundry-engine-dev`) | Game authors who use the engine binary; don't compile the engine themselves | Phase 1 |
+| `worldfoundry-engine-dev` | `foundry-engine-build-deps` + `rustup` + [`maturin`](https://www.maturin.rs/) + arm64 cross-toolchain (`gcc-aarch64-linux-gnu`) + [`qemu-user-static`](https://packages.ubuntu.com/noble/qemu-user-static) | Engine + wftools hackers who need to build from source and cross-test arm64 | Phase 1 |
+| `foundry-engine-build-deps` | `build-essential`, `cmake`, `libx11-dev`, `libgl1-mesa-dev`, `libglu1-mesa-dev`, `gdb`, `xxd`, `pkg-config`, `python3` | Bare-minimum to compile the engine from source; subset of `worldfoundry-engine-dev` | Phase 1 |
+| `foundry-blender` | [Blender 4.2 from PPA](https://launchpad.net/~thomas-schiex/+archive/ubuntu/blender) + `foundry-blender-addon` (prebuilt `wf_core.so`) + curated Blender extension bundle | Just the Blender side of the stack | Phase 1 |
+| `foundry-blender-addon` | The `wf_blender` extension as a single `.deb` (built in CI via [`maturin`](https://www.maturin.rs/), ships prebuilt `wf_core.so`) | Sub-component; not usually installed directly — pulled in by `foundry-blender` and `worldfoundry-game-dev` | Phase 1 |
+| `foundry-retro-tools` | [`mame`](https://www.mamedev.org/), `mame-tools`, [`dasm`](https://dasm-assembler.github.io/), [`cc65`](https://cc65.github.io/), [`z80dasm`](https://www.tablix.org/~avian/blog/articles/z80dasm/), `z80asm`, [`radare2`](https://rada.re/), [`binwalk`](https://github.com/ReFirmLabs/binwalk), [`sox`](https://sox.sourceforge.net/), `binutils-m68k-linux-gnu` (apt) + [Ghidra](https://ghidra-sre.org/), [f9dasm](https://github.com/Arakula/f9dasm), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm), [xa65](https://www.floodgap.com/retrotech/xa/) (our R2 repo) | Retro porting / ROM archaeology bundle | Phase 1 |
+| `foundry-android-dev` | `openjdk-17-jdk`, `adb`, `google-android-ndk-r26c-installer` | Optional, for Android targets (phones, tablets, Android TV/Google TV, Chromecast with Google TV) | Phase 1 |
 | `worldfoundry-ios-dev` | [Codemagic CLI](https://docs.codemagic.io/cli/codemagic-cli-tools/), [`ios-deploy`](https://github.com/ios-control/ios-deploy), [`libimobiledevice`](https://libimobiledevice.org/), [`sourcekit-lsp`](https://github.com/swiftlang/sourcekit-lsp), [`swiftlint`](https://github.com/realm/SwiftLint), iOS asset prep tools | Optional, for iOS targets. **Full iOS dev still requires macOS** (local Mac or cloud Mac via Codemagic) — [Apple's Xcode + SDK License Agreement](https://www.apple.com/legal/sla/docs/xcode.pdf) explicitly prohibits running Apple SDKs on non-Apple hardware, and Xcode itself [requires macOS](https://developer.apple.com/xcode/system-requirements/). See `foundrylinux.org/develop/ios/` | Phase 1 |
 | `worldfoundry-launcher` | `wf-launcher` (the kiosk-mode tile UI) + bundled WF arcade ports (SMB W1-1, Q\*bert, etc.) + sample art. **No dev tools** | Lightweight player-only install; usable on any Ubuntu-family 26.04 to "just play the WF games" | Phase 1 |
 | `worldfoundry-live-kiosk` | [`gamescope`](https://github.com/ValveSoftware/gamescope) + auto-login config + `gamescope-session.target` systemd unit | **Only installed inside the live ISO build**, never on a regular install. Boots the live USB straight to the launcher in kiosk mode | **Phase 3** (live ISO only) |
 | `worldfoundry-homebrew-games` | [`mgba`](https://mgba.io/) + [`fceux`](https://fceux.com/) + [`stella`](https://stella-emu.github.io/) + curated CC/PD homebrew ROMs (Tobu Tobu Girl, Halo 2600, Sheep It Up!, etc.) per `LICENSES.md` | Curated retro-platform homebrew bundle for the launcher | Phase 1 (ships, but library grows over time as new permissively-licensed homebrew gets vetted) |
 | `worldfoundry-scummvm-freeware` | [ScummVM](https://www.scummvm.org/) + the ScummVM freeware roster (Beneath a Steel Sky, Flight of the Amazon Queen, Lure of the Temptress, Drascula, Soltys, The Labyrinth of Time) | Curated ScummVM freeware bundle for the launcher | Phase 1 |
-| `wf-vendor-fetch`, `wf-clone`, `wf-deepen`, `wf-game-create`, `wf-tools-create`, `wf-welcome`, `wf-rom-check`, `wf-mame-free-roms-fetch`, `wf-steamworks-install`, `wf-release-build`, `wf-steam-smoke`, `wf-projects-deepen` | These are individual scripts, packaged inside `foundry-linux-dev` / sub-metapackages — not metapackages themselves | Each runs at the appropriate phase | Phase 1+ |
+| `wf-vendor-fetch`, `wf-clone`, `wf-deepen`, `wf-game-create`, `wf-tools-create`, `wf-welcome`, `wf-rom-check`, `wf-mame-free-roms-fetch`, `wf-steamworks-install`, `wf-release-build`, `wf-steam-smoke`, `wf-projects-deepen` | These are individual scripts, packaged inside `foundry-dev` / sub-metapackages — not metapackages themselves | Each runs at the appropriate phase | Phase 1+ |
 
 **Dependency graph (what installs what transitively):**
 
 ```
-foundry-linux-dev
+foundry-dev
 ├── worldfoundry-game-dev
-│   ├── foundry-linux-blender
-│   │   └── foundry-linux-blender-addon
+│   ├── foundry-blender
+│   │   └── foundry-blender-addon
 │   ├── wf_game (binary)
 │   ├── wf-launcher
 │   └── wftools (iffcomp/levcomp/textile/chargrab)
 ├── worldfoundry-engine-dev
-│   └── foundry-linux-engine-build-deps
-├── foundry-linux-retro-tools
+│   └── foundry-engine-build-deps
+├── foundry-retro-tools
 └── worldfoundry-launcher
     └── worldfoundry-homebrew-games  (recommended, not required)
     └── worldfoundry-scummvm-freeware  (recommended, not required)
 
-foundry-linux-android-dev      ← opt-in, not in foundry-linux-dev
-worldfoundry-ios-dev          ← opt-in, not in foundry-linux-dev
+foundry-android-dev      ← opt-in, not in foundry-dev
+worldfoundry-ios-dev          ← opt-in, not in foundry-dev
 worldfoundry-live-kiosk       ← Phase 3 only, live ISO build, not for end-user install
 ```
 
@@ -550,10 +550,10 @@ User adds the repo:
 curl -fsSL https://apt.foundrylinux.org/key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org 26.04 main" \
   | sudo tee /etc/apt/sources.list.d/foundry.list
-sudo apt update && sudo apt install foundry-linux-dev
+sudo apt update && sudo apt install foundry-dev
 ```
 
-**The APT repo works on any Ubuntu-family 26.04 system, not just Foundry Linux.** Ubuntu (GNOME), [Ubuntu MATE](https://ubuntu-mate.org/), [Xubuntu](https://xubuntu.org/), [Lubuntu](https://lubuntu.me/), [Pop!_OS](https://pop.system76.com/), [Linux Mint](https://linuxmint.com/) on its Ubuntu base, vanilla Kubuntu (without the Foundry Linux branding), or any Debian-derivative tracking 26.04's package versions can add the repo and `apt install foundry-linux-dev` to get the full functional WF stack (engine, wftools, Blender addon, retro tools container, launcher, welcome app, etc.). Per-distro install quickstart pages live at `foundrylinux.org/install/{ubuntu,pop-os,ubuntu-mate,xubuntu,lubuntu,linux-mint,kubuntu,…}` so users on any DE have a first-class path to the WF stack without needing Foundry Linux itself. The branded Foundry Linux Plasma desktop is the polished turnkey experience; the APT repo is the universal substrate.
+**The APT repo works on any Ubuntu-family 26.04 system, not just Foundry Linux.** Ubuntu (GNOME), [Ubuntu MATE](https://ubuntu-mate.org/), [Xubuntu](https://xubuntu.org/), [Lubuntu](https://lubuntu.me/), [Pop!_OS](https://pop.system76.com/), [Linux Mint](https://linuxmint.com/) on its Ubuntu base, vanilla Kubuntu (without the Foundry Linux branding), or any Debian-derivative tracking 26.04's package versions can add the repo and `apt install foundry-dev` to get the full functional WF stack (engine, wftools, Blender addon, retro tools container, launcher, welcome app, etc.). Per-distro install quickstart pages live at `foundrylinux.org/install/{ubuntu,pop-os,ubuntu-mate,xubuntu,lubuntu,linux-mint,kubuntu,…}` so users on any DE have a first-class path to the WF stack without needing Foundry Linux itself. The branded Foundry Linux Plasma desktop is the polished turnkey experience; the APT repo is the universal substrate.
 
 **Build automation:** GitHub Actions workflow builds .debs on tag push, signs with a key stored as a repo secret, then `rclone sync`s the updated `pool/` and `dists/` to the R2 bucket. R2 serves the static objects directly; Cloudflare's CDN sits in front for HTTPS + caching.
 
@@ -571,7 +571,7 @@ RUN curl -fsSL https://apt.foundrylinux.org/key.gpg \
       | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg \
  && echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org 26.04 main" \
       > /etc/apt/sources.list.d/foundry.list \
- && apt-get update && apt-get install -y foundry-linux-dev
+ && apt-get update && apt-get install -y foundry-dev
 # Distrobox conventions for GUI passthrough
 RUN apt-get install -y sudo libvte-2.91-0
 ENV NVIDIA_VISIBLE_DEVICES=all NVIDIA_DRIVER_CAPABILITIES=all
@@ -592,15 +592,15 @@ GHCR is free for public images and free from storage limits for popular projects
 
 ### Channel 3: Foundry Linux ISO
 
-**Repo:** `github.com/foundry-linux/foundry-linux-iso`
+**Repo:** `github.com/foundry-linux/foundry-iso`
 **Tool:** `live-build` (Debian's official ISO builder, works fine for Ubuntu bases too)
-**Output:** `foundry-linux-1.0-amd64.iso` (~3.5 GB estimated: 2.5 GB Ubuntu base + 1 GB WF stack)
+**Output:** `foundry-1.0-amd64.iso` (~3.5 GB estimated: 2.5 GB Ubuntu base + 1 GB WF stack)
 
 **Build pipeline (GitHub Actions, monthly cron + on tag):**
 ```
 1. live-build pulls Kubuntu 26.04 seed (26.04/main + universe + kubuntu-desktop seed)
 2. Adds our APT repo to the seed sources
-3. Includes foundry-linux-dev in the package set
+3. Includes foundry-dev in the package set
 4. Applies branding (GRUB splash, Plymouth, wallpaper, .desktop launcher pinning)
 5. Bakes in the first-run welcome app
 6. lb build → ISO + signed checksums + manifest
@@ -641,7 +641,7 @@ The launcher mode is the killer feature for the live USB: hand someone a stick t
 **What ships pre-loaded on the live ISO:**
 - All published WF arcade ports (SMB W1-1, Q\*bert, eventually the 38-game roster) as standalone `.iff` files in `/opt/wf-games/`
 - The `wf-launcher` app
-- The `wf_game` engine binary (already there as part of `foundry-linux-dev`)
+- The `wf_game` engine binary (already there as part of `foundry-dev`)
 - Sample reference videos / screenshots for each game (so the tile grid has art even before first launch)
 
 **ROMs / game content the live ISO can legally ship:**
@@ -698,7 +698,7 @@ The launcher mode is the killer feature for the live USB: hand someone a stick t
 - Lets save games, joystick remappings, custom-added `.iff` files survive reboots
 - The welcome app prompts on first kiosk-mode boot: "Make this USB stick remember your progress?" → one-click writes the casper-rw partition
 
-**Outside of the live ISO:** `wf-launcher` is also installed by the regular `foundry-linux-dev` metapackage and pinned to the Plasma Application Launcher + Task Manager (and the Application Dashboard if the user prefers the full-screen launcher), so installed users can launch into the same UI any time. The kiosk auto-login is the only piece specific to the live mode.
+**Outside of the live ISO:** `wf-launcher` is also installed by the regular `foundry-dev` metapackage and pinned to the Plasma Application Launcher + Task Manager (and the Application Dashboard if the user prefers the full-screen launcher), so installed users can launch into the same UI any time. The kiosk auto-login is the only piece specific to the live mode.
 
 #### VM artifacts (alternative to bare-metal install)
 
@@ -715,8 +715,8 @@ The ISO works fine in any hypervisor — but "boot the installer, wait, click th
 
 | Format | Filename | Works with | Why |
 |--------|----------|------------|-----|
-| **qcow2** | `foundry-linux-1.0-amd64.qcow2` | QEMU/KVM (Linux), UTM (macOS, including Apple Silicon via emulation for amd64 or native for arm64), [virt-manager](https://virt-manager.org/), GNOME Boxes | QEMU's native format; sparse (~3 GB on disk for a 20 GB virtual); UTM is the standard Mac path |
-| **OVA** | `foundry-linux-1.0-amd64.ova` | VirtualBox (all OSes), VMware Workstation/Fusion/ESXi, Proxmox | Open Virtualization Format — single tarball that any standards-following hypervisor can import; covers Windows + cross-platform GUI use cases |
+| **qcow2** | `foundry-1.0-amd64.qcow2` | QEMU/KVM (Linux), UTM (macOS, including Apple Silicon via emulation for amd64 or native for arm64), [virt-manager](https://virt-manager.org/), GNOME Boxes | QEMU's native format; sparse (~3 GB on disk for a 20 GB virtual); UTM is the standard Mac path |
+| **OVA** | `foundry-1.0-amd64.ova` | VirtualBox (all OSes), VMware Workstation/Fusion/ESXi, Proxmox | Open Virtualization Format — single tarball that any standards-following hypervisor can import; covers Windows + cross-platform GUI use cases |
 
 That's it. We skip per-hypervisor proprietary formats (VHDX for Hyper-V, native VMDK, VDI) because OVA covers their import paths via the standards-compliant route, and the marginal user pool for "I refuse to use OVA on Hyper-V" doesn't justify another build artifact.
 
@@ -731,7 +731,7 @@ After the ISO is built and signed:
 12. Upload to Cloudflare R2 alongside the ISO
 ```
 
-Both VM artifacts live next to the ISO at `iso.foundrylinux.org/foundry-linux-1.0-amd64.{iso,qcow2,ova}` (plus `.sha256` and `.sig` for each). Storage cost on R2: ~$0.05/month for the full set of three.
+Both VM artifacts live next to the ISO at `iso.foundrylinux.org/foundry-1.0-amd64.{iso,qcow2,ova}` (plus `.sha256` and `.sig` for each). Storage cost on R2: ~$0.05/month for the full set of three.
 
 **Documentation: per-hypervisor quickstart pages.** `foundrylinux.org/vm/` holds copy-paste-ready quickstart pages for the common hypervisors:
 
@@ -741,12 +741,12 @@ Both VM artifacts live next to the ISO at `iso.foundrylinux.org/foundry-linux-1.
 - **QEMU/KVM via virt-manager (Linux)** — Create new VM → Import existing image → select .qcow2 → run
 - **GNOME Boxes (Linux)** — even simpler: drag .qcow2 in
 - **Hyper-V (Windows)** — convert OVA to VHDX with `qemu-img` or `Microsoft Virtual Machine Converter`; documented but not the smoothest path
-- **CLI / headless** — `qemu-system-x86_64 -enable-kvm -m 8G -smp 4 -drive file=foundry-linux-1.0-amd64.qcow2 -nic user`
+- **CLI / headless** — `qemu-system-x86_64 -enable-kvm -m 8G -smp 4 -drive file=foundry-1.0-amd64.qcow2 -nic user`
 
 Each quickstart includes recommended VM specs (4 GB RAM minimum, 8 GB ideal; 4 vCPUs; GPU passthrough where applicable; 30 GB virtual disk to accommodate game projects).
 
 **Variants (Phase 4+ stretch):**
-- **Cloud image variant** (`foundry-linux-1.0-amd64-cloud.qcow2`) — headless, cloud-init-friendly, smaller (no GNOME). For CI runners and remote dev. Same R2 bucket.
+- **Cloud image variant** (`foundry-1.0-amd64-cloud.qcow2`) — headless, cloud-init-friendly, smaller (no GNOME). For CI runners and remote dev. Same R2 bucket.
 - **Vagrant box** (`worldfoundry/foundry` on Vagrant Cloud) — `vagrant init worldfoundry/foundry && vagrant up` brings up a configured Foundry Linux dev VM in one command. Lovely for "WF dev environment in 30 seconds on any host." Hosted free on Vagrant Cloud.
 - **arm64 build** — once the apt-repo / wftools have arm64 `.deb`s (a Phase 1 stretch), produce a native arm64 qcow2 for Apple Silicon. Eliminates UTM's emulation tax (~5–10× speedup vs amd64-on-arm64 emulation).
 - **Multipass image** — Canonical's tool for managing Ubuntu VMs; could publish Foundry Linux as a Multipass-launchable image. Pure convenience layer; defer.
@@ -774,7 +774,7 @@ Containers, not VMs — the overhead is ~50–200 MB of layered filesystem per g
 
 ### `wf-game-create` tool
 
-Bundled in `foundry-linux-dev`:
+Bundled in `foundry-dev`:
 
 ```
 $ wf-game-create donkey-kong
@@ -942,7 +942,7 @@ A binary built natively on Kubuntu 26.04 (or Ubuntu 26.04, same glibc) demands g
 
 ### `wf-release-build` script + `release-sniper` container
 
-Ship as part of `foundry-linux-dev`:
+Ship as part of `foundry-dev`:
 
 ```bash
 $ wf-release-build           # builds release artifact via Sniper SDK
@@ -972,9 +972,9 @@ Under the hood it `podman run`s the canonical Sniper SDK image with the source t
 | Asset | Where | Why |
 |-------|-------|-----|
 | Engine, games, tools source | github.com/worldfoundry/* | Free, familiar, CI included |
-| Distro infrastructure source (foundry-apt, foundry-linux-iso, foundry-devbox, foundry-docs) | github.com/foundry-linux/* | Free, familiar, CI included |
+| Distro infrastructure source (foundry-apt, foundry-iso, foundry-devbox, foundry-docs) | github.com/foundry-linux/* | Free, familiar, CI included |
 | WF tools APT repo (worldfoundry-\* packages) | Cloudflare R2 → `apt.foundrylinux.org` | Free under R2's 10 GB free tier; no per-file size limit (Ghidra is 400 MB); zero egress fees |
-| Distro APT repo (foundry-linux-\* packages, retro tools, Ghidra, etc.) | Cloudflare R2 → `apt.foundrylinux.org` | Same R2 model; separate bucket, separate signing key, separate CI |
+| Distro APT repo (foundry-\* packages, retro tools, Ghidra, etc.) | Cloudflare R2 → `apt.foundrylinux.org` | Same R2 model; separate bucket, separate signing key, separate CI |
 | Container images | ghcr.io/foundry-linux/* | Free for public; integrated with GH Actions |
 | ISOs | Cloudflare R2 → `iso.foundrylinux.org` | 100 MB Pages limit doesn't apply; zero egress |
 | Distro docs + marketing site | Cloudflare Pages → `foundrylinux.org` | Domain registered 2026-05-17, on Cloudflare |
@@ -1074,10 +1074,10 @@ Aggregating from the well-documented post-mortems of dead distros (CrunchBang, A
 ```
 github.com/worldfoundry/      ← engine, games, tools  →  apt.foundrylinux.org
 github.com/foundry-linux/     ← distro infrastructure →  apt.foundrylinux.org, iso.foundrylinux.org, foundrylinux.org
-  foundry-linux-setup/   ← Phase 0: install.sh, docs
+  foundry-setup/   ← Phase 0: install.sh, docs
   foundry-apt/           ← Phase 1: aptly config, .deb sources, GH Actions to publish
   foundry-devbox/        ← Phase 2: Dockerfile, distrobox recipe
-  foundry-linux-iso/     ← Phase 3: live-build config, branding assets
+  foundry-iso/     ← Phase 3: live-build config, branding assets
   foundry-docs/          ← mkdocs-material; serves foundrylinux.org
 
 foundrylinux.org (Cloudflare Pages, static, free)
@@ -1090,9 +1090,9 @@ apt.foundrylinux.org (Cloudflare R2 bucket, S3-compatible)
   /dists/  /pool/  /key.gpg
 
 iso.foundrylinux.org (Cloudflare R2 bucket, S3-compatible)
-  /foundry-linux-1.0-amd64.iso
-  /foundry-linux-1.0-amd64.iso.sha256
-  /foundry-linux-1.0-amd64.iso.sig
+  /foundry-1.0-amd64.iso
+  /foundry-1.0-amd64.iso.sha256
+  /foundry-1.0-amd64.iso.sig
 
 foundrylinux.org (Cloudflare Pages → mkdocs)
   /                      ← landing
@@ -1106,14 +1106,14 @@ foundrylinux.org (Cloudflare Pages → mkdocs)
 
 ## Critical files to seed (in order)
 
-1. `foundry-linux-setup/install.sh` — drives Channel 0; canonical dependency list, sourced from `Taskfile.yml:240-251` plus the retro-tooling investigation
-2. `foundry-apt/aptly.conf` + `foundry-apt/metapackages/foundry-linux-dev/debian/control` — Channel 1
+1. `foundry-setup/install.sh` — drives Channel 0; canonical dependency list, sourced from `Taskfile.yml:240-251` plus the retro-tooling investigation
+2. `foundry-apt/aptly.conf` + `foundry-apt/metapackages/foundry-dev/debian/control` — Channel 1
 3. `foundry-devbox/Dockerfile` — Channel 2
-4. `foundry-linux-iso/auto/config` (live-build configuration) — Channel 3
+4. `foundry-iso/auto/config` (live-build configuration) — Channel 3
 5. `foundry-docs/mkdocs.yml` + `docs/quickstart.md`
-6. `foundry-linux-iso/branding/` — wallpaper, Plymouth theme, GRUB splash, app icon
+6. `foundry-iso/branding/` — wallpaper, Plymouth theme, GRUB splash, app icon
 7. GitHub Actions workflows in each repo (`build.yml`, `release.yml`)
-8. A `LICENSES.md` in `foundry-linux-iso/` tracking attribution for every non-Ubuntu component
+8. A `LICENSES.md` in `foundry-iso/` tracking attribution for every non-Ubuntu component
 
 Existing WF assets to reuse, not duplicate:
 - `Taskfile.yml:240-251` — the authoritative apt list
@@ -1130,7 +1130,7 @@ End-to-end smoke tests for each channel:
 
 **Channel 0 (script):** On a fresh Kubuntu 26.04 VM, `curl … | bash` → `cd ~/Projects/WorldFoundry && task build` succeeds → `task run-level -- wflevels/smb_w1_1-standalone.iff` opens the SMB W1-1 window.
 
-**Channel 1 (APT):** Same, but via `apt install foundry-linux-dev` instead of curl/bash. Run `apt-cache depends foundry-linux-dev` to confirm metapackage closure matches Channel 0's set.
+**Channel 1 (APT):** Same, but via `apt install foundry-dev` instead of curl/bash. Run `apt-cache depends foundry-dev` to confirm metapackage closure matches Channel 0's set.
 
 **Channel 2 (container):** `distrobox create -i ghcr.io/foundry-linux/devbox:26.04 -n test && distrobox enter test -- task build && task run-level …` from host with Blender visible.
 
@@ -1140,7 +1140,7 @@ End-to-end smoke tests for each channel:
 
 **Channel 3 (ISO), game launcher mode (primary live use):** Same qemu boot, select "Foundry Game Launcher" → gamescope session boots straight to the tile grid → keyboard/gamepad navigation to "SMB W1-1" → game runs fullscreen → quit returns to launcher → "Power off" tile cleanly shuts down. Bonus: plug a USB stick with `wf-roms/qbert.zip` in, verify it appears under "Your Arcade ROMs" within 5 seconds.
 
-**Channel 3 (VM artifacts):** Import `foundry-linux-1.0-amd64.qcow2` into UTM on macOS → boot → autologin to GNOME → SMB W1-1 launcher works. Import `foundry-linux-1.0-amd64.ova` into VirtualBox on Windows → boot → same. Both VMs should reach the desktop in under 30 seconds from import.
+**Channel 3 (VM artifacts):** Import `foundry-1.0-amd64.qcow2` into UTM on macOS → boot → autologin to GNOME → SMB W1-1 launcher works. Import `foundry-1.0-amd64.ova` into VirtualBox on Windows → boot → same. Both VMs should reach the desktop in under 30 seconds from import.
 
 **Retro tooling smoke test** (per the arcade-tooling investigation):
 ```
@@ -1200,7 +1200,7 @@ These are deliberately *not* baked into the proposal above — they need the aut
     curl -fsSL https://apt.foundrylinux.org/key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
     echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org 26.04 main" \
       | sudo tee /etc/apt/sources.list.d/foundry.list
-    sudo apt update && sudo apt install foundry-linux-dev
+    sudo apt update && sudo apt install foundry-dev
     ```
     …and get the entire functional WF stack: engine binary, wftools, Blender addon (just Blender — uses GTK's file picker on GNOME hosts, KDE's KIO on Plasma hosts), retro-tools container (DE-agnostic), `wf-launcher`, `wf-game-create`, the welcome app, Steam client, MAME, Ghidra. Everything except the branded Foundry Linux Plasma desktop chrome — and chrome is the easiest part to skip.
 

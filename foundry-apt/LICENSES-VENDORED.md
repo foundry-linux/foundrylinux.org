@@ -19,7 +19,7 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 | Package | Reason |
 |---|---|
 | `task` | The official Cloudsmith apt repo (`deb.taskfile.dev`) is the easiest source — Phase 0's `install-task.sh` configures it directly, no in-repo vendoring needed. |
-| `xa65` | Ubuntu 26.04 universe ships it as `xa65 2.4.1-0.1build1` — same upstream code as we briefly vendored under `2.4.1-1foundry1`. Phase 0's `install-foundry-linux-retro-tools.sh` now apt-installs `xa65` directly; `foundry-linux-retro-tools` `Depends: xa65` resolves to the universe entry. Retirement plan: [`../docs/plans/2026-05-18-retire-xa65.md`](../../docs/plans/2026-05-18-retire-xa65.md). |
+| `xa65` | Ubuntu 26.04 universe ships it as `xa65 2.4.1-0.1build1` — same upstream code as we briefly vendored under `2.4.1-1foundry1`. Phase 0's `install-foundry-retro-tools.sh` now apt-installs `xa65` directly; `foundry-retro-tools` `Depends: xa65` resolves to the universe entry. Retirement plan: [`../docs/plans/2026-05-18-retire-xa65.md`](../../docs/plans/2026-05-18-retire-xa65.md). |
 
 ## Foundry-authored content
 

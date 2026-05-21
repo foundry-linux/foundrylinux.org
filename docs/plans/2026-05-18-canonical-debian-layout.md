@@ -19,7 +19,7 @@ Five metapackages, all `Architecture: all`:
 
 | Package | Current version | Source name (chosen) |
 |---|---|---|
-| `foundry-linux-retro-tools` | 1.0.1 | `foundry-linux-retro-tools` |
+| `foundry-retro-tools` | 1.0.1 | `foundry-retro-tools` |
 | `worldfoundry-dev` | 1.0.0 | `worldfoundry-dev` |
 | `worldfoundry-blender` | 1.0.0 | `worldfoundry-blender` |
 | `worldfoundry-android-dev` | 1.0.0 | `worldfoundry-android-dev` |
@@ -218,7 +218,7 @@ The "Package layouts — two supported, one deprecated" table I just wrote needs
 2. **Per-metapackage `dpkg-deb -I` is functionally equivalent to the pre-migration version.**
 
     ```bash
-    for pkg in foundry-linux-retro-tools worldfoundry-dev worldfoundry-blender worldfoundry-android-dev worldfoundry-engine-build-deps; do
+    for pkg in foundry-retro-tools worldfoundry-dev worldfoundry-blender worldfoundry-android-dev worldfoundry-engine-build-deps; do
         echo "--- $pkg ---"
         dpkg-deb -I dist/${pkg}_*_all.deb | grep -E "Package|Version|Depends|Recommends|Description" | head -8
     done
@@ -243,7 +243,7 @@ The "Package layouts — two supported, one deprecated" table I just wrote needs
 
     Expect: six rows (five metapackages + xa65), same as today.
 
-5. **Live (post sync + bump).** `https://apt.foundrylinux.org/` shows the same six package rows; `docker run ubuntu:26.04 apt install foundry-linux-retro-tools` from the live repo installs successfully (regression test).
+5. **Live (post sync + bump).** `https://apt.foundrylinux.org/` shows the same six package rows; `docker run ubuntu:26.04 apt install foundry-retro-tools` from the live repo installs successfully (regression test).
 
 6. **Skill docs updated.** `/package` skill's "Pure metapackages" section + new-web-apt-repo's table reflect the canonical-only state.
 

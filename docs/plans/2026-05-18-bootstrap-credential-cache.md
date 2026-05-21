@@ -5,12 +5,12 @@
 
 ## Changes shipped
 
-### Credential caching (`BOOTSTRAP_CACHE=/tmp/foundry-linux-bootstrap.env`)
+### Credential caching (`BOOTSTRAP_CACHE=/tmp/foundry-bootstrap.env`)
 
 `CF_API_TOKEN`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` were re-prompted on every
 fresh run. Added:
 
-- `BOOTSTRAP_CACHE="/tmp/foundry-linux-bootstrap.env"` to config block
+- `BOOTSTRAP_CACHE="/tmp/foundry-bootstrap.env"` to config block
 - `cache_set KEY value` helper — grep-and-replace single line in cache file, chmod 600
 - Source cache before preflight; `CF_API_TOKEN` saved immediately after entry, R2 creds
   saved immediately after their `until` loops

@@ -19,7 +19,7 @@ using the exact repo-setup commands from the project docs.
 
 ## Script: `foundry-apt/test/run-test.sh`
 
-Pattern mirrors `foundry-linux-setup/test/run-test.sh`.
+Pattern mirrors `foundry-setup/test/run-test.sh`.
 
 ### Usage
 ```
@@ -90,7 +90,7 @@ All five packages resolve correctly against the live repo:
 
 | Package | Result | Notes |
 |---|---|---|
-| `foundry-linux-retro-tools` | PASS | |
+| `foundry-retro-tools` | PASS | |
 | `worldfoundry-android-dev` | PASS | |
 | `worldfoundry-blender` | PASS | |
 | `worldfoundry-dev` | PASS | Cloudsmith task repo added automatically (detected via `Depends: task`) |
@@ -106,7 +106,7 @@ All five packages install successfully from the live repo in a fresh Ubuntu 26.0
 
 | Package | Result | Notes |
 |---|---|---|
-| `foundry-linux-retro-tools` | PASS | ~483 MB download |
+| `foundry-retro-tools` | PASS | ~483 MB download |
 | `worldfoundry-android-dev` | PASS | ~253 MB download |
 | `worldfoundry-blender` | PASS | ~475 MB download |
 | `worldfoundry-dev` | PASS | ~900 MB download (all deps + Cloudsmith task repo) |

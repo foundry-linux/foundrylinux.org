@@ -18,7 +18,7 @@ The architecture in `CLAUDE.md` lists `foundry-apt/` as **the** Phase 1 repo, bu
 User direction (2026-05-20):
 
 1. **Permanently separate** — no consolidation planned.
-2. **Collapse blender + dev umbrella to worldfoundry-***: `install-foundry-linux-blender.sh` → `apt install worldfoundry-blender`; `install-foundry-linux-dev.sh` → `apt install worldfoundry-development`.
+2. **Collapse blender + dev umbrella to worldfoundry-***: `install-foundry-blender.sh` → `apt install worldfoundry-blender`; `install-foundry-dev.sh` → `apt install worldfoundry-development`.
 3. **Keep architecture inline in CLAUDE.md** — don't redirect to the inventory.
 
 ## Approach
@@ -33,23 +33,23 @@ User direction (2026-05-20):
 
 Mirror of `setup-foundry-apt-source.sh`, but for `apt.worldfoundry.org`. Adds the GPG key + sources.list.d entry idempotently. Called by the install scripts below.
 
-### 3. `install-foundry-linux-blender.sh` collapse
+### 3. `install-foundry-blender.sh` collapse
 
 Currently: `apt install blender python3` (Ubuntu universe).
 
 After: setup apt.worldfoundry.org source → `apt install worldfoundry-blender`. That transitively brings Blender + the WF Blender add-on (`wf-blender`) + the asset-finder add-on (`blender-asset-finder`) — strictly more than the bare `blender` install.
 
-### 4. `install-foundry-linux-dev.sh` collapse
+### 4. `install-foundry-dev.sh` collapse
 
 Currently: composes engine-build-deps + task + blender + retro-tools by calling sub-installers in order.
 
-After: setup apt.worldfoundry.org source → `apt install worldfoundry-development` (umbrella that pulls in worldfoundry → cli + blender + Blender, plus build-essential, cmake, X11/GL dev, python3). Then chain `install-task.sh` and `install-foundry-linux-retro-tools.sh` because task (Cloudsmith) and retro-tools (apt.foundrylinux.org) aren't part of worldfoundry-development.
+After: setup apt.worldfoundry.org source → `apt install worldfoundry-development` (umbrella that pulls in worldfoundry → cli + blender + Blender, plus build-essential, cmake, X11/GL dev, python3). Then chain `install-task.sh` and `install-foundry-retro-tools.sh` because task (Cloudsmith) and retro-tools (apt.foundrylinux.org) aren't part of worldfoundry-development.
 
-`install.sh`'s role dispatch logic stays the same — `both` / `maintainer` still call `install-foundry-linux-dev.sh`; engine-dev / game-dev still compose individual sub-installers (which now route correctly to whichever apt source they need).
+`install.sh`'s role dispatch logic stays the same — `both` / `maintainer` still call `install-foundry-dev.sh`; engine-dev / game-dev still compose individual sub-installers (which now route correctly to whichever apt source they need).
 
 ## Verification
 
-1. `bash foundry-linux-setup/install.sh --dry-run --role both` prints the new plan with both apt sources getting configured.
-2. `bash foundry-linux-setup/install-foundry-linux-blender.sh --dry-run` shows `apt install worldfoundry-blender`, not the old `blender python3`.
-3. After publishing: in a clean ubuntu:26.04 container, `bash install-foundry-linux-blender.sh` resolves and installs Blender + wf-blender + blender-asset-finder via the worldfoundry metapackage.
+1. `bash foundry-setup/install.sh --dry-run --role both` prints the new plan with both apt sources getting configured.
+2. `bash foundry-setup/install-foundry-blender.sh --dry-run` shows `apt install worldfoundry-blender`, not the old `blender python3`.
+3. After publishing: in a clean ubuntu:26.04 container, `bash install-foundry-blender.sh` resolves and installs Blender + wf-blender + blender-asset-finder via the worldfoundry metapackage.
 4. CLAUDE.md `grep -c 'apt.worldfoundry.org'` returns ≥1.

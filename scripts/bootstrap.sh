@@ -37,12 +37,12 @@ PUB_KEY="/tmp/foundry-packages.pub.gpg"
 SEC_KEY="/tmp/foundry-packages.sec.gpg"
 
 R2_BUCKET="foundry-apt"
-SECRETS_BUCKET="foundry-linux-secrets"
+SECRETS_BUCKET="foundry-secrets"
 R2_TOKEN_NAME="foundry-apt-ci"
-BOOTSTRAP_CACHE="/tmp/foundry-linux-bootstrap.env"
+BOOTSTRAP_CACHE="/tmp/foundry-bootstrap.env"
 CUSTOM_DOMAIN="apt.foundrylinux.org"
 DNS_CNAME="apt"
-CF_OPERATOR_TOKEN_NAME="foundry-linux-operator"
+CF_OPERATOR_TOKEN_NAME="foundry-operator"
 CF_ZONE_NAME="foundrylinux.org"
 
 DRY_RUN=false
@@ -88,7 +88,7 @@ cf_api() {
         "$@"
 }
 
-# Store a secret in the private foundry-linux-secrets R2 bucket.
+# Store a secret in the private foundry-secrets R2 bucket.
 # Usage: r2_put_secret <key-name> <value>
 r2_put_secret() {
     local name="$1" value="$2"

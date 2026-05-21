@@ -10,7 +10,7 @@ Phase 0 (bash installer) lives in this repo; Phase 1 (signed apt repos) ships ac
 
 | Repo | Scope | Source tree |
 |---|---|---|
-| `apt.foundrylinux.org` | Foundry Linux distro toolchain — `foundry-linux-retro-tools` metapackage + vendored upstreams (`f9dasm`, `ghidra`, `libvgm`, `vgmstream`) | this repo, `foundry-apt/` |
+| `apt.foundrylinux.org` | Foundry Linux distro toolchain — `foundry-retro-tools` metapackage + vendored upstreams (`f9dasm`, `ghidra`, `libvgm`, `vgmstream`) | this repo, `foundry-apt/` |
 | `apt.worldfoundry.org` | WorldFoundry-specific authoring tools — 10 CLIs (cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, wf-asset) + 2 Blender add-ons (wf-blender, blender-asset-finder) + 4 umbrella metapackages (worldfoundry, worldfoundry-cli, worldfoundry-blender, worldfoundry-development) | sibling repo `../worldfoundry.org/apt/` |
 
 The two repos are **deliberately separate**: foundry-linux is the distribution; WorldFoundry is one tenant's authoring stack. They're co-installed on a workstation but neither depends on the other being configured.
@@ -19,21 +19,21 @@ Distro roadmap: Phase 0 (this repo) → Phase 1 (both apt repos, live) → Phase
 
 ### Phase 0: per-metapackage script pattern
 
-Each `foundry-linux-setup/install-<name>.sh` is a thin Phase 0 wrapper that installs from whichever Phase 1 source carries that package. Most scripts are one or two `apt install` calls under the hood.
+Each `foundry-setup/install-<name>.sh` is a thin Phase 0 wrapper that installs from whichever Phase 1 source carries that package. Most scripts are one or two `apt install` calls under the hood.
 
 ```
-foundry-linux-setup/
+foundry-setup/
   lib.sh                                       shared helpers (colors, logging, run_sudo, apt_update)
   install.sh                                   orchestrator: distro check (26.04 only), role dispatch, summary
   setup-foundry-apt-source.sh                  wire apt.foundrylinux.org (key + sources.list.d)
   setup-worldfoundry-apt-source.sh             wire apt.worldfoundry.org (key + sources.list.d)
-  install-foundry-linux-engine-build-deps.sh   build-essential, cmake, libx11-dev, libgl/glu dev, gdb, xxd, python3, pkg-config, git, curl, wget, unzip (Ubuntu universe)
-  install-foundry-linux-blender.sh             apt install worldfoundry-blender (apt.worldfoundry.org → Blender + wf-blender + blender-asset-finder)
-  install-foundry-linux-retro-tools.sh         apt install foundry-linux-retro-tools (apt.foundrylinux.org → mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream, ghidra)
-  install-foundry-linux-android-development.sh apt install foundry-linux-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c; enables Ubuntu multiverse)
-  install-foundry-linux-ios-development.sh     apt install foundry-linux-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx install codemagic-cli-tools
+  install-foundry-engine-build-deps.sh   build-essential, cmake, libx11-dev, libgl/glu dev, gdb, xxd, python3, pkg-config, git, curl, wget, unzip (Ubuntu universe)
+  install-foundry-blender.sh             apt install worldfoundry-blender (apt.worldfoundry.org → Blender + wf-blender + blender-asset-finder)
+  install-foundry-retro-tools.sh         apt install foundry-retro-tools (apt.foundrylinux.org → mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream, ghidra)
+  install-foundry-android-development.sh apt install foundry-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c; enables Ubuntu multiverse)
+  install-foundry-ios-development.sh     apt install foundry-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx install codemagic-cli-tools
   install-task.sh                              go-task (Cloudsmith)
-  install-foundry-linux-dev.sh                 apt install worldfoundry-development (apt.worldfoundry.org umbrella — pulls cli + Blender + dev deps) + chains task + retro-tools
+  install-foundry-dev.sh                 apt install worldfoundry-development (apt.worldfoundry.org umbrella — pulls cli + Blender + dev deps) + chains task + retro-tools
 ```
 
 WF repo cloning, Rust install, and wftools build are **not** in these scripts — they live in `setup-wf-workspace.sh` (tracked in the WorldFoundry repo).
@@ -79,18 +79,18 @@ task build                       # build all .debs → dist/
 task verify                      # dpkg-deb --info each .deb
 task shellcheck                  # lint scripts/*.sh + packages/*/build.sh
 task publish-local               # build + aptly publish → ./public/ (smoke test)
-task apt-test                    # point apt at ./public/ and resolve foundry-linux-dev
+task apt-test                    # point apt at ./public/ and resolve foundry-dev
 
-# foundry-linux-setup
-bash foundry-linux-setup/install.sh --dry-run
-bash foundry-linux-setup/install.sh --role engine-dev --dry-run
-bash foundry-linux-setup/install-foundry-linux-retro-tools.sh --dry-run
-bash foundry-linux-setup/install-foundry-linux-retro-tools.sh --apt-only   # skip ~/opt/ source-builds
+# foundry-setup
+bash foundry-setup/install.sh --dry-run
+bash foundry-setup/install.sh --role engine-dev --dry-run
+bash foundry-setup/install-foundry-retro-tools.sh --dry-run
+bash foundry-setup/install-foundry-retro-tools.sh --apt-only   # skip ~/opt/ source-builds
 
 # Docker test harness (requires docker; Ubuntu 26.04 LTS is the only target)
-bash foundry-linux-setup/test/run-test.sh                  # dry-run
-bash foundry-linux-setup/test/run-test.sh --real           # full install (slow, needs network)
-bash foundry-linux-setup/test/test-retro-tools-e2e.sh      # fresh-VM retro-tools install + tool-invocation
+bash foundry-setup/test/run-test.sh                  # dry-run
+bash foundry-setup/test/run-test.sh --real           # full install (slow, needs network)
+bash foundry-setup/test/test-retro-tools-e2e.sh      # fresh-VM retro-tools install + tool-invocation
 ```
 
 To release Phase 1: `git tag v1.0.1 && git push origin v1.0.1` — the publish workflow builds, signs, and syncs to R2 automatically.
@@ -99,7 +99,7 @@ To release Phase 1: `git tag v1.0.1 && git push origin v1.0.1` — the publish w
 
 **Everything is scripted — no manual console steps.** All site and infrastructure setup (GitHub repos, Cloudflare DNS/R2, GPG keys) must be executed via scripts, CLI tools (`gh`, `curl`/`wrangler`), or Terraform. Never describe a step as "click X in the console" — translate it into the equivalent CLI command or script block. If a one-time action genuinely has no CLI path, document exactly why and what the minimum manual surface is.
 
-**Credentials and keys for automation only.** API tokens, access keys, and role ARNs are for non-interactive script/CI use. The private GPG signing key and R2 CI tokens go into GitHub Actions secrets (for CI use) and are backed up to the private `foundry-linux-secrets` R2 bucket (for disaster recovery) — the local copy is shredded immediately. No credentials live in local files, `.env`, or are typed interactively more than once. No AWS account or SSM is used by this project.
+**Credentials and keys for automation only.** API tokens, access keys, and role ARNs are for non-interactive script/CI use. The private GPG signing key and R2 CI tokens go into GitHub Actions secrets (for CI use) and are backed up to the private `foundry-secrets` R2 bucket (for disaster recovery) — the local copy is shredded immediately. No credentials live in local files, `.env`, or are typed interactively more than once. No AWS account or SSM is used by this project.
 
 **Scripts are the source of truth.** `foundry-apt/scripts/` and any future `scripts/setup-*.sh` files must be runnable end-to-end (idempotent) to recreate the full stack from a blank account. A step that cannot be reproduced from scripts is not done.
 

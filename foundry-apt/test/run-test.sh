@@ -5,7 +5,7 @@
 # Usage:
 #   bash test/run-test.sh                              # all packages, full install
 #   bash test/run-test.sh --download-only              # resolution check only
-#   bash test/run-test.sh --package foundry-linux-retro-tools
+#   bash test/run-test.sh --package foundry-retro-tools
 #
 # Base: ubuntu:26.04 (the only release we support).
 

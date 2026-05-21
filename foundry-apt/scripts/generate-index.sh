@@ -210,7 +210,7 @@ cat > "$OUT" <<HTML
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] ${SITE_URL} resolute main" \\
   | sudo tee /etc/apt/sources.list.d/foundry.list
 sudo apt-get update
-sudo apt-get install foundry-linux-retro-tools</pre>
+sudo apt-get install foundry-retro-tools</pre>
 
   <h2>GPG key</h2>
   <p><a href="/key.gpg">↓ key.gpg</a> &mdash; verify before trusting:

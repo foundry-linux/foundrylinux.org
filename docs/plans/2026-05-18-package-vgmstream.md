@@ -5,7 +5,7 @@
 
 ## Context
 
-vgmstream is the streamed-video-game-audio decoder in the Phase 0 retro-tools source-build sidecar set ([`foundry-linux-setup/install-foundry-linux-retro-tools.sh:162-169`](../../foundry-linux-setup/install-foundry-linux-retro-tools.sh)). Of the three source-built tools still needing to ship as `.deb`s (libvgm, vgmstream, ghidra) it's the meatiest of the two non-Ghidra ones: cmake-based, many optional codec dependencies (mpg123 / vorbis / ffmpeg / opus / speex), produces a CLI plus optional plugins.
+vgmstream is the streamed-video-game-audio decoder in the Phase 0 retro-tools source-build sidecar set ([`foundry-setup/install-foundry-retro-tools.sh:162-169`](../../foundry-setup/install-foundry-retro-tools.sh)). Of the three source-built tools still needing to ship as `.deb`s (libvgm, vgmstream, ghidra) it's the meatiest of the two non-Ghidra ones: cmake-based, many optional codec dependencies (mpg123 / vorbis / ffmpeg / opus / speex), produces a CLI plus optional plugins.
 
 **Universe check (skill Step 1, mandatory):** confirmed absent. `apt-cache policy vgmstream` and `apt-cache search vgmstream` on `ubuntu:26.04` both return empty. Not a duplicate.
 
@@ -46,9 +46,9 @@ vgmstream tags as `r<number>` (e.g. `r2083`) rather than `vN.N.N`. Affects `debi
 | `foundry-apt/packages/vgmstream/debian/patches/series` | **new** — empty |
 | `foundry-apt/packages/vgmstream/debian/man/vgmstream-cli.1` | **new** — hand-written man page from `vgmstream-cli --help` |
 | `foundry-apt/packages/vgmstream/debian/vgmstream.manpages` | **new** — lists `vgmstream-cli.1` |
-| `foundry-apt/packages/foundry-linux-retro-tools/debian/control` | **edit** — promote `vgmstream` from `Recommends:` → `Depends:`; bump `Version:` to `1.0.4` |
-| `foundry-apt/packages/foundry-linux-retro-tools/debian/changelog` | **edit** — new `1.0.4` entry (1.0.3 was libvgm promotion) |
-| `foundry-linux-setup/install-foundry-linux-retro-tools.sh` | **defer** — strip the source-build block once Phase 0 configures foundry-apt as a source (blocked) |
+| `foundry-apt/packages/foundry-retro-tools/debian/control` | **edit** — promote `vgmstream` from `Recommends:` → `Depends:`; bump `Version:` to `1.0.4` |
+| `foundry-apt/packages/foundry-retro-tools/debian/changelog` | **edit** — new `1.0.4` entry (1.0.3 was libvgm promotion) |
+| `foundry-setup/install-foundry-retro-tools.sh` | **defer** — strip the source-build block once Phase 0 configures foundry-apt as a source (blocked) |
 | `TODO.md` | **edit** — flip vgmstream item to `[x]` and move to Done |
 | `docs/plans/2026-05-18-package-vgmstream.md` | **new** — this file |
 
@@ -135,7 +135,7 @@ If vgmstream-cli links to libvgmstream as a static archive (the cmake default fo
 
     PASS
 
-7. **Metapackage rebuild.** `foundry-linux-retro-tools 1.0.4` — `vgmstream` promoted from `Recommends:` to `Depends:`; `ghidra` remains as sole `Recommends:`.
+7. **Metapackage rebuild.** `foundry-retro-tools 1.0.4` — `vgmstream` promoted from `Recommends:` to `Depends:`; `ghidra` remains as sole `Recommends:`.
 
     PASS
 
