@@ -142,9 +142,16 @@ tasks:
           printf "  %-30s  %d\n" "$SLUG" "$MED"
         done
 
-  site-build:
-    desc: SSR-render site/*.jsx → fully-static site/index.html (no React runtime)
+  packages-page:
+    desc: "Regenerate site/packages-data.json from live Packages.gz (~3 s, pure Node)"
     dir: "{{.ROOT_DIR}}"
+    cmds:
+      - bash scripts/build-packages-page.sh {{.CLI_ARGS}}
+
+  site-build:
+    desc: SSR-render site/*.jsx → fully-static site/index.html + site/packages.html (no React runtime)
+    dir: "{{.ROOT_DIR}}"
+    deps: [packages-page]
     cmds:
       - node scripts/ssr-render.js
 

@@ -1,0 +1,105 @@
+# data/upstream.yml — hand-curated upstream status for Foundry-built packages.
+#
+# The build-packages-data.js generator looks up every foundry-origin or
+# worldfoundry-origin package here. Ubuntu universe/multiverse packages are
+# auto-classified from `apt-cache policy` and don't need entries.
+#
+# status values (closed set — see docs/plans/2026-05-21-packages-page.md):
+#   vendored             — Foundry-built, not in Debian/Ubuntu, no ITP filed
+#   debian-itp           — open Debian Intent To Package bug; include `bug:`
+#   in-debian-unstable   — landed in Debian unstable, awaiting Ubuntu autosync
+#   n/a-firstparty       — our own software (worldfoundry-*, blender-asset-finder-*)
+#   n/a-proprietary      — non-free, not a candidate for upstreaming
+#
+# If a foundry-origin package is missing from this file, the generator
+# defaults to `vendored` and warns.
+
+# Foundry-built vendored upstreams (real upstreaming candidates)
+f9dasm:
+  status: vendored
+  note: "Small, self-contained, debhelper build, no patches — natural first ITP target."
+ghidra:
+  status: vendored
+  note: "Debian licensing review ongoing — NSA-origin code, no ITP yet."
+libvgm:
+  status: vendored
+  note: "Upstream has no tagged releases; pinned to a commit by sha256. ITP impractical until upstream stabilises."
+vgmstream:
+  status: vendored
+  note: "Tracks vgmstream rXXXX revisions; ITP after upstream stabilises a release cadence."
+
+# WorldFoundry first-party — not upstreaming candidates
+blender-asset-finder:
+  status: n/a-firstparty
+blender-asset-finder-cli:
+  status: n/a-firstparty
+worldfoundry:
+  status: n/a-firstparty
+worldfoundry-cli:
+  status: n/a-firstparty
+worldfoundry-blender:
+  status: n/a-firstparty
+worldfoundry-blender-addons:
+  status: n/a-firstparty
+worldfoundry-blender-editor-exporter:
+  status: n/a-firstparty
+worldfoundry-development:
+  status: n/a-firstparty
+cdpack:
+  status: n/a-firstparty
+iffcomp:
+  status: n/a-firstparty
+iffdump:
+  status: n/a-firstparty
+levcomp:
+  status: n/a-firstparty
+lvldump:
+  status: n/a-firstparty
+oaddump:
+  status: n/a-firstparty
+oas2oad:
+  status: n/a-firstparty
+prep:
+  status: n/a-firstparty
+textile:
+  status: n/a-firstparty
+
+# Foundry-built metapackages — not upstreaming candidates (Foundry-specific umbrellas)
+foundry-anvil:
+  status: n/a-firstparty
+foundry-sprite:
+  status: n/a-firstparty
+foundry-atelier:
+  status: n/a-firstparty
+foundry-retro-tools:
+  status: n/a-firstparty
+foundry-emulators:
+  status: n/a-firstparty
+foundry-emulators-computers:
+  status: n/a-firstparty
+foundry-emulators-consoles:
+  status: n/a-firstparty
+foundry-emulators-consoles-heavy:
+  status: n/a-firstparty
+foundry-emulators-vintage:
+  status: n/a-firstparty
+foundry-art:
+  status: n/a-firstparty
+foundry-pixel-art:
+  status: n/a-firstparty
+foundry-trackers:
+  status: n/a-firstparty
+foundry-daw:
+  status: n/a-firstparty
+foundry-image-cli:
+  status: n/a-firstparty
+foundry-game-frameworks:
+  status: n/a-firstparty
+foundry-game-reimplementations:
+  status: n/a-firstparty
+foundry-free-games:
+  status: n/a-firstparty
+foundry-android-development:
+  status: n/a-firstparty
+foundry-ios-development:
+  status: n/a-firstparty

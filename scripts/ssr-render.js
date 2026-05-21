@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Renders the React app to a fully-static site/index.html (no React runtime needed).
-// Run via: node scripts/ssr-render.js  (or: task site-build)
+// SSR-renders each entry in PAGES → a fully-static .html file (no React runtime).
+// Run via: node scripts/ssr-render.js  (or: task site-build).
+// See docs/plans/2026-05-21-packages-page.md §4.
 'use strict';
 
 const esbuild = require('esbuild');
@@ -9,51 +10,41 @@ const path = require('path');
 const os = require('os');
 
 const root = path.resolve(__dirname, '..');
-const bundle = path.join(os.tmpdir(), 'foundry-ssr.cjs');
-const entry = path.join(os.tmpdir(), 'foundry-ssr-entry.jsx');
 
-// Temp entry: import App + react-dom/server and export the rendered HTML string
-fs.writeFileSync(entry, [
-  `import { App } from '${path.join(root, 'site/app.jsx')}';`,
-  `import { renderToStaticMarkup } from 'react-dom/server';`,
-  `import { createElement } from 'react';`,
-  `export const html = renderToStaticMarkup(createElement(App));`,
-].join('\n'));
+// ─── PAGES table ─────────────────────────────────────────────────────────────
+const PAGES = [
+  {
+    entry: 'site/app.jsx',
+    exportName: 'App',
+    out: 'site/index.html',
+    title: 'foundrylinux.org · FOUNDRY LINUX',
+    description: 'Foundry Linux — a Linux distribution for game development, reverse engineering, and retro tooling. Curated packages and a devbox built on Ubuntu 26.04.',
+    extraBodyScripts: true, // copy-button + embers + scroll-shrink (home only)
+  },
+  {
+    entry: 'site/packages.jsx',
+    exportName: 'PackagesApp',
+    out: 'site/packages.html',
+    title: 'Packages · FOUNDRY LINUX',
+    description: 'Every package Foundry Linux installs on top of Kubuntu 26.04 — three nested editions, nine domain categories, six vendored standalones.',
+    extraBodyScripts: false,
+  },
+];
 
-esbuild.buildSync({
-  entryPoints: [entry],
-  bundle: true,
-  platform: 'node',
-  format: 'cjs',
-  jsx: 'automatic',
-  outfile: bundle,
-  // Tell esbuild where to find react/react-dom
-  nodePaths: [path.join(root, 'node_modules')],
-});
-
-delete require.cache[bundle];
-const { html: body } = require(bundle);
-
-const page = `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>foundrylinux.org · FOUNDRY LINUX</title>
-  <meta name="description" content="Foundry Linux — a Linux distribution for game development, reverse engineering, and retro tooling. Curated packages and a devbox built on Ubuntu 26.04." />
-  <link rel="preload" href="fonts/big-shoulders-display-900-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body data-bg="pure">
-  <div id="root">${body}</div>
+// ─── HTML wrapper ────────────────────────────────────────────────────────────
+function homePageScripts() {
+  return `
   <script>
     /* Copy button — replaces the React useState handler */
-    document.querySelector('.copy').addEventListener('click', function() {
-      navigator.clipboard?.writeText('sudo apt install foundry-anvil');
-      this.lastChild.textContent = 'COPIED';
-      var btn = this;
-      setTimeout(function() { btn.lastChild.textContent = 'COPY'; }, 1400);
-    });
+    var _copyBtn = document.querySelector('.copy');
+    if (_copyBtn) {
+      _copyBtn.addEventListener('click', function() {
+        navigator.clipboard?.writeText('sudo apt install foundry-anvil');
+        this.lastChild.textContent = 'COPIED';
+        var btn = this;
+        setTimeout(function() { btn.lastChild.textContent = 'COPY'; }, 1400);
+      });
+    }
   </script>
   <script src="embers.js"></script>
   <script>
@@ -75,10 +66,62 @@ const page = `<!doctype html>
       window.addEventListener("scroll", _hsTick, { passive: true });
       window.addEventListener("resize", _hsTick, { passive: true });
     }
-  </script>
+  </script>`;
+}
+
+function wrap(body, { title, description, extraBodyScripts }) {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${title}</title>
+  <meta name="description" content="${description}" />
+  <link rel="preload" href="fonts/big-shoulders-display-900-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-bg="pure">
+  <div id="root">${body}</div>
+${extraBodyScripts ? homePageScripts() : ''}
 </body>
 </html>`;
+}
 
-fs.writeFileSync(path.join(root, 'site/index.html'), page);
-const kb = Math.round(body.length / 1024);
-console.log(`✓ site/index.html rendered (${kb} KB of markup, no React runtime)`);
+// ─── per-page renderer ───────────────────────────────────────────────────────
+function renderPage(page) {
+  const entryPath = path.join(root, page.entry);
+  const bundle = path.join(os.tmpdir(), `foundry-ssr-${page.exportName}.cjs`);
+  const tmpEntry = path.join(os.tmpdir(), `foundry-ssr-entry-${page.exportName}.jsx`);
+
+  fs.writeFileSync(tmpEntry, [
+    `import { ${page.exportName} } from '${entryPath}';`,
+    `import { renderToStaticMarkup } from 'react-dom/server';`,
+    `import { createElement } from 'react';`,
+    `export const html = renderToStaticMarkup(createElement(${page.exportName}));`,
+  ].join('\n'));
+
+  esbuild.buildSync({
+    entryPoints: [tmpEntry],
+    bundle: true,
+    platform: 'node',
+    format: 'cjs',
+    jsx: 'automatic',
+    loader: { '.json': 'json' },
+    outfile: bundle,
+    nodePaths: [path.join(root, 'node_modules')],
+  });
+
+  delete require.cache[bundle];
+  const { html: body } = require(bundle);
+
+  const fullHtml = wrap(body, page);
+  const outPath = path.join(root, page.out);
+  fs.writeFileSync(outPath, fullHtml);
+  const kb = Math.round(body.length / 1024);
+  console.log(`✓ ${page.out.padEnd(20)} rendered (${kb} KB of markup, no React runtime)`);
+}
+
+// ─── main ────────────────────────────────────────────────────────────────────
+for (const page of PAGES) {
+  renderPage(page);
+}

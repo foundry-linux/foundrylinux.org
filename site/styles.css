@@ -1022,3 +1022,280 @@ body[data-bg="textured"] {
   margin-right: 14px;
   vertical-align: 6px;
 }
+
+/* ============================ FORGE GRID ============================
+   Six category headliner cards. Reuses the kit-* visual language but with
+   anchor wrappers so each card links to /packages#<slug>. */
+
+.forge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--hairline);
+  border-left: 1px solid var(--hairline);
+}
+@media (max-width: 900px) { .forge-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .forge-grid { grid-template-columns: repeat(1, 1fr); } }
+
+.forge-cell {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  padding: 36px 32px 40px;
+  position: relative;
+  transition: background 0.2s;
+  min-height: 280px;
+}
+.forge-cell:hover {
+  background: radial-gradient(circle at 40% 30%, var(--accent-soft) 0%, transparent 50%);
+}
+.forge-cell:hover .forge-icon { color: var(--accent); }
+.forge-cell:hover .forge-icon svg { filter: drop-shadow(0 0 12px var(--accent-glow)); }
+
+.forge-icon { width: 64px; height: 64px; color: var(--ink); margin-bottom: 32px; transition: color 0.2s; }
+.forge-icon svg { width: 100%; height: 100%; transition: filter 0.2s; }
+
+.forge-name {
+  font-family: var(--font-wordmark);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+  color: var(--ink);
+  line-height: 1.05;
+}
+.forge-role {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: block;
+}
+.forge-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.55; margin: 0 0 20px; flex: 1; }
+.forge-meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+}
+.forge-pkg { color: var(--ink); font-weight: 600; }
+.forge-stats { color: var(--ink-faint); }
+
+.forge-footstrip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 24px;
+  margin-top: 18px;
+  border-left: 1px solid var(--hairline);
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+}
+.forge-footstrip b { color: var(--accent); font-weight: 600; }
+.forge-catalogue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--accent);
+  font-weight: 600;
+}
+.forge-catalogue:hover { text-decoration: underline; }
+
+/* ============================ /packages PAGE ============================ */
+
+.hero-pkg { padding: 80px 0 40px; }
+.wordmark-pkg { font-size: clamp(64px, 12vw, 140px); margin: 12px 0 18px; }
+
+.pkg-cat .section-head { margin-bottom: 20px; }
+
+.pkg-cat-head {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--hairline);
+}
+.pkg-cat-icon { color: var(--accent); flex-shrink: 0; }
+.pkg-cat-icon svg { width: 56px; height: 56px; }
+.pkg-cat-headtext { flex: 1; }
+.pkg-cat-headtext .section-title { font-size: clamp(36px, 5vw, 56px); margin: 4px 0 10px; }
+.pkg-cat-blurb { color: var(--ink-soft); margin: 0 0 14px; max-width: 720px; line-height: 1.55; }
+.pkg-cat-meta {
+  display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint);
+}
+.pkg-cat-meta code {
+  background: var(--surface-soft, rgba(255,255,255,0.04));
+  padding: 4px 10px; border-radius: 4px; color: var(--ink);
+}
+
+.pkg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.pkg-table th, .pkg-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: top;
+}
+.pkg-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+  color: var(--ink-faint);
+  border-bottom: 2px solid var(--hairline);
+}
+.pkg-table td.num, .pkg-table th.num { text-align: right; white-space: nowrap; }
+.pkg-table .pkg-name code {
+  color: var(--ink);
+  background: none;
+  font-weight: 600;
+}
+.pkg-table .pkg-summary {
+  color: var(--ink-soft);
+  font-family: var(--font-body, system-ui);
+  font-size: 13px;
+}
+
+.pkg-origin-badge, .pkg-upstream-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--hairline);
+  white-space: nowrap;
+}
+.pkg-origin-badge[data-origin="foundry"]            { color: var(--accent); border-color: var(--accent); }
+.pkg-origin-badge[data-origin="worldfoundry"]       { color: #8ab4f8; border-color: #8ab4f8; }
+.pkg-origin-badge[data-origin="ubuntu-universe"]    { color: #e2a857; border-color: #e2a857; }
+.pkg-origin-badge[data-origin="ubuntu-multiverse"]  { color: #d97757; border-color: #d97757; }
+.pkg-origin-badge[data-origin="ubuntu-main"]        { color: #7ec8a0; border-color: #7ec8a0; }
+
+.pkg-upstream-badge[data-upstream="vendored"]              { color: var(--accent); border-color: var(--accent); }
+.pkg-upstream-badge[data-upstream="debian-itp"]            { color: #d97757; border-color: #d97757; }
+.pkg-upstream-badge[data-upstream^="in-ubuntu"]            { color: var(--ink-faint); }
+.pkg-upstream-badge[data-upstream="n/a-firstparty"]        { color: #8ab4f8; border-color: #8ab4f8; }
+
+.vendored-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.vendored-list li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+.vendored-list code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.vendored-pulled-by {
+  color: var(--ink-faint);
+  font-size: 12px;
+  margin-right: auto;
+}
+.vendored-pulled-by code {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-faint);
+}
+
+.upstreaming-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+@media (max-width: 900px) { .upstreaming-grid { grid-template-columns: 1fr; } }
+.upstreaming-block h3 {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  margin: 0 0 12px;
+}
+.upstreaming-block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.upstreaming-block code { color: var(--ink); }
+.upstreaming-block em { color: var(--ink-soft); font-style: italic; }
+.dim { color: var(--ink-faint); }
+
+.alignment-list { display: grid; grid-template-columns: 200px 1fr; gap: 14px 24px; }
+.alignment-list dt {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+}
+.alignment-list dd {
+  margin: 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.alignment-list code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  color: var(--ink);
+}
+@media (max-width: 700px) {
+  .alignment-list { grid-template-columns: 1fr; gap: 6px 0; }
+}
+
+.edition-install {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--surface-soft, rgba(255,255,255,0.04));
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin: 12px 0 14px;
+  color: var(--ink);
+  overflow-x: auto;
+}

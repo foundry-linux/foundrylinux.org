@@ -1,10 +1,31 @@
-// Page sections — Hero, Kit, Install, Editions, Footer
+// Page sections — Hero, Forge, Install, Editions, Footer
 import React from 'react';
 import {
   FoundryMark, GearStackIcon, BigAnvilLogo, CopyIcon, DownloadIcon, ArrowRightIcon,
-  WorldFoundryIcon, BlenderIcon, MameIcon, F9dasmIcon, AssemblerIcon, LibvgmIcon, VgmstreamIcon,
+  WorldFoundryIcon, BlenderIcon, MameIcon, AssemblerIcon, LibvgmIcon, VgmstreamIcon,
   AnvilEditionIcon, SpriteIcon, GamepadIcon, SparksIcon,
 } from './icons.jsx';
+import packagesData from './packages-data.json';
+
+const ICONS = {
+  WorldFoundryIcon, BlenderIcon, MameIcon, AssemblerIcon,
+  LibvgmIcon, VgmstreamIcon, GamepadIcon, SpriteIcon, SparksIcon,
+};
+
+function formatSize(kb) {
+  if (!kb || kb <= 0) return '—';
+  if (kb >= 1024 * 1024) return (kb / 1024 / 1024).toFixed(1) + ' GiB';
+  if (kb >= 1024)        return Math.round(kb / 1024) + ' MiB';
+  return kb + ' KiB';
+}
+
+function findCategory(slug) {
+  return packagesData.categories.find(c => c.slug === slug);
+}
+
+function findEdition(slug) {
+  return packagesData.editions.find(e => e.slug === slug);
+}
 
 function Topbar() {
   return (
@@ -16,9 +37,10 @@ function Topbar() {
             <b>foundrylinux.org</b>
           </div>
           <nav className="topbar-nav">
-            <a href="#kit">The Kit</a>
+            <a href="#forge">The Forge</a>
             <a href="#install">Install</a>
             <a href="#editions">Editions</a>
+            <a href="/packages">Packages</a>
             <a href="#docs">Docs</a>
           </nav>
           <div className="topbar-version">
@@ -86,112 +108,80 @@ function Hero() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// The Kit — installed tools
+// The Forge — six category headliner cards, auto-driven from packages-data.json
+//
+// Card slots are hand-curated (which category appears, in what order, with
+// what icon). The numbers (package count, install command, headline size)
+// are looked up from packages-data.json at SSR time so they never diverge
+// from the live apt indexes.
 
-const KIT = [
-  {
-    icon: WorldFoundryIcon,
-    name: "World Foundry GDK",
-    role: "Game Development Kit",
-    desc: "Cross-platform engine and scripting toolchain. Author once; ship to 6502, 68k, ARM, x86 — and the modern desktop.",
-    pkg: "world-foundry",
-    version: "4.2.1",
-  },
-  {
-    icon: BlenderIcon,
-    name: "Blender",
-    role: "3D Modeling · Animation",
-    desc: "Full pipeline preconfigured with Wacom drivers, EEVEE Next, and the Foundry preset library for game-asset workflows.",
-    pkg: "blender-foundry",
-    version: "4.3",
-  },
-  {
-    icon: MameIcon,
-    name: "MAME",
-    role: "Arcade Platform",
-    desc: "Multiple Arcade Machine Emulator — reference hardware, debugger, and dev rig for nearly every arcade board ever made.",
-    pkg: "mame",
-    version: "0.272",
-  },
-  {
-    icon: F9dasmIcon,
-    name: "f9dasm",
-    role: "Disassembler",
-    desc: "Free 6800 / 6809 / 6309 / 68HC11 disassembler. Annotated output, symbol tables, and Motorola S-record support.",
-    pkg: "f9dasm",
-    version: "2.94",
-  },
-  {
-    icon: AssemblerIcon,
-    name: "65ax",
-    role: "Assembler Suite",
-    desc: "Cross-assembler for 6502, 65C02, 65816, and the W65C02 family. Macros, conditional assembly, listing output.",
-    pkg: "65ax",
-    version: "1.8.0",
-  },
-  {
-    icon: LibvgmIcon,
-    name: "libvgm",
-    role: "Audio Library",
-    desc: "Video Game Music library — emulators for YM2612, SN76489, NES APU, SID, and dozens more vintage sound chips.",
-    pkg: "libvgm",
-    version: "0.5.2",
-  },
-  {
-    icon: VgmstreamIcon,
-    name: "vgmstream",
-    role: "Audio Extractor",
-    desc: "Plays and extracts streamed audio from hundreds of game container formats. Plugin support for foobar, Audacious, deadbeef.",
-    pkg: "vgmstream",
-    version: "r1980",
-  },
+const FORGE_CARDS = [
+  // Top row — creative loops
+  { categorySlug: 'worldfoundry-gdk' },
+  { categorySlug: 'blender' },
+  { categorySlug: 'retro-tools' },
+  // Bottom row — rest of catalogue
+  { categorySlug: 'emulators' },
+  { categorySlug: 'audio-production' },
+  { categorySlug: 'games' },
 ];
 
-function Kit() {
+function Forge() {
+  const totals = packagesData.upstream_summary;
+  const inUniverse = (totals['in-ubuntu-universe'] || 0) + (totals['in-ubuntu-multiverse'] || 0);
+  const openItps = totals['debian-itp'] || 0;
+  const vendored = totals['vendored'] || 0;
+
   return (
-    <section className="section" id="kit">
+    <section className="section" id="forge">
       <div className="shell">
         <div className="section-head">
           <div>
-            <span className="section-num">№ 01 · The Kit</span>
-            <h2 className="section-title">Struck into the iron.</h2>
+            <span className="section-num">№ 01 · The Forge</span>
+            <h2 className="section-title">Six tongs<br />on the rack.</h2>
           </div>
           <p className="section-blurb">
-            Every Foundry install ships with the working tools of game
-            development and digital art — preconfigured, signed, and
-            updated through the same <code>apt</code> channels as the OS.
+            We package the retro, game-dev, reverse-engineering, and
+            authoring tools Ubuntu doesn&rsquo;t ship — and push the ones
+            worth shipping upstream into Debian. Built for Ubuntu&nbsp;26.04.
+            Resigned, rebuilt, and re-tested on every push.
           </p>
         </div>
 
-        <div className="kit-grid">
-          {KIT.map((k) => {
-            const Icon = k.icon;
+        <div className="forge-grid">
+          {FORGE_CARDS.map(({ categorySlug }) => {
+            const cat = findCategory(categorySlug);
+            if (!cat) {
+              throw new Error(`Forge card references unknown category slug: ${categorySlug}`);
+            }
+            const Icon = ICONS[cat.icon] || SparksIcon;
+            const installCmd = `sudo apt install ${cat.metapackages[0]}`;
             return (
-              <div className="kit-cell" key={k.pkg}>
-                <div className="kit-icon"><Icon size={64} /></div>
-                <span className="kit-role">{k.role}</span>
-                <h3 className="kit-name">{k.name}</h3>
-                <p className="kit-desc">{k.desc}</p>
-                <div className="kit-meta">
-                  <span>{k.pkg}</span>
-                  <span>v{k.version}</span>
+              <a className="forge-cell" key={categorySlug} href={`/packages#${categorySlug}`}>
+                <div className="forge-icon"><Icon size={64} /></div>
+                <span className="forge-role">{cat.role}</span>
+                <h3 className="forge-name">{cat.title}</h3>
+                <p className="forge-desc">{cat.blurb}</p>
+                <div className="forge-meta">
+                  <span className="forge-pkg">{installCmd}</span>
+                  <span className="forge-stats">
+                    {cat.package_count}&nbsp;pkgs · {formatSize(cat.installed_size_kb)}
+                  </span>
                 </div>
-              </div>
+              </a>
             );
           })}
-          <div className="kit-cell" style={{ display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-            <div>
-              <div style={{ opacity: 0.5, marginBottom: 18 }}><SparksIcon size={48} /></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--ink-soft)", marginBottom: 10 }}>
-                + 1,400 more
-              </div>
-              <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0 }}>
-                Krita, Aseprite, Godot, Tiled,<br />
-                ScummVM, OpenMSX, OpenTTD,<br />
-                Audacity, ffmpeg, ImageMagick...
-              </p>
-            </div>
-          </div>
+        </div>
+
+        <div className="forge-footstrip">
+          <span>
+            <b>{vendored}</b> vendored &nbsp;·&nbsp;
+            <b>{openItps}</b> open Debian&nbsp;ITP{openItps === 1 ? '' : 's'} &nbsp;·&nbsp;
+            <b>{inUniverse}</b> already in Ubuntu universe/multiverse
+          </span>
+          <a className="forge-catalogue" href="/packages">
+            Browse the full catalogue<ArrowRightIcon />
+          </a>
         </div>
       </div>
     </section>
@@ -270,6 +260,14 @@ function Install() {
 // Editions
 
 function Editions() {
+  const anvil   = findEdition('anvil');
+  const sprite  = findEdition('sprite');
+  const atelier = findEdition('atelier');
+  const editionCards = [
+    { ed: anvil,   icon: <AnvilEditionIcon /> },
+    { ed: sprite,  icon: <SpriteIcon /> },
+    { ed: atelier, icon: <GamepadIcon /> },
+  ];
   return (
     <section className="section" id="editions">
       <div className="shell">
@@ -279,53 +277,25 @@ function Editions() {
             <h2 className="section-title">Three<br />marks.</h2>
           </div>
           <p className="section-blurb">
-            One distribution, three casts. Same kernel, same archive — different
-            sets of tools struck in from the first boot.
+            One distribution, three nested casts. Atelier pulls in Sprite,
+            which pulls in Anvil. Pick the largest one whose tools you
+            actually want struck in from first boot.
           </p>
         </div>
 
         <div className="editions">
-          <div className="edition" data-flavor="anvil">
-            <div className="edition-icon"><AnvilEditionIcon /></div>
-            <span className="edition-tag">Edition · 26.04</span>
-            <h3 className="edition-name">Anvil</h3>
-            <p className="edition-desc">
-              The full kit. World Foundry GDK, Blender, MAME, the assembler
-              suite, the audio libraries — everything ready on first boot.
-            </p>
-            <div className="edition-pkg">
-              <span>foundry-anvil</span>
-              <span className="size">4.8 GB</span>
+          {editionCards.map(({ ed, icon }) => (
+            <div className="edition" key={ed.slug} data-flavor={ed.slug}>
+              <div className="edition-icon">{icon}</div>
+              <span className="edition-tag">Edition · 26.04</span>
+              <h3 className="edition-name">{ed.title}</h3>
+              <p className="edition-desc">{ed.blurb}</p>
+              <div className="edition-pkg">
+                <span>{ed.metapackage}</span>
+                <span className="size">{ed.package_count}&nbsp;pkgs · {formatSize(ed.installed_size_kb)}</span>
+              </div>
             </div>
-          </div>
-
-          <div className="edition" data-flavor="sprite">
-            <div className="edition-icon"><SpriteIcon /></div>
-            <span className="edition-tag">Edition · 26.04</span>
-            <h3 className="edition-name">Sprite</h3>
-            <p className="edition-desc">
-              Retro-first. 65ax, f9dasm, libvgm, vgmstream, MAME, Aseprite,
-              Tiled, ScummVM. For the 8-bit and 16-bit homebrew scene.
-            </p>
-            <div className="edition-pkg">
-              <span>foundry-sprite</span>
-              <span className="size">2.6 GB</span>
-            </div>
-          </div>
-
-          <div className="edition" data-flavor="atelier">
-            <div className="edition-icon"><GamepadIcon /></div>
-            <span className="edition-tag">Edition · 26.04</span>
-            <h3 className="edition-name">Atelier</h3>
-            <p className="edition-desc">
-              Artist-leaning. Blender, Krita, GIMP, Inkscape, Natron, OpenToonz,
-              Wacom tuning, color-managed pipeline. Light on engines.
-            </p>
-            <div className="edition-pkg">
-              <span>foundry-atelier</span>
-              <span className="size">3.4 GB</span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
@@ -344,7 +314,7 @@ function Foot() {
         </div>
         <nav className="foot-links">
           <a href="#docs">Docs</a>
-          <a href="#packages">Packages</a>
+          <a href="/packages">Packages</a>
           <a href="#mirrors">Mirrors</a>
           <a href="#irc">IRC</a>
           <a href="#git">Git</a>
@@ -359,4 +329,4 @@ function Foot() {
   );
 }
 
-export { Topbar, Hero, Kit, Install, Editions, Foot };
+export { Topbar, Hero, Forge, Install, Editions, Foot, formatSize, findCategory, findEdition, ICONS };

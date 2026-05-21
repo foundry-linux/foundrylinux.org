@@ -1,0 +1,125 @@
+{
+  "_comment": "Hand-curated category schema driving /packages and the home Forge. See docs/plans/2026-05-21-packages-page.md §2. Edit this; the generator never writes here.",
+
+  "editions": [
+    {
+      "slug": "anvil",
+      "title": "Anvil",
+      "blurb": "Base edition — full WorldFoundry stack, retro toolkit, light emulators, game frameworks, image tools. The Distrobox devbox image installs this and nothing else.",
+      "install_command": "sudo apt install foundry-anvil",
+      "metapackage": "foundry-anvil"
+    },
+    {
+      "slug": "sprite",
+      "title": "Sprite",
+      "blurb": "Anvil + heavy graphics and audio production: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint, the DAW stack, and trackers.",
+      "install_command": "sudo apt install foundry-sprite",
+      "metapackage": "foundry-sprite"
+    },
+    {
+      "slug": "atelier",
+      "title": "Atelier",
+      "blurb": "Sprite + everything else: ROM-bundled vintage emulators, heavy console emulators, FOSS engine reimplementations, free games, mobile development, cross-repo dev deps. Around 10 GB on top of bare Ubuntu.",
+      "install_command": "sudo apt install foundry-atelier",
+      "metapackage": "foundry-atelier"
+    }
+  ],
+
+  "categories": [
+    {
+      "slug": "worldfoundry-gdk",
+      "title": "World Foundry GDK",
+      "role": "Game Development Kit",
+      "blurb": "Cross-platform engine and 10 CLI authoring tools — cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, blender-asset-finder-cli. Plus the engine build-deps (build-essential, cmake, libx11-dev, libgl) via worldfoundry-development.",
+      "icon": "WorldFoundryIcon",
+      "metapackages": ["worldfoundry", "worldfoundry-cli", "worldfoundry-development"],
+      "in_edition_tier": "anvil"
+    },
+    {
+      "slug": "blender",
+      "title": "Blender",
+      "role": "3D · Animation · WF",
+      "blurb": "Blender preconfigured with the WorldFoundry add-ons (editor exporter + level importer/exporter) and the blender-asset-finder.",
+      "icon": "BlenderIcon",
+      "metapackages": ["worldfoundry-blender-addons"],
+      "in_edition_tier": "anvil"
+    },
+    {
+      "slug": "retro-tools",
+      "title": "Retro toolkit",
+      "role": "Disassembly · RE · audio",
+      "blurb": "Retro-porting and reverse-engineering toolchain. MAME, Ghidra, radare2, binwalk, and the 6502 / Z80 / m68k / 6800-family assemblers and disassemblers — the bench for getting old code running again.",
+      "icon": "AssemblerIcon",
+      "metapackages": ["foundry-retro-tools"],
+      "in_edition_tier": "anvil"
+    },
+    {
+      "slug": "emulators",
+      "title": "Emulators",
+      "role": "Arcade · console · vintage",
+      "blurb": "MAME plus a four-way split — light console (mednafen, fceux, stella), heavy console (dolphin-emu, pcsx2, yuzu, retroarch), vintage home computers (dosbox-x, hatari, fs-uae, openmsx), and multiverse vintage (vice, atari800).",
+      "icon": "MameIcon",
+      "metapackages": ["foundry-emulators", "foundry-emulators-computers", "foundry-emulators-consoles", "foundry-emulators-consoles-heavy", "foundry-emulators-vintage"],
+      "in_edition_tier": "spans"
+    },
+    {
+      "slug": "game-frameworks",
+      "title": "Game frameworks",
+      "role": "Engines · SDKs · shaders",
+      "blurb": "2D/3D game-dev frameworks, headers, and shader tools — Tiled, SDL2/3, SFML, Allegro5, libtcod, glslang, spirv-cross, spirv-tools.",
+      "icon": "GamepadIcon",
+      "metapackages": ["foundry-game-frameworks"],
+      "in_edition_tier": "anvil"
+    },
+    {
+      "slug": "image-tools",
+      "title": "Image tools",
+      "role": "Paint · pixel · CLI",
+      "blurb": "Raster and vector paint plus pixel-art suites: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint. Plus the ImageMagick / GraphicsMagick CLIs in Anvil.",
+      "icon": "SparksIcon",
+      "metapackages": ["foundry-art", "foundry-pixel-art", "foundry-image-cli"],
+      "in_edition_tier": "sprite"
+    },
+    {
+      "slug": "audio-production",
+      "title": "Audio & trackers",
+      "role": "DAW · trackers · chiptune",
+      "blurb": "Audio production stack — Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx — and the tracker suite (MilkyTracker, Schism, Furnace, openmpt123).",
+      "icon": "LibvgmIcon",
+      "metapackages": ["foundry-daw", "foundry-trackers"],
+      "in_edition_tier": "sprite"
+    },
+    {
+      "slug": "games",
+      "title": "Games & reimplementations",
+      "role": "FOSS engines · free games",
+      "blurb": "Free games (0 A.D., SuperTuxKart, Widelands, Warzone 2100, OpenTTD, Freeciv, Freedoom, Hedgewars) and FOSS engine reimplementations (VCMI, OpenRCT2, Fheroes2, Exult, Sauerbraten — bring your own data).",
+      "icon": "SpriteIcon",
+      "metapackages": ["foundry-free-games", "foundry-game-reimplementations"],
+      "in_edition_tier": "atelier"
+    },
+    {
+      "slug": "mobile-dev",
+      "title": "Mobile development",
+      "role": "Android · iOS",
+      "blurb": "Android (OpenJDK 17, adb, NDK r26c) and Linux-side iOS tooling (libimobiledevice, ideviceinstaller, usbmuxd, ifuse).",
+      "icon": "VgmstreamIcon",
+      "metapackages": ["foundry-android-development", "foundry-ios-development"],
+      "in_edition_tier": "atelier"
+    }
+  ],
+
+  "out_of_catalogue": [],
+
+  "_forge_home_page_layout": {
+    "_comment": "Six cards on the home page, in 3×2 grid. Each card resolves to a `category_slug` (above) at SSR time, pulling its install_command, package count, and headline size from packages-data.json. The card copy fields (title, role, icon) are duplicated from the category for clarity — if they diverge from the category, SSR uses the category as source of truth and warns.",
+    "cards": [
+      { "category_slug": "worldfoundry-gdk", "row": 1 },
+      { "category_slug": "blender",          "row": 1 },
+      { "category_slug": "retro-tools",      "row": 1 },
+      { "category_slug": "emulators",        "row": 2 },
+      { "category_slug": "audio-production", "row": 2 },
+      { "category_slug": "games",            "row": 2 }
+    ]
+  }
+}
