@@ -138,7 +138,7 @@ function Forge() {
         <div className="section-head">
           <div>
             <span className="section-num">№ 01 · The Forge</span>
-            <h2 className="section-title">Six tongs<br />on the rack.</h2>
+            <h2 className="section-title">Struck into the iron.</h2>
           </div>
           <p className="section-blurb">
             We package the retro, game-dev, reverse-engineering, and
