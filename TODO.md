@@ -17,6 +17,7 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 
 ### Site
 
+- [ ] **`/packages` page + home Forge reshape** ([plan](docs/plans/2026-05-21-packages-page.md)) — replace stale `Kit` grid (f9dasm/65ax/libvgm/vgmstream tool cards) with a 6-card `Forge` headlining the actual categories; add generated `/packages` page driven by `data/categories.json` + `data/upstream.yml` + live Packages.gz from both apt repos. Local-only; CI triggers deferred to follow-up.
 - [ ] **Flesh out foundrylinux.org** — Claude Design landing page is live (v0.2.x); content passes as a real landing page but the design is still iterating. `tweaks-panel.jsx` still present — remove once design is finalised.
 
 ### Navbar
