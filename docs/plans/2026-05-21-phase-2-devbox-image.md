@@ -13,7 +13,7 @@
   `foundry-retro-tools` (transitively brings the standalone-binary packages `f9dasm`, `ghidra`, `libvgm`, `vgmstream` plus Ubuntu's `mame`, `mame-tools`, `dasm`, `cc65`, `z80dasm`, `z80asm`, `radare2`, `binwalk`, `sox`, `binutils-m68k-linux-gnu`, `xa65`). Excluded: `foundry-android-development`, `foundry-ios-development`.
 
   **From `apt.worldfoundry.org`:**
-  `worldfoundry`, `worldfoundry-cli`, `worldfoundry-blender` (transitively brings the 10 WF CLIs, `wf-blender`, `blender-asset-finder`, `blender-asset-finder-cli`, and the regular Ubuntu `blender` package). Excluded: `worldfoundry-development`.
+  `worldfoundry`, `worldfoundry-cli`, `worldfoundry-blender-addons` (transitively brings the 10 WF CLIs, `worldfoundry-blender-editor-exporter`, `blender-asset-finder`, `blender-asset-finder-cli`, and the regular Ubuntu `blender` package). Excluded: `worldfoundry-development`.
 
   **From `apt.foundrylinux.org` — metapackages to author this round (NEW):**
 
@@ -47,7 +47,7 @@
 
   The Dockerfile handles all three in Layer 1 before any `apt install`. On bare metal, the corresponding `foundry-setup/install-foundry-<edition>.sh` script does the same idempotent source-wiring up front. Phase 0 owns "make apt able to resolve our Depends"; Phase 1 metapackages get to declare Depends naively, without postinst hacks or maintainer-script source manipulation. **Add idempotent helpers to `foundry-setup/lib.sh` — `enable_multiverse()` and `setup_worldfoundry_source()` — so every new install script is a one-liner.**
 
-  **Explicit:** `blender` itself (pulled transitively via `worldfoundry-blender`, but listed for visibility / manual-installed marker). Ubuntu 26.04 universe ships **Blender 5.0.1+dfsg-1ubuntu1**, not 4.2 — `worldfoundry-blender`'s `Depends: blender (>= 4.2.0)` is satisfied. The `wf-blender` and `blender-asset-finder` add-ons were originally written for 4.2's Python API; 5.0 compatibility is tracked in WorldFoundry's TODO ("Verify wf-blender + blender-asset-finder on Blender 5.0.1") and is a runtime concern, not a packaging blocker.
+  **Explicit:** `blender` itself (pulled transitively via `worldfoundry-blender-addons`, but listed for visibility / manual-installed marker). Ubuntu 26.04 universe ships **Blender 5.0.1+dfsg-1ubuntu1**, not 4.2 — `worldfoundry-blender-addons`'s `Depends: blender (>= 4.2.0)` is satisfied. The `worldfoundry-blender-editor-exporter` and `blender-asset-finder` add-ons were originally written for 4.2's Python API; 5.0 compatibility is tracked in WorldFoundry's TODO ("Verify worldfoundry-blender-editor-exporter + blender-asset-finder on Blender 5.0.1") and is a runtime concern, not a packaging blocker.
 
   **From Cloudsmith:** `task`.
 
@@ -75,9 +75,9 @@
 ghcr.io/foundry-linux/devbox:26.04
 ────────────────────────────────────────────────────────────────
 ubuntu:26.04 base                                       250 MB
-worldfoundry  +  worldfoundry-cli  +  worldfoundry-blender
+worldfoundry  +  worldfoundry-cli  +  worldfoundry-blender-addons
   ├─ blender 4.2+ (regular Ubuntu universe pkg)         555 MB
-  ├─ wf-blender add-on + blender-asset-finder add-on      1 MB
+  ├─ worldfoundry-blender-editor-exporter add-on + blender-asset-finder add-on      1 MB
   └─ 10 WF CLIs (cdpack, iffcomp, levcomp, …)             4 MB
 foundry-retro-tools
   ├─ ghidra + openjdk-21-jdk                          1.40 GB
@@ -181,10 +181,10 @@ RUN apt-get update \
 #     │                                 liballegro5-dev libtcod-dev glslang-tools spirv-cross spirv-tools
 #     ├── foundry-image-cli           = imagemagick graphicsmagick
 #     ├── task                          (resolved directly from the Cloudsmith repo configured in Layer 1)
-#     ├── worldfoundry [cross-repo]   = worldfoundry-cli + worldfoundry-blender
+#     ├── worldfoundry [cross-repo]   = worldfoundry-cli + worldfoundry-blender-addons
 #     │     ├── worldfoundry-cli      = cdpack iffcomp iffdump levcomp lvldump oaddump
 #     │     │                           oas2oad textile blender-asset-finder-cli prep
-#     │     └── worldfoundry-blender  = wf-blender + blender-asset-finder + blender (5.0.1)
+#     │     └── worldfoundry-blender-addons  = worldfoundry-blender-editor-exporter + blender-asset-finder + blender (5.0.1)
 #     └── sudo libvte-2.91-0 bash-completion man-db   (distrobox conveniences)
 RUN apt-get install -y --no-install-recommends \
         foundry-anvil \
@@ -438,9 +438,9 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
    graph TD
      WF[worldfoundry<br/>**in devbox image**]
      WF --> WFCLI[worldfoundry-cli<br/>**in devbox image**]
-     WF --> WFB[worldfoundry-blender<br/>**in devbox image**]
+     WF --> WFB[worldfoundry-blender-addons<br/>**in devbox image**]
      WFCLI --> CLIS[10 CLI binaries:<br/>cdpack iffcomp iffdump levcomp lvldump<br/>oaddump oas2oad textile blender-asset-finder-cli prep]
-     WFB --> WFBLENDER[wf-blender extension]
+     WFB --> WFBLENDER[worldfoundry-blender-editor-exporter extension]
      WFB --> BAF[blender-asset-finder extension]
      WFB --> BLENDER[blender 5.0.1<br/>Ubuntu universe]
      WFDEV[worldfoundry-development<br/>*NOT in devbox image* — engine-dev tier] --> WF
@@ -461,7 +461,7 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
      ANVIL --> R[8 Tier 0 sub-metapackages +<br/>retro-tools + distrobox conveniences]
      ANVIL --> WF[worldfoundry<br/>apt.worldfoundry.org<br/><i>cross-repo</i>]
      WF --> WFCLI[worldfoundry-cli]
-     WF --> WFB[worldfoundry-blender]
+     WF --> WFB[worldfoundry-blender-addons]
 
      classDef img fill:#3d2f1f,stroke:#d29922,color:#e6edf3
      class IMG img
@@ -650,12 +650,12 @@ Bottom line: **multiverse repo enabled, ROM-bundled packages excluded from prein
 
 ## Known concerns / external dependencies
 
-- **Blender 5.0.1 vs WF add-on compatibility.** Ubuntu 26.04 ships Blender 5.0.1; WF's `wf-blender` + `blender-asset-finder` add-ons were authored against 4.2. Tracked in `../WorldFoundry-wbniv/TODO.md` under §TOOLS. If 5.0 breaks the add-ons, the fix lives in the WorldFoundry repo, not here.
+- **Blender 5.0.1 vs WF add-on compatibility.** Ubuntu 26.04 ships Blender 5.0.1; WF's `worldfoundry-blender-editor-exporter` + `blender-asset-finder` add-ons were authored against 4.2. Tracked in `../WorldFoundry-wbniv/TODO.md` under §TOOLS. If 5.0 breaks the add-ons, the fix lives in the WorldFoundry repo, not here.
 
 ## Out of scope (follow-up plans)
 
 - **Per-game tooling** (`wf-game-create`, per-game Distrobox scaffolding, asset isolation, per-game Claude permissions, ROM library conventions) from proposal §763-836 — its own plan file to be created next.
 - Maintainer-tier image (`:26.04-maintainer` with android-development + ios-development; +2.5 GB) — deferred until someone actually needs the NDK preinstalled.
 - ROM-bundled Ubuntu **multiverse** emulators (`vice`, `atari800`, `fbzx`, `mame-extra`) — opt-in via `foundry-emulators-vintage`. The multiverse repo IS enabled in the image so users can `apt install <pkg>` directly without needing this metapackage.
-- `apt.worldfoundry.org`'s builder Dockerfile still being `debian:bookworm-slim` (sibling-repo concern, already flagged earlier). Not blocking Phase 2, but for a more specific reason than first stated: the umbrella metapackages we install (`worldfoundry`, `worldfoundry-cli`, `worldfoundry-blender`, `worldfoundry-development`) are themselves `Architecture: all`, **but** they `Depends:` transitively on 10 `Architecture: amd64` binaries (`cdpack`, `iffcomp`, `iffdump`, `levcomp`, `lvldump`, `oaddump`, `oas2oad`, `prep`, `textile`, `worldfoundry-blender-editor-exporter`) — so the arch tag of the wrappers alone isn't the defense. The actual reason this hasn't bitten is that every one of those arch-specific binaries currently links only to `libc` / `python3` / minimal libgcc, all forward-compatible from bookworm to resolute. **Resolved on the worldfoundry side**: see `../../worldfoundry.org/docs/plans/2026-05-21-apt-builder-ubuntu-26-04.md`, executed 2026-05-21 (apt-v0.1.17).
+- `apt.worldfoundry.org`'s builder Dockerfile still being `debian:bookworm-slim` (sibling-repo concern, already flagged earlier). Not blocking Phase 2, but for a more specific reason than first stated: the umbrella metapackages we install (`worldfoundry`, `worldfoundry-cli`, `worldfoundry-blender-addons`, `worldfoundry-development`) are themselves `Architecture: all`, **but** they `Depends:` transitively on 10 `Architecture: amd64` binaries (`cdpack`, `iffcomp`, `iffdump`, `levcomp`, `lvldump`, `oaddump`, `oas2oad`, `prep`, `textile`, `worldfoundry-blender-addons-editor-exporter`) — so the arch tag of the wrappers alone isn't the defense. The actual reason this hasn't bitten is that every one of those arch-specific binaries currently links only to `libc` / `python3` / minimal libgcc, all forward-compatible from bookworm to resolute. **Resolved on the worldfoundry side**: see `../../worldfoundry.org/docs/plans/2026-05-21-apt-builder-ubuntu-26-04.md`, executed 2026-05-21 (apt-v0.1.17).
 - A `release-sniper` companion image for Steam builds (proposal §587; explicitly its own initiative).
