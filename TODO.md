@@ -63,7 +63,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ### Phase 2 — Distrobox image
 
-- [ ] Build `ghcr.io/foundry-linux/devbox:26.04` — Containerfile (Kubuntu/Ubuntu 26.04 base) + `apt.foundrylinux.org` configured + `foundry-dev` preinstalled. GHCR workflow for tag-driven publish. Per proposal §"Channel 3 — OCI/container image".
+- [ ] Build `ghcr.io/foundry-linux/devbox:26.04` — single `apt install foundry-anvil` (the base edition of a 3-tier nested hierarchy: anvil ⊆ sprite ⊆ atelier). GHCR workflow for tag-driven publish. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
 
 ### Phase 3 — Foundry Linux ISO
 
