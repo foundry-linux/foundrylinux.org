@@ -23,6 +23,12 @@ tasks:
         set -euo pipefail
         rm -rf {{.WORK_DIR}}
         gh repo clone {{.GH_REPO}} {{.WORK_DIR}}
+        # Wipe everything in the clone except .git/ so renames and deletions
+        # propagate cleanly. Without this, removing a package dir in
+        # foundry-apt/ would leave the orphaned dir behind on the remote
+        # (caught 2026-05-21 — the foundry-linux-* → foundry-* rename left
+        # old source dirs behind, CI built both, Packages.gz indexed both).
+        find {{.WORK_DIR}} -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
         # Export only committed content from foundry-apt/ (respects .gitignore;
         # avoids syncing local build artifacts like debian/.debhelper/, *.deb, etc.)
         git archive HEAD -- {{.SRC_DIR}}/ \
