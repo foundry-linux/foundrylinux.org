@@ -17,7 +17,7 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 
 ### Site
 
-- [ ] **`/packages` page + home Forge reshape** ([plan](docs/plans/2026-05-21-packages-page.md)) — replace stale `Kit` grid (f9dasm/65ax/libvgm/vgmstream tool cards) with a 6-card `Forge` headlining the actual categories; add generated `/packages` page driven by `data/categories.json` + `data/upstream.yml` + live Packages.gz from both apt repos. Local-only; CI triggers deferred to follow-up.
+- [ ] **packages-page CI triggers** ([plan §6](docs/plans/2026-05-21-packages-page.md)) — `workflow_run` on foundry-apt publish, `repository_dispatch` from worldfoundry.org with new `FOUNDRYLINUX_DISPATCH_PAT` secret, nightly cron fallback. Currently regenerated manually via `task site-build` before tagging.
 - [ ] **Flesh out foundrylinux.org** — Claude Design landing page is live (v0.2.x); content passes as a real landing page but the design is still iterating. `tweaks-panel.jsx` still present — remove once design is finalised.
 
 ### Navbar
@@ -80,6 +80,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ## Done
 
+- 2026-05-22 — [packages-page] `/packages` generated from live Packages.gz of both apt repos + Ubuntu resolute; home Kit grid (stale f9dasm/65ax/libvgm/vgmstream tool cards) replaced with auto-driven 6-card Forge; pure Node generator, ~3 s. CI triggers deferred to follow-up. See [plan](docs/plans/2026-05-21-packages-page.md).
 - 2026-05-22 — [move-asset-packages] `blender-asset-finder` + `wf-asset` (→ `blender-asset-finder-cli`) moved from apt.worldfoundry.org to apt.foundrylinux.org; `worldfoundry-cli` Depends + description updated; live on both R2 repos. See [plan](docs/plans/2026-05-20-move-asset-packages.md).
 - 2026-05-22 — [drop-linux-from-package-names] `foundry-linux-*` → `foundry-*` across packages, install scripts, and `foundry-linux-setup/` dir; landed in 433a07b, shipped via foundry-apt v0.0.41, live R2 index serves only new names. See [plan](docs/plans/2026-05-21-drop-linux-from-package-names.md).
 - 2026-05-21 — [retro-tools-e2e-test] `test-retro-tools-e2e.sh` (docker-based) installs metapackage in fresh ubuntu:26.04 + verifies all 15 tools invoke; 15/15 pass. VM not needed for this.

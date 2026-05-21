@@ -2,7 +2,7 @@
 title: /packages page + home-page Forge — generated from live apt indexes
 date: 2026-05-21
 revised: 2026-05-22
-status: planned
+status: done
 ---
 
 # Plan: `/packages` page, apt-publish-triggered
@@ -489,4 +489,110 @@ For now, regeneration happens manually (`task site-build`) or on tag push (exist
 
 - **packages-page CI triggers** — `workflow_run` on foundry-apt publish, `repository_dispatch` from worldfoundry.org with new `FOUNDRYLINUX_DISPATCH_PAT` secret, nightly cron fallback. See §6.
 - **File first Debian ITP** — `f9dasm` is the natural candidate (small, self-contained, debhelper build, no patches). Once landed, `data/upstream.yml` flips `f9dasm.status: vendored` → `debian-itp` with the bug number.
-- **`worldfoundry-blender-editor-exporter` — catalogue or out-of-catalogue?** Currently rendered as `out_of_catalogue` because it's a build artifact, not for direct end-user install. Re-evaluate once its purpose is clearer.
+
+---
+
+## Verification results (2026-05-22)
+
+Implementation landed in `db702ef feat(site): /packages page + Forge home reshape, generated from live apt`. All 12 steps PASS.
+
+Pivot during implementation: original §1 design used an `ubuntu:26.04` container with `apt-cache depends --recurse / show / policy` per package — ~1,700 sequential shell calls totalling ~15 minutes. Killed and rewrote to fetch the 5 Packages.gz files in parallel and traverse Depends in Node (with virtual-package resolution via Provides). New runtime: **~3 seconds** (cache hit: ~1 s). No docker dependency.
+
+Three minor adjustments during verification:
+1. Categories.json initially listed a non-existent `worldfoundry-blender` metapackage; the real package is `worldfoundry-blender-addons`. Fixed.
+2. Categories.json missed `worldfoundry-development` ownership; added to the WF GDK category (it's the engine build-deps layer).
+3. Vendored-standalones filter was too narrow (excluded `n/a-firstparty`). Widened to "every leaf in `origin === 'foundry'`" so the blender-asset-finder pair shows up (the cross-repo first-party bridge). WF CLIs in apt.worldfoundry.org stay in the GDK category, not the standalones list.
+
+### 1. Local generation — PASS
+```
+$ task packages-page -- --force
+· fetching Packages.gz from 5 archives (parallel)
+  · merged 74500 packages, 71343 virtual provides
+· resolving editions
+  · anvil      745 pkgs  3.72 GiB
+  · sprite    1061 pkgs  5.00 GiB
+  · atelier   1281 pkgs  18.27 GiB
+· resolving categories
+  · worldfoundry-gdk        21 pkgs  208 MiB
+  · blender                  3 pkgs  156 MiB
+  · retro-tools             15 pkgs  1.33 GiB
+  · emulators               23 pkgs  597 MiB
+  · game-frameworks          9 pkgs  58 MiB
+  · image-tools              9 pkgs  246 MiB
+  · audio-production        11 pkgs  179 MiB
+  · games                   35 pkgs  9.43 GiB
+  · mobile-dev               7 pkgs  2.04 GiB
+  audit: unowned=0 missing-metapackages=0
+```
+
+### 2. Cache hit on second run — PASS (~1 s)
+```
+$ task packages-page
+✓ no change in apt repos or local config — skipping
+```
+
+### 3. Force regenerate — PASS (~3 s)
+
+### 4. SSR builds both pages — PASS
+```
+✓ site/index.html      rendered (22 KB of markup, no React runtime)
+✓ site/packages.html   rendered (65 KB of markup, no React runtime)
+```
+
+### 5. Home page lost the lower-4 per-tool cards — PASS
+```
+$ grep -Eo '(f9dasm|65ax|libvgm|vgmstream)' site/index.html | sort -u
+(empty)
+```
+(The Retro toolkit blurb originally enumerated those tool names; tightened the blurb so the names live only on /packages.)
+
+### 6. Home page Forge has 6 categories — PASS
+```
+$ grep -Eo '(World Foundry GDK|Blender|Retro toolkit|Emulators|Audio &amp; trackers|Games &amp; reimplementations)' site/index.html | sort -u
+Audio &amp; trackers · Blender · Emulators · Games &amp; reimplementations · Retro toolkit · World Foundry GDK
+```
+
+### 7. Forge framing + catalogue link — PASS
+```
+$ grep -Eo '(The Forge|push the ones worth shipping upstream|/packages)' site/index.html | sort -u
+/packages · The Forge · push the ones worth shipping upstream
+```
+
+### 8. Audit clean — PASS
+```
+$ jq '.audit' site/packages-data.json
+{ "unowned_packages": [], "missing_metapackages": [], "out_of_catalogue": [] }
+```
+
+### 9. Upstream summary — PASS
+```
+{ "vendored": 4, "debian-itp": 0, "in-debian-unstable": 0,
+  "in-ubuntu-universe": 94, "in-ubuntu-multiverse": 12, "in-ubuntu-main": 6,
+  "n/a-firstparty": 14, "n/a-proprietary": 0, "unknown": 0 }
+```
+
+### 10. Vendored standalones — PASS (6 names, mix of vendored + first-party)
+```
+blender-asset-finder — n/a-firstparty
+blender-asset-finder-cli — n/a-firstparty
+f9dasm — vendored
+ghidra — vendored
+libvgm — vendored
+vgmstream — vendored
+```
+
+### 11. Preview locally — PASS
+
+Both pages render via `cd site && python3 -m http.server 8080`. Home has the 6-card Forge grid + Editions ladder; /packages has the Editions header + 9 category sections + Vendored standalones + Upstreaming + Alignment.
+
+### 12. Card → category link integrity — PASS
+```
+$ grep -Eo 'href="/packages#[a-z-]+"' site/index.html | sort -u
+href="/packages#audio-production"
+href="/packages#blender"
+href="/packages#emulators"
+href="/packages#games"
+href="/packages#retro-tools"
+href="/packages#worldfoundry-gdk"
+```
+All 6 slugs exist in `packages-data.json` `.categories[].slug`.
