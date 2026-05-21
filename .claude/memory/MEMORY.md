@@ -1,5 +1,11 @@
 # Memory Index
 
+- [site/index.html is generated — never edit directly](feedback_site_generated_file.md) — edit site/*.jsx or scripts/ssr-render.js, then run task site-build.
+- [Iterate the /package skill as we package](feedback_package_skill_iterate.md) — every real /package run is a feedback loop for the skill itself; commit the refinement alongside the package.
+- [Always build packages in Docker containers](feedback_build_in_containers.md) — never on the host; host deps silently satisfy Build-Depends and mask CI failures.
+- [Update new-web-apt-repo skill during each run](feedback_update_skill_during_run.md) — every real apt repo bootstrap is a feedback loop; update SKILL.md with gaps/corrections found.
+- [Say "non-redistributable", not "copyrighted"](feedback_copyright_vs_redistributable.md) — GPL code is copyrighted too; the multiverse/image issue is redistribution rights, not copyright.
+
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 
 ## User (inherited from ~)
@@ -22,9 +28,5 @@
 - [feedback_seed_dont_clone.md](feedback_seed_dont_clone.md) — Seeding a new site from an existing one + swapping wordmark/color isn't enough — the source's visual fingerprint carries through. Ship distinctive elements with the seed, not after.
 - [feedback_prefer_proper_fix.md](feedback_prefer_proper_fix.md) — When offering fix-scope options, default to the proper/architectural one. Don't lead with the minimal fix as "recommended."
 - [feedback_public_vs_internal_surfaces.md](feedback_public_vs_internal_surfaces.md) — Public marketing pages (colophon, homepage) describe visible craft — never internal infra (repo URLs, predecessor projects, deploy pipeline, IaC paths).
-
-## Projects (inherited from ~)
-
-- [project_finding_your_way.md](project_finding_your_way.md) — Parmenides hypertext port to Astro+MD+AWS at ~/SRC/finding-your-way/ (author-commissioned)
 
 <!-- END GLOBAL MEMORY -->
