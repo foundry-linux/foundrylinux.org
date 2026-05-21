@@ -262,7 +262,7 @@ jobs:
               vgmstream-cli f9dasm vgm-player vgm2wav task \
               cdpack iffcomp levcomp \
               dosbox-x scummvm fceux mednafen stella hatari fs-uae \
-              openmsx frotz desmume \
+              openmsx frotz desmume-cli \
               tiled sdl2-config sdl3-config \
               glslangValidator spirv-cross spirv-val \
               magick gm; do
@@ -305,7 +305,7 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
    ```
    bash foundry-devbox/test/smoke-test.sh
    ```
-   Expected: prints `✓ <tool>` for each foundry-anvil tool — Foundry stack: `mame`, `chdman`, `ghidra`, `ghidra-headless`, `blender`, `vgmstream-cli`, `f9dasm`, `vgm-player`, `vgm2wav`, `task`, `cdpack`, `iffcomp`, `levcomp`; universe emulators: `dosbox-x`, `scummvm`, `fceux`, `mednafen`, `stella`, `hatari`, `fs-uae`, `openmsx`, `frotz`, `desmume`; game-dev frameworks: `tiled`, `sdl2-config`, `sdl3-config`; shader/image: `glslangValidator`, `spirv-cross`, `spirv-val`, `magick`, `gm`. Final line "N/N tools verified" with N≈30. (Sprite/atelier tools — trackers, pixel-art, krita, ardour, dolphin, etc. — are NOT in the image and not smoke-tested.)
+   Expected: prints `✓ <tool>` for each foundry-anvil tool — Foundry stack: `mame`, `chdman`, `ghidra`, `ghidra-headless`, `blender`, `vgmstream-cli`, `f9dasm`, `vgm-player`, `vgm2wav`, `task`, `cdpack`, `iffcomp`, `levcomp`; universe emulators: `dosbox-x`, `scummvm`, `fceux`, `mednafen`, `stella`, `hatari`, `fs-uae`, `openmsx`, `frotz`, `desmume-cli`; game-dev frameworks: `tiled`, `sdl2-config`, `sdl3-config`; shader/image: `glslangValidator`, `spirv-cross`, `spirv-val`, `magick`, `gm`. Final line "N/N tools verified" with N≈30. (Sprite/atelier tools — trackers, pixel-art, krita, ardour, dolphin, etc. — are NOT in the image and not smoke-tested.)
 
 3. **Sync to the mirror remote.**
    ```

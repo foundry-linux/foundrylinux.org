@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Phase 0 installer for the WorldFoundry Blender stack.
 #
-# Installs the `worldfoundry-blender` metapackage from apt.worldfoundry.org,
+# Installs the `worldfoundry-blender-addons` metapackage from apt.worldfoundry.org,
 # which transitively pulls:
 #   - blender (Ubuntu 26.04 universe, ≥4.2)
 #   - wf-blender (the World Foundry level-editor add-on)
@@ -18,7 +18,7 @@ for arg in "$@"; do
             cat <<EOF
 Phase 0 installer for foundry-blender
 
-Installs worldfoundry-blender from apt.worldfoundry.org — Blender 4.2+ plus
+Installs worldfoundry-blender-addons from apt.worldfoundry.org — Blender 4.2+ plus
 the WorldFoundry Blender add-on (wf-blender) and the asset-finder add-on
 (blender-asset-finder). Add-on registration into Blender is handled by the
 per-add-on -install wrappers shipped inside each .deb.
@@ -60,7 +60,7 @@ dry=()
 $DRY_RUN && dry=(--dry-run)
 FOUNDRY_LOG_FILE="${FOUNDRY_LOG_FILE:-}" bash "$SCRIPT_DIR/setup-worldfoundry-apt-source.sh" "${dry[@]}"
 
-step "Installing worldfoundry-blender"
+step "Installing worldfoundry-blender-addons"
 apt_update
-run_sudo apt-get install -y worldfoundry-blender
-ok "worldfoundry-blender installed (Blender + wf-blender + blender-asset-finder)"
+run_sudo apt-get install -y worldfoundry-blender-addons
+ok "worldfoundry-blender-addons installed (Blender + wf-blender + blender-asset-finder)"

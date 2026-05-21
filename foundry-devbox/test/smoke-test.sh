@@ -22,7 +22,7 @@ TOOLS=(
     # foundry-emulators-computers
     dosbox-x hatari fs-uae openmsx
     # foundry-emulators-consoles
-    fceux mednafen stella scummvm frotz desmume
+    fceux mednafen stella scummvm frotz desmume-cli
     # foundry-game-frameworks (love is upstream-broken on Ubuntu 26.04; tracked, not preinstalled)
     tiled sdl2-config sdl3-config glslangValidator spirv-cross spirv-val
     # foundry-image-cli
