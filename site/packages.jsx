@@ -255,7 +255,7 @@ function PackagesHero() {
         <div className="hero-eyebrow">
           /packages · regenerated {packagesData.generated_at}
         </div>
-        <h1 className="wordmark wordmark-pkg" data-font="big-shoulders">
+        <h1 className="wordmark wordmark-pkg" data-material="chrome" data-font="big-shoulders">
           <span className="wordmark-line">PACKAGES</span>
         </h1>
         <p className="hero-tagline">
