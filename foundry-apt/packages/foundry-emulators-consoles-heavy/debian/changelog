@@ -1,0 +1,7 @@
+foundry-emulators-consoles-heavy (1.0.0) resolute; urgency=medium
+
+  * Initial release. Part of the Phase 2 nested-editions hierarchy
+    (anvil ⊆ sprite ⊆ atelier). See
+    docs/plans/2026-05-21-phase-2-devbox-image.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 21 May 2026 23:01:00 +0700

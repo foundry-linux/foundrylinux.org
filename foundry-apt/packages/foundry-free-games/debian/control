@@ -1,0 +1,59 @@
+Source: foundry-free-games
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-free-games
+Architecture: all
+Depends: ${misc:Depends},
+ 0ad,
+ 0ad-data,
+ supertuxkart,
+ supertuxkart-data,
+ supertux,
+ supertux-data,
+ widelands,
+ widelands-data,
+ warzone2100,
+ warzone2100-data,
+ openttd,
+ freeciv,
+ freedoom,
+ freedm,
+ hedgewars,
+ hedgewars-data,
+ endless-sky,
+ endless-sky-data,
+ endless-sky-high-dpi,
+ wesnoth,
+ wesnoth-1.18-data,
+ wesnoth-1.18-music,
+ nethack-console,
+ crawl-tiles,
+ flightgear,
+ flightgear-data-base,
+ flightgear-data-ai,
+ flightgear-data-models
+Description: bundled FOSS games with multi-GB data packs
+ Free-software games shipping with their data packages — total install
+ around 6 GB once data packs land. Deliberately separate from the base
+ devbox image so it stays sub-4 GB.
+ .
+   * 0ad + 0ad-data                                   real-time strategy (~3.5 GB data)
+   * supertuxkart + supertuxkart-data                 kart racing (~770 MB data)
+   * supertux + supertux-data                         2D platformer
+   * widelands + widelands-data                       Settlers-style RTS
+   * warzone2100 + warzone2100-data                   real-time strategy
+   * openttd                                          Transport Tycoon Deluxe clone
+   * freeciv                                          Civilization clone
+   * freedoom + freedm                                FOSS Doom IWADs
+   * hedgewars + hedgewars-data                       turn-based artillery (Worms-style)
+   * endless-sky + data + high-dpi assets             space trading / exploration
+   * wesnoth + wesnoth-1.18-data + wesnoth-1.18-music turn-based strategy
+   * nethack-console                                  the classic dungeon crawl
+   * crawl-tiles                                      Dungeon Crawl Stone Soup
+   * flightgear + flight gear data subpackages        flight simulator (~1.7 GB data)

@@ -1,0 +1,38 @@
+Source: foundry-emulators-consoles-heavy
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-emulators-consoles-heavy
+Architecture: all
+Depends: ${misc:Depends},
+ snes9x-gtk,
+ nestopia,
+ pcsxr,
+ pcsx2,
+ ppsspp,
+ mupen64plus-ui-console,
+ dolphin-emu,
+ yuzu,
+ retroarch,
+ retroarch-assets
+Description: heavy console and handheld emulators
+ Console and handheld emulators with larger installation footprints
+ (up to ~270 MB for the set including assets) — left out of the base
+ devbox image for size reasons, all in Ubuntu universe (no licensing
+ issues):
+ .
+   * snes9x-gtk              SNES
+   * nestopia                NES (alternative to fceux)
+   * pcsxr                   PlayStation 1
+   * pcsx2                   PlayStation 2
+   * ppsspp                  PlayStation Portable
+   * mupen64plus-ui-console  Nintendo 64
+   * dolphin-emu             GameCube + Wii
+   * yuzu                    Nintendo Switch
+   * retroarch               libretro frontend
+   * retroarch-assets        libretro UI assets

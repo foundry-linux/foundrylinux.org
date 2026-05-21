@@ -1,0 +1,23 @@
+Source: foundry-trackers
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-trackers
+Architecture: all
+Depends: ${misc:Depends},
+ milkytracker,
+ schism,
+ furnace,
+ openmpt123
+Description: chiptune and module trackers
+ Tracker-style music production tools for chiptune and module formats:
+ .
+   * milkytracker   Amiga MOD-style (FastTracker II clone)
+   * schism         Impulse Tracker clone
+   * furnace        multi-chip chiptune tracker (NES/SMS/SID/etc.)
+   * openmpt123     CLI module-format player (MOD/S3M/XM/IT)

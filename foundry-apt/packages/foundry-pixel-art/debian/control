@@ -1,0 +1,19 @@
+Source: foundry-pixel-art
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-pixel-art
+Architecture: all
+Depends: ${misc:Depends},
+ mtpaint,
+ grafx2
+Description: pixel-art paint programs
+ Lightweight raster paint programs focused on pixel-perfect art:
+ .
+   * mtpaint   minimalist pixel-art paint
+   * grafx2    256-colour Deluxe-Paint-style raster editor

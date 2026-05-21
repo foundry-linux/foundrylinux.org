@@ -1,0 +1,38 @@
+Source: foundry-anvil
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-anvil
+Architecture: all
+Depends: ${misc:Depends},
+ worldfoundry,
+ foundry-retro-tools,
+ foundry-emulators-computers,
+ foundry-emulators-consoles,
+ foundry-game-frameworks,
+ foundry-image-cli,
+ task,
+ sudo,
+ libvte-2.91-0,
+ bash-completion,
+ man-db
+Description: Foundry Linux base layer — full kit, devbox image preinstall
+ The base "Foundry Linux" install for game-makers, level designers,
+ and digital artists: the WorldFoundry authoring stack (Blender + 10
+ WF CLIs + WF Blender add-ons), the retro-porting toolkit (MAME,
+ Ghidra, dasm, z80, cc65, ...), light universe emulators, game-dev
+ frameworks (SDL2/3, SFML, Allegro, libtcod, Tiled, LOVE + Vulkan
+ shader tools), CLI image utilities, and go-task. Single command,
+ the whole working environment.
+ .
+ The Foundry Linux devbox container image (ghcr.io/foundry-linux/devbox:26.04)
+ installs this and nothing else; sprite and atelier are layered on top
+ inside a running container if wanted.
+ .
+ Cross-Depends on apt.worldfoundry.org (worldfoundry); the bootstrap
+ setup.sh wires up both apt sources and the Cloudsmith task repo.

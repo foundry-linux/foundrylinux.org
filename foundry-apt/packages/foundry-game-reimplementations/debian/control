@@ -1,0 +1,35 @@
+Source: foundry-game-reimplementations
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-game-reimplementations
+Architecture: all
+Depends: ${misc:Depends},
+ vcmi,
+ openrct2,
+ openrct2-objects,
+ openrct2-title-sequences,
+ fheroes2,
+ exult,
+ sauerbraten
+Description: FOSS engines for commercial games (BYO data)
+ FOSS reimplementations of commercial game engines. The engine code
+ is free; users must legally own the original game's data files and
+ drop them into each engine's per-game data directory at runtime.
+ These all live in Ubuntu multiverse because of the data requirement,
+ not because of engine code licensing.
+ .
+   * vcmi                       Heroes of Might & Magic 3 engine
+   * openrct2                   RollerCoaster Tycoon 2 engine
+   * openrct2-objects           OpenRCT2 object library
+   * openrct2-title-sequences   OpenRCT2 title-screen sequences
+   * fheroes2                   Heroes of Might & Magic 2 engine
+   * exult                      Ultima VII engine
+   * sauerbraten                Cube 2 engine and game
+ .
+ Enable multiverse with: sudo add-apt-repository -y multiverse

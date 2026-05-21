@@ -1,0 +1,38 @@
+Source: foundry-daw
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-daw
+Architecture: all
+Depends: ${misc:Depends},
+ ardour,
+ audacity,
+ lmms,
+ rosegarden,
+ hydrogen,
+ qtractor,
+ mixxx,
+ milkytracker,
+ schism,
+ furnace,
+ openmpt123
+Description: Digital Audio Workstation stack and trackers
+ Full audio-production stack — DAWs, MIDI sequencers, drum machines,
+ the DJ tool, and the chiptune trackers:
+ .
+   * ardour          multitrack DAW (the FOSS Logic/Reaper)
+   * audacity        waveform editor
+   * lmms            Linux Multimedia Studio (FL Studio-like)
+   * rosegarden      MIDI + audio sequencer
+   * hydrogen        drum machine / step sequencer
+   * qtractor        MIDI/audio sequencer
+   * mixxx           DJ interface
+   * milkytracker    Amiga MOD tracker (also in foundry-trackers)
+   * schism          Impulse Tracker clone (also in foundry-trackers)
+   * furnace         multi-chip chiptune tracker (also in foundry-trackers)
+   * openmpt123      module-format CLI player (also in foundry-trackers)

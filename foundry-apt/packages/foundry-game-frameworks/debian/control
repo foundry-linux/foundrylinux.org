@@ -1,0 +1,36 @@
+Source: foundry-game-frameworks
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-game-frameworks
+Architecture: all
+Depends: ${misc:Depends},
+ tiled,
+ love,
+ libsdl2-dev,
+ libsdl3-dev,
+ libsfml-dev,
+ liballegro5-dev,
+ libtcod-dev,
+ glslang-tools,
+ spirv-cross,
+ spirv-tools
+Description: 2D/3D game-dev frameworks, headers, and shader tools
+ SDK headers and tools for game-engine development against the standard
+ cross-platform C/C++ frameworks plus Vulkan shader tooling:
+ .
+   * tiled            tile-based level editor (TMX format)
+   * love             LÖVE 2D Lua game engine
+   * libsdl2-dev      SDL2 (Simple DirectMedia Layer)
+   * libsdl3-dev      SDL3
+   * libsfml-dev      SFML (Simple Fast Multimedia Library)
+   * liballegro5-dev  Allegro 5
+   * libtcod-dev      libtcod (roguelike toolkit)
+   * glslang-tools    glslangValidator (Vulkan GLSL → SPIR-V)
+   * spirv-cross      SPIR-V → other shader languages
+   * spirv-tools      SPIR-V assembler, validator, optimizer

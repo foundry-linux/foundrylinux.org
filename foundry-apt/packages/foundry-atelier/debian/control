@@ -1,0 +1,36 @@
+Source: foundry-atelier
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-atelier
+Architecture: all
+Depends: ${misc:Depends},
+ foundry-sprite,
+ foundry-emulators-vintage,
+ foundry-emulators-consoles-heavy,
+ foundry-game-reimplementations,
+ foundry-free-games,
+ foundry-android-development,
+ foundry-ios-development,
+ worldfoundry-development
+Description: Foundry Linux complete edition — everything
+ foundry-sprite plus every optional Foundry metapackage and cross-repo
+ development tooling — the "give me the lot" install, around 10 GB on
+ top of bare Ubuntu:
+ .
+   * foundry-sprite                       anvil + heavy graphics + audio
+   * foundry-emulators-vintage            VICE, Atari800, FBZX (multiverse)
+   * foundry-emulators-consoles-heavy     Dolphin, PCSX2, Yuzu, RetroArch
+   * foundry-game-reimplementations       VCMI, OpenRCT2, Fheroes2, Exult
+   * foundry-free-games                   0 A.D., SuperTuxKart, FlightGear, …
+   * foundry-android-development          OpenJDK 17, adb, NDK r26c
+   * foundry-ios-development              libimobiledevice, codemagic-cli-tools
+   * worldfoundry-development             cross-repo engine build deps
+ .
+ Requires multiverse for the vintage emulators and game
+ reimplementations. The bootstrap setup.sh handles this.

@@ -1,0 +1,27 @@
+Source: foundry-emulators-vintage
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-emulators-vintage
+Architecture: all
+Depends: ${misc:Depends},
+ vice,
+ atari800,
+ fbzx,
+ mame-extra
+Description: vintage home-computer emulators with bundled ROMs (multiverse)
+ Emulators whose .deb ships non-redistributable ROMs or BIOS data.
+ Users opt in explicitly; this metapackage is NOT preinstalled in any
+ image we publish. Requires Ubuntu multiverse component to be enabled.
+ .
+   * vice         Commodore 64 / 128 / VIC-20 / PET / Plus/4 (KERNAL+CHAR+BASIC ROMs)
+   * atari800     Atari 8-bit XL / XE / 5200 (OS ROMs)
+   * fbzx         ZX Spectrum (ROM)
+   * mame-extra   MAME sample files and debugging ROMs (mixed licensing)
+ .
+ Enable multiverse with: sudo add-apt-repository -y multiverse

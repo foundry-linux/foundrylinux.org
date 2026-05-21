@@ -1,0 +1,27 @@
+Source: foundry-sprite
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-sprite
+Architecture: all
+Depends: ${misc:Depends},
+ foundry-anvil,
+ foundry-pixel-art,
+ foundry-art,
+ foundry-trackers,
+ foundry-daw
+Description: Foundry Linux retro / graphics / audio edition (anvil + heavy art + audio)
+ foundry-anvil plus the heavy-graphics suites and full audio-production
+ stack — for users whose work spans game-making AND multimedia content
+ creation:
+ .
+   * foundry-anvil           the full Foundry Linux base layer
+   * foundry-pixel-art       mtPaint, GrafX2
+   * foundry-art             Krita, GIMP, Inkscape, MyPaint, Tux Paint
+   * foundry-trackers        MilkyTracker, Schism, Furnace, openmpt123
+   * foundry-daw             Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx

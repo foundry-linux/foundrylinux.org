@@ -1,0 +1,20 @@
+Source: foundry-image-cli
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-image-cli
+Architecture: all
+Depends: ${misc:Depends},
+ imagemagick,
+ graphicsmagick
+Description: command-line image manipulation utilities
+ The two canonical CLI image-processing toolkits — both useful and
+ slightly different in capability and feature set:
+ .
+   * imagemagick      magick / convert / mogrify / identify / montage / …
+   * graphicsmagick   gm (lighter fork, often faster for batch work)

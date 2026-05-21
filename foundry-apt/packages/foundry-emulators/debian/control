@@ -1,0 +1,26 @@
+Source: foundry-emulators
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-emulators
+Architecture: all
+Depends: ${misc:Depends},
+ foundry-emulators-computers,
+ foundry-emulators-consoles,
+ foundry-emulators-vintage,
+ foundry-emulators-consoles-heavy
+Description: all Foundry emulator metapackages (umbrella)
+ Convenience umbrella that pulls every Foundry emulator metapackage —
+ light universe emulators plus the ROM-bundled vintage set and the
+ heavy console/handheld emulators. Requires multiverse for the vintage
+ subset.
+ .
+   * foundry-emulators-computers        dosbox-x, hatari, fs-uae, openmsx
+   * foundry-emulators-consoles         fceux, mednafen, stella, scummvm, frotz, desmume
+   * foundry-emulators-vintage          vice, atari800, fbzx, mame-extra (multiverse)
+   * foundry-emulators-consoles-heavy   dolphin, pcsx2, yuzu, retroarch, …

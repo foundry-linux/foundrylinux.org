@@ -1,0 +1,31 @@
+Source: foundry-emulators-consoles
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-emulators-consoles
+Architecture: all
+Depends: ${misc:Depends},
+ fceux,
+ mednafen,
+ stella,
+ desmume,
+ scummvm,
+ frotz
+Description: light console and adventure-engine emulators
+ Universe-only console/handheld emulators plus light adventure-engine
+ interpreters:
+ .
+   * fceux       NES / Famicom
+   * mednafen    multi-platform (NES, SNES, GB/GBA, PC Engine, Lynx, etc.)
+   * stella      Atari 2600
+   * desmume     Nintendo DS
+   * scummvm     classic adventure-game engine (Sierra/LucasArts/Westwood)
+   * frotz       Z-machine interpreter for Infocom-style text adventures
+ .
+ Heavier console emulators (Dolphin, PCSX2, Yuzu, RetroArch) live in
+ foundry-emulators-consoles-heavy.

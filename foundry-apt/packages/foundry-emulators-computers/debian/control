@@ -1,0 +1,30 @@
+Source: foundry-emulators-computers
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-emulators-computers
+Architecture: all
+Depends: ${misc:Depends},
+ dosbox-x,
+ hatari,
+ fs-uae,
+ openmsx,
+ openmsx-data
+Description: vintage home-computer emulators (no bundled ROMs)
+ Universe-only emulators that do not ship non-redistributable ROMs in
+ the .deb. Suitable for inclusion in container images and ISOs without
+ redistribution concerns:
+ .
+   * dosbox-x        DOS / x86 PC emulator (16-bit + early 32-bit)
+   * hatari          Atari ST / STE / TT / Falcon
+   * fs-uae          Amiga
+   * openmsx         MSX / MSX2 / MSX2+ / turboR
+   * openmsx-data    OpenMSX system data files
+ .
+ Vintage emulators that ship non-redistributable ROMs in the .deb (VICE,
+ Atari800, FBZX) live in foundry-emulators-vintage instead.

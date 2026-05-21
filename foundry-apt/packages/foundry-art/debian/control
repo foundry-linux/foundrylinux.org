@@ -1,0 +1,34 @@
+Source: foundry-art
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-art
+Architecture: all
+Depends: ${misc:Depends},
+ krita,
+ gimp,
+ inkscape,
+ mypaint,
+ tuxpaint,
+ mtpaint,
+ grafx2,
+ imagemagick,
+ graphicsmagick
+Description: raster, vector, and pixel-art suites
+ Heavy-duty digital art applications for the artist whose workflow
+ spans raster, vector, and pixel art:
+ .
+   * krita           tablet-friendly raster paint (sprite art, concept art)
+   * gimp            general-purpose raster image editor
+   * inkscape        vector illustration
+   * mypaint         tablet-focused painting
+   * tuxpaint        kid-friendly entry-point paint program
+   * mtpaint         pixel-art paint (also in foundry-pixel-art)
+   * grafx2          256-colour pixel-art editor (also in foundry-pixel-art)
+   * imagemagick     CLI image conversion (also in foundry-image-cli)
+   * graphicsmagick  CLI image conversion (also in foundry-image-cli)
