@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  build:
+    desc: "Build the image locally (no push)"
+    cmds:
+      - docker build -t ghcr.io/foundry-linux/devbox:local .
+
+  run:
+    desc: "Shell into the locally-built image"
+    cmds:
+      - docker run --rm -it ghcr.io/foundry-linux/devbox:local
+
+  smoke:
+    desc: "Smoke-test tools on PATH in the locally-built image"
+    cmds:
+      - bash test/smoke-test.sh
+
+  clean:
+    desc: "Remove the local image"
+    cmds:
+      - docker rmi -f ghcr.io/foundry-linux/devbox:local 2>/dev/null || true

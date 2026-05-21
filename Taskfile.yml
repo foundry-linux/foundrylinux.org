@@ -170,3 +170,39 @@ tasks:
         git tag "${NEXT}"
         git push origin "${NEXT}"
         echo "Tagged ${NEXT} — watch: https://github.com/{{.GH_REPO}}/actions"
+
+  # ─────────────────────────────────────────────────────────────────────
+  # foundry-devbox/ — mirror to github.com/foundry-linux/foundry-devbox.
+  # Each task reuses sync/release/bump above with var overrides; no
+  # logic is duplicated. Same numbering convention as foundry-apt
+  # (v0.0.x patch bumps).
+  # ─────────────────────────────────────────────────────────────────────
+
+  devbox-sync:
+    desc: "Sync foundry-devbox/ to github.com/foundry-linux/foundry-devbox and push"
+    cmds:
+      - task: sync
+        vars:
+          GH_REPO: foundry-linux/foundry-devbox
+          SRC_DIR: foundry-devbox
+          WORK_DIR: /tmp/foundry-devbox-sync
+
+  devbox-release:
+    desc: "Tag and push a release to trigger GHCR publish (usage: task devbox-release TAG=v0.0.1)"
+    requires:
+      vars: [TAG]
+    cmds:
+      - task: release
+        vars:
+          TAG: '{{.TAG}}'
+          GH_REPO: foundry-linux/foundry-devbox
+          WORK_DIR: /tmp/foundry-devbox-sync
+
+  devbox-bump:
+    desc: "Sync and auto-increment patch tag on foundry-devbox (e.g. v0.0.3 → v0.0.4)"
+    cmds:
+      - task: bump
+        vars:
+          GH_REPO: foundry-linux/foundry-devbox
+          SRC_DIR: foundry-devbox
+          WORK_DIR: /tmp/foundry-devbox-sync

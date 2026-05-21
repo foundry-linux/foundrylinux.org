@@ -1,0 +1,70 @@
+name: Build and publish devbox image
+
+# Tag-driven publish to GHCR. Push a v* tag to ship a new image; the v0.0.x
+# series matches foundry-apt's numbering convention.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build only; do not push to GHCR'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        if: ${{ !inputs.dry_run }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: ${{ !inputs.dry_run }}
+          tags: |
+            ghcr.io/foundry-linux/devbox:26.04
+            ghcr.io/foundry-linux/devbox:${{ github.ref_name }}
+            ghcr.io/foundry-linux/devbox:latest
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+
+      - name: Smoke-check image (pull + foundry-anvil tool list)
+        if: ${{ !inputs.dry_run }}
+        env:
+          IMAGE: ghcr.io/foundry-linux/devbox:26.04
+        run: |
+          docker pull "$IMAGE"
+          # /usr/games in PATH inside the image — mame lives at /usr/games/mame
+          # per Debian games convention.
+          for tool in \
+              mame chdman ghidra ghidra-headless blender \
+              vgmstream-cli f9dasm vgm-player vgm2wav task \
+              cdpack iffcomp levcomp \
+              dosbox-x scummvm fceux mednafen stella hatari fs-uae \
+              openmsx frotz desmume \
+              tiled love sdl2-config sdl3-config \
+              glslangValidator spirv-cross spirv-val \
+              magick gm; do
+            docker run --rm \
+              -e PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/usr/games:/bin:/sbin \
+              "$IMAGE" \
+              bash -c "command -v $tool" \
+              || { echo "MISSING: $tool" >&2; exit 1; }
+          done
+          echo "All foundry-anvil tools present on PATH."
