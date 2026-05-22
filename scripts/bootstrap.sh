@@ -39,7 +39,7 @@ SEC_KEY="/tmp/foundry-packages.sec.gpg"
 R2_BUCKET="foundry-apt"
 SECRETS_BUCKET="foundry-secrets"
 R2_TOKEN_NAME="foundry-apt-ci"
-BOOTSTRAP_CACHE="/tmp/foundry-bootstrap.env"
+BOOTSTRAP_CACHE="${REPO_ROOT}/.foundry/bootstrap.env"
 CUSTOM_DOMAIN="apt.foundrylinux.org"
 DNS_CNAME="apt"
 CF_OPERATOR_TOKEN_NAME="foundry-operator"
@@ -69,6 +69,8 @@ cleanup() {
     [[ -n "${BATCH_FILE}" && -f "${BATCH_FILE}" ]] && rm -f  "${BATCH_FILE}" || true
 }
 trap cleanup EXIT
+
+mkdir -p "$(dirname "$BOOTSTRAP_CACHE")"
 
 cache_set() {
     local key="$1" val="$2"

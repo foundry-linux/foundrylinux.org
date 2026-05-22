@@ -6,13 +6,15 @@
 # Usage:
 #   bash scripts/bootstrap-r2.sh [--dry-run]
 #
-# If CF_API_TOKEN is not already exported, the script prompts you to paste
-# the value of the existing 'foundry-operator' Cloudflare token.
-# Credentials are cached in /tmp/foundry-bootstrap.env between runs.
+# If CF_API_TOKEN is not already exported, the script prompts you to roll
+# the 'foundry-linux-operator' Cloudflare token and paste the new value.
+# Credentials are cached in .foundry/bootstrap.env (project root, gitignored).
 
 set -euo pipefail
 
-BOOTSTRAP_CACHE="/tmp/foundry-bootstrap.env"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+BOOTSTRAP_CACHE="${REPO_ROOT}/.foundry/bootstrap.env"
+mkdir -p "${REPO_ROOT}/.foundry"
 GH_REPO="foundry-linux/foundry-iso"
 BUCKET="foundry-iso"
 SECRETS_BUCKET="foundry-secrets"
@@ -96,7 +98,8 @@ else
   if [[ -z "${CF_API_TOKEN:-}" ]]; then
     echo "  Cloudflare operator token needed."
     echo "  Go to: https://dash.cloudflare.com/profile/api-tokens"
-    echo "  Find the 'foundry-operator' token and click '...' → View."
+    echo "  Click '...' next to 'foundry-linux-operator' → Roll → confirm → copy the new value."
+    echo "  (Cloudflare does not let you view existing token values — rolling is the only way.)"
     echo ""
     until [[ -n "${CF_API_TOKEN:-}" ]]; do
       read -rsp "  Paste token value (input hidden): " CF_API_TOKEN; echo
