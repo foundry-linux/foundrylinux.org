@@ -17,7 +17,7 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 
 ### Site
 
-- [ ] **packages-page CI triggers** ([plan §6](docs/plans/2026-05-21-packages-page.md)) — `workflow_run` on foundry-apt publish, `repository_dispatch` from worldfoundry.org with new `FOUNDRYLINUX_DISPATCH_PAT` secret, nightly cron fallback. Currently regenerated manually via `task site-build` before tagging.
+- [x] **packages-page CI triggers** ([plan §6](docs/plans/2026-05-21-packages-page.md)) — `workflow_run` on foundry-apt publish, `repository_dispatch` from worldfoundry.org with new `FOUNDRYLINUX_DISPATCH_PAT` secret, nightly cron fallback. **Pending**: create fine-grained PAT and `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org`.
 - [ ] **Flesh out foundrylinux.org** — Claude Design landing page is live (v0.2.x); content passes as a real landing page but the design is still iterating. `tweaks-panel.jsx` still present — remove once design is finalised.
 
 ### Navbar
