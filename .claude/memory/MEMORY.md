@@ -8,6 +8,7 @@
 - [Cloudflare token/credential names](project_cloudflare_credentials.md) — actual names unknown; never assert from script defaults — ask Will and record here.
 - [Don't assert infra names from script defaults](feedback_verify_infra_names.md) — script defaults mean nothing; record actual names as Will confirms them.
 - [Foundry Linux audience: game devs new to Linux](project_foundry_audience.md) — NOT traditional Linux users; they don't care about Linux, it's just the platform. Frame UX/hosting as "downloading a game tool", not "downloading a distro".
+- [VM downloads are a planned distribution channel](project_vm_distribution.md) — VirtualBox/VMware/QEMU rows are intentional strategy, not placeholders. Add alongside, never replace.
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 

@@ -43,7 +43,8 @@ build_canonical() {
     trap "rm -rf '$builddir'" RETURN
 
     mkdir -p "${builddir}/${name}-${ver}"
-    cp -a "${pkgdir}/debian" "${builddir}/${name}-${ver}/"
+    # Copy full source tree so dh_install can find data/ files in native packages
+    cp -a "${pkgdir}/." "${builddir}/${name}-${ver}/"
 
     if ! ( cd "${builddir}/${name}-${ver}" && dpkg-buildpackage -us -uc -b -d --no-sign ) >/dev/null 2>&1; then
         echo "FAIL $name (dpkg-buildpackage exited non-zero)" >&2

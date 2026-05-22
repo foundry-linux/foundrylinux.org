@@ -1,0 +1,85 @@
+# audit-apt-repos.notes.yaml — per-package narrative annotations that
+# audit-apt-repos.sh can't derive from apt metadata alone.
+#
+# Format (intentionally minimal — the script's own loader parses this):
+#
+#   package-name:
+#     what_it_does: "one-line override of the .deb's Description first-line"
+#     rename_from: "previous-name (YYYY-MM-DD)"
+#     stale_note: "...prepended with ⚠️..."
+#     why_vendored: "for vendored upstreams only"
+#     upstream_url: "github.com/... or similar"
+#
+# Optional script-level keys (script names from foundry-setup/):
+#
+#   install-foo.sh:
+#     phase1_target: "package-name (apt.host)"
+#     status: "STALE" | "ok"
+#
+# Anything not listed here just uses the .deb's own Description / Section.
+
+# ─── apt.worldfoundry.org ──────────────────────────────────────────────
+
+worldfoundry-blender-addons:
+  rename_from: "worldfoundry-blender (2026-05-21)"
+  note: "Blender pin matrix-validated across 4.0.2, 4.2.21, 4.5.10, 5.0.1"
+
+worldfoundry-blender-editor-exporter:
+  rename_from: "wf-blender (2026-05-21)"
+  what_it_does: "World Foundry Blender add-on — dynamic OAD property panel, validation, .lev text-IFF level export. Ships extension zip + wf-blender-install wrapper. Bundles the native wf_core Rust extension (pyo3 abi3)."
+
+# ─── apt.foundrylinux.org — vendored upstreams ─────────────────────────
+
+f9dasm:
+  why_vendored: "Not in Ubuntu universe; needed for 6800/6809 ROM disassembly"
+  upstream_url: "github.com/Arakula/f9dasm"
+
+ghidra:
+  why_vendored: "NSA ships ZIPs only; pre-built x86_64 decompiler. Depends openjdk-21-jdk"
+  upstream_url: "ghidra-sre.org"
+
+libvgm:
+  why_vendored: "Git-tip only, no upstream releases. Chip-register VGM playback library + player utilities"
+  upstream_url: "github.com/ValleyBell/libvgm"
+
+vgmstream:
+  why_vendored: "Not in Ubuntu universe. 100+ game-audio formats → WAV. ATRAC9/FSB CELT/G.719 deliberately excluded (Windows-only DLLs)"
+  upstream_url: "github.com/vgmstream/vgmstream"
+
+# ─── apt.foundrylinux.org — Blender add-ons (moved from worldfoundry.org) ───
+
+blender-asset-finder:
+  rename_from: "(moved from apt.worldfoundry.org per 2026-05-20 reorg)"
+
+blender-asset-finder-cli:
+  rename_from: "wf-asset, moved + renamed per 2026-05-20 reorg"
+
+# ─── Phase 0 installer scripts ─────────────────────────────────────────
+
+install-foundry-blender.sh:
+  phase1_target: "worldfoundry-blender-addons (apt.worldfoundry.org)"
+  status: "⚠️ STALE — still references the pre-rename `worldfoundry-blender`; should target `worldfoundry-blender-addons`"
+
+install-foundry-retro-tools.sh:
+  phase1_target: "foundry-retro-tools (apt.foundrylinux.org)"
+
+install-foundry-android-development.sh:
+  phase1_target: "foundry-android-development (apt.foundrylinux.org)"
+
+install-foundry-ios-development.sh:
+  phase1_target: "foundry-ios-development (apt.foundrylinux.org)"
+
+install-foundry-engine-build-deps.sh:
+  phase1_target: "overlaps with worldfoundry-development's engine deps"
+
+install-foundry-dev.sh:
+  phase1_target: "umbrella — overlaps with worldfoundry-development"
+
+install-task.sh:
+  phase1_target: "N/A — Cloudsmith / Ubuntu universe"
+
+setup-foundry-apt-source.sh:
+  phase1_target: "— (bootstrap)"
+
+setup-worldfoundry-apt-source.sh:
+  phase1_target: "— (bootstrap)"
