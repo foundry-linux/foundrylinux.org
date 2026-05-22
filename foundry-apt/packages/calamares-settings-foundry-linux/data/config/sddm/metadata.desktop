@@ -1,0 +1,7 @@
+[SddmGreeterTheme]
+Name=Foundry Linux
+Description=Foundry Linux 26.04 login screen
+Author=Foundry Linux
+Version=1.0
+Website=https://foundrylinux.org
+MainScript=Main.qml

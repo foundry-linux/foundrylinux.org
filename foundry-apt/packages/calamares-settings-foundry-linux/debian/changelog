@@ -1,0 +1,6 @@
+calamares-settings-foundry-linux (1.0.0) resolute; urgency=medium
+
+  * Initial release. Calamares branding + settings for Foundry Linux 26.04
+    (wallpaper, GRUB theme, Plymouth animation, SDDM login screen, slideshow).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 22 May 2026 00:00:00 +0000

@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Foundry Linux
+Description=Boot animation for Foundry Linux 26.04
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/foundry-linux
+ScriptFile=/usr/share/plymouth/themes/foundry-linux/foundry-linux.script

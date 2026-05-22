@@ -764,6 +764,77 @@ body[data-bg="textured"] {
 .codeblock .str { color: #c0a878; }
 .codeblock .kw { color: #d8d8d8; }
 
+.install-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.download-vms {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), transparent 30%),
+    rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--hairline-strong);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  overflow: hidden;
+}
+
+.download-vms .codeblock-head {
+  border-bottom: 1px solid var(--hairline);
+}
+.download-vms .codeblock-head svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.vm-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vm-row {
+  display: grid;
+  grid-template-columns: 6.5em 1fr auto auto;
+  align-items: center;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--hairline);
+  gap: 12px;
+}
+.vm-row:last-child { border-bottom: none; }
+
+.vm-type {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.vm-file {
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vm-size {
+  color: var(--ink-faint);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.vm-dl {
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+.vm-dl:hover { color: var(--accent); }
+.vm-dl svg { width: 14px; height: 14px; }
+
 .install-side h3 {
   font-family: var(--font-wordmark);
   font-weight: 700;

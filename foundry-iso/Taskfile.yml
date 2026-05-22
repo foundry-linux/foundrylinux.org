@@ -1,0 +1,35 @@
+version: '3'
+
+tasks:
+  default:
+    desc: "List available tasks"
+    cmds:
+      - task --list
+
+  build:
+    desc: "Build the ISO locally (EDITION=anvil|atelier, default: anvil)"
+    cmds:
+      - EDITION=${EDITION:-anvil} bash scripts/build-iso.sh
+
+  clean:
+    desc: "Clean live-build artifacts"
+    cmds:
+      - |
+        docker run --rm -v "$(pwd):/work" -w /work/config ubuntu:26.04 \
+          bash -c 'apt-get install -y live-build -qq && lb clean --purge'
+        rm -rf dist/
+
+  smoke:
+    desc: "Boot the locally-built ISO in QEMU (EDITION=anvil|atelier, default: anvil)"
+    cmds:
+      - bash test/boot-smoke.sh dist/foundry-${EDITION:-anvil}-1.0-amd64.iso
+
+  sign:
+    desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier)"
+    cmds:
+      - EDITION=${EDITION:-anvil} bash scripts/sign-iso.sh
+
+  bootstrap-r2:
+    desc: "One-time: create foundry-iso R2 bucket + iso.foundrylinux.org binding (requires CF_API_TOKEN)"
+    cmds:
+      - bash scripts/bootstrap-r2.sh

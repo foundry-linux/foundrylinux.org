@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+add-apt-repository -y multiverse
+apt-get update -qq

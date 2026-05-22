@@ -10,8 +10,8 @@ Phase 0 (bash installer) lives in this repo; Phase 1 (signed apt repos) ships ac
 
 | Repo | Scope | Source tree |
 |---|---|---|
-| `apt.foundrylinux.org` | Foundry Linux distro toolchain — `foundry-retro-tools` metapackage + vendored upstreams (`f9dasm`, `ghidra`, `libvgm`, `vgmstream`) | this repo, `foundry-apt/` |
-| `apt.worldfoundry.org` | WorldFoundry-specific authoring tools — 10 CLIs (cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, wf-asset) + 2 Blender add-ons (wf-blender, blender-asset-finder) + 4 umbrella metapackages (worldfoundry, worldfoundry-cli, worldfoundry-blender, worldfoundry-development) | sibling repo `../worldfoundry.org/apt/` |
+| `apt.foundrylinux.org` | Foundry Linux distro toolchain — `foundry-*` edition/category metapackages + vendored upstreams (`f9dasm`, `ghidra`, `libvgm`, `vgmstream`) + general Blender tools (`blender-asset-finder`, `blender-asset-finder-cli`) | this repo, `foundry-apt/` |
+| `apt.worldfoundry.org` | WorldFoundry-specific authoring tools — 9 CLIs (cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile) + 1 Blender add-on (`worldfoundry-blender-editor-exporter`) + 4 umbrella metapackages (`worldfoundry`, `worldfoundry-cli`, `worldfoundry-blender-addons`, `worldfoundry-development`) | sibling repo `../worldfoundry.org/apt/` |
 
 The two repos are **deliberately separate**: foundry-linux is the distribution; WorldFoundry is one tenant's authoring stack. They're co-installed on a workstation but neither depends on the other being configured.
 
@@ -28,7 +28,7 @@ foundry-setup/
   setup-foundry-apt-source.sh                  wire apt.foundrylinux.org (key + sources.list.d)
   setup-worldfoundry-apt-source.sh             wire apt.worldfoundry.org (key + sources.list.d)
   install-foundry-engine-build-deps.sh   build-essential, cmake, libx11-dev, libgl/glu dev, gdb, xxd, python3, pkg-config, git, curl, wget, unzip (Ubuntu universe)
-  install-foundry-blender.sh             apt install worldfoundry-blender (apt.worldfoundry.org → Blender + wf-blender + blender-asset-finder)
+  install-foundry-blender.sh             apt install worldfoundry-blender-addons (apt.worldfoundry.org → Blender + worldfoundry-blender-editor-exporter + blender-asset-finder)
   install-foundry-retro-tools.sh         apt install foundry-retro-tools (apt.foundrylinux.org → mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream, ghidra)
   install-foundry-android-development.sh apt install foundry-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c; enables Ubuntu multiverse)
   install-foundry-ios-development.sh     apt install foundry-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx install codemagic-cli-tools

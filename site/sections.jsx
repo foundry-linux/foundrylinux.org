@@ -207,22 +207,51 @@ function Install() {
         </div>
 
         <div className="install-wrap">
-          <div className="codeblock">
-            <div className="codeblock-head">
-              <span>shell · root</span>
-              <div className="dots"><i /><i /><i /></div>
+          <div className="install-left">
+            <div className="codeblock">
+              <div className="codeblock-head">
+                <span>shell · root</span>
+                <div className="dots"><i /><i /><i /></div>
+              </div>
+              <pre>
+                <span className="step">① Add the Foundry archive</span>{"\n"}
+                <span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>{"\n"}
+                {"\n"}
+                <span className="step">② Install</span>{"\n"}
+                <span className="ember">sudo apt install</span> foundry-anvil{"\n"}
+                {"\n"}
+                <span className="cmt"># or pick a different edition:</span>{"\n"}
+                <span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>{"\n"}
+                <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~10 GB)</span>
+              </pre>
             </div>
-            <pre>
-              <span className="step">① Add the Foundry archive</span>{"\n"}
-              <span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>{"\n"}
-              {"\n"}
-              <span className="step">② Install</span>{"\n"}
-              <span className="ember">sudo apt install</span> foundry-anvil{"\n"}
-              {"\n"}
-              <span className="cmt"># or pick a different edition:</span>{"\n"}
-              <span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>{"\n"}
-              <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~10 GB)</span>
-            </pre>
+
+            <div className="download-vms" id="download">
+              <div className="codeblock-head">
+                <span>download · vms</span>
+                <DownloadIcon />
+              </div>
+              <ul className="vm-list">
+                <li className="vm-row">
+                  <span className="vm-type">VirtualBox</span>
+                  <span className="vm-file">foundry-26.04-anvil.ova</span>
+                  <span className="vm-size">4.8 GB</span>
+                  <a className="vm-dl" href="#" aria-label="Download VirtualBox OVA"><DownloadIcon /></a>
+                </li>
+                <li className="vm-row">
+                  <span className="vm-type">VMware</span>
+                  <span className="vm-file">foundry-26.04-anvil.vmdk</span>
+                  <span className="vm-size">4.6 GB</span>
+                  <a className="vm-dl" href="#" aria-label="Download VMware VMDK"><DownloadIcon /></a>
+                </li>
+                <li className="vm-row">
+                  <span className="vm-type">QEMU / KVM</span>
+                  <span className="vm-file">foundry-26.04-anvil.qcow2</span>
+                  <span className="vm-size">3.2 GB</span>
+                  <a className="vm-dl" href="#" aria-label="Download QEMU qcow2"><DownloadIcon /></a>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div className="install-side">

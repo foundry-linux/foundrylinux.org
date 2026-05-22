@@ -1,0 +1,33 @@
+// Foundry Linux Plymouth boot animation
+// Module: script (built-in)
+
+// Background
+bg_image = Image("background.png");
+bg_sprite = Sprite(bg_image);
+bg_sprite.SetX(0);
+bg_sprite.SetY(0);
+bg_sprite.SetZ(-100);
+
+// Logo — centred on screen
+logo_image  = Image("logo.png");
+screen_w    = Window.GetWidth();
+screen_h    = Window.GetHeight();
+logo_sprite = Sprite(logo_image);
+logo_sprite.SetX(screen_w / 2 - logo_image.GetWidth()  / 2);
+logo_sprite.SetY(screen_h / 2 - logo_image.GetHeight() / 2 - 40);
+logo_sprite.SetZ(1);
+
+// Spinner arc (drawn as a small progress bar)
+progress_image  = Image.Text("", 1, 0.36, 0.10);  // placeholder
+spinner_angle   = 0.0;
+spinner_radius  = 40;
+spinner_x       = screen_w / 2;
+spinner_y       = screen_h / 2 + logo_image.GetHeight() / 2 + 20;
+
+fun refresh_callback() {
+    spinner_angle = spinner_angle + 0.12;
+    if (spinner_angle > Math.Pi * 2)
+        spinner_angle = spinner_angle - Math.Pi * 2;
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);

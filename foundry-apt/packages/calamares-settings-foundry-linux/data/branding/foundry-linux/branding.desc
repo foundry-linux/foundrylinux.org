@@ -1,0 +1,35 @@
+---
+componentName: foundry-linux
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo:  true
+
+strings:
+    productName:      "Foundry Linux"
+    shortProductName: "Foundry"
+    version:          "26.04"
+    shortVersion:     "26.04"
+    versionedName:    "Foundry Linux 26.04"
+    shortVersionedName: "Foundry 26.04"
+    bootloaderEntryName: "Foundry Linux"
+    productUrl:       "https://foundrylinux.org/"
+    supportUrl:       "https://foundrylinux.org/docs"
+    knownIssuesUrl:   "https://github.com/foundry-linux/foundrylinux.org/issues"
+    releaseNotesUrl:  "https://foundrylinux.org/"
+
+images:
+    # logo.png: 256×256 — placed here as a placeholder; replace with real asset.
+    productLogo:   "logo.png"
+    productIcon:   "logo.png"
+    productWelcome: "banner.png"
+
+# Sidebar / navigation colours — forge palette (near-black + ember orange).
+sidebar:
+    background:  "#0e0e0e"
+    text:        "#e0e0e0"
+    textSelect:  "#ffffff"
+    select:      "#ff5b1a"
+
+# Slideshow shown while packages install (QML file, 4–6 slides).
+slideshow:               "slideshow.qml"
+slideshowAPI:            2

@@ -1,0 +1,31 @@
+# Foundry Linux GRUB2 theme
+# Place in /usr/share/grub/themes/foundry-linux/
+
+desktop-image: "background.png"
+desktop-color: "#0a0a0a"
+title-color: "#f7f7f7"
+message-color: "#ff5b1a"
+
++ boot_menu {
+  left   = 10%
+  top    = 22%
+  width  = 80%
+  height = 55%
+  item_color          = "#ebe8e2"
+  selected_item_color = "#ffffff"
+  item_height         = 34
+  item_padding        = 12
+  item_spacing        = 4
+  menu_pixmap_style   = ""
+  scrollbar           = false
+}
+
++ label {
+  top    = 83%
+  left   = 50%-140
+  width  = 280
+  align  = "center"
+  text   = "FOUNDRY LINUX 26.04 LTS"
+  color  = "#ff5b1a"
+  font   = "sans Regular 13"
+}

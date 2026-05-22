@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+# Edition is driven by env; CI sets it per matrix axis (anvil | atelier).
+EDITION="${EDITION:?EDITION env var required: anvil or atelier}"
+case "$EDITION" in
+  anvil|atelier) ;;
+  *) echo "EDITION must be one of: anvil, atelier" >&2; exit 1 ;;
+esac
+
+lb config noauto \
+    --distribution resolute \
+    --architectures amd64 \
+    --binary-images iso-hybrid \
+    --archive-areas "main restricted universe multiverse" \
+    --bootappend-live "boot=live components quiet splash" \
+    --iso-application "Foundry Linux" \
+    --iso-volume "FOUNDRY-${EDITION^^}-1.0" \
+    --iso-preparer "foundry-linux" \
+    --iso-publisher "foundry-linux@foundrylinux.org" \
+    --apt-recommends true \
+    --apt-secure true \
+    --mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-binary    "http://archive.ubuntu.com/ubuntu/" \
+    --parent-mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
+    --parent-mirror-binary    "http://archive.ubuntu.com/ubuntu/" \
+    --linux-flavours generic \
+    --bootloaders grub-efi,grub-pc \
+    --debian-installer false \
+    --memtest none \
+    "${@}"
+
+# Write the per-edition package list so live-build pulls it during chroot.
+echo "foundry-${EDITION}"                    > config/package-lists/foundry.list.chroot
+echo "kubuntu-desktop"                       >> config/package-lists/foundry.list.chroot
+echo "calamares-settings-foundry-linux"      >> config/package-lists/foundry.list.chroot

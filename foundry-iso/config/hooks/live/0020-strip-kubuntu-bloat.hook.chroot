@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+# Purge KDE PIM / office / camera / games / snap bloat not wanted in Foundry Linux.
+# .list.chroot.purge handles the bulk removal; this hook adds the explicit
+# autoremove pass and guards against packages that may already be absent.
+apt-get purge -y --auto-remove \
+    libreoffice-\* \
+    kontact kmail 'akonadi-*' \
+    'kdepim-*' kaddressbook kalarm kjots knotes korganizer merkuro-calendar \
+    digikam showfoto kamoso \
+    'kde-games-*' kalgebra kgeography kig kbruch \
+    kdeconnect krdc krfb ktorrent \
+    snapd snap-store \
+    usb-creator-kde system-config-printer-kde kcharselect kfind \
+    2>/dev/null || true
+
+apt-get autoremove -y
+apt-get clean

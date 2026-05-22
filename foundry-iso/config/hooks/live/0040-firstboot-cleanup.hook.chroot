@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+
+# Shrink the ISO: wipe the apt cache already swept into the squashfs.
+rm -rf /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial
+
+# Rebuild man-db so man pages work out of the box.
+mandb --quiet || true
+
+# Reset machine-id so the live USB doesn't pre-collide with installed systems.
+echo > /etc/machine-id
+rm -f /var/lib/dbus/machine-id

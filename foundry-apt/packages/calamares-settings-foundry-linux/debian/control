@@ -1,0 +1,21 @@
+Source: calamares-settings-foundry-linux
+Section: misc
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org
+Rules-Requires-Root: no
+
+Package: calamares-settings-foundry-linux
+Architecture: all
+Depends: ${misc:Depends}, calamares
+Description: Calamares installer branding and settings for Foundry Linux
+ Installer branding and configuration for the Foundry Linux distribution.
+ Ships the Calamares branding descriptor (logo, slideshow, colour scheme),
+ the installer module sequence (settings.conf), and desktop appearance
+ defaults: wallpaper, GRUB theme, Plymouth boot animation, and SDDM login
+ screen matching the Foundry Linux visual identity.
+ .
+ Drop this package into a live-build chroot alongside calamares and
+ kubuntu-desktop to get a fully-branded Foundry Linux installer.

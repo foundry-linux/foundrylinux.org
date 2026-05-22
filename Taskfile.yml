@@ -11,6 +11,33 @@ tasks:
     cmds:
       - task --list
 
+  dev-setup:
+    desc: "Install all tools needed to develop this repo (run once after checkout)"
+    cmds:
+      - |
+        set -euo pipefail
+        APT_PKGS=(docker.io gh shellcheck aptly dpkg-dev debhelper jq distrobox python3 curl)
+        MISSING=()
+        for pkg in "${APT_PKGS[@]}"; do
+          dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q 'install ok installed' || MISSING+=("$pkg")
+        done
+        if (( ${#MISSING[@]} > 0 )); then
+          echo "=== apt: installing ${MISSING[*]} ==="
+          sudo apt-get update -qq || echo "  warning: apt-get update had errors; continuing with cached lists"
+          sudo apt-get install -y --no-install-recommends "${MISSING[@]}"
+        else
+          echo "=== apt: all system packages already installed ==="
+        fi
+        if ! command -v task &>/dev/null; then
+          echo "=== task (go-task): installing ==="
+          bash foundry-setup/install-task.sh
+        fi
+        if [[ ! -d node_modules ]]; then
+          echo "=== npm install ==="
+          npm install
+        fi
+        echo "All done. Run 'task' to see available tasks."
+
   md:
     desc: "Preview a markdown file in the browser"
     cmds:
@@ -231,3 +258,37 @@ tasks:
           GH_REPO: foundry-linux/foundry-devbox
           SRC_DIR: foundry-devbox
           WORK_DIR: /tmp/foundry-devbox-sync
+
+  # ─────────────────────────────────────────────────────────────────────
+  # foundry-iso/ — mirror to github.com/foundry-linux/foundry-iso.
+  # Same sync/release/bump triple as foundry-apt and foundry-devbox.
+  # ─────────────────────────────────────────────────────────────────────
+
+  iso-sync:
+    desc: "Sync foundry-iso/ to github.com/foundry-linux/foundry-iso and push"
+    cmds:
+      - task: sync
+        vars:
+          GH_REPO: foundry-linux/foundry-iso
+          SRC_DIR: foundry-iso
+          WORK_DIR: /tmp/foundry-iso-sync
+
+  iso-release:
+    desc: "Tag and push a release to trigger ISO build (usage: task iso-release TAG=v0.0.1)"
+    requires:
+      vars: [TAG]
+    cmds:
+      - task: release
+        vars:
+          TAG: '{{.TAG}}'
+          GH_REPO: foundry-linux/foundry-iso
+          WORK_DIR: /tmp/foundry-iso-sync
+
+  iso-bump:
+    desc: "Sync and auto-increment patch tag on foundry-iso (e.g. v0.0.3 → v0.0.4)"
+    cmds:
+      - task: bump
+        vars:
+          GH_REPO: foundry-linux/foundry-iso
+          SRC_DIR: foundry-iso
+          WORK_DIR: /tmp/foundry-iso-sync
