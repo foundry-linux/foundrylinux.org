@@ -115,8 +115,14 @@ for i in "${!PKG_NAMES[@]}"; do
     ver_cell="${ver} (${arch_links})"
   fi
   PKG_ROWS="${PKG_ROWS}
-      <tr><td>${name_cell}</td><td>${ver_cell}</td><td>${desc}</td></tr>"
+      <tr><td class="col-name">${name_cell}</td><td class="col-ver">${ver_cell}</td><td class="col-desc">${desc}</td></tr>"
 done
+
+# Copy tracked static assets (favicon, etc.) into the publish dir so rclone
+# picks them up. Anything under gen/static/ ships to the repo root.
+if [[ -d "$REPO_ROOT/gen/static" ]]; then
+  cp -a "$REPO_ROOT/gen/static/." "$OUT_DIR/"
+fi
 
 cat > "$OUT" <<HTML
 <!DOCTYPE html>
@@ -125,6 +131,7 @@ cat > "$OUT" <<HTML
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${SITE_TITLE}</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -184,8 +191,8 @@ cat > "$OUT" <<HTML
     border-bottom: 1px solid var(--hairline-strong);
   }
   td { padding: .5rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; }
-  td:nth-child(1) { white-space: nowrap; font-family: var(--font-mono); font-size: 13px; }
-  td:nth-child(2) { color: var(--ink-soft); white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
+  td.col-name { white-space: nowrap; font-family: var(--font-mono); font-size: 13px; }
+  td.col-ver { color: var(--ink-soft); white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
   footer {
     margin-top: 3rem;
     color: var(--ink-faint);
@@ -195,6 +202,32 @@ cat > "$OUT" <<HTML
     text-transform: uppercase;
     border-top: 1px solid var(--hairline);
     padding-top: 1rem;
+  }
+
+  /* ── Narrow screens: card layout ────────────────────────────────────
+     Five columns don't fit in 375 px without breaking. Convert each row
+     into a stacked card: package name (line 1), version (line 2, muted),
+     description (line 3, full width). Last-modified and hash aren't in
+     this table so nothing needs hiding — just the header row.
+  ──────────────────────────────────────────────────────────────────── */
+  @media (max-width: 639px) {
+    .wrap { padding: 1.5rem 0.75rem; }
+    .site-title { font-size: 1.75rem; }
+    pre { white-space: pre-wrap; word-break: break-all; }
+    table thead { display: none; }
+    table, tbody { display: block; }
+    tbody tr {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-areas: "name" "ver" "desc";
+      gap: 0.2rem;
+      padding: 0.75rem 0.6rem;
+      border-top: 1px solid var(--hairline);
+    }
+    tbody tr td { display: block; padding: 0; border: 0; white-space: normal; }
+    td.col-name { grid-area: name; }
+    td.col-ver  { grid-area: ver; }
+    td.col-desc { grid-area: desc; }
   }
 </style>
 </head>
