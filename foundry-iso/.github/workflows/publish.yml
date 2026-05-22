@@ -22,9 +22,18 @@ jobs:
       matrix:
         edition: [anvil, atelier]
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
 
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          overprovision-lvm: 'true'
+
       - uses: actions/checkout@v6
 
       - name: Build ISO in ubuntu:26.04
