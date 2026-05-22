@@ -94,11 +94,14 @@ foundry-iso/                                 # NEW monorepo subdir
     bootloaders/                             # GRUB theme drop-in (branded splash)
   scripts/
     build-iso.sh                             # invokes lb build inside ubuntu:26.04 docker
-    sign-iso.sh                              # GPG sign + sha256sum + manifest
-    upload-iso.sh                            # rclone copy iso.foundrylinux.org R2 bucket
+    sign-iso.sh                              # GPG sign + sha256sum + manifest JSON
+    upload-iso.sh                            # rclone: ISOs + checksums → R2 (pre-1.0.0) or archive.org (post-1.0.0)
+    generate-iso-index.sh                    # reads manifest-*.json → dist/index.html (branded download page)
+    upload-iso-index.sh                      # rclone: dist/index.html → R2 foundry-iso bucket
+    bootstrap-r2.sh                          # one-time: R2 bucket + iso.foundrylinux.org + GHA secrets
   test/
     boot-smoke.sh                            # qemu-system-x86_64 boots ISO, asserts Calamares + getty come up
-  .github/workflows/publish.yml              # tag push → build (matrix: anvil, atelier) → sign → upload to R2
+  .github/workflows/publish.yml              # tag push → build matrix (anvil, atelier) → sign → upload ISOs → index job
 
 foundry-apt/packages/calamares-settings-foundry-linux/   # NEW deb
   debian/
@@ -299,20 +302,49 @@ jobs:
             dist/foundry-${{ matrix.edition }}-*.iso.sha256
             dist/foundry-${{ matrix.edition }}-*.iso.asc
             dist/manifest-${{ matrix.edition }}.json
+
+      - name: Save manifest for index job
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifest-${{ matrix.edition }}
+          path: dist/manifest-${{ matrix.edition }}.json
+          retention-days: 1
+
+  index:
+    needs: build              # waits for BOTH matrix editions to complete
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: manifest-*
+          path: dist/
+          merge-multiple: true
+      - name: Generate index.html
+        run: bash scripts/generate-iso-index.sh
+      - name: Upload index to R2
+        if: ${{ !inputs.dry_run }}
+        env:
+          R2_ACCOUNT_ID:        ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: bash scripts/upload-iso-index.sh
 ```
 
-`scripts/build-iso.sh` runs `lb build` inside `docker run -v $PWD:/work
-ubuntu:26.04 …`, same pattern as `foundry-apt`'s
-`docker run … bash -c 'scripts/build-all.sh'`. Build host = `ubuntu:26.04`
-is mandatory for the same reason it's mandatory in foundry-apt:
-`dpkg-shlibdeps` and `live-build`'s seed resolution both pin to the build
-host's library state.
+The workflow has two jobs. `build` runs the matrix (anvil + atelier) in parallel —
+each builds, signs, uploads the ISO, attaches to the GH Release, and saves its
+`manifest-*.json` as a GHA artifact. `index` runs after both matrix entries
+complete: it downloads both manifests, runs `generate-iso-index.sh` to produce
+`dist/index.html`, then uploads it to the R2 bucket via `upload-iso-index.sh`.
+
+`iso.foundrylinux.org/` therefore serves a branded download page; the ISO
+files themselves are served at `iso.foundrylinux.org/foundry-{edition}-latest-amd64.iso`
+(R2 pre-1.0.0; archive.org redirect post-1.0.0 — see
+[investigation](../investigations/2026-05-22-iso-hosting.md)).
 
 **The ISO itself is NOT uploaded to the GitHub Release** — too big for the
-2 GB per-file limit (atelier is ~10 GB and would fail outright; even
-anvil's ~3.5 GB is at the limit and slow). The ISO goes to R2; the
-Release only carries the signature, checksum, and a JSON manifest pointing
-to the R2 URL.
+2 GB per-file limit. The Release only carries the signature, checksum, and
+a JSON manifest pointing to the download URL.
 
 ## Local Taskfile (`foundry-iso/Taskfile.yml`)
 
@@ -469,27 +501,25 @@ site, reject it.
 
 ## Hosting on Cloudflare R2
 
-R2 bucket: `foundry-iso` (new, separate from the existing `foundry-apt` bucket
-for clean retention policy + easier monitoring).
+**Two-phase hosting plan** (decided 2026-05-22, see
+[investigation](../investigations/2026-05-22-iso-hosting.md)):
+
+**Pre-1.0.0 (development releases):** Cloudflare R2 bucket `foundry-iso`,
+served at `iso.foundrylinux.org`. Simple, already wired, small cost
+(~$0.25/month). Old tagged releases expire via 90-day lifecycle policy.
+
+**At v1.0.0 (public launch):** Migrate ISO storage to **Internet Archive**
+(free, unlimited, no egress fees). `iso.foundrylinux.org` canonical URL is
+unchanged — a Cloudflare Worker redirects requests to the archive.org
+download URL. R2 stays for apt repos only. Migration adds
+`scripts/upload-iso-ia.sh` (rclone → `s3.us.archive.org`) and the Worker
+redirect; `publish.yml` swaps the upload step.
 
 Object naming: `foundry-{anvil,atelier}-{1.0,1.0.1,…}-amd64.iso` (semver
-matches the `git tag` that triggered the build).
-
-A static "latest" pointer: `foundry-anvil-latest-amd64.iso` and
-`foundry-atelier-latest-amd64.iso` get re-written to the most recent
-build's content after each successful upload. Same pattern as Ubuntu's
-`releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso` symlink.
-
-Custom hostname binding: `iso.foundrylinux.org` → R2 bucket (Cloudflare
-zone for foundrylinux.org already exists; one Worker route + DNS
-record). The site's `/download` page links to
-`iso.foundrylinux.org/foundry-anvil-latest-amd64.iso` etc.
-
-Cost: a 3.5 GB anvil + 10 GB atelier = 13.5 GB. R2 free tier is 10 GB —
-slightly over. The overage is ~$0.05/month per GB-over, so ~$0.18/month
-once we publish a single tagged release. Trivial. Old tagged releases
-expire via R2 lifecycle policy (`expire after 90 days` for non-latest
-objects; latest never expires).
+matches the `git tag` that triggered the build). Latest pointer:
+`foundry-{anvil,atelier}-latest-amd64.iso`. The site's `/download` page
+always links to `iso.foundrylinux.org/foundry-anvil-latest-amd64.iso` etc. —
+the URL never changes regardless of backend.
 
 ## Verification
 

@@ -29,6 +29,16 @@ tasks:
     cmds:
       - EDITION=${EDITION:-anvil} bash scripts/sign-iso.sh
 
+  generate-index:
+    desc: "Generate dist/index.html from dist/manifest-*.json"
+    cmds:
+      - bash scripts/generate-iso-index.sh
+
+  upload-index:
+    desc: "Upload dist/index.html to the foundry-iso R2 bucket"
+    cmds:
+      - bash scripts/upload-iso-index.sh
+
   bootstrap-r2:
     desc: "One-time: create foundry-iso R2 bucket + iso.foundrylinux.org binding (requires CF_API_TOKEN)"
     cmds:

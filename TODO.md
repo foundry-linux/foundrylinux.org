@@ -68,7 +68,8 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ### Phase 3 — Foundry Linux ISO
 
-- [ ] Kubuntu 26.04-based ISO via `live-build` (NOT `livecd-rootfs` — the proposal calls for live-build; per Ubuntu Studio precedent). Two ISOs at v1: `foundry-anvil-1.0-amd64.iso` (~3.5 GB) and `foundry-atelier-1.0-amd64.iso` (~10 GB), Sprite skipped. Calamares installer with branding shipped as `calamares-settings-foundry-linux` deb on apt.foundrylinux.org. Hosting: R2 (`iso.foundrylinux.org`). Kiosk mode + VM artifacts deferred. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
+- [ ] Kubuntu 26.04-based ISO via `live-build` (NOT `livecd-rootfs` — the proposal calls for live-build; per Ubuntu Studio precedent). Two ISOs at v1: `foundry-anvil-1.0-amd64.iso` (~3.5 GB) and `foundry-atelier-1.0-amd64.iso` (~10 GB), Sprite skipped. Calamares installer with branding shipped as `calamares-settings-foundry-linux` deb on apt.foundrylinux.org. Hosting: R2 (`iso.foundrylinux.org`) until v1.0.0, then migrate to Internet Archive (free, unlimited). Kiosk mode + VM artifacts deferred. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
+- [ ] **[at v1.0.0] Migrate ISO hosting to Internet Archive** — add `scripts/upload-iso-ia.sh` (rclone → `s3.us.archive.org`), add Cloudflare Worker redirecting `iso.foundrylinux.org/*` → archive.org download URLs, update `publish.yml`. R2 stays for apt repos. See [investigation](docs/investigations/2026-05-22-iso-hosting.md).
 
 ### apt.worldfoundry.org
 

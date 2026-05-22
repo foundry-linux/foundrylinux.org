@@ -39,12 +39,12 @@ jobs:
           GPG_PASSPHRASE:  ${{ secrets.GPG_PASSPHRASE  }}
         run: bash scripts/sign-iso.sh
 
-      - name: Upload to R2
+      - name: Upload ISO to R2
         if: ${{ !inputs.dry_run }}
         env:
-          EDITION:             ${{ matrix.edition }}
-          R2_ACCOUNT_ID:       ${{ secrets.R2_ACCOUNT_ID }}
-          R2_ACCESS_KEY_ID:    ${{ secrets.R2_ACCESS_KEY_ID }}
+          EDITION:              ${{ matrix.edition }}
+          R2_ACCOUNT_ID:        ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: bash scripts/upload-iso.sh
 
@@ -56,3 +56,34 @@ jobs:
             dist/foundry-${{ matrix.edition }}-*.iso.sha256
             dist/foundry-${{ matrix.edition }}-*.iso.asc
             dist/manifest-${{ matrix.edition }}.json
+
+      - name: Save manifest for index job
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifest-${{ matrix.edition }}
+          path: dist/manifest-${{ matrix.edition }}.json
+          retention-days: 1
+
+  index:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download manifests
+        uses: actions/download-artifact@v4
+        with:
+          pattern: manifest-*
+          path: dist/
+          merge-multiple: true
+
+      - name: Generate index.html
+        run: bash scripts/generate-iso-index.sh
+
+      - name: Upload index to R2
+        if: ${{ !inputs.dry_run }}
+        env:
+          R2_ACCOUNT_ID:        ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: bash scripts/upload-iso-index.sh

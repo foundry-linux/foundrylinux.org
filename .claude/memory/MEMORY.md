@@ -5,6 +5,9 @@
 - [Always build packages in Docker containers](feedback_build_in_containers.md) — never on the host; host deps silently satisfy Build-Depends and mask CI failures.
 - [Update new-web-apt-repo skill during each run](feedback_update_skill_during_run.md) — every real apt repo bootstrap is a feedback loop; update SKILL.md with gaps/corrections found.
 - [Say "non-redistributable", not "copyrighted"](feedback_copyright_vs_redistributable.md) — GPL code is copyrighted too; the multiverse/image issue is redistribution rights, not copyright.
+- [Cloudflare token/credential names](project_cloudflare_credentials.md) — actual names unknown; never assert from script defaults — ask Will and record here.
+- [Don't assert infra names from script defaults](feedback_verify_infra_names.md) — script defaults mean nothing; record actual names as Will confirms them.
+- [Foundry Linux audience: game devs new to Linux](project_foundry_audience.md) — NOT traditional Linux users; they don't care about Linux, it's just the platform. Frame UX/hosting as "downloading a game tool", not "downloading a distro".
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 
