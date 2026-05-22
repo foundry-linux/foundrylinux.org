@@ -10,7 +10,6 @@ DIST="/work/dist"
 BUILD_TMP="/work/.vm-build-tmp"
 mkdir -p "$BUILD_TMP"
 
-LOOP=""
 cleanup() {
   umount "$BUILD_TMP/vm/run"      2>/dev/null || true
   umount "$BUILD_TMP/vm/sys"      2>/dev/null || true
@@ -20,7 +19,7 @@ cleanup() {
   umount "$BUILD_TMP/vm/boot/efi" 2>/dev/null || true
   umount "$BUILD_TMP/vm"          2>/dev/null || true
   umount "$BUILD_TMP/iso"         2>/dev/null || true
-  [[ -n "$LOOP" ]] && losetup -d "$LOOP" 2>/dev/null || true
+  qemu-nbd --disconnect /dev/nbd0 2>/dev/null || true
   rm -rf "$BUILD_TMP"
 }
 trap cleanup EXIT
@@ -28,7 +27,13 @@ trap cleanup EXIT
 echo "[0/9] Installing tools..."
 apt-get update -qq
 apt-get install -y --no-install-recommends \
-  qemu-utils squashfs-tools parted dosfstools e2fsprogs rsync ca-certificates
+  qemu-utils squashfs-tools parted dosfstools e2fsprogs rsync ca-certificates kmod
+
+modprobe nbd max_part=8
+
+# No udev in container: find dynamic nbd major and create device node.
+NBD_MAJOR=$(awk '$2 == "nbd" {print $1}' /proc/devices)
+[[ -b /dev/nbd0 ]] || mknod /dev/nbd0 b "$NBD_MAJOR" 0
 
 # ── 1: Mount ISO ──────────────────────────────────────────────────────────
 echo "[1/9] Mounting ISO..."
@@ -51,18 +56,24 @@ parted -s "$RAW" mkpart primary fat32   1MiB  513MiB
 parted -s "$RAW" mkpart primary ext4  513MiB  100%
 parted -s "$RAW" set 1 esp on
 
-LOOP=$(losetup --show -f -P "$RAW")
+qemu-nbd -f raw --connect=/dev/nbd0 "$RAW"
 sleep 1
+partprobe /dev/nbd0 2>/dev/null || true
+sleep 2
 
-mkfs.fat -F32 -n "FOUNDRY_EFI" "${LOOP}p1"
-mkfs.ext4 -F -L "foundry-root" "${LOOP}p2"
+# Create partition device nodes (no udev; with max_part=8: p1=minor1, p2=minor2)
+[[ -b /dev/nbd0p1 ]] || mknod /dev/nbd0p1 b "$NBD_MAJOR" 1
+[[ -b /dev/nbd0p2 ]] || mknod /dev/nbd0p2 b "$NBD_MAJOR" 2
+
+mkfs.fat -F32 -n "FOUNDRY_EFI" /dev/nbd0p1
+mkfs.ext4 -F -L "foundry-root" /dev/nbd0p2
 
 # ── 5: Mount and copy filesystem ─────────────────────────────────────────
 echo "[5/9] Copying filesystem (~5 min)..."
 mkdir -p "$BUILD_TMP/vm"
-mount "${LOOP}p2" "$BUILD_TMP/vm"
+mount /dev/nbd0p2 "$BUILD_TMP/vm"
 mkdir -p "$BUILD_TMP/vm/boot/efi"
-mount "${LOOP}p1" "$BUILD_TMP/vm/boot/efi"
+mount /dev/nbd0p1 "$BUILD_TMP/vm/boot/efi"
 
 rsync -aHAX \
   --exclude="/proc/*"  --exclude="/sys/*"   --exclude="/dev/*" \
@@ -76,8 +87,8 @@ chmod 1777 "$BUILD_TMP/vm/tmp"
 # ── 6: Configure for disk install ────────────────────────────────────────
 echo "[6/9] Configuring..."
 
-ROOT_UUID=$(blkid -s UUID -o value "${LOOP}p2")
-EFI_UUID=$(blkid  -s UUID -o value "${LOOP}p1")
+ROOT_UUID=$(blkid -s UUID -o value /dev/nbd0p2)
+EFI_UUID=$(blkid  -s UUID -o value /dev/nbd0p1)
 
 printf 'UUID=%s  /          ext4  defaults,noatime  0 1\nUUID=%s   /boot/efi  vfat  umask=0077        0 1\ntmpfs            /tmp       tmpfs defaults,nosuid,nodev  0 0\n' \
   "$ROOT_UUID" "$EFI_UUID" > "$BUILD_TMP/vm/etc/fstab"
@@ -101,6 +112,7 @@ truncate -s 0 "$BUILD_TMP/vm/etc/machine-id" 2>/dev/null || true
 
 # ── 7: Remove live-boot; install grub-efi; regenerate initramfs ──────────
 echo "[7/9] Installing GRUB EFI + removing live-boot (~3 min)..."
+rm -f "$BUILD_TMP/vm/etc/resolv.conf"
 cp /etc/resolv.conf "$BUILD_TMP/vm/etc/resolv.conf"
 
 mount --bind /dev           "$BUILD_TMP/vm/dev"
@@ -134,11 +146,11 @@ umount "$BUILD_TMP/vm/dev/pts"  2>/dev/null || true
 umount "$BUILD_TMP/vm/dev"      2>/dev/null || true
 
 # Free squashfs temp space before conversion
+umount "$BUILD_TMP/iso" 2>/dev/null || true
 rm -rf "$BUILD_TMP/rootfs" "$BUILD_TMP/iso"
 umount "$BUILD_TMP/vm/boot/efi"
 umount "$BUILD_TMP/vm"
-losetup -d "$LOOP"
-LOOP=""
+qemu-nbd --disconnect /dev/nbd0
 sleep 1
 
 # ── 8: Convert to qcow2 and VMDK ─────────────────────────────────────────

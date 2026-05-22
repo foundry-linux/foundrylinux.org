@@ -300,23 +300,23 @@ function Install() {
                 <DownloadIcon />
               </div>
               <ul className="vm-list">
-                <li className="vm-row" data-status="soon">
+                <li className="vm-row">
                   <span className="vm-type">VirtualBox</span>
                   <span className="vm-file">foundry-anvil-latest-amd64.ova</span>
-                  <span className="vm-size">~5 GB</span>
-                  <span className="vm-dl vm-dl-soon" aria-hidden="true"><DownloadIcon /></span>
+                  <span className="vm-size">11 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.ova" aria-label="Download Anvil OVA"><DownloadIcon /></a>
                 </li>
-                <li className="vm-row" data-status="soon">
+                <li className="vm-row">
                   <span className="vm-type">VMware</span>
                   <span className="vm-file">foundry-anvil-latest-amd64.vmdk</span>
-                  <span className="vm-size">~5 GB</span>
-                  <span className="vm-dl vm-dl-soon" aria-hidden="true"><DownloadIcon /></span>
+                  <span className="vm-size">11 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.vmdk" aria-label="Download Anvil VMDK"><DownloadIcon /></a>
                 </li>
-                <li className="vm-row" data-status="soon">
+                <li className="vm-row">
                   <span className="vm-type">QEMU / KVM</span>
                   <span className="vm-file">foundry-anvil-latest-amd64.qcow2</span>
-                  <span className="vm-size">~4 GB</span>
-                  <span className="vm-dl vm-dl-soon" aria-hidden="true"><DownloadIcon /></span>
+                  <span className="vm-size">5.1 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.qcow2" aria-label="Download Anvil qcow2"><DownloadIcon /></a>
                 </li>
               </ul>
             </div>

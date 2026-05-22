@@ -37,6 +37,7 @@ docker run --rm \
   --privileged \
   -e IMAGE_BASE="$IMAGE_BASE" \
   -v "$REPO_ROOT:/work" \
+  -v /lib/modules:/lib/modules:ro \
   -w /work \
   ubuntu:26.04 \
   bash /work/scripts/vm-images-inner.sh
