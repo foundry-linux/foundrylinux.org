@@ -292,3 +292,21 @@ tasks:
           GH_REPO: foundry-linux/foundry-iso
           SRC_DIR: foundry-iso
           WORK_DIR: /tmp/foundry-iso-sync
+
+  iso-bootstrap-r2:
+    desc: "One-time: create foundry-iso R2 bucket + iso.foundrylinux.org binding"
+    dir: foundry-iso
+    cmds:
+      - bash scripts/bootstrap-r2.sh
+
+  iso-generate-index:
+    desc: "Generate dist/index.html for iso.foundrylinux.org (from dist/manifest-*.json if present)"
+    dir: foundry-iso
+    cmds:
+      - bash scripts/generate-iso-index.sh
+
+  iso-upload-index:
+    desc: "Upload dist/index.html to the foundry-iso R2 bucket (loads creds from .foundry/bootstrap.env)"
+    dir: foundry-iso
+    cmds:
+      - bash scripts/upload-iso-index.sh
