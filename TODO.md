@@ -68,11 +68,11 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ### Phase 3 — Foundry Linux ISO
 
-- [ ] Kubuntu 26.04-based ISO via `livecd-rootfs`. Calamares installer with Foundry Linux branding. Per proposal §"Channel 4 — bootable ISO".
+- [ ] Kubuntu 26.04-based ISO via `live-build` (NOT `livecd-rootfs` — the proposal calls for live-build; per Ubuntu Studio precedent). Two ISOs at v1: `foundry-anvil-1.0-amd64.iso` (~3.5 GB) and `foundry-atelier-1.0-amd64.iso` (~10 GB), Sprite skipped. Calamares installer with branding shipped as `calamares-settings-foundry-linux` deb on apt.foundrylinux.org. Hosting: R2 (`iso.foundrylinux.org`). Kiosk mode + VM artifacts deferred. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
 
-### apt.worldfoundry.org [deferred]
+### apt.worldfoundry.org
 
-- [ ] **apt.worldfoundry.org Phase A** [deferred] — `worldfoundry.org/apt/` infrastructure + gen-index site; migrate `new-web-apt-repo` command → global skill with SKILL.md + templates (Tailwind v4, design-mode prompting). See [plan](docs/plans/2026-05-18-worldfoundry-apt-repo.md).
+- [x] **apt.worldfoundry.org Phase A** — `worldfoundry.org/apt/` infrastructure + gen-index site + `new-web-apt-repo` global skill. Verified 2026-05-22. See [plan](docs/plans/2026-05-18-worldfoundry-apt-repo.md).
 - [ ] **apt.worldfoundry.org Phase B** [deferred] — five `worldfoundry-*` metapackages + `worldfoundry-blender-addon`; remove worldfoundry-* from `foundry-apt/`.
 
 ### Housekeeping
@@ -80,6 +80,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ## Done
 
+- 2026-05-22 — [worldfoundry-apt-phase-a] `worldfoundry.org/apt/` infra live: GPG-signed empty repo, gen-index site at apt.worldfoundry.org, `new-web-apt-repo` global skill. All 7 verification steps pass. See [plan](docs/plans/2026-05-18-worldfoundry-apt-repo.md).
 - 2026-05-22 — [phase-2-devbox] `ghcr.io/foundry-linux/devbox:26.04` live; 16 new metapackages (anvil/sprite/atelier hierarchy + 6 tier-0 sub-meta + 7 opt-in) on apt.foundrylinux.org; 42/42 smoke-test pass; CI green at v0.0.5. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
 - 2026-05-22 — [packages-page] `/packages` generated from live Packages.gz of both apt repos + Ubuntu resolute; home Kit grid (stale f9dasm/65ax/libvgm/vgmstream tool cards) replaced with auto-driven 6-card Forge; pure Node generator, ~3 s. CI triggers deferred to follow-up. See [plan](docs/plans/2026-05-21-packages-page.md).
 - 2026-05-22 — [move-asset-packages] `blender-asset-finder` + `wf-asset` (→ `blender-asset-finder-cli`) moved from apt.worldfoundry.org to apt.foundrylinux.org; `worldfoundry-cli` Depends + description updated; live on both R2 repos. See [plan](docs/plans/2026-05-20-move-asset-packages.md).
