@@ -213,15 +213,15 @@ function Install() {
               <div className="dots"><i /><i /><i /></div>
             </div>
             <pre>
-<span className="step">① Add the Foundry archive</span>
-<span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>
-
-<span className="step">② Install</span>
-<span className="ember">sudo apt install</span> foundry-anvil
-
-<span className="cmt"># or pick a different edition:</span>
-<span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>
-<span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~10 GB)</span>
+              <span className="step">① Add the Foundry archive</span>{"\n"}
+              <span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>{"\n"}
+              {"\n"}
+              <span className="step">② Install</span>{"\n"}
+              <span className="ember">sudo apt install</span> foundry-anvil{"\n"}
+              {"\n"}
+              <span className="cmt"># or pick a different edition:</span>{"\n"}
+              <span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>{"\n"}
+              <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~10 GB)</span>
             </pre>
           </div>
 
