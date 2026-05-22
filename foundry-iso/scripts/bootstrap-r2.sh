@@ -239,23 +239,11 @@ else
   fi
 fi
 
-# ── step 6: lifecycle — expire objects after 90 days ────────────────────────
-
-info "[6] Setting 90-day lifecycle on $BUCKET"
-if $DRY_RUN; then
-  echo "  [dry-run] PUT /r2/buckets/$BUCKET/lifecycle"
-else
-  LC_RESP=$(curl -sS -X PUT \
-    "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${BUCKET}/lifecycle" \
-    -H "Authorization: Bearer ${CF_API_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -d '{"rules":[{"id":"expire-old-releases","enabled":true,"prefix":"","expiration":{"days":90}}]}')
-  if echo "$LC_RESP" | python3 -c "import sys,json; sys.exit(0 if json.load(sys.stdin).get('success') else 1)" 2>/dev/null; then
-    ok "[6] Lifecycle rule set (90 days)"
-  else
-    echo "  [warn]  [6] Lifecycle rule failed (non-fatal): $(echo "$LC_RESP" | python3 -c "import sys,json; r=json.load(sys.stdin); print(r.get('errors',r))" 2>/dev/null || echo "$LC_RESP")"
-  fi
-fi
+# ── step 6: lifecycle — set manually in R2 dashboard if needed ───────────────
+# (Cloudflare R2 lifecycle API format is unstable; configure via dashboard:
+#  dash.cloudflare.com → R2 → foundry-iso → Settings → Object lifecycle rules
+#  Rule: expire objects older than 90 days, prefix "" )
+ok "[6] Lifecycle rule skipped — configure manually in R2 dashboard if desired"
 
 # ── step 7: R2 API token for CI (foundry-iso-ci) ────────────────────────────
 
@@ -309,12 +297,13 @@ elif [[ -z "$GPG_PRIVATE_KEY" ]]; then
     GPG_PRIVATE_KEY=$(gpg --armor --export-secret-keys "$GPG_KEY_EMAIL" 2>/dev/null || true)
     [[ -n "$GPG_PRIVATE_KEY" ]] \
       || die "[8] GPG key for $GPG_KEY_EMAIL not in local keyring. Re-run bootstrap.sh."
-    ok "[8] Exported from local keyring; storing in r2://foundry-secrets for next time"
-    printf '%s' "$GPG_PRIVATE_KEY" | curl -fsSL -X PUT \
+    ok "[8] Exported from local keyring"
+    # Best-effort store to foundry-secrets (bucket may not exist yet — non-fatal)
+    printf '%s' "$GPG_PRIVATE_KEY" | curl -sS -X PUT \
       "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${SECRETS_BUCKET}/objects/GPG_PRIVATE_KEY" \
       -H "Authorization: Bearer ${CF_API_TOKEN}" \
       -H "Content-Type: text/plain; charset=utf-8" \
-      --data-binary @- >/dev/null
+      --data-binary @- >/dev/null 2>&1 || echo "  [warn]  [8] Could not store in r2://$SECRETS_BUCKET (non-fatal)"
   fi
   export GPG_PRIVATE_KEY
   ok "[8] GPG_PRIVATE_KEY ready"
