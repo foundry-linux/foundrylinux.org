@@ -8,10 +8,7 @@ on:
   workflow_run:
     workflows: ["Build, sign, and publish APT repo"]
     types: [completed]
-  # Rebuild when worldfoundry.org publishes new apt packages (cross-repo dispatch)
-  repository_dispatch:
-    types: [apt-published]
-  # Nightly fallback — catches any drift not covered by the above triggers
+  # Nightly fallback — catches worldfoundry.org apt publishes + any other drift
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
