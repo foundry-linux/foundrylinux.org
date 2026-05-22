@@ -18,7 +18,6 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 ### Site
 
 - [x] **packages-page CI triggers** ([plan §6](docs/plans/2026-05-21-packages-page.md)) — `workflow_run` on foundry-apt publish, `repository_dispatch` from worldfoundry.org with new `FOUNDRYLINUX_DISPATCH_PAT` secret, nightly cron fallback. **Pending**: create fine-grained PAT and `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org`.
-- [ ] **Flesh out foundrylinux.org** — Claude Design landing page is live (v0.2.x); content passes as a real landing page but the design is still iterating.
 
 ### Navbar
 
@@ -87,6 +86,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ## Done
 
+- 2026-05-23 — [flesh-out-site] channels grid (4 install paths), #docs section, dead footer links wired/removed, VM rows marked coming-soon, Install sidebar copy expanded. Shipped v0.3.4.
 - 2026-05-22 — [worldfoundry-apt-phase-b] 9 WF CLIs + `worldfoundry-blender-editor-exporter` + 4 metapackages on `apt.worldfoundry.org`; `blender-asset-finder{,-cli}` on `apt.foundrylinux.org` (general Blender tools, not WF-specific); CLAUDE.md updated.
 - 2026-05-22 — [worldfoundry-apt-phase-a] `worldfoundry.org/apt/` infra live: GPG-signed empty repo, gen-index site at apt.worldfoundry.org, `new-web-apt-repo` global skill. All 7 verification steps pass. See [plan](docs/plans/2026-05-18-worldfoundry-apt-repo.md).
 - 2026-05-22 — [phase-2-devbox] `ghcr.io/foundry-linux/devbox:26.04` live; 16 new metapackages (anvil/sprite/atelier hierarchy + 6 tier-0 sub-meta + 7 opt-in) on apt.foundrylinux.org; 42/42 smoke-test pass; CI green at v0.0.5. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
