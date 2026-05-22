@@ -128,9 +128,27 @@ cat > "$OUT" <<HTML
     display: flex;
     flex-direction: column;
     gap: .75rem;
+    transition: border-color .2s, box-shadow .2s;
   }
-  .edition.recommended { border-color: var(--accent); }
-  .edition-icon { color: var(--ink-faint); }
+  .edition:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(255,99,32,.45), 0 0 12px rgba(255,99,32,.25);
+  }
+  .edition.recommended {
+    border-color: var(--accent);
+    box-shadow: 0 0 28px rgba(255,99,32,.25), 0 0 6px rgba(255,99,32,.12);
+  }
+  .edition.recommended:hover {
+    box-shadow: 0 0 56px rgba(255,99,32,.6), 0 0 16px rgba(255,99,32,.35);
+  }
+  .edition-icon {
+    color: var(--ink-faint);
+    transition: color .2s, filter .2s;
+  }
+  .edition:hover .edition-icon {
+    color: var(--accent);
+    filter: drop-shadow(0 0 8px rgba(255,99,32,.8));
+  }
   .edition-size {
     font-family: var(--font-mono);
     font-size: 2rem;
@@ -150,7 +168,13 @@ cat > "$OUT" <<HTML
     font-size: 1.4rem;
     font-weight: 900;
     text-transform: uppercase;
+    letter-spacing: 0;
     color: var(--ink);
+    transition: color .2s, text-shadow .2s;
+  }
+  .edition:hover .edition-name {
+    color: var(--accent);
+    text-shadow: 0 0 10px rgba(255,99,32,.6), 0 0 24px rgba(255,99,32,.3);
   }
   .edition-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
   .edition-includes {
