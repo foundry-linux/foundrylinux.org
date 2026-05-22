@@ -54,14 +54,18 @@ anvil_size="$(human_size "$anvil_bytes")"
 [[ -z "$anvil_size" || "$anvil_size" == "—" ]] && anvil_size="~5 GB"
 anvil_filename="$(manifest_field anvil filename)"
 [[ -z "$anvil_filename" ]] && anvil_filename="foundry-anvil-latest-amd64.iso"
+anvil_torrent="$(manifest_field anvil torrent_url)"
+anvil_magnet="$(manifest_field anvil magnet_link)"
 
 atelier_ver="$(manifest_field atelier version)"
 atelier_sha="$(manifest_field atelier sha256)"
 atelier_bytes="$(manifest_field atelier size_bytes)"
 atelier_size="$(human_size "$atelier_bytes")"
-[[ -z "$atelier_size" || "$atelier_size" == "—" ]] && atelier_size="~10 GB"
+[[ -z "$atelier_size" || "$atelier_size" == "—" ]] && atelier_size="~15 GB"
 atelier_filename="$(manifest_field atelier filename)"
 [[ -z "$atelier_filename" ]] && atelier_filename="foundry-atelier-latest-amd64.iso"
+atelier_torrent="$(manifest_field atelier torrent_url)"
+atelier_magnet="$(manifest_field atelier magnet_link)"
 
 # Version label shown on the page (prefer anvil's version; both are the same).
 VERSION="${anvil_ver:-latest}"
@@ -324,6 +328,8 @@ cat > "$OUT" <<HTML
         <a href="/foundry-anvil-latest-amd64.iso.sha256">SHA256</a>
         &nbsp;&middot;&nbsp;
         <a href="/foundry-anvil-latest-amd64.iso.asc">GPG sig</a>
+        $([ -n "${anvil_torrent}" ] && echo "&nbsp;&middot;&nbsp;<a href=\"${anvil_torrent}\">.torrent</a>")
+        $([ -n "${anvil_magnet}" ] && echo "&nbsp;&middot;&nbsp;<a href=\"${anvil_magnet}\">magnet</a>")
       </div>
     </div>
 
@@ -350,6 +356,8 @@ cat > "$OUT" <<HTML
         <a href="/foundry-atelier-latest-amd64.iso.sha256">SHA256</a>
         &nbsp;&middot;&nbsp;
         <a href="/foundry-atelier-latest-amd64.iso.asc">GPG sig</a>
+        $([ -n "${atelier_torrent}" ] && echo "&nbsp;&middot;&nbsp;<a href=\"${atelier_torrent}\">.torrent</a>")
+        $([ -n "${atelier_magnet}" ] && echo "&nbsp;&middot;&nbsp;<a href=\"${atelier_magnet}\">magnet</a>")
       </div>
     </div>
   </div>

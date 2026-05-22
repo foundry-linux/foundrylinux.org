@@ -4,6 +4,7 @@ import {
   FoundryMark, GearStackIcon, BigAnvilLogo, CopyIcon, DownloadIcon, ArrowRightIcon,
   WorldFoundryIcon, BlenderIcon, MameIcon, AssemblerIcon, LibvgmIcon, VgmstreamIcon,
   AnvilEditionIcon, SpriteIcon, GamepadIcon, SparksIcon,
+  TorrentIcon, MagnetIcon,
 } from './icons.jsx';
 import packagesData from './packages-data.json';
 
@@ -272,7 +273,7 @@ function Install() {
                 {"\n"}
                 <span className="cmt"># or pick a different edition:</span>{"\n"}
                 <span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>{"\n"}
-                <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~10 GB)</span>
+                <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~15 GB)</span>
               </pre>
             </div>
 
@@ -287,12 +288,16 @@ function Install() {
                   <span className="vm-file">foundry-anvil-latest-amd64.iso</span>
                   <span className="vm-size">~5 GB</span>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso" aria-label="Download Anvil ISO"><DownloadIcon /></a>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso.torrent" aria-label="Anvil torrent file"><TorrentIcon /></a>
+                  <a className="vm-dl" href="magnet:?xt=urn:btih:959059a55e5709014ce0fb6b86d3feefc7ae6885&dn=foundry-anvil-1.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-anvil-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Anvil magnet link"><MagnetIcon /></a>
                 </li>
                 <li className="vm-row">
                   <span className="vm-type">Atelier</span>
                   <span className="vm-file">foundry-atelier-latest-amd64.iso</span>
-                  <span className="vm-size">~10 GB</span>
+                  <span className="vm-size">~15 GB</span>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso" aria-label="Download Atelier ISO"><DownloadIcon /></a>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso.torrent" aria-label="Atelier torrent file"><TorrentIcon /></a>
+                  <a className="vm-dl" href="magnet:?xt=urn:btih:521b695f1f35665187d73d1a95b9c3e9b6878cb1&dn=foundry-atelier-1.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-atelier-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Atelier magnet link"><MagnetIcon /></a>
                 </li>
               </ul>
               <div className="codeblock-head" style={{ marginTop: '1rem' }}>

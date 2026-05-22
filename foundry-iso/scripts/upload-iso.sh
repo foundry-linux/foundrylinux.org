@@ -54,5 +54,11 @@ rclone copyto "$ISO"           "r2:${BUCKET}/${LATEST}"              --progress
 rclone copyto "${ISO}.sha256"  "r2:${BUCKET}/${LATEST}.sha256"       --progress
 rclone copyto "${ISO}.asc"     "r2:${BUCKET}/${LATEST}.asc"          --progress
 
+if [[ -f "${ISO}.torrent" ]]; then
+  echo "=== Uploading torrent ==="
+  rclone copyto "${ISO}.torrent" "r2:${BUCKET}/${VERSIONED}.torrent" --progress
+  rclone copyto "${ISO}.torrent" "r2:${BUCKET}/${LATEST}.torrent"    --progress
+fi
+
 echo "=== Upload complete ==="
 echo "  https://iso.foundrylinux.org/${LATEST}"

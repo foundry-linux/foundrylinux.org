@@ -797,7 +797,7 @@ body[data-bg="textured"] {
 
 .vm-row {
   display: grid;
-  grid-template-columns: 6.5em 1fr auto auto;
+  grid-template-columns: 6.5em 1fr auto auto auto auto;
   align-items: center;
   padding: 13px 18px;
   border-bottom: 1px solid var(--hairline);

@@ -399,10 +399,28 @@ const GearStackIcon = () => (
   </svg>
 );
 
+const TorrentIcon = () => (
+  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M8 2 C4.7 2 2 4.7 2 8 C2 11.3 4.7 14 8 14 C11.3 14 14 11.3 14 8 C14 6.1 13.1 4.4 11.7 3.3" />
+    <path d="M8 5 L8 11 M5.5 8.5 L8 11 L10.5 8.5" />
+  </svg>
+);
+
+const MagnetIcon = () => (
+  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 3 L3 9 C3 11.8 5.2 14 8 14 C10.8 14 13 11.8 13 9 L13 3" />
+    <line x1="3" y1="3" x2="6" y2="3" />
+    <line x1="13" y1="3" x2="10" y2="3" />
+    <line x1="6" y1="3" x2="6" y2="7" />
+    <line x1="10" y1="3" x2="10" y2="7" />
+  </svg>
+);
+
 export {
   AnvilIcon, HammerIcon, SparksIcon,
   WorldFoundryIcon, BlenderIcon, MameIcon, F9dasmIcon, AssemblerIcon, LibvgmIcon, VgmstreamIcon,
   GamepadIcon, AnvilEditionIcon, SpriteIcon,
   BigAnvilLogo, FoundryMark, DownloadIcon, CopyIcon, ArrowRightIcon,
   ForgeSceneIcon, GearStackIcon,
+  TorrentIcon, MagnetIcon,
 };
