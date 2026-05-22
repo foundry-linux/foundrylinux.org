@@ -197,7 +197,7 @@ cat > "$OUT" <<HTML
     text-align: center;
     padding: .7rem 1rem;
     background: var(--accent);
-    color: #222;
+    color: var(--bg);
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
