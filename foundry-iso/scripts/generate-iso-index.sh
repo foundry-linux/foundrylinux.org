@@ -242,17 +242,6 @@ cat > "$OUT" <<HTML
     width: 9rem;
   }
 
-  footer {
-    margin-top: 3rem;
-    color: var(--ink-faint);
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    border-top: 1px solid var(--hairline);
-    padding-top: 1rem;
-  }
-
   @media (max-width: 600px) {
     .editions { grid-template-columns: 1fr; }
     .wrap { padding: 1.5rem .75rem; }
@@ -261,6 +250,25 @@ cat > "$OUT" <<HTML
 </style>
 </head>
 <body>
+<header class="topbar-wrap">
+  <div class="shell">
+    <div class="topbar">
+      <a class="topbar-mark" href="https://foundrylinux.org" style="text-decoration:none;color:inherit;">
+        <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 L28 12 L26 16 L22 16 L22 20 L10 20 L10 16 L6 16 Z"></path><path d="M12 20 L11 24 L21 24 L20 20"></path><path d="M9 24 L23 24 L23 27 L9 27 Z"></path><line x1="16" y1="4" x2="16" y2="8"></line><line x1="11" y1="6" x2="13" y2="9"></line><line x1="21" y1="6" x2="19" y2="9"></line></g></svg>
+        <b>foundrylinux.org</b>
+      </a>
+      <nav class="topbar-nav">
+        <a href="https://foundrylinux.org/#forge">The Forge</a>
+        <a href="https://foundrylinux.org/#install">Install</a>
+        <a href="https://foundrylinux.org/#editions">Editions</a>
+        <a href="https://foundrylinux.org/packages">Packages</a>
+      </nav>
+      <div class="topbar-version">
+        <span class="dot"></span>FOUNDRY 26.04 &middot; &ldquo;ANVIL&rdquo; &middot; LTS
+      </div>
+    </div>
+  </div>
+</header>
 <div class="wrap">
   <p class="eyebrow">Downloads</p>
   <p class="site-title">Foundry Linux</p>
@@ -347,11 +355,26 @@ sha256sum foundry-anvil-latest-amd64.iso
 Get-FileHash foundry-anvil-latest-amd64.iso -Algorithm SHA256</pre>
   <p style="font-size:13px;color:var(--ink-faint);margin-top:.5rem;">Compare the output against <a href="/foundry-anvil-latest-amd64.iso.sha256">foundry-anvil-latest-amd64.iso.sha256</a>.</p>
 
-  <footer>
-    Published ${PUBLISHED} &mdash;
-    <a href="https://foundrylinux.org">foundrylinux.org</a>
-  </footer>
 </div>
+<footer class="shell">
+  <div class="foot">
+    <div class="foot-mark">
+      <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 L28 12 L26 16 L22 16 L22 20 L10 20 L10 16 L6 16 Z"></path><path d="M12 20 L11 24 L21 24 L20 20"></path><path d="M9 24 L23 24 L23 27 L9 27 Z"></path><line x1="16" y1="4" x2="16" y2="8"></line><line x1="11" y1="6" x2="13" y2="9"></line><line x1="21" y1="6" x2="19" y2="9"></line></g></svg>
+      <span>FOUNDRY &middot; LINUX</span>
+    </div>
+    <nav class="foot-links">
+      <a href="https://foundrylinux.org/#docs">Docs</a>
+      <a href="https://foundrylinux.org/packages">Packages</a>
+      <a href="https://foundrylinux.org/#mirrors">Mirrors</a>
+      <a href="https://foundrylinux.org/#git">Git</a>
+      <a href="https://foundrylinux.org/#bugs">Bugs</a>
+    </nav>
+    <div class="foot-meta">
+      Published ${PUBLISHED}<br>
+      Forged in the open &middot; MMXXVI
+    </div>
+  </div>
+</footer>
 </body>
 </html>
 HTML
