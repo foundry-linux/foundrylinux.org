@@ -18,7 +18,7 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 ### Site
 
 - [x] **packages-page CI triggers** ([plan §6](docs/plans/2026-05-21-packages-page.md)) — `workflow_run` on foundry-apt publish, `repository_dispatch` from worldfoundry.org with new `FOUNDRYLINUX_DISPATCH_PAT` secret, nightly cron fallback. **Pending**: create fine-grained PAT and `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org`.
-- [ ] **Flesh out foundrylinux.org** — Claude Design landing page is live (v0.2.x); content passes as a real landing page but the design is still iterating. `tweaks-panel.jsx` still present — remove once design is finalised.
+- [ ] **Flesh out foundrylinux.org** — Claude Design landing page is live (v0.2.x); content passes as a real landing page but the design is still iterating.
 
 ### Navbar
 
@@ -75,6 +75,11 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 - [x] **apt.worldfoundry.org Phase A** — `worldfoundry.org/apt/` infrastructure + gen-index site + `new-web-apt-repo` global skill. Verified 2026-05-22. See [plan](docs/plans/2026-05-18-worldfoundry-apt-repo.md).
 - [x] **apt.worldfoundry.org Phase B** — 9 WF CLIs + `worldfoundry-blender-editor-exporter` + 4 metapackages live on `apt.worldfoundry.org`; `blender-asset-finder{,-cli}` deliberately on `apt.foundrylinux.org`; no `worldfoundry-*` remain in `foundry-apt/`.
+
+### Packaging — dropped packages to investigate
+
+- [ ] **snes9x-gtk** — dropped from Ubuntu 26.04; removed from `foundry-emulators-consoles-heavy` 1.0.1. Research: why was it dropped from the archive? Is it still maintained upstream (snes9x.com)? Should we package it in `foundry-apt`?
+- [ ] **ppsspp** — dropped from Ubuntu 26.04; removed from `foundry-emulators-consoles-heavy` 1.0.1. Research: why dropped? ppsspp.org upstream is active; strong candidate to package ourselves.
 
 ### Housekeeping
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.

@@ -217,9 +217,9 @@ const CHANNELS = [
     num: '04',
     label: 'VM',
     hook: 'VirtualBox · VMware · QEMU.',
-    cmd: 'foundry-26.04-anvil.{ova,qcow2}',
-    href: null,
-    soon: true,
+    cmd: 'foundry-anvil-latest-amd64.{ova,vmdk,qcow2}',
+    href: '#download',
+    soon: false,
   },
 ];
 

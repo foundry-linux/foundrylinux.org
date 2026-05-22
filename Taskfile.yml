@@ -293,6 +293,18 @@ tasks:
           SRC_DIR: foundry-iso
           WORK_DIR: /tmp/foundry-iso-sync
 
+  iso-build-vms:
+    desc: "Build VM images (qcow2, VMDK, OVA) from the anvil ISO"
+    dir: foundry-iso
+    cmds:
+      - bash scripts/build-vm-images.sh
+
+  iso-upload-vms:
+    desc: "Upload VM images to R2 (loads creds from .foundry/bootstrap.env)"
+    dir: foundry-iso
+    cmds:
+      - bash scripts/upload-vm-images.sh
+
   iso-bootstrap-r2:
     desc: "One-time: create foundry-iso R2 bucket + iso.foundrylinux.org binding"
     dir: foundry-iso

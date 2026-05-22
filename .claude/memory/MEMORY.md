@@ -7,6 +7,7 @@
 - [Say "non-redistributable", not "copyrighted"](feedback_copyright_vs_redistributable.md) — GPL code is copyrighted too; the multiverse/image issue is redistribution rights, not copyright.
 - [Cloudflare token/credential names](project_cloudflare_credentials.md) — actual names unknown; never assert from script defaults — ask Will and record here.
 - [Don't assert infra names from script defaults](feedback_verify_infra_names.md) — script defaults mean nothing; record actual names as Will confirms them.
+- [Dropped packages → add TODO to research + repackage](feedback_dropped_packages_todo.md) — when removing a dep because it's gone from Ubuntu, add TODO entries for why it was dropped and whether to package it ourselves.
 - [Foundry Linux audience: game devs new to Linux](project_foundry_audience.md) — NOT traditional Linux users; they don't care about Linux, it's just the platform. Frame UX/hosting as "downloading a game tool", not "downloading a distro".
 - [VM downloads are a planned distribution channel](project_vm_distribution.md) — VirtualBox/VMware/QEMU rows are intentional strategy, not placeholders. Add alongside, never replace.
 
