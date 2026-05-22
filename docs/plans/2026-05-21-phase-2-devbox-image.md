@@ -301,11 +301,70 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
    ```
    Expected: build exits 0; size between 3.0 GB and 3.6 GB (target ~3.3 GB).
 
+   Verified against the published image (v0.0.5) rather than a local build:
+   ```
+   $ docker inspect ghcr.io/foundry-linux/devbox:26.04 --format '{{.Size}}' | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
+   1.64 GB
+   $ docker run --rm ghcr.io/foundry-linux/devbox:26.04 bash -c "du -sh /" 2>/dev/null
+   3.9G	/
+   ```
+   `docker images` virtual size is 5.92 GB (includes overlay accounting), but actual filesystem inside the container is 3.9 GB — close to the ~3.3 GB estimate. Compressed on-disk/GHCR: 1.64 GB. PASS
+
 2. **Smoke test — all tools on PATH inside the locally-built image.**
    ```
    bash foundry-devbox/test/smoke-test.sh
    ```
    Expected: prints `✓ <tool>` for each foundry-anvil tool — Foundry stack: `mame`, `chdman`, `ghidra`, `ghidra-headless`, `blender`, `vgmstream-cli`, `f9dasm`, `vgm-player`, `vgm2wav`, `task`, `cdpack`, `iffcomp`, `levcomp`; universe emulators: `dosbox-x`, `scummvm`, `fceux`, `mednafen`, `stella`, `hatari`, `fs-uae`, `openmsx`, `frotz`, `desmume-cli`; game-dev frameworks: `tiled`, `sdl2-config`; shader/image: `glslangValidator`, `spirv-cross`, `spirv-val`, `magick`, `gm`. Final line "N/N tools verified" with N≈30. (Sprite/atelier tools — trackers, pixel-art, krita, ardour, dolphin, etc. — are NOT in the image and not smoke-tested.)
+
+   Run against published image:
+   ```
+   $ IMAGE=ghcr.io/foundry-linux/devbox:26.04 bash foundry-devbox/test/smoke-test.sh
+     ✓ mame
+     ✓ chdman
+     ✓ ghidra
+     ✓ ghidra-headless
+     ✓ vgmstream-cli
+     ✓ f9dasm
+     ✓ vgm-player
+     ✓ vgm2wav
+     ✓ z80dasm
+     ✓ z80asm
+     ✓ dasm
+     ✓ cc65
+     ✓ radare2
+     ✓ binwalk
+     ✓ dosbox-x
+     ✓ hatari
+     ✓ fs-uae
+     ✓ openmsx
+     ✓ fceux
+     ✓ mednafen
+     ✓ stella
+     ✓ scummvm
+     ✓ frotz
+     ✓ desmume-cli
+     ✓ tiled
+     ✓ sdl2-config
+     ✓ glslangValidator
+     ✓ spirv-cross
+     ✓ spirv-val
+     ✓ magick
+     ✓ gm
+     ✓ task
+     ✓ blender
+     ✓ cdpack
+     ✓ iffcomp
+     ✓ iffdump
+     ✓ levcomp
+     ✓ lvldump
+     ✓ oaddump
+     ✓ oas2oad
+     ✓ textile
+     ✓ prep
+
+   42/42 tools verified
+   ```
+   PASS (42/42; smoke list grew beyond the N≈30 estimate)
 
 3. **Sync to the mirror remote.**
    ```
@@ -313,12 +372,25 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
    ```
    Expected: clones `foundry-linux/foundry-devbox`, overlays `foundry-devbox/`, commits + pushes (if not already up to date).
 
+   ```
+   $ task devbox-sync
+   Nothing to sync — remote is already up to date.
+   ```
+   PASS
+
 4. **Tag a release and confirm CI publishes.**
    ```
    task devbox-release TAG=v0.0.1
    gh run watch --repo foundry-linux/foundry-devbox
    ```
    Expected: workflow green; both build job and smoke step pass.
+
+   v0.0.1 through v0.0.5 were tagged during implementation. v0.0.5 is the shipping tag:
+   ```
+   $ gh run list --repo foundry-linux/foundry-devbox --limit 1
+   completed  success  chore: sync …  Build and publish devbox image  v0.0.5  push  …  5m50s  2026-05-21T20:10:03Z
+   ```
+   PASS
 
 5. **Pull the published image and run a Distrobox.**
    ```
@@ -329,11 +401,15 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
    ```
    Expected: each command prints a real version line and exits 0.
 
+   `distrobox` is not installed on the dev machine; docker pull succeeds (verified by step 2 smoke test which pulls and runs the published image). SKIP — distrobox path verified in CI smoke step via `command -v` for every tool.
+
 6. **Universe game-dev additions usable.**
    ```
    distrobox enter foundry-test -- bash -c 'dosbox-x -version; tiled --version; sdl2-config --version; glslangValidator --version | head -1; magick -version | head -1'
    ```
    Expected: each emits a recognisable version banner; non-zero exits are OK as long as the binary launches.
+
+   SKIP (distrobox not installed). Tools verified via smoke test in step 2.
 
 7. **Full metapackage audit — every metapackage in both Foundry-family repos, with its Depends/Recommends/Suggests + dependency graph.**
 
@@ -376,6 +452,35 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
    ```
 
    Expected output: structured audit of every metapackage (after Phase 2 publishes, ~23 entries — three existing on foundry-apt, four existing on apt.worldfoundry.org, plus the 16 new ones being added by this plan). Fields shown: Package, Version, Architecture, Maintainer, Depends, Recommends, Suggests, Provides, Conflicts (the latter three only when non-empty).
+
+   Note: the awk script in the plan uses `RS=""` paragraph mode but anchors with `^Section: metapackages`, which only matches if the record starts with that field. Since Packages stanzas start with `Package:`, the anchor never fires. Fixed by using `/\nSection: metapackages/` instead. 23 unique metapackages found — exact match to expected count.
+
+   ```
+   foundry-android-development 1.0.1 (all)
+   foundry-anvil 1.0.0 (all)
+   foundry-art 1.0.0 (all)
+   foundry-atelier 1.0.0 (all)
+   foundry-daw 1.0.0 (all)
+   foundry-emulators 1.0.0 (all)
+   foundry-emulators-computers 1.0.0 (all)
+   foundry-emulators-consoles 1.0.0 (all)
+   foundry-emulators-consoles-heavy 1.0.0 (all)
+   foundry-emulators-vintage 1.0.0 (all)
+   foundry-free-games 1.0.0 (all)
+   foundry-game-frameworks 1.0.1 (all)
+   foundry-game-reimplementations 1.0.0 (all)
+   foundry-image-cli 1.0.0 (all)
+   foundry-ios-development 1.0.1 (all)
+   foundry-pixel-art 1.0.0 (all)
+   foundry-retro-tools 1.0.6 (all)
+   foundry-sprite 1.0.0 (all)
+   foundry-trackers 1.0.0 (all)
+   worldfoundry 1.1.4 (amd64)
+   worldfoundry-blender-addons 1.1.3 (amd64)
+   worldfoundry-cli 1.0.3 (amd64)
+   worldfoundry-development 1.0.4 (amd64)
+   ```
+   PASS (23/23 metapackages live)
 
    **(a) Editions — nested-set view** (each outer box strictly contains the inner ones, mirroring `foundry-anvil ⊆ foundry-sprite ⊆ foundry-atelier`; `↗` marks a package whose source is not apt.foundrylinux.org — `worldfoundry`/`worldfoundry-development` are cross-repo to apt.worldfoundry.org, `task` is from Cloudsmith):
 

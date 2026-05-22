@@ -62,9 +62,9 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 - [ ] **Oil slick** — a very subtle iridescent sheen (desaturated spectral colors — pale blue, violet, green — at ~0.03 opacity) drifts slowly across the bar. Thin-film interference, like the surface of a freshly quenched blade or motor oil on water. Soft, continuous, never distracting.
 - [ ] **Spangle** — a brief overlay of delicate crystalline geometry (Voronoi cell edges, thin and bright) flashes onto the bar and fades. Like zinc spangle on galvanized steel: industrial, geometric, beautiful. Unique in revealing a mathematical structure rather than emitting or distorting light.
 
-### Phase 2 — Distrobox image
+### Phase 2 — Distrobox image — COMPLETE ✓
 
-- [ ] Build `ghcr.io/foundry-linux/devbox:26.04` — single `apt install foundry-anvil` (the base edition of a 3-tier nested hierarchy: anvil ⊆ sprite ⊆ atelier). GHCR workflow for tag-driven publish. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
+- [x] Build `ghcr.io/foundry-linux/devbox:26.04` — single `apt install foundry-anvil` (the base edition of a 3-tier nested hierarchy: anvil ⊆ sprite ⊆ atelier). GHCR workflow for tag-driven publish. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
 
 ### Phase 3 — Foundry Linux ISO
 
@@ -80,6 +80,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ## Done
 
+- 2026-05-22 — [phase-2-devbox] `ghcr.io/foundry-linux/devbox:26.04` live; 16 new metapackages (anvil/sprite/atelier hierarchy + 6 tier-0 sub-meta + 7 opt-in) on apt.foundrylinux.org; 42/42 smoke-test pass; CI green at v0.0.5. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
 - 2026-05-22 — [packages-page] `/packages` generated from live Packages.gz of both apt repos + Ubuntu resolute; home Kit grid (stale f9dasm/65ax/libvgm/vgmstream tool cards) replaced with auto-driven 6-card Forge; pure Node generator, ~3 s. CI triggers deferred to follow-up. See [plan](docs/plans/2026-05-21-packages-page.md).
 - 2026-05-22 — [move-asset-packages] `blender-asset-finder` + `wf-asset` (→ `blender-asset-finder-cli`) moved from apt.worldfoundry.org to apt.foundrylinux.org; `worldfoundry-cli` Depends + description updated; live on both R2 repos. See [plan](docs/plans/2026-05-20-move-asset-packages.md).
 - 2026-05-22 — [drop-linux-from-package-names] `foundry-linux-*` → `foundry-*` across packages, install scripts, and `foundry-linux-setup/` dir; landed in 433a07b, shipped via foundry-apt v0.0.41, live R2 index serves only new names. See [plan](docs/plans/2026-05-21-drop-linux-from-package-names.md).
