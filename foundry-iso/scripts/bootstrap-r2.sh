@@ -245,10 +245,16 @@ info "[6] Setting 90-day lifecycle on $BUCKET"
 if $DRY_RUN; then
   echo "  [dry-run] PUT /r2/buckets/$BUCKET/lifecycle"
 else
-  cf_api PUT "/accounts/${CF_ACCOUNT_ID}/r2/buckets/${BUCKET}/lifecycle" \
-    -d '{"rules":[{"id":"expire-old-releases","status":"enabled","filter":{"object_size_greater_than":0},"expiration":{"days":90}}]}' \
-    >/dev/null
-  ok "[6] Lifecycle rule set (90 days)"
+  LC_RESP=$(curl -sS -X PUT \
+    "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${BUCKET}/lifecycle" \
+    -H "Authorization: Bearer ${CF_API_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d '{"rules":[{"id":"expire-old-releases","enabled":true,"prefix":"","expiration":{"days":90}}]}')
+  if echo "$LC_RESP" | python3 -c "import sys,json; sys.exit(0 if json.load(sys.stdin).get('success') else 1)" 2>/dev/null; then
+    ok "[6] Lifecycle rule set (90 days)"
+  else
+    echo "  [warn]  [6] Lifecycle rule failed (non-fatal): $(echo "$LC_RESP" | python3 -c "import sys,json; r=json.load(sys.stdin); print(r.get('errors',r))" 2>/dev/null || echo "$LC_RESP")"
+  fi
 fi
 
 # ── step 7: R2 API token for CI (foundry-iso-ci) ────────────────────────────
