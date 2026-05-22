@@ -1,5 +1,5 @@
 // FOUNDRY LINUX — foundrylinux.org
-import { Topbar, Hero, Forge, Install, Editions, Foot } from './sections.jsx';
+import { Topbar, Hero, Forge, Install, Editions, Docs, Foot } from './sections.jsx';
 
 export function App() {
   return (
@@ -10,6 +10,7 @@ export function App() {
         <Forge />
         <Install />
         <Editions />
+        <Docs />
       </main>
       <Foot />
     </>

@@ -1,4 +1,4 @@
-// Page sections — Hero, Forge, Install, Editions, Footer
+// Page sections — Hero, Forge, Install, Editions, Docs, Footer
 import React from 'react';
 import {
   FoundryMark, GearStackIcon, BigAnvilLogo, CopyIcon, DownloadIcon, ArrowRightIcon,
@@ -191,6 +191,38 @@ function Forge() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Install / apt instructions
 
+const CHANNELS = [
+  {
+    num: '01',
+    label: 'Existing Ubuntu',
+    hook: 'Already on 26.04? Add the repo.',
+    cmd: 'curl -fsSL https://foundrylinux.org/setup.sh | bash',
+    href: '#install',
+  },
+  {
+    num: '02',
+    label: 'Container',
+    hook: 'Any Linux, macOS, or Windows host.',
+    cmd: 'distrobox create -i ghcr.io/foundry-linux/devbox:26.04',
+    href: 'https://github.com/foundry-linux/foundry-devbox',
+  },
+  {
+    num: '03',
+    label: 'ISO / USB',
+    hook: 'Fresh install — boot and click.',
+    cmd: 'foundry-anvil-latest-amd64.iso',
+    href: '#download',
+  },
+  {
+    num: '04',
+    label: 'VM',
+    hook: 'VirtualBox · VMware · QEMU.',
+    cmd: 'foundry-26.04-anvil.{ova,qcow2}',
+    href: null,
+    soon: true,
+  },
+];
+
 function Install() {
   return (
     <section className="section" id="install">
@@ -202,8 +234,26 @@ function Install() {
           </div>
           <p className="section-blurb">
             Already running Ubuntu 26.04 LTS or any apt-compatible derivative?
-            Add our signed repository and pull the Foundry kit piece by piece.
+            Add the signed repo and pull what you need. Or boot straight from
+            the ISO and get the full branded desktop in one click.
           </p>
+        </div>
+
+        <div className="channels-grid">
+          {CHANNELS.map(({ num, label, hook, cmd, href, soon }) => {
+            const inner = (
+              <>
+                <span className="channel-num">{num}</span>
+                <span className="channel-label">{label}</span>
+                <p className="channel-hook">{hook}</p>
+                <code className="channel-cmd">{cmd}</code>
+                {soon && <span className="channel-soon">SOON</span>}
+              </>
+            );
+            return soon
+              ? <div key={num} className="channel-card" data-soon="true">{inner}</div>
+              : <a key={num} className="channel-card" href={href}>{inner}</a>;
+          })}
         </div>
 
         <div className="install-wrap">
@@ -250,23 +300,23 @@ function Install() {
                 <DownloadIcon />
               </div>
               <ul className="vm-list">
-                <li className="vm-row">
+                <li className="vm-row" data-status="soon">
                   <span className="vm-type">VirtualBox</span>
-                  <span className="vm-file">foundry-26.04-anvil.ova</span>
-                  <span className="vm-size">4.8 GB</span>
-                  <a className="vm-dl" href="#" aria-label="Download VirtualBox OVA"><DownloadIcon /></a>
+                  <span className="vm-file">foundry-anvil-latest-amd64.ova</span>
+                  <span className="vm-size">~5 GB</span>
+                  <span className="vm-dl vm-dl-soon" aria-hidden="true"><DownloadIcon /></span>
                 </li>
-                <li className="vm-row">
+                <li className="vm-row" data-status="soon">
                   <span className="vm-type">VMware</span>
-                  <span className="vm-file">foundry-26.04-anvil.vmdk</span>
-                  <span className="vm-size">4.6 GB</span>
-                  <a className="vm-dl" href="#" aria-label="Download VMware VMDK"><DownloadIcon /></a>
+                  <span className="vm-file">foundry-anvil-latest-amd64.vmdk</span>
+                  <span className="vm-size">~5 GB</span>
+                  <span className="vm-dl vm-dl-soon" aria-hidden="true"><DownloadIcon /></span>
                 </li>
-                <li className="vm-row">
+                <li className="vm-row" data-status="soon">
                   <span className="vm-type">QEMU / KVM</span>
-                  <span className="vm-file">foundry-26.04-anvil.qcow2</span>
-                  <span className="vm-size">3.2 GB</span>
-                  <a className="vm-dl" href="#" aria-label="Download QEMU qcow2"><DownloadIcon /></a>
+                  <span className="vm-file">foundry-anvil-latest-amd64.qcow2</span>
+                  <span className="vm-size">~4 GB</span>
+                  <span className="vm-dl vm-dl-soon" aria-hidden="true"><DownloadIcon /></span>
                 </li>
               </ul>
             </div>
@@ -287,7 +337,9 @@ function Install() {
 
             <h3 style={{ marginTop: 32 }}>System requirements</h3>
             <p>
-              The full ISO is 4.8 GB.
+              The ISO installs a full Kubuntu 26.04 (Plasma 6) desktop with
+              the Foundry kit struck in. Calamares installer — guided or
+              automatic partitioning. Works bare-metal or in a VM.
             </p>
             <ul className="requirements">
               <li><span className="req-key">CPU</span><span>x86_64 · ARM64</span></li>
@@ -350,6 +402,61 @@ function Editions() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Docs
+
+const DOCS_LINKS = [
+  {
+    label: 'Source',
+    href: 'https://github.com/foundry-linux',
+    desc: 'github.com/foundry-linux',
+  },
+  {
+    label: 'Issues & Bugs',
+    href: 'https://github.com/foundry-linux/foundrylinux.org/issues',
+    desc: 'github.com/…/issues',
+  },
+  {
+    label: 'APT Repository',
+    href: 'https://apt.foundrylinux.org',
+    desc: 'apt.foundrylinux.org',
+  },
+  {
+    label: 'Package Catalogue',
+    href: '/packages',
+    desc: 'foundrylinux.org/packages',
+  },
+];
+
+function Docs() {
+  return (
+    <section className="section" id="docs">
+      <div className="shell">
+        <div className="section-head">
+          <div>
+            <span className="section-num">№ 04 · Docs</span>
+            <h2 className="section-title">Find the<br />source.</h2>
+          </div>
+          <p className="section-blurb">
+            Everything is in the open — source, issues, packages, and the
+            signed apt repo. No forums, no wiki, no separate account.
+          </p>
+        </div>
+
+        <div className="docs-links">
+          {DOCS_LINKS.map(({ label, href, desc }) => (
+            <a key={href} className="docs-link-card" href={href}>
+              <span className="docs-link-label">{label}</span>
+              <span className="docs-link-desc">{desc}</span>
+              <ArrowRightIcon />
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 function Foot() {
   return (
@@ -362,10 +469,8 @@ function Foot() {
         <nav className="foot-links">
           <a href="#docs">Docs</a>
           <a href="/packages">Packages</a>
-          <a href="#mirrors">Mirrors</a>
-          <a href="#irc">IRC</a>
-          <a href="#git">Git</a>
-          <a href="#bugs">Bugs</a>
+          <a href="https://github.com/foundry-linux">Git</a>
+          <a href="https://github.com/foundry-linux/foundrylinux.org/issues">Bugs</a>
         </nav>
         <div className="foot-meta">
           Released under GPLv3<br />
@@ -376,4 +481,4 @@ function Foot() {
   );
 }
 
-export { Topbar, Hero, Forge, Install, Editions, Foot, formatSize, findCategory, findEdition, ICONS };
+export { Topbar, Hero, Forge, Install, Editions, Docs, Foot, formatSize, findCategory, findEdition, ICONS };
