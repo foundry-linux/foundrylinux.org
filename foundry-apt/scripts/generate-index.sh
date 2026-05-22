@@ -139,6 +139,7 @@ cat > "$OUT" <<HTML
 <style>
   /* apt-index layout — colour/font variables from foundrylinux.org/styles.css */
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
