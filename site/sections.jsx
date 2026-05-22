@@ -245,6 +245,30 @@ function Install() {
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso" aria-label="Download Atelier ISO"><DownloadIcon /></a>
                 </li>
               </ul>
+              <div className="codeblock-head" style={{ marginTop: '1rem' }}>
+                <span>download · vms</span>
+                <DownloadIcon />
+              </div>
+              <ul className="vm-list">
+                <li className="vm-row">
+                  <span className="vm-type">VirtualBox</span>
+                  <span className="vm-file">foundry-26.04-anvil.ova</span>
+                  <span className="vm-size">4.8 GB</span>
+                  <a className="vm-dl" href="#" aria-label="Download VirtualBox OVA"><DownloadIcon /></a>
+                </li>
+                <li className="vm-row">
+                  <span className="vm-type">VMware</span>
+                  <span className="vm-file">foundry-26.04-anvil.vmdk</span>
+                  <span className="vm-size">4.6 GB</span>
+                  <a className="vm-dl" href="#" aria-label="Download VMware VMDK"><DownloadIcon /></a>
+                </li>
+                <li className="vm-row">
+                  <span className="vm-type">QEMU / KVM</span>
+                  <span className="vm-file">foundry-26.04-anvil.qcow2</span>
+                  <span className="vm-size">3.2 GB</span>
+                  <a className="vm-dl" href="#" aria-label="Download QEMU qcow2"><DownloadIcon /></a>
+                </li>
+              </ul>
             </div>
           </div>
 
