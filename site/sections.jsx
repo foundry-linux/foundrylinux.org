@@ -95,8 +95,8 @@ function Hero() {
         </div>
 
         <div className="hero-actions">
-          <a className="cta cta-primary" href="#download">
-            <DownloadIcon />Download foundry-26.04.iso
+          <a className="cta cta-primary" href="https://iso.foundrylinux.org">
+            <DownloadIcon />Download the ISO
           </a>
           <a className="cta cta-secondary" href="#install">
             Set up the repo<ArrowRightIcon />
@@ -228,27 +228,21 @@ function Install() {
 
             <div className="download-vms" id="download">
               <div className="codeblock-head">
-                <span>download · vms</span>
+                <span>download · iso</span>
                 <DownloadIcon />
               </div>
               <ul className="vm-list">
                 <li className="vm-row">
-                  <span className="vm-type">VirtualBox</span>
-                  <span className="vm-file">foundry-26.04-anvil.ova</span>
-                  <span className="vm-size">4.8 GB</span>
-                  <a className="vm-dl" href="#" aria-label="Download VirtualBox OVA"><DownloadIcon /></a>
+                  <span className="vm-type">Anvil</span>
+                  <span className="vm-file">foundry-anvil-latest-amd64.iso</span>
+                  <span className="vm-size">~5 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso" aria-label="Download Anvil ISO"><DownloadIcon /></a>
                 </li>
                 <li className="vm-row">
-                  <span className="vm-type">VMware</span>
-                  <span className="vm-file">foundry-26.04-anvil.vmdk</span>
-                  <span className="vm-size">4.6 GB</span>
-                  <a className="vm-dl" href="#" aria-label="Download VMware VMDK"><DownloadIcon /></a>
-                </li>
-                <li className="vm-row">
-                  <span className="vm-type">QEMU / KVM</span>
-                  <span className="vm-file">foundry-26.04-anvil.qcow2</span>
-                  <span className="vm-size">3.2 GB</span>
-                  <a className="vm-dl" href="#" aria-label="Download QEMU qcow2"><DownloadIcon /></a>
+                  <span className="vm-type">Atelier</span>
+                  <span className="vm-file">foundry-atelier-latest-amd64.iso</span>
+                  <span className="vm-size">~10 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso" aria-label="Download Atelier ISO"><DownloadIcon /></a>
                 </li>
               </ul>
             </div>
