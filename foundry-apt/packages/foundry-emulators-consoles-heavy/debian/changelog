@@ -1,3 +1,9 @@
+foundry-emulators-consoles-heavy (1.0.1) resolute; urgency=medium
+
+  * Drop snes9x-gtk and ppsspp — not available in Ubuntu 26.04 resolute.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 22 May 2026 22:30:00 +0700
+
 foundry-emulators-consoles-heavy (1.0.0) resolute; urgency=medium
 
   * Initial release. Part of the Phase 2 nested-editions hierarchy

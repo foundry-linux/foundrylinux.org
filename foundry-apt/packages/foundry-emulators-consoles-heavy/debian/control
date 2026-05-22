@@ -10,11 +10,9 @@ Rules-Requires-Root: no
 Package: foundry-emulators-consoles-heavy
 Architecture: all
 Depends: ${misc:Depends},
- snes9x-gtk,
  nestopia,
  pcsxr,
  pcsx2,
- ppsspp,
  mupen64plus-ui-console,
  dolphin-emu,
  yuzu,
@@ -26,11 +24,9 @@ Description: heavy console and handheld emulators
  devbox image for size reasons, all in Ubuntu universe (no licensing
  issues):
  .
-   * snes9x-gtk              SNES
    * nestopia                NES (alternative to fceux)
    * pcsxr                   PlayStation 1
    * pcsx2                   PlayStation 2
-   * ppsspp                  PlayStation Portable
    * mupen64plus-ui-console  Nintendo 64
    * dolphin-emu             GameCube + Wii
    * yuzu                    Nintendo Switch
