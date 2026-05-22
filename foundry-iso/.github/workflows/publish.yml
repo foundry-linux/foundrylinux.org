@@ -1,10 +1,8 @@
 name: Build and publish foundry-iso
 
 on:
-  push:
-    tags: ['v*']
-  schedule:
-    - cron: '0 6 1 * *'        # monthly rebuild
+  # Auto-triggers disabled — builds run locally until post-1.0 CI cleanup.
+  # See TODO.md: "Restore foundry-iso CI triggers after 1.0 ships".
   workflow_dispatch:
     inputs:
       dry_run:
