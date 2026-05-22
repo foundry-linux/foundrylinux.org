@@ -36,7 +36,6 @@ jobs:
         env:
           EDITION: ${{ matrix.edition }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE:  ${{ secrets.GPG_PASSPHRASE }}
         run: bash scripts/sign-iso.sh
 
       - name: Upload to R2
