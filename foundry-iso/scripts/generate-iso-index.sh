@@ -51,6 +51,7 @@ anvil_ver="$(manifest_field anvil version)"
 anvil_sha="$(manifest_field anvil sha256)"
 anvil_bytes="$(manifest_field anvil size_bytes)"
 anvil_size="$(human_size "$anvil_bytes")"
+[[ -z "$anvil_size" || "$anvil_size" == "—" ]] && anvil_size="~5 GB"
 anvil_filename="$(manifest_field anvil filename)"
 [[ -z "$anvil_filename" ]] && anvil_filename="foundry-anvil-latest-amd64.iso"
 
@@ -58,6 +59,7 @@ atelier_ver="$(manifest_field atelier version)"
 atelier_sha="$(manifest_field atelier sha256)"
 atelier_bytes="$(manifest_field atelier size_bytes)"
 atelier_size="$(human_size "$atelier_bytes")"
+[[ -z "$atelier_size" || "$atelier_size" == "—" ]] && atelier_size="~10 GB"
 atelier_filename="$(manifest_field atelier filename)"
 [[ -z "$atelier_filename" ]] && atelier_filename="foundry-atelier-latest-amd64.iso"
 
@@ -128,6 +130,14 @@ cat > "$OUT" <<HTML
     gap: .75rem;
   }
   .edition.recommended { border-color: var(--accent); }
+  .edition-icon { color: var(--ink-faint); }
+  .edition-size {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
   .edition-badge {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -261,6 +271,7 @@ cat > "$OUT" <<HTML
   <div class="editions">
     <!-- Anvil -->
     <div class="edition recommended">
+      <div class="edition-icon"><svg viewBox="0 0 64 64" width="36" height="36" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22 L58 22 L52 32 L46 32 L46 38 L18 38 L18 32 L12 32 Z"></path><path d="M22 38 L20 50 L44 50 L42 38"></path><path d="M14 50 L50 50 L50 56 L14 56 Z"></path><line x1="8" y1="14" x2="6" y2="8"></line><line x1="14" y1="14" x2="14" y2="6"></line><line x1="20" y1="14" x2="22" y2="8"></line></g></svg></div>
       <div class="edition-badge">&#9733; Recommended</div>
       <div class="edition-name">Anvil</div>
       <div class="edition-desc">Everything you need to develop games on Linux. Retro tools, Blender add-ons, WorldFoundry GDK, and the full Foundry toolchain — ready from first boot.</div>
@@ -271,8 +282,8 @@ cat > "$OUT" <<HTML
         <span>+</span>Android &amp; iOS dev<br>
         <span>+</span>KDE Plasma desktop
       </div>
+      <div class="edition-size">${anvil_size}</div>
       <div class="edition-meta">
-        <span>~${anvil_size}</span>
         <span>amd64</span>
         <span>Ubuntu 26.04</span>
       </div>
@@ -286,6 +297,7 @@ cat > "$OUT" <<HTML
 
     <!-- Atelier -->
     <div class="edition">
+      <div class="edition-icon"><svg viewBox="0 0 64 64" width="36" height="36" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 24 Q8 24 8 36 Q8 48 16 48 L20 44 L44 44 L48 48 Q56 48 56 36 Q56 24 48 24 Z"></path><circle cx="20" cy="34" r="3"></circle><line x1="17" y1="34" x2="23" y2="34"></line><line x1="20" y1="31" x2="20" y2="37"></line><circle cx="42" cy="32" r="1.4"></circle><circle cx="46" cy="36" r="1.4"></circle><circle cx="38" cy="36" r="1.4"></circle></g></svg></div>
       <div class="edition-badge">Full kit</div>
       <div class="edition-name">Atelier</div>
       <div class="edition-desc">Everything in Anvil plus every Foundry metapackage: emulators, trackers, DAW tools, pixel art, game reimplementations, and the free-games bundle.</div>
@@ -296,8 +308,8 @@ cat > "$OUT" <<HTML
         <span>+</span>Pixel art &amp; game frameworks<br>
         <span>+</span>Free &amp; open-source game library
       </div>
+      <div class="edition-size">${atelier_size}</div>
       <div class="edition-meta">
-        <span>~${atelier_size}</span>
         <span>amd64</span>
         <span>Ubuntu 26.04</span>
       </div>
@@ -312,10 +324,10 @@ cat > "$OUT" <<HTML
 
   <h2>How to install</h2>
   <ol class="steps">
-    <li><strong>Download</strong> the ISO above. Anvil is the right choice if you're not sure.</li>
-    <li><strong>Write to USB.</strong> Use <a href="https://etcher.balena.io">Balena Etcher</a> (free, Windows/Mac/Linux) &mdash; select the ISO, select your USB drive (8 GB or larger), click Flash.</li>
-    <li><strong>Boot from USB.</strong> Restart your machine. On most PCs press <code>F12</code> (or <code>F2</code>, <code>Del</code>, <code>Esc</code>) during startup to choose a boot device and select the USB drive.</li>
-    <li><strong>Try or install.</strong> The live session lets you try Foundry Linux before installing. Click <em>Install Foundry Linux</em> on the desktop to run the installer. Takes about 15 minutes.</li>
+    <li><span><strong>Download the ISO above.</strong> If you're not sure which edition, pick Anvil &mdash; it has everything you need to build and run games.</span></li>
+    <li><span><strong>Flash it to a USB drive (8 GB+).</strong> Use <a href="https://rufus.ie">Rufus</a> on Windows or <a href="https://etcher.balena.io">Balena Etcher</a> on Mac. Select the ISO, select your USB drive, write. Done in a couple of minutes.</span></li>
+    <li><span><strong>Boot from the USB.</strong> Plug it in and restart. If your PC doesn't boot from USB automatically, enter your firmware menu (usually <code>F12</code> or <code>Del</code> at the manufacturer splash screen) and select the USB drive. <em>Tip: if you see a Windows fast-startup screen instead, hold Shift while clicking Restart in Windows first.</em></span></li>
+    <li><span><strong>Install.</strong> Foundry Linux boots to a live desktop. Click <em>Install Foundry Linux</em>, follow the prompts &mdash; takes about 15 minutes. Your game projects and files stay on whatever drive you point the installer at.</span></li>
   </ol>
 
   <h2>System requirements</h2>
@@ -337,8 +349,7 @@ Get-FileHash foundry-anvil-latest-amd64.iso -Algorithm SHA256</pre>
 
   <footer>
     Published ${PUBLISHED} &mdash;
-    <a href="https://foundrylinux.org">foundrylinux.org</a> &mdash;
-    <a href="https://github.com/foundry-linux/foundry-iso">source</a>
+    <a href="https://foundrylinux.org">foundrylinux.org</a>
   </footer>
 </div>
 </body>
