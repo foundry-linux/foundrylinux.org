@@ -1,0 +1,1 @@
+deb [signed-by=/etc/apt/trusted.gpg.d/cloudsmith-task.key.gpg] https://dl.cloudsmith.io/public/task/task/deb/ubuntu resolute main

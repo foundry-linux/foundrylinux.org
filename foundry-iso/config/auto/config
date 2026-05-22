@@ -9,6 +9,7 @@ case "$EDITION" in
 esac
 
 lb config noauto \
+    --mode ubuntu \
     --distribution resolute \
     --architectures amd64 \
     --binary-images iso-hybrid \
@@ -20,17 +21,30 @@ lb config noauto \
     --iso-publisher "foundry-linux@foundrylinux.org" \
     --apt-recommends true \
     --apt-secure true \
-    --mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
-    --mirror-binary    "http://archive.ubuntu.com/ubuntu/" \
-    --parent-mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
-    --parent-mirror-binary    "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-bootstrap              "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-chroot                 "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-chroot-security        "http://security.ubuntu.com/ubuntu/" \
+    --mirror-binary                 "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-binary-security        "http://security.ubuntu.com/ubuntu/" \
+    --parent-mirror-bootstrap       "http://archive.ubuntu.com/ubuntu/" \
+    --parent-mirror-chroot          "http://archive.ubuntu.com/ubuntu/" \
+    --parent-mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
+    --parent-mirror-binary          "http://archive.ubuntu.com/ubuntu/" \
+    --parent-mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
     --linux-flavours generic \
-    --bootloaders grub-efi,grub-pc \
+    --bootloader grub2 \
+    --initsystem systemd \
+    --firmware-chroot false \
     --debian-installer false \
     --memtest none \
+    --zsync false \
     "${@}"
 
 # Write the per-edition package list so live-build pulls it during chroot.
+# Note: calamares-settings-foundry-linux is installed via hook (see
+# config/hooks/normal/1000-install-local-debs.hook.chroot) to avoid lb's
+# packages.chroot/ local-repo signing path, which breaks with gnupg 2.4+
+# in containers (--secret-keyring is obsolete, agent_genkey fails w/o TTY).
 echo "foundry-${EDITION}"                    > config/package-lists/foundry.list.chroot
 echo "kubuntu-desktop"                       >> config/package-lists/foundry.list.chroot
-echo "calamares-settings-foundry-linux"      >> config/package-lists/foundry.list.chroot
+echo "calamares"                             >> config/package-lists/foundry.list.chroot

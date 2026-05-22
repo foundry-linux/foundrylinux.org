@@ -1,1 +1,1 @@
-deb [signed-by=/etc/apt/trusted.gpg.d/foundry.gpg] https://apt.foundrylinux.org resolute main
+deb [signed-by=/etc/apt/trusted.gpg.d/foundry.key.gpg] https://apt.foundrylinux.org resolute main

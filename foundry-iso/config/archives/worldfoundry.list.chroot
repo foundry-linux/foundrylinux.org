@@ -1,1 +1,1 @@
-deb [signed-by=/etc/apt/trusted.gpg.d/worldfoundry.gpg] https://apt.worldfoundry.org stable main
+deb [signed-by=/etc/apt/trusted.gpg.d/worldfoundry.key.gpg] https://apt.worldfoundry.org stable main
