@@ -1,0 +1,9 @@
+snes9x-gtk (1.63-1foundry1) stable; urgency=low
+
+  * Initial packaging for Foundry Linux apt repo.
+  * GTK3 frontend; Vulkan/slang shader support disabled (USE_SLANG=OFF)
+    to avoid submodule dependencies; ALSA, PulseAudio, PortAudio enabled.
+  * Source: https://github.com/snes9xgit/snes9x/releases/tag/1.63
+  * Commit: 921f9f7b83660eb44ad263022a57a4a029057c37
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 23 May 2026 00:00:00 +0000

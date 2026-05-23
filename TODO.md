@@ -77,8 +77,6 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ### Packaging — dropped packages to investigate
 
-- [ ] **ppsspp** — never in Debian/Ubuntu (13-yr-old stalled ITP #697821); old blockers (libpng16, bundled ffmpeg) gone; v1.20.4 upstream very active. `/package` against latest tarball. See [investigation](investigations/2026-05-23-dropped-emulators.md).
-- [ ] **snes9x-gtk** — absent since Ubuntu 11.10; Debian orphaned it in 2011 (bug #617588) but upstream revived (1.63, 2024). `/package` against 1.63 tarball. See [investigation](investigations/2026-05-23-dropped-emulators.md).
 
 ### Housekeeping
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
@@ -86,6 +84,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ## Done
 
+- 2026-05-23 — [ppsspp+snes9x-gtk] Both packaged and wired into `foundry-emulators-consoles-heavy`; ppsspp v1.20.4 (git-clone build, 8 submodules), snes9x-gtk 1.63 (tarball, USE_SLANG=OFF). Lintian clean, smoke-tested.
 - 2026-05-23 — [flesh-out-site] channels grid (4 install paths), #docs section, dead footer links wired/removed, VM rows marked coming-soon, Install sidebar copy expanded. Shipped v0.3.4.
 - 2026-05-22 — [worldfoundry-apt-phase-b] 9 WF CLIs + `worldfoundry-blender-editor-exporter` + 4 metapackages on `apt.worldfoundry.org`; `blender-asset-finder{,-cli}` on `apt.foundrylinux.org` (general Blender tools, not WF-specific); CLAUDE.md updated.
 - 2026-05-22 — [worldfoundry-apt-phase-a] `worldfoundry.org/apt/` infra live: GPG-signed empty repo, gen-index site at apt.worldfoundry.org, `new-web-apt-repo` global skill. All 7 verification steps pass. See [plan](docs/plans/2026-05-18-worldfoundry-apt-repo.md).

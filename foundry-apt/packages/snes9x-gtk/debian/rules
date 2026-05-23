@@ -1,0 +1,28 @@
+#!/usr/bin/make -f
+# snes9x-gtk uses CMake; the GTK frontend's CMakeLists.txt lives in gtk/.
+# USE_SLANG=OFF avoids needing the glslang/SPIRV-Cross/vulkan-headers submodules.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-format
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake --sourcedir=gtk -- \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DUSE_SLANG=OFF \
+	    -DUSE_ALSA=ON \
+	    -DUSE_PULSEAUDIO=ON \
+	    -DUSE_PORTAUDIO=ON \
+	    -DUSE_WAYLAND=ON \
+	    -DUSE_XV=OFF \
+	    -DUSE_OSS=OFF \
+	    -DUSE_SYSTEMZIP=ON
+
+override_dh_auto_build:
+	dh_auto_build --buildsystem=cmake
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	dh_auto_install --buildsystem=cmake

@@ -1,0 +1,51 @@
+.TH SNES9X\-GTK 1 "May 2026" "Snes9x 1.63" "User Commands"
+.SH NAME
+snes9x\-gtk \- Super Nintendo Entertainment System emulator (GTK3 frontend)
+.SH SYNOPSIS
+.B snes9x\-gtk
+[\fIOPTIONS\fR] [\fIROM\fR]
+.SH DESCRIPTION
+.B snes9x\-gtk
+is the GTK3 graphical frontend for Snes9x, a portable Super Nintendo
+Entertainment System emulator. It emulates the SNES CPU, PPU, APU, and
+co-processors including Super FX, SA-1, DSP-1/2/3/4, S-DD1, and others.
+.PP
+If a ROM file is given on the command line, it is loaded immediately on
+startup. Supported formats include .smc, .sfc, .fig, .swc, and .zip/.gz
+archives of the same.
+.SH OPTIONS
+.TP
+.B \-\-fullscreen
+Start in fullscreen mode.
+.TP
+.BI \-\-conf\  FILE
+Load configuration from \fIFILE\fR instead of the default location.
+.TP
+.BI \-\-display\-driver\  DRIVER
+Select display driver. Available drivers depend on compile-time options;
+typical values include \fBopengl\fR and \fBxv\fR.
+.TP
+.BI \-\-sound\-driver\  DRIVER
+Select sound driver. Available values include \fBalsa\fR, \fBpulse\fR,
+\fBportaudio\fR, and \fBoss\fR (if compiled in).
+.TP
+.B \-\-help
+Display a brief usage message and exit.
+.TP
+.B \-\-version
+Display the emulator version and exit.
+.SH FILES
+.TP
+.I ~/.config/snes9x/snes9x.conf
+Per-user configuration file.
+.TP
+.I /usr/share/snes9x/
+Data directory (cheats database, etc.).
+.SH SEE ALSO
+.BR retroarch (1)
+.SH AUTHORS
+Snes9x was written by Gary Henderson, Jerremy Koot, and many contributors.
+See \fI/usr/share/doc/snes9x\-gtk/copyright\fR for the full list.
+.SH COPYRIGHT
+Snes9x is freeware for personal, non-commercial use.
+See \fI/usr/share/doc/snes9x\-gtk/copyright\fR for the full license terms.

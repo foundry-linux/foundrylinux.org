@@ -129,7 +129,16 @@ foundry-apt/packages/ppsspp/
 
 ### Submodule status
 
-TBD — check at packaging time. Likely similar submodule issues to ppsspp; check `ext/` and `.gitmodules` before choosing tarball vs clone approach.
+Six submodules: `win32/libpng/src`, `win32/zlib/src` (Windows-only, never compiled on Linux),
+`external/SPIRV-Cross`, `external/glslang`, `external/vulkan-headers` (only needed when
+`USE_SLANG=ON`), and `external/cubeb` (not referenced in `gtk/CMakeLists.txt`).
+
+**Solution:** Use the GitHub tarball with `-DUSE_SLANG=OFF`. Zero submodule issues.
+
+### Build note
+
+`hardening=+all` triggers `-Werror=format-security` via glib-2.0 system headers in ubuntu 26.04
+(`/usr/include/glib-2.0/glib/gmessages.h`). Fix: `hardening=+all,-format` in `debian/rules`.
 
 ### License note
 

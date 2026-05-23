@@ -1,0 +1,83 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: snes9x
+Upstream-Contact: https://github.com/snes9xgit/snes9x
+Source: https://github.com/snes9xgit/snes9x
+
+Files: *
+Copyright: 1996-2002 Gary Henderson <gary.henderson@ntlworld.com>
+           1996-2002 Jerremy Koot <jkoot@snes9x.com>
+           2002-2004 Matthew Kendora
+           2002-2005 Peter Bortas <peter@bortas.org>
+           2004-2005 Joel Yliluoma <http://iki.fi/bisqwit/>
+           2001-2006 John Weidman <jweidman@slip.net>
+           2002-2006 funkyass, Kris Bleakley
+           2002-2010 Brad Jorsch, Nach
+           2002-2011 zones
+           2006-2007 nitsuja
+           2009-2023 BearOso, OV2
+           2017      qwertymodo
+License: Snes9x
+
+License: Snes9x
+ Permission to use, copy, modify and/or distribute Snes9x in both binary
+ and source form, for non-commercial purposes, is hereby granted without
+ fee, providing that this license information and copyright notice appear
+ with all copies and any derived work.
+ .
+ This software is provided 'as-is', without any express or implied
+ warranty. In no event shall the authors be held liable for any damages
+ arising from the use of this software or it's derivatives.
+ .
+ Snes9x is freeware for PERSONAL USE only. Commercial users should
+ seek permission of the copyright holders first. Commercial use includes,
+ but is not limited to, charging money for Snes9x or software derived from
+ Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
+ using Snes9x as a promotion for your commercial product.
+ .
+ The copyright holders request that bug fixes and improvements to the code
+ should be forwarded to them so everyone can benefit from the modifications
+ in future versions.
+
+Files: jma/*
+Copyright: 2002-2004 Matthew Kendora, Nach, et al.
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 2 can be found in /usr/share/common-licenses/GPL-2.
+
+Files: filter/xbrz*
+Copyright: 2012-2021 Zenju
+License: GPL-3+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 3 can be found in /usr/share/common-licenses/GPL-3.
+
+Files: filter/snes_ntsc*
+Copyright: 2006-2007 Shay Green
+License: LGPL-2.1+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ .
+ On Debian systems, the full text of the GNU Lesser General Public License
+ version 2.1 can be found in /usr/share/common-licenses/LGPL-2.1.
+
+Files: debian/*
+Copyright: 2026 Foundry Linux <packages@foundrylinux.org>
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 2 can be found in /usr/share/common-licenses/GPL-2.

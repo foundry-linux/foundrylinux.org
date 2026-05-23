@@ -1,0 +1,2 @@
+version=4
+https://github.com/snes9xgit/snes9x/tags .*/archive/refs/tags/(\d[\d.]*)\.tar\.gz

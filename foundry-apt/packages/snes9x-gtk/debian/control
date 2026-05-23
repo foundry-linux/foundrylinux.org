@@ -1,0 +1,37 @@
+Source: snes9x-gtk
+Section: otherosfs
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ cmake,
+ pkg-config,
+ gettext,
+ libgtkmm-3.0-dev,
+ libsdl2-dev,
+ libpng-dev,
+ libxrandr-dev,
+ libx11-dev,
+ libxext-dev,
+ libpulse-dev,
+ libasound2-dev,
+ portaudio19-dev,
+ zlib1g-dev,
+ libminizip-dev
+Standards-Version: 4.7.2
+Homepage: https://www.snes9x.com
+Rules-Requires-Root: no
+
+Package: snes9x-gtk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: portable Super Nintendo Entertainment System emulator
+ Snes9x is a Super Nintendo Entertainment System (SNES) emulator written in
+ C++. This package provides the GTK3 graphical frontend.
+ .
+ It emulates the SNES CPU, PPU (graphics), APU (audio), and co-processors
+ including the Super FX, SA-1, DSP-1/2/3/4, S-DD1, and others. Netplay,
+ save states, game genie/pro action replay codes, and multiple sound drivers
+ (ALSA, PulseAudio, PortAudio) are supported.
+ .
+ SNES ROMs are not included. Users must supply their own legally obtained
+ game files.
