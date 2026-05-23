@@ -77,8 +77,8 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ### Packaging — dropped packages to investigate
 
-- [ ] **snes9x-gtk** — dropped from Ubuntu 26.04; removed from `foundry-emulators-consoles-heavy` 1.0.1. Research: why was it dropped from the archive? Is it still maintained upstream (snes9x.com)? Should we package it in `foundry-apt`?
-- [ ] **ppsspp** — dropped from Ubuntu 26.04; removed from `foundry-emulators-consoles-heavy` 1.0.1. Research: why dropped? ppsspp.org upstream is active; strong candidate to package ourselves.
+- [ ] **ppsspp** — never in Debian/Ubuntu (13-yr-old stalled ITP #697821); old blockers (libpng16, bundled ffmpeg) gone; v1.20.4 upstream very active. `/package` against latest tarball. See [investigation](investigations/2026-05-23-dropped-emulators.md).
+- [ ] **snes9x-gtk** — absent since Ubuntu 11.10; Debian orphaned it in 2011 (bug #617588) but upstream revived (1.63, 2024). `/package` against 1.63 tarball. See [investigation](investigations/2026-05-23-dropped-emulators.md).
 
 ### Housekeeping
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
