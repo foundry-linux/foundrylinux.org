@@ -300,6 +300,33 @@ tasks:
           SRC_DIR: foundry-iso
           WORK_DIR: /tmp/foundry-iso-sync
 
+  iso-build:
+    desc: "Build the ISO locally (EDITION=anvil|atelier, default: anvil)"
+    dir: foundry-iso
+    cmds:
+      - EDITION=${EDITION:-anvil} bash scripts/build-iso.sh
+
+  iso-clean:
+    desc: "Clean live-build artifacts and dist/"
+    dir: foundry-iso
+    cmds:
+      - |
+        docker run --rm -v "$(pwd):/work" -w /work/config ubuntu:26.04 \
+          bash -c 'apt-get install -y live-build -qq && lb clean --purge'
+        rm -rf dist/
+
+  iso-smoke:
+    desc: "Boot the locally-built ISO in QEMU (EDITION=anvil|atelier, default: anvil)"
+    dir: foundry-iso
+    cmds:
+      - bash test/boot-smoke.sh dist/foundry-${EDITION:-anvil}-1.0-amd64.iso
+
+  iso-sign:
+    desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier)"
+    dir: foundry-iso
+    cmds:
+      - EDITION=${EDITION:-anvil} bash scripts/sign-iso.sh
+
   iso-build-vms:
     desc: "Build VM images (qcow2, VMDK, OVA) from the anvil ISO"
     dir: foundry-iso
