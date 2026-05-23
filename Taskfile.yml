@@ -192,6 +192,13 @@ tasks:
     cmds:
       - node scripts/ssr-render.js
 
+  link-check:
+    desc: "Check all links in built HTML (--skip-external to skip HTTP checks)"
+    dir: "{{.ROOT_DIR}}"
+    deps: [site-build]
+    cmds:
+      - node scripts/check-links.js {{.CLI_ARGS}}
+
   site-deploy:
     desc: "Deploy site/ to Cloudflare Pages (requires CLOUDFLARE_API_TOKEN)"
     cmds:
@@ -322,3 +329,15 @@ tasks:
     dir: foundry-iso
     cmds:
       - bash scripts/upload-iso-index.sh
+
+  iso-list:
+    desc: "List ISOs in R2 and local dist/"
+    dir: foundry-iso
+    cmds:
+      - bash scripts/list-isos.sh
+
+  iso-prune:
+    desc: "Prune versioned ISOs from R2. Use KEEP=N or BEFORE=YYYY-MM-DD; DRY_RUN=0 to apply."
+    dir: foundry-iso
+    cmds:
+      - bash scripts/prune-isos.sh
