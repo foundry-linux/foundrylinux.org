@@ -49,6 +49,16 @@ tasks:
     cmds:
       - bash scripts/upload-vm-images.sh
 
+  iso-list:
+    desc: "List ISOs in R2 and local dist/"
+    cmds:
+      - bash scripts/list-isos.sh
+
+  iso-prune:
+    desc: "Prune versioned ISOs from R2 (dry-run by default). Use KEEP=N or BEFORE=YYYY-MM-DD; set DRY_RUN=0 to apply."
+    cmds:
+      - bash scripts/prune-isos.sh
+
   bootstrap-r2:
     desc: "One-time: create foundry-iso R2 bucket + iso.foundrylinux.org binding (requires CF_API_TOKEN)"
     cmds:
