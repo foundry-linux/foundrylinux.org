@@ -40,11 +40,18 @@ for edition in anvil atelier; do
   any_r2=1
   version=$(echo "$iso_line" | awk '{print $4}' | sed "s/foundry-${edition}-//;s/-amd64\.iso//")
   date=$(echo "$iso_line"  | awk '{print $2}')
-  iso_sz=""; ova_sz=""; vmdk_sz=""; qcow2_sz=""
-  for fmt in iso ova vmdk qcow2; do
-    b=$(echo "$files" | grep -E "foundry-${edition}-${version}-amd64\.${fmt}$" | awk '{print $1}' | head -1 || true)
-    [[ -n "$b" ]] && eval "${fmt}_sz=\$(_gb \"\$b\")"
-  done
+  iso_bytes=$(echo "$iso_line" | awk '{print $1}')
+  iso_sz=$(_gb "$iso_bytes")
+  ova_sz=""; vmdk_sz=""; qcow2_sz=""
+  # ISOs over 8 GB are too large for practical VM images
+  if (( iso_bytes > 8589934592 )); then
+    ova_sz="-"; vmdk_sz="-"; qcow2_sz="-"
+  else
+    for fmt in ova vmdk qcow2; do
+      b=$(echo "$files" | grep -E "foundry-${edition}-${version}-amd64\.${fmt}$" | awk '{print $1}' | head -1 || true)
+      [[ -n "$b" ]] && eval "${fmt}_sz=\$(_gb \"\$b\")"
+    done
+  fi
   printf '│ %-15s │ %-10s │ %-5s │ %-6s │ %-6s │ %-6s │\n' \
     "${edition}-${version}" "$date" "$iso_sz" "$ova_sz" "$vmdk_sz" "$qcow2_sz"
 done
