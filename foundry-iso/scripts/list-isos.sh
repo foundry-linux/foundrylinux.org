@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# List ISOs in R2 and local dist/ — one line per edition+version set.
+# List ISOs in R2 and local dist/ with box-table output.
 
 set -euo pipefail
 
@@ -24,30 +24,47 @@ export RCLONE_CONFIG_R2_NO_CHECK_BUCKET=true
 DIST_DIR="$SCRIPT_DIR/../dist"
 BUCKET="foundry-iso"
 
-_gb() { awk -v b="$1" 'BEGIN { printf "%.1fG", b/1073741824 }'; }
+_gb() { awk -v b="$1" 'BEGIN { if (b>=1073741824) printf "%.1fG", b/1073741824; else if (b>=1048576) printf "%.0fM", b/1048576; else printf "%dB", b }'; }
 
 files=$(rclone lsl "r2:${BUCKET}/" 2>/dev/null | grep -v 'latest' | sort -k4 || true)
 
-echo "=== R2: foundry-iso ==="
+# ── R2 table ─────────────────────────────────────────────────────────────────
+printf '\n┌─────────────────┬────────────┬───────┬────────┬────────┬────────┐\n'
+printf '│ %-15s │ %-10s │ %-5s │ %-6s │ %-6s │ %-6s │\n' "edition" "date" "iso" "ova" "vmdk" "qcow2"
+printf '├─────────────────┼────────────┼───────┼────────┼────────┼────────┤\n'
+
+any_r2=0
 for edition in anvil atelier; do
   iso_line=$(echo "$files" | grep -E "foundry-${edition}-[0-9]+\.[0-9]+-amd64\.iso$" | head -1 || true)
   [[ -z "$iso_line" ]] && continue
+  any_r2=1
   version=$(echo "$iso_line" | awk '{print $4}' | sed "s/foundry-${edition}-//;s/-amd64\.iso//")
-  date=$(echo "$iso_line" | awk '{print $2}')
-  line=$(printf "  %-15s  %s" "${edition}-${version}" "$date")
+  date=$(echo "$iso_line"  | awk '{print $2}')
+  iso_sz=""; ova_sz=""; vmdk_sz=""; qcow2_sz=""
   for fmt in iso ova vmdk qcow2; do
-    sz=$(echo "$files" | grep -E "foundry-${edition}-${version}-amd64\.${fmt}$" | awk '{print $1}' | head -1 || true)
-    [[ -n "$sz" ]] && line+="  ${fmt}:$(_gb "$sz")"
+    b=$(echo "$files" | grep -E "foundry-${edition}-${version}-amd64\.${fmt}$" | awk '{print $1}' | head -1 || true)
+    [[ -n "$b" ]] && eval "${fmt}_sz=\$(_gb \"\$b\")"
   done
-  echo "$line"
+  printf '│ %-15s │ %-10s │ %-5s │ %-6s │ %-6s │ %-6s │\n' \
+    "${edition}-${version}" "$date" "$iso_sz" "$ova_sz" "$vmdk_sz" "$qcow2_sz"
 done
+if [[ $any_r2 -eq 0 ]]; then
+  printf '│ %-63s │\n' "(no versioned ISOs found)"
+fi
+printf '└─────────────────┴────────────┴───────┴────────┴────────┴────────┘\n'
 
-echo ""
-echo "=== Local: dist/ ==="
-any=0
+# ── Local table ───────────────────────────────────────────────────────────────
+printf '\n┌──────────────────────────────────────────────┬──────┐\n'
+printf '│ %-44s │ %-4s │\n' "local: dist/" "size"
+printf '├──────────────────────────────────────────────┼──────┤\n'
+
+any_local=0
 for f in "$DIST_DIR"/foundry-*.{iso,ova,vmdk,qcow2}; do
   [[ -f "$f" ]] || continue
-  any=1
-  printf "  %-45s  %s\n" "$(basename "$f")" "$(du -h "$f" | cut -f1)"
+  any_local=1
+  printf '│ %-44s │ %-4s │\n' "$(basename "$f")" "$(du -h "$f" | cut -f1)"
 done
-if [[ $any -eq 0 ]]; then echo "  (empty)"; fi
+if [[ $any_local -eq 0 ]]; then
+  printf '│ %-44s │ %-4s │\n' "(empty)" ""
+fi
+printf '└──────────────────────────────────────────────┴──────┘\n'
