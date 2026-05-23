@@ -41,6 +41,9 @@ jobs:
           bash scripts/build-packages-page.sh
           node scripts/ssr-render.js
 
+      - name: Check links
+        run: node scripts/check-links.js
+
       - uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CF_PAGES_API_TOKEN }}

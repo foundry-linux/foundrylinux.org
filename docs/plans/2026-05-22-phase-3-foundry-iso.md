@@ -25,10 +25,10 @@ workstation in one click.
   for the storage + CI cost. The two ISOs come from one `live-build` config
   driven by an `EDITION` matrix axis.
 
-  | ISO | Base metapackage | Estimated size | Audience |
+  | ISO | Base metapackage | Actual size | Audience |
   |---|---|---|---|
-  | `foundry-anvil-1.0-amd64.iso`    | `foundry-anvil`    | ~3.5 GB | Default — the "Foundry Linux full kit" everyone gets |
-  | `foundry-atelier-1.0-amd64.iso`  | `foundry-atelier`  | ~10 GB  | "Give me the lot" — every Foundry metapackage + mobile dev + free-games bundle |
+  | `foundry-anvil-1.0-amd64.iso`    | `foundry-anvil`    | 4.6 GB | Default — the "Foundry Linux full kit" everyone gets |
+  | `foundry-atelier-1.0-amd64.iso`  | `foundry-atelier`  | 15 GB  | "Give me the lot" — every Foundry metapackage + mobile dev + free-games bundle |
 
 - **Out of scope for v1** — covered in §"Out of scope (follow-up plans)":
   - **Kiosk mode** (`gamescope` + `wf-launcher` + `worldfoundry-live-kiosk`
@@ -40,7 +40,8 @@ workstation in one click.
   - **VM artifacts** (qcow2, OVA). The same `live-build` pipeline can emit
     pre-installed disk images, but that's a separate build axis and a
     separate plan.
-  - **`.torrent` / magnet links, mirror network application.** Phase 4+.
+  - **`.torrent` / magnet links.** ~~Phase 4+~~ — **shipped 2026-05-23** alongside ISO launch. `create-torrents.sh` generates .torrent + magnet sidecars via mktorrent + inline Python3 bencode; sign-iso.sh embeds them in manifests; upload-iso.sh pushes to R2; homepage and iso.foundrylinux.org index both show torrent/magnet buttons with real infohashes.
+- **Mirror network application.** Phase 4+.
   - **Welcome app + first-run experience.** Whole separate piece of work.
   - **ROM/freeware bundle** (`worldfoundry-scummvm-freeware`,
     `worldfoundry-homebrew-games`). Curated retro-content library belongs in
@@ -623,6 +624,20 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
     `0ad` and `supertuxkart` launch.
     Expected: install completes (slower — atelier is ~3× the disk write);
     all atelier-tier tools present.
+
+## What shipped (2026-05-23)
+
+Both ISOs built, signed, and live on iso.foundrylinux.org:
+
+- **foundry-anvil-1.0-amd64.iso** — 4.6 GB; SHA256 `9fbe6a7e…`; infohash `959059a5…`
+- **foundry-atelier-1.0-amd64.iso** — 15 GB; SHA256 `a5f19767…`; infohash `521b695f…`
+
+Torrents, magnet links, manifests, and iso.foundrylinux.org index all live. Homepage updated.
+
+**Boot test findings (2026-05-23):**
+
+- **BIOS El Torito boot**: SeaBIOS says "Booting from DVD/CD…" then stalls in QEMU (SeaBIOS + ATAPI emulation). El Torito boot catalog and `grub_eltorito` stub are present; likely works on real hardware but unconfirmed. Further investigation needed.
+- **UEFI boot**: Missing from both ISOs — `live-build 3.0~a57-1ubuntu54` does not generate EFI boot images in `binary_grub2`. Fix: `build-iso.sh` now post-processes the ISO with xorriso after `lb binary` — runs `grub-mkimage` (from `grub-efi-amd64-bin`, already in the build container) to produce `BOOTX64.EFI`, packs it into a 1 MiB FAT12 image, appends it as a GPT partition type 0xEF, and wires it as a second El Torito entry (`platform_id=0xef`). This runs inside the same Docker container as `lb binary` before the ISO is moved to `dist/`. The existing ISOs on R2 **do not have EFI boot** — a rebuild is needed to ship the fix.
 
 ## Known concerns / external dependencies
 
