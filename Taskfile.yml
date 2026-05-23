@@ -390,14 +390,25 @@ tasks:
       - KEEP='{{.KEEP}}' BEFORE='{{.BEFORE}}' DRY_RUN='{{.DRY_RUN | default "1"}}' bash scripts/prune-isos.sh
 
   iso-publish:
-    desc: "Build ISO (if stale), bump version, sign, upload, and refresh index (EDITION=anvil|atelier, default: anvil)"
+    desc: "Build ISO(s) (if stale), bump, sign, upload, refresh index (EDITION=anvil|atelier|all, default: anvil)"
+    vars:
+      EDITIONS:
+        sh: |
+          if [[ '{{.EDITION | default "anvil"}}' == "all" ]]; then
+            echo "anvil atelier"
+          else
+            echo '{{.EDITION | default "anvil"}}'
+          fi
     cmds:
-      - task: iso-build
-        vars: { EDITION: '{{.EDITION | default "anvil"}}' }
+      - for: { var: EDITIONS }
+        task: iso-build
+        vars: { EDITION: "{{.ITEM}}" }
       - task: iso-bump
-      - task: iso-sign
-        vars: { EDITION: '{{.EDITION | default "anvil"}}' }
-      - task: iso-upload
-        vars: { EDITION: '{{.EDITION | default "anvil"}}' }
+      - for: { var: EDITIONS }
+        task: iso-sign
+        vars: { EDITION: "{{.ITEM}}" }
+      - for: { var: EDITIONS }
+        task: iso-upload
+        vars: { EDITION: "{{.ITEM}}" }
       - task: iso-generate-index
       - task: iso-upload-index
