@@ -38,11 +38,11 @@ function Topbar() {
             <b>foundrylinux.org</b>
           </div>
           <nav className="topbar-nav">
-            <a href="#forge">The Forge</a>
-            <a href="#install">Install</a>
-            <a href="#editions">Editions</a>
+            <a href="/#forge">The Forge</a>
+            <a href="/#install">Install</a>
+            <a href="/#editions">Editions</a>
             <a href="/packages">Packages</a>
-            <a href="#docs">Docs</a>
+            <a href="/#docs">Docs</a>
           </nav>
           <div className="topbar-version">
             <span className="dot" />FOUNDRY 26.04 · "ANVIL" · LTS
@@ -289,7 +289,7 @@ function Install() {
                   <span className="vm-size">~5 GB</span>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso" aria-label="Download Anvil ISO"><DownloadIcon /></a>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso.torrent" aria-label="Anvil torrent file"><TorrentIcon /></a>
-                  <a className="vm-dl" href="magnet:?xt=urn:btih:959059a55e5709014ce0fb6b86d3feefc7ae6885&dn=foundry-anvil-1.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-anvil-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Anvil magnet link"><MagnetIcon /></a>
+                  <a className="vm-dl" href="magnet:?xt=urn:btih:45e8c75c92f2f19dddcb3d7c8e1d45c68044ac96&dn=foundry-anvil-1.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-anvil-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Anvil magnet link"><MagnetIcon /></a>
                 </li>
                 <li className="vm-row">
                   <span className="vm-type">Atelier</span>
@@ -297,7 +297,7 @@ function Install() {
                   <span className="vm-size">~15 GB</span>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso" aria-label="Download Atelier ISO"><DownloadIcon /></a>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso.torrent" aria-label="Atelier torrent file"><TorrentIcon /></a>
-                  <a className="vm-dl" href="magnet:?xt=urn:btih:521b695f1f35665187d73d1a95b9c3e9b6878cb1&dn=foundry-atelier-1.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-atelier-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Atelier magnet link"><MagnetIcon /></a>
+                  <a className="vm-dl" href="magnet:?xt=urn:btih:9725b0ace804d20791175d695df2daff271d5fa8&dn=foundry-atelier-1.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-atelier-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Atelier magnet link"><MagnetIcon /></a>
                 </li>
               </ul>
               <div className="codeblock-head" style={{ marginTop: '1rem' }}>
@@ -417,7 +417,7 @@ const DOCS_LINKS = [
   },
   {
     label: 'Issues & Bugs',
-    href: 'https://github.com/foundry-linux/foundrylinux.org/issues',
+    href: 'https://github.com/foundry-linux/foundry-iso/issues',
     desc: 'github.com/…/issues',
   },
   {
@@ -472,10 +472,10 @@ function Foot() {
           <span>FOUNDRY · LINUX</span>
         </div>
         <nav className="foot-links">
-          <a href="#docs">Docs</a>
+          <a href="/#docs">Docs</a>
           <a href="/packages">Packages</a>
           <a href="https://github.com/foundry-linux">Git</a>
-          <a href="https://github.com/foundry-linux/foundrylinux.org/issues">Bugs</a>
+          <a href="https://github.com/foundry-linux/foundry-iso/issues">Bugs</a>
         </nav>
         <div className="foot-meta">
           Released under GPLv3<br />

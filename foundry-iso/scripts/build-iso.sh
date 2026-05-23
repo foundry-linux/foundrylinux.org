@@ -80,11 +80,66 @@ docker run --rm \
     chmod +x chroot/usr/bin/genisoimage
     # isohybrid patches the ISO MBR for legacy USB boot, but exits non-zero when
     # it cannot recognise the grub2 boot signature, aborting lb_binary_iso before
-    # it moves the ISO out of the chroot.  grub2 EFI boot works without it.
+    # it moves the ISO out of the chroot.  We add UEFI boot ourselves below.
     printf "#!/bin/sh\nexit 0\n" > chroot/usr/bin/isohybrid
     chmod +x chroot/usr/bin/isohybrid
     # Stage 3
     lb binary
+
+    # === UEFI / EFI boot injection ===
+    # live-build 3.0~a57 on Ubuntu 26.04 does not generate EFI boot images in
+    # binary_grub2.  Post-process the ISO with xorriso to inject an EFI System
+    # Partition containing a GRUB EFI image built from the installed modules.
+    #
+    # Free build dirs first — the xorriso pass needs ~ISO-size of temp space.
+    echo "=== Freeing build dirs before EFI injection ==="
+    rm -rf binary/ chroot/
+
+    echo "=== Building GRUB EFI image ==="
+    EFI_WORK="/tmp/foundry-efi"
+    mkdir -p "$EFI_WORK/EFI/BOOT"
+
+    # Embedded grub.cfg: search for the ISO root by a known file, then load the
+    # real grub.cfg.  This survives device reordering between machines.
+    cat > "$EFI_WORK/grub.cfg" <<'"'"'GCFG'"'"'
+search --set=root --file /live/filesystem.squashfs
+set prefix=($root)/boot/grub
+configfile ($root)/boot/grub/grub.cfg
+GCFG
+
+    grub-mkimage \
+      --format=x86_64-efi \
+      --prefix=/boot/grub \
+      --output="$EFI_WORK/EFI/BOOT/BOOTX64.EFI" \
+      --config="$EFI_WORK/grub.cfg" \
+      iso9660 linux normal all_video search search_fs_file search_fs_uuid \
+      search_label cat echo ls boot part_gpt part_msdos \
+      fat loopback configfile font gfxterm gfxmenu png jpeg video \
+      gfxterm_background
+
+    # Create a 1 MiB FAT12 EFI System Partition image
+    EFI_IMG="$EFI_WORK/efi.img"
+    dd if=/dev/zero of="$EFI_IMG" bs=1k count=1024 2>/dev/null
+    mkfs.fat -F12 -n "EFIBOOT" "$EFI_IMG"
+    mmd -i "$EFI_IMG" ::/EFI ::/EFI/BOOT
+    mcopy -i "$EFI_IMG" "$EFI_WORK/EFI/BOOT/BOOTX64.EFI" ::/EFI/BOOT/BOOTX64.EFI
+
+    echo "=== Injecting EFI partition into ISO ==="
+    # -dev edits in-place; -map adds efi.img as a real ISO file, creating a
+    # pending session so -commit actually writes.  -boot_image registers the
+    # El Torito EFI entry pointing at that file.
+    # (-indev/-outdev with -append_partition alone creates no session data and
+    # silently produces no output — discovered during testing 2026-05-23.)
+    xorriso \
+      -dev binary.hybrid.iso \
+      -map "$EFI_IMG" /boot/grub/efi.img \
+      -boot_image any next \
+      -boot_image any bin_path=/boot/grub/efi.img \
+      -boot_image any platform_id=0xef \
+      -boot_image any emul_type=no_emulation \
+      -commit
+    rm -rf "$EFI_WORK"
+    echo "=== EFI boot support injected ==="
   '
 
 # live-build writes the ISO to the working directory as binary.hybrid.iso

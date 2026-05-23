@@ -351,6 +351,12 @@ tasks:
     cmds:
       - bash scripts/generate-iso-index.sh
 
+  iso-upload:
+    desc: "Upload signed ISO + checksums + torrent to R2 (EDITION=anvil|atelier; loads creds from .foundry/bootstrap.env)"
+    dir: foundry-iso
+    cmds:
+      - EDITION='{{.EDITION | default "anvil"}}' bash scripts/upload-iso.sh
+
   iso-upload-index:
     desc: "Upload dist/index.html to the foundry-iso R2 bucket (loads creds from .foundry/bootstrap.env)"
     dir: foundry-iso

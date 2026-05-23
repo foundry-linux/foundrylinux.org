@@ -51,6 +51,7 @@ for t in "${TRACKERS[@]}"; do
   TRACKER_ARGS+=(-a "$t")
 done
 
+rm -f "$TORRENT"
 # -l 22 = 4 MiB piece size (good for files 4-16 GB)
 mktorrent -v -l 22 "${TRACKER_ARGS[@]}" -w "$WEBSEED" -n "$DISPLAY_NAME" -o "$TORRENT" "$ISO"
 
