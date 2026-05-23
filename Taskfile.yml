@@ -304,7 +304,7 @@ tasks:
     desc: "Build the ISO locally (EDITION=anvil|atelier, default: anvil)"
     dir: foundry-iso
     cmds:
-      - EDITION=${EDITION:-anvil} bash scripts/build-iso.sh
+      - EDITION='{{.EDITION | default "anvil"}}' bash scripts/build-iso.sh
 
   iso-clean:
     desc: "Clean live-build artifacts and dist/"
@@ -319,13 +319,13 @@ tasks:
     desc: "Boot the locally-built ISO in QEMU (EDITION=anvil|atelier, default: anvil)"
     dir: foundry-iso
     cmds:
-      - bash test/boot-smoke.sh dist/foundry-${EDITION:-anvil}-1.0-amd64.iso
+      - bash test/boot-smoke.sh dist/foundry-{{.EDITION | default "anvil"}}-1.0-amd64.iso
 
   iso-sign:
     desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier)"
     dir: foundry-iso
     cmds:
-      - EDITION=${EDITION:-anvil} bash scripts/sign-iso.sh
+      - EDITION='{{.EDITION | default "anvil"}}' bash scripts/sign-iso.sh
 
   iso-build-vms:
     desc: "Build VM images (qcow2, VMDK, OVA) from the anvil ISO"
@@ -367,4 +367,4 @@ tasks:
     desc: "Prune versioned ISOs from R2. Use KEEP=N or BEFORE=YYYY-MM-DD; DRY_RUN=0 to apply."
     dir: foundry-iso
     cmds:
-      - bash scripts/prune-isos.sh
+      - KEEP='{{.KEEP}}' BEFORE='{{.BEFORE}}' DRY_RUN='{{.DRY_RUN | default "1"}}' bash scripts/prune-isos.sh
