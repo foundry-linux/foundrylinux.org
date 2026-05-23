@@ -389,15 +389,15 @@ tasks:
     cmds:
       - KEEP='{{.KEEP}}' BEFORE='{{.BEFORE}}' DRY_RUN='{{.DRY_RUN | default "1"}}' bash scripts/prune-isos.sh
 
-  atelier-publish:
-    desc: "Build atelier ISO (if stale), bump version, sign, upload, and refresh index"
+  iso-publish:
+    desc: "Build ISO (if stale), bump version, sign, upload, and refresh index (EDITION=anvil|atelier, default: anvil)"
     cmds:
       - task: iso-build
-        vars: { EDITION: atelier }
+        vars: { EDITION: '{{.EDITION | default "anvil"}}' }
       - task: iso-bump
       - task: iso-sign
-        vars: { EDITION: atelier }
+        vars: { EDITION: '{{.EDITION | default "anvil"}}' }
       - task: iso-upload
-        vars: { EDITION: atelier }
+        vars: { EDITION: '{{.EDITION | default "anvil"}}' }
       - task: iso-generate-index
       - task: iso-upload-index
