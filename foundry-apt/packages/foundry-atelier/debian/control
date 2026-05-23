@@ -25,7 +25,7 @@ Description: Foundry Linux complete edition — everything
  .
    * foundry-sprite                       anvil + heavy graphics + audio
    * foundry-emulators-vintage            VICE, Atari800, FBZX (multiverse)
-   * foundry-emulators-consoles-heavy     Dolphin, PCSX2, Yuzu, RetroArch
+   * foundry-emulators-consoles-heavy     Dolphin, PCSX2, Yuzu, RetroArch, ppsspp, snes9x-gtk
    * foundry-game-reimplementations       VCMI, OpenRCT2, Fheroes2, Exult
    * foundry-free-games                   0 A.D., SuperTuxKart, FlightGear, …
    * foundry-android-development          OpenJDK 17, adb, NDK r26c

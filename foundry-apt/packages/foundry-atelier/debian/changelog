@@ -1,3 +1,10 @@
+foundry-atelier (0.9.1) resolute; urgency=low
+
+  * Note ppsspp (PSP) and snes9x-gtk (SNES) in description; both now
+    ship via foundry-emulators-consoles-heavy 1.0.3.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 23 May 2026 00:00:00 +0000
+
 foundry-atelier (1.0.0) resolute; urgency=medium
 
   * Initial release. Part of the Phase 2 nested-editions hierarchy

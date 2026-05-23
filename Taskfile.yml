@@ -311,6 +311,12 @@ tasks:
   iso-build:
     desc: "Build the ISO locally (EDITION=anvil|atelier, default: anvil)"
     dir: foundry-iso
+    sources:
+      - ../foundry-apt/packages/**/*
+      - config/**/*
+      - scripts/build-iso.sh
+    generates:
+      - dist/foundry-{{.EDITION | default "anvil"}}-*.iso
     cmds:
       - EDITION='{{.EDITION | default "anvil"}}' bash scripts/build-iso.sh
 
@@ -382,3 +388,16 @@ tasks:
     dir: foundry-iso
     cmds:
       - KEEP='{{.KEEP}}' BEFORE='{{.BEFORE}}' DRY_RUN='{{.DRY_RUN | default "1"}}' bash scripts/prune-isos.sh
+
+  atelier-publish:
+    desc: "Build atelier ISO (if stale), bump version, sign, upload, and refresh index"
+    cmds:
+      - task: iso-build
+        vars: { EDITION: atelier }
+      - task: iso-bump
+      - task: iso-sign
+        vars: { EDITION: atelier }
+      - task: iso-upload
+        vars: { EDITION: atelier }
+      - task: iso-generate-index
+      - task: iso-upload-index
