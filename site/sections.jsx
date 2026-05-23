@@ -289,7 +289,7 @@ function Install() {
                   <span className="vm-size">~5 GB</span>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso" aria-label="Download Anvil ISO"><DownloadIcon /></a>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso.torrent" aria-label="Anvil torrent file"><TorrentIcon /></a>
-                  <a className="vm-dl" href="magnet:?xt=urn:btih:45e8c75c92f2f19dddcb3d7c8e1d45c68044ac96&dn=foundry-anvil-1.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-anvil-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Anvil magnet link"><MagnetIcon /></a>
+                  <a className="vm-dl" href="magnet:?xt=urn:btih:4475708175bc2ef9f9c764f406a43679221147ed&dn=foundry-anvil-0.9.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-anvil-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Anvil magnet link"><MagnetIcon /></a>
                 </li>
                 <li className="vm-row">
                   <span className="vm-type">Atelier</span>
@@ -297,7 +297,7 @@ function Install() {
                   <span className="vm-size">~15 GB</span>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso" aria-label="Download Atelier ISO"><DownloadIcon /></a>
                   <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso.torrent" aria-label="Atelier torrent file"><TorrentIcon /></a>
-                  <a className="vm-dl" href="magnet:?xt=urn:btih:9725b0ace804d20791175d695df2daff271d5fa8&dn=foundry-atelier-1.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-atelier-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Atelier magnet link"><MagnetIcon /></a>
+                  <a className="vm-dl" href="magnet:?xt=urn:btih:bfb49155b514b79b36e544887f8b87af25d63bc6&dn=foundry-atelier-0.9.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-atelier-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Atelier magnet link"><MagnetIcon /></a>
                 </li>
               </ul>
               <div className="codeblock-head" style={{ marginTop: '1rem' }}>
