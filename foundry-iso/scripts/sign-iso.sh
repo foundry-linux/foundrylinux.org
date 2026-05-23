@@ -12,7 +12,8 @@ EDITION="${EDITION:?EDITION env var required: anvil or atelier}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DIST_DIR="$(cd "$SCRIPT_DIR/../dist" && pwd)"
-ISO="$DIST_DIR/foundry-${EDITION}-1.0-amd64.iso"
+ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"
+ISO="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
 
 if [[ ! -f "$ISO" ]]; then
   echo "ERROR: $ISO not found — run build-iso.sh first" >&2
@@ -34,11 +35,13 @@ sha256sum "$ISO" > "${ISO}.sha256"
 cat "${ISO}.sha256"
 
 echo "=== GPG sign ==="
+rm -f "${ISO}.asc"
 if [[ ${#PASSPHRASE_ARGS[@]} -gt 0 ]]; then
   echo "$GPG_PASSPHRASE" | gpg --batch "${PASSPHRASE_ARGS[@]}" \
       --armor --detach-sign --output "${ISO}.asc" "$ISO"
 else
-  gpg --armor --detach-sign --output "${ISO}.asc" "$ISO"
+  gpg --batch --no-tty --pinentry-mode loopback \
+      --armor --detach-sign --output "${ISO}.asc" "$ISO" < /dev/null
 fi
 
 echo "=== Creating torrent ==="
@@ -61,8 +64,8 @@ SIZE=$(stat -c %s "$ISO")
 cat > "$MANIFEST" <<EOF
 {
   "edition":      "${EDITION}",
-  "version":      "1.0",
-  "filename":     "foundry-${EDITION}-1.0-amd64.iso",
+  "version":      "${ISO_VERSION}",
+  "filename":     "foundry-${EDITION}-${ISO_VERSION}-amd64.iso",
   "sha256":       "${SHA}",
   "size_bytes":   ${SIZE},
   "download":     "https://iso.foundrylinux.org/foundry-${EDITION}-latest-amd64.iso",

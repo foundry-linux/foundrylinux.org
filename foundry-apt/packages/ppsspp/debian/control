@@ -1,0 +1,47 @@
+Source: ppsspp
+Section: otherosfs
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ cmake,
+ pkg-config,
+ git,
+ libsdl2-dev,
+ libgl-dev,
+ libglu-dev,
+ libsdl2-ttf-dev,
+ libfontconfig1-dev,
+ libavcodec-dev,
+ libavformat-dev,
+ libavutil-dev,
+ libavdevice-dev,
+ libswscale-dev,
+ libswresample-dev,
+ libvulkan-dev,
+ libpng-dev,
+ libsnappy-dev,
+ libzip-dev,
+ libzstd-dev,
+ libminiupnpc-dev,
+ libfreetype-dev,
+ libchdr-dev,
+ libopenxr-dev,
+ rapidjson-dev
+Standards-Version: 4.7.2
+Homepage: https://www.ppsspp.org
+Rules-Requires-Root: no
+
+Package: ppsspp
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: fast and portable PSP emulator
+ PPSSPP is a PSP emulator written in C++ that translates PSP CPU instructions
+ into optimized x86, x64, ARM, or ARM64 machine code using JIT recompilation.
+ .
+ It runs many PSP games at full HD resolution (or higher) with enhancements
+ including anisotropic filtering, texture scaling, increased draw distance, and
+ post-processing shaders. Vulkan, OpenGL, and software rendering backends are
+ supported. Save states, rewind, and netplay are included.
+ .
+ PSP ROMs and ISOs are not included. Users must supply their own legally
+ obtained game files.

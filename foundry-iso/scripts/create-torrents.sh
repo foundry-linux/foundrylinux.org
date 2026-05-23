@@ -22,8 +22,9 @@ fi
 EDITION="${EDITION:?EDITION env var required: anvil or atelier}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DIST_DIR="$(cd "$SCRIPT_DIR/../dist" && pwd)"
+ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"
 
-ISO="$DIST_DIR/foundry-${EDITION}-1.0-amd64.iso"
+ISO="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
 TORRENT="$ISO.torrent"
 INFOHASH_FILE="$ISO.infohash"
 MAGNET_FILE="$ISO.magnet"
@@ -43,7 +44,7 @@ TRACKERS=(
   "http://tracker.opentracker.info:80/announce"
 )
 WEBSEED="https://iso.foundrylinux.org/foundry-${EDITION}-latest-amd64.iso"
-DISPLAY_NAME="foundry-${EDITION}-1.0-amd64"
+DISPLAY_NAME="foundry-${EDITION}-${ISO_VERSION}-amd64"
 
 echo "=== Creating torrent: $TORRENT ==="
 TRACKER_ARGS=()

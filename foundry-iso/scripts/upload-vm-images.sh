@@ -26,7 +26,8 @@ R2_SECRET_ACCESS_KEY="${R2_SECRET_ACCESS_KEY:-${ISO_R2_SECRET:-}}"
 [[ -n "$R2_SECRET_ACCESS_KEY" ]] || { echo "ERROR: R2_SECRET_ACCESS_KEY not set — run bootstrap-r2.sh first" >&2; exit 1; }
 
 DIST_DIR="$SCRIPT_DIR/../dist"
-IMAGE_BASE="foundry-anvil-1.0-amd64"
+ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"
+IMAGE_BASE="foundry-anvil-${ISO_VERSION}-amd64"
 BUCKET="foundry-iso"
 ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
 

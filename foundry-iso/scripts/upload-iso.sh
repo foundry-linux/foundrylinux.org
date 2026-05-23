@@ -26,7 +26,8 @@ R2_SECRET_ACCESS_KEY="${R2_SECRET_ACCESS_KEY:-${ISO_R2_SECRET:-}}"
 [[ -n "$R2_SECRET_ACCESS_KEY" ]] || { echo "ERROR: R2_SECRET_ACCESS_KEY not set" >&2; exit 1; }
 
 DIST_DIR="$SCRIPT_DIR/../dist"
-ISO="$DIST_DIR/foundry-${EDITION}-1.0-amd64.iso"
+ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"
+ISO="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
 BUCKET="foundry-iso"
 ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
@@ -49,7 +50,7 @@ export RCLONE_CONFIG_R2_ENDPOINT="$ENDPOINT"
 export RCLONE_CONFIG_R2_ACL=public-read
 export RCLONE_CONFIG_R2_NO_CHECK_BUCKET=true
 
-VERSIONED="foundry-${EDITION}-1.0-amd64.iso"
+VERSIONED="foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
 LATEST="foundry-${EDITION}-latest-amd64.iso"
 
 echo "=== Uploading $VERSIONED ==="

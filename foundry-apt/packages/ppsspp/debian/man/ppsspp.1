@@ -1,0 +1,120 @@
+.TH PPSSPP 1 "May 2026" "PPSSPP 1.20.4" "Games"
+.SH NAME
+ppsspp \- fast and portable PSP emulator
+.SH SYNOPSIS
+.B ppsspp
+[\fIOPTIONS\fR]
+[\fIFILE\fR]
+.SH DESCRIPTION
+.B ppsspp
+is a PlayStation Portable (PSP) emulator that translates PSP CPU instructions
+directly into optimized x86, x64, ARM, or ARM64 machine code using JIT
+recompilation.
+.PP
+When launched with a game \fIFILE\fR (ISO, CSO, PBP, ELF, or ZIP), the emulator
+starts the game immediately. Without a \fIFILE\fR argument, it opens the main menu
+where games can be browsed and launched.
+.PP
+PSP game files are not included. Users must supply their own legally obtained
+game images.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Print usage and exit.
+.TP
+.B \-\-version
+Print version string and exit.
+.TP
+.B \-d
+Set log level to debug.
+.TP
+.B \-v
+Set log level to verbose.
+.TP
+.BI \-\-loglevel= INTEGER
+Set log level to the specified integer value.
+.TP
+.BI \-\-log= FILE
+Write log output to \fIFILE\fR.
+.TP
+.BI \-\-state= FILE
+Load save state from \fIFILE\fR on startup.
+.TP
+.B \-i
+Use the interpreter (slowest; most accurate).
+.TP
+.B \-r
+Use the IR interpreter.
+.TP
+.B \-j
+Use JIT recompilation (default; fastest).
+.TP
+.B \-J
+Use IR JIT recompilation.
+.TP
+.B \-\-fullscreen
+Start in fullscreen mode, ignoring the saved configuration.
+.TP
+.B \-\-windowed
+Start in windowed mode, ignoring the saved configuration.
+.TP
+.BI \-\-xres= PIXELS
+Set horizontal resolution.
+.TP
+.BI \-\-yres= PIXELS
+Set vertical resolution.
+.TP
+.BI \-\-dpi= FACTOR
+Set DPI scaling factor.
+.TP
+.BI \-\-scale= FACTOR
+Set display scale factor.
+.TP
+.B \-\-ipad
+Set resolution to 1024\(mu768 (iPad dimensions).
+.TP
+.B \-\-portrait
+Enable portrait mode.
+.TP
+.BI \-\-graphics= BACKEND
+Select GPU rendering backend. Valid values include
+.BR gles ,
+.BR vulkan ,
+.BR opengl ,
+.BR software .
+.TP
+.B \-\-pause\-menu\-exit
+Change "Exit to menu" in the in-game pause menu to "Exit" (exits the emulator).
+.TP
+.B \-\-escape\-exit
+Exit the emulator when the Escape key is pressed.
+.TP
+.B \-\-gamesettings
+Open settings directly on startup.
+.TP
+.B \-\-touchscreentest
+Open the touchscreen test screen on startup.
+.TP
+.BI \-\-appendconfig= FILE
+Merge the configuration from \fIFILE\fR into the running configuration.
+.SH FILES
+.TP
+.I ~/.config/ppsspp/
+User configuration directory. Contains
+.I PSP/SYSTEM/ppsspp.ini
+(settings) and subdirectories for save data, states, and screenshots.
+.TP
+.I /usr/share/ppsspp/assets/
+Bundled assets (shaders, fonts, UI textures).
+.SH AUTHORS
+PPSSPP was written by Henrik Hrydgard and contributors.
+See https://github.com/hrydgard/ppsspp/graphs/contributors for the full list.
+.SH COPYRIGHT
+Copyright 2012\(en2026 Henrik Hrydgard and contributors.
+.PP
+PPSSPP is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+.SH SEE ALSO
+.BR ppsspp-headless (1)

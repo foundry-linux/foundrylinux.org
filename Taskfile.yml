@@ -292,6 +292,14 @@ tasks:
           WORK_DIR: /tmp/foundry-iso-sync
 
   iso-bump:
+    desc: "Bump the ISO version in foundry-iso/VERSION (e.g. 0.9.0 → 0.9.1) and commit"
+    dir: foundry-iso
+    cmds:
+      - bash scripts/bump-version.sh
+      - git add VERSION
+      - git commit -m "chore(foundry-iso): bump ISO version to $(cat VERSION)"
+
+  iso-tag-bump:
     desc: "Sync and auto-increment patch tag on foundry-iso (e.g. v0.0.3 → v0.0.4)"
     cmds:
       - task: bump
@@ -319,7 +327,7 @@ tasks:
     desc: "Boot the locally-built ISO in QEMU (EDITION=anvil|atelier, default: anvil)"
     dir: foundry-iso
     cmds:
-      - bash test/boot-smoke.sh dist/foundry-{{.EDITION | default "anvil"}}-1.0-amd64.iso
+      - bash test/boot-smoke.sh dist/foundry-{{.EDITION | default "anvil"}}-$(cat VERSION)-amd64.iso
 
   iso-sign:
     desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier)"

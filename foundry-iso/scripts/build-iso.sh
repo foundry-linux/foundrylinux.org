@@ -5,7 +5,7 @@
 #   EDITION=anvil bash scripts/build-iso.sh
 #   EDITION=atelier bash scripts/build-iso.sh
 #
-# Output: dist/foundry-<edition>-1.0-amd64.iso
+# Output: dist/foundry-<edition>-<version>-amd64.iso  (version from foundry-iso/VERSION)
 
 set -euo pipefail
 
@@ -17,6 +17,7 @@ esac
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"
 DIST_DIR="$REPO_ROOT/dist"
 
 mkdir -p "$DIST_DIR"
@@ -33,6 +34,7 @@ echo "=== Building foundry-${EDITION} ISO (inside ubuntu:26.04 container) ==="
 docker run --rm \
   --privileged \
   -e EDITION="$EDITION" \
+  -e ISO_VERSION="$ISO_VERSION" \
   -v "$REPO_ROOT:/work" \
   -w /work \
   ubuntu:26.04 \
@@ -144,7 +146,7 @@ GCFG
 
 # live-build writes the ISO to the working directory as binary.hybrid.iso
 ISO_SRC="$REPO_ROOT/binary.hybrid.iso"
-ISO_DST="$DIST_DIR/foundry-${EDITION}-1.0-amd64.iso"
+ISO_DST="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
 
 if [[ -f "$ISO_SRC" ]]; then
   mv "$ISO_SRC" "$ISO_DST"

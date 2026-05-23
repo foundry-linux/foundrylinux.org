@@ -1,0 +1,52 @@
+#!/usr/bin/make -f
+# ppsspp uses CMake as its primary Linux build system.
+#
+# Submodule note: the GitHub tarball lacks submodule content (glslang,
+# SPIRV-Cross, armips, cpu_features). build.sh clones the repo with those
+# four submodules initialised before invoking dpkg-buildpackage, so they are
+# present in the source tree at this point.
+#
+# System libs replace the remaining submodule/bundled copies via USE_SYSTEM_*
+# flags. Discord RPC is disabled (empty submodule, optional feature).
+# Binary is renamed PPSSPPSDL → ppsspp in override_dh_auto_install.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+BUILD_DIR = obj-$(DEB_HOST_GNU_TYPE)
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake -- \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DUSE_SYSTEM_FFMPEG=ON \
+	    -DUSE_SYSTEM_LIBSDL2=ON \
+	    -DUSE_SYSTEM_LIBPNG=ON \
+	    -DUSE_SYSTEM_SNAPPY=ON \
+	    -DUSE_SYSTEM_LIBZIP=ON \
+	    -DUSE_SYSTEM_ZSTD=ON \
+	    -DUSE_SYSTEM_MINIUPNPC=ON \
+	    -DUSE_SYSTEM_FREETYPE=ON \
+	    -DUSE_SYSTEM_RAPIDJSON=ON \
+	    -DUSE_SYSTEM_LIBCHDR=ON \
+	    -DUSE_DISCORD=OFF
+
+override_dh_auto_build:
+	dh_auto_build --buildsystem=cmake
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	dh_auto_install --buildsystem=cmake
+	# Rename upstream binary PPSSPPSDL → ppsspp for consistency with other distros
+	mv $(CURDIR)/debian/ppsspp/usr/bin/PPSSPPSDL \
+	    $(CURDIR)/debian/ppsspp/usr/bin/ppsspp
+	# Rename and patch the desktop file
+	mv $(CURDIR)/debian/ppsspp/usr/share/applications/PPSSPPSDL.desktop \
+	    $(CURDIR)/debian/ppsspp/usr/share/applications/ppsspp.desktop
+	sed -i 's/^Name=PPSSPPSDL/Name=PPSSPP/' \
+	    $(CURDIR)/debian/ppsspp/usr/share/applications/ppsspp.desktop
+	sed -i 's/^Exec=PPSSPPSDL$$/Exec=ppsspp %F/' \
+	    $(CURDIR)/debian/ppsspp/usr/share/applications/ppsspp.desktop

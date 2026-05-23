@@ -23,8 +23,9 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 DIST_DIR="$REPO_ROOT/dist"
-ISO="$DIST_DIR/foundry-${EDITION}-1.0-amd64.iso"
-IMAGE_BASE="foundry-${EDITION}-1.0-amd64"
+ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"
+ISO="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
+IMAGE_BASE="foundry-${EDITION}-${ISO_VERSION}-amd64"
 
 if [[ ! -f "$ISO" ]]; then
   echo "ERROR: $ISO not found — run build-iso.sh first" >&2
@@ -43,4 +44,4 @@ docker run --rm \
   bash /work/scripts/vm-images-inner.sh
 
 echo "=== Done: dist/ ==="
-ls -lh "$DIST_DIR/foundry-${EDITION}-1.0-amd64".{qcow2,vmdk,ova} 2>/dev/null || true
+ls -lh "$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64".{qcow2,vmdk,ova} 2>/dev/null || true
