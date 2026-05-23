@@ -30,9 +30,11 @@ _gb() { awk -v b="$1" 'BEGIN { if (b>=1073741824) printf "%.1fG", b/1073741824; 
 files=$(rclone lsl "r2:${BUCKET}/" 2>/dev/null | grep -v 'latest' | sort -k4 || true)
 
 # ── R2 table ─────────────────────────────────────────────────────────────────
-printf '\n┌─────────────────┬────────────┬───────┬────────┬────────┬────────┐\n'
-printf '│ %-15s │ %-10s │ %-5s │ %-6s │ %-6s │ %-6s │\n' "edition" "date" "iso" "ova" "vmdk" "qcow2"
-printf '├─────────────────┼────────────┼───────┼────────┼────────┼────────┤\n'
+printf '\n┌───────────────────────────────────────────────────────────────────────┐\n'
+printf '│ %-69s │\n' "r2: ${BUCKET}/"
+printf '├─────────────────┬──────────────────┬───────┬────────┬────────┬────────┤\n'
+printf '│ %-15s │ %-16s │ %-5s │ %-6s │ %-6s │ %-6s │\n' "edition" "timestamp" "iso" "ova" "vmdk" "qcow2"
+printf '├─────────────────┼──────────────────┼───────┼────────┼────────┼────────┤\n'
 
 any_r2=0
 for edition in anvil atelier; do
@@ -40,7 +42,7 @@ for edition in anvil atelier; do
   [[ -z "$iso_line" ]] && continue
   any_r2=1
   version=$(echo "$iso_line" | awk '{print $4}' | sed "s/foundry-${edition}-//;s/-amd64\.iso//")
-  date=$(echo "$iso_line"  | awk '{print $2}')
+  ts="${iso_line}" ; ts="$(echo "$ts" | awk '{print $2, substr($3,1,5)}')"
   iso_bytes=$(echo "$iso_line" | awk '{print $1}')
   iso_sz=$(_gb "$iso_bytes")
   ova_sz=""; vmdk_sz=""; qcow2_sz=""
@@ -53,27 +55,39 @@ for edition in anvil atelier; do
       [[ -n "$b" ]] && eval "${fmt}_sz=\$(_gb \"\$b\")"
     done
   fi
-  printf '│ %-15s │ %-10s │ %-5s │ %-6s │ %-6s │ %-6s │\n' \
-    "${edition}-${version}" "$date" "$iso_sz" "$ova_sz" "$vmdk_sz" "$qcow2_sz"
+  printf '│ %-15s │ %-16s │ %-5s │ %-6s │ %-6s │ %-6s │\n' \
+    "${edition}-${version}" "$ts" "$iso_sz" "$ova_sz" "$vmdk_sz" "$qcow2_sz"
 done
 if [[ $any_r2 -eq 0 ]]; then
-  printf '│ %-63s │\n' "(no versioned ISOs found)"
+  printf '│ %-69s │\n' "(no versioned ISOs found)"
 fi
-printf '└─────────────────┴────────────┴───────┴────────┴────────┴────────┘\n'
+printf '└─────────────────┴──────────────────┴───────┴────────┴────────┴────────┘\n'
 
 # ── Local table ───────────────────────────────────────────────────────────────
-printf '\n┌──────────────────────────────────────────────┬──────┐\n'
 DIST_LABEL="$(realpath --relative-to="$REPO_ROOT" "$DIST_DIR")/"
-printf '│ %-44s │ %-4s │\n' "local: $DIST_LABEL" "size"
-printf '├──────────────────────────────────────────────┼──────┤\n'
+printf '\n┌───────────────────────────────────────────────────────────────────────┐\n'
+printf '│ %-69s │\n' "local: ${DIST_LABEL}"
+printf '├─────────────────┬──────────────────┬───────┬────────┬────────┬────────┤\n'
+printf '│ %-15s │ %-16s │ %-5s │ %-6s │ %-6s │ %-6s │\n' "edition" "timestamp" "iso" "ova" "vmdk" "qcow2"
+printf '├─────────────────┼──────────────────┼───────┼────────┼────────┼────────┤\n'
 
 any_local=0
-for f in "$DIST_DIR"/foundry-*.{iso,ova,vmdk,qcow2}; do
-  [[ -f "$f" ]] || continue
+for edition in anvil atelier; do
+  iso_f=$(ls "$DIST_DIR"/foundry-${edition}-*-amd64.iso 2>/dev/null | sort | tail -1 || true)
+  [[ -z "$iso_f" || ! -f "$iso_f" ]] && continue
   any_local=1
-  printf '│ %-44s │ %-4s │\n' "$(basename "$f")" "$(du -h "$f" | cut -f1)"
+  version=$(basename "$iso_f" | sed "s/foundry-${edition}-//;s/-amd64\.iso//")
+  ts=$(stat -c '%y' "$iso_f" | cut -c1-16)
+  iso_sz=$(du -h "$iso_f" | cut -f1)
+  ova_sz="-"; vmdk_sz="-"; qcow2_sz="-"
+  for fmt in ova vmdk qcow2; do
+    vm_f="$DIST_DIR/foundry-${edition}-${version}-amd64.${fmt}"
+    [[ -f "$vm_f" ]] && eval "${fmt}_sz=\$(du -h \"\$vm_f\" | cut -f1)"
+  done
+  printf '│ %-15s │ %-16s │ %-5s │ %-6s │ %-6s │ %-6s │\n' \
+    "${edition}-${version}" "$ts" "$iso_sz" "$ova_sz" "$vmdk_sz" "$qcow2_sz"
 done
 if [[ $any_local -eq 0 ]]; then
-  printf '│ %-44s │ %-4s │\n' "(empty)" ""
+  printf '│ %-69s │\n' "(no local builds)"
 fi
-printf '└──────────────────────────────────────────────┴──────┘\n'
+printf '└─────────────────┴──────────────────┴───────┴────────┴────────┴────────┘\n'
