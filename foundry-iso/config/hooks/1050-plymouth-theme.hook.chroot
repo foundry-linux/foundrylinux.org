@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+echo "=== Activating Foundry Linux Plymouth theme ==="
+
+if ! plymouth-set-default-theme foundry-linux 2>/dev/null; then
+    echo "WARNING: plymouth-set-default-theme failed — theme files may be missing" >&2
+    plymouth-set-default-theme --list || true
+    exit 0
+fi
+
+echo "Plymouth theme set to: $(plymouth-set-default-theme)"
+
+# Rebuild initramfs so the theme is embedded before squashfs is snapshotted.
+# Tolerates missing kernel (Docker test environments).
+if ! update-initramfs -u -k all 2>/dev/null; then
+    echo "WARNING: update-initramfs failed — live-build will regenerate initramfs" >&2
+fi
+echo "=== Plymouth theme activation complete ==="

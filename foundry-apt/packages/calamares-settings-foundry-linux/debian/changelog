@@ -1,3 +1,10 @@
+calamares-settings-foundry-linux (1.0.4) resolute; urgency=medium
+
+  * Add postinst to activate foundry-linux Plymouth theme on install
+    (plymouth-set-default-theme + update-initramfs -u).
+
+ -- Will Norris <wbnorris@gmail.com>  Sat, 24 May 2026 17:15:00 +0700
+
 calamares-settings-foundry-linux (1.0.3) resolute; urgency=medium
 
   * Add Theme-API=2.0 and QtVersion=6 to SDDM metadata.desktop — SDDM 0.21
