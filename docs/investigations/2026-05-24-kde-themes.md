@@ -19,13 +19,13 @@ Kubuntu, notably, ships **no custom KDE theme** beyond wallpapers — Breeze Dar
 | **Color Scheme** | **✓ done** | **`foundry-kde-theme`** | **`/usr/share/color-schemes/FoundryLinux.colors`** |
 
 Established color palette (from `FoundryLinux.colors`):
-- Background (window bg): `#0a0a0a`
-- Surface-hi (raised widgets): `#141414`
-- Widget bg (buttons/inputs): `#1a1a1a`
-- Text (on-surface): `#f7f7f7`
-- Muted (inactive/secondary): `#909090`
-- Accent (forge orange): `#ff5b1a`
-- Accent-dark (selection alt): `#c8410a`
+- Background (window bg): <span style="display:inline-block;width:12px;height:12px;background:#0a0a0a;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#0a0a0a`
+- Surface-hi (raised widgets): <span style="display:inline-block;width:12px;height:12px;background:#141414;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#141414`
+- Widget bg (buttons/inputs): <span style="display:inline-block;width:12px;height:12px;background:#1a1a1a;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#1a1a1a`
+- Text (on-surface): <span style="display:inline-block;width:12px;height:12px;background:#f7f7f7;border-radius:2px;vertical-align:middle"></span> `#f7f7f7`
+- Muted (inactive/secondary): <span style="display:inline-block;width:12px;height:12px;background:#909090;border-radius:2px;vertical-align:middle"></span> `#909090`
+- Accent (forge orange): <span style="display:inline-block;width:12px;height:12px;background:#ff5b1a;border-radius:2px;vertical-align:middle"></span> `#ff5b1a`
+- Accent-dark (selection alt): <span style="display:inline-block;width:12px;height:12px;background:#c8410a;border-radius:2px;vertical-align:middle"></span> `#c8410a`
 
 ---
 

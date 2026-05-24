@@ -48,7 +48,7 @@ Plasma's color scheme chooser picks it up immediately; no restart needed.
 
 **Package:** folded into `foundry-plasma-theme` or shipped standalone as
 `foundry-color-scheme`  
-**Effort:** low — generate from brand colors (`#E85D00` ember orange etc.)
+**Effort:** low — generate from brand colors (<span style="display:inline-block;width:12px;height:12px;background:#E85D00;border-radius:2px;vertical-align:middle"></span> `#E85D00` ember orange etc.)
 
 ### 3. Plasma Desktop theme (SVG-based shell chrome)
 Controls panel, widgets, tooltips, window decorations chrome. Lives in
@@ -96,7 +96,7 @@ Package count: 1–2. Looks intentional without requiring custom SVG work.
 ### Tier 3 — full brand treatment
 - **Icon theme** (`foundry-icon-theme`) — inherits Papirus Dark; custom icons for
   WorldFoundry apps (blender-asset-finder, wf-blender-install, etc.)
-- **SDDM login theme** — login screen matching the desktop theme
+- **SDDM login theme** — ✓ done (`calamares-settings-foundry-linux`; `/usr/share/sddm/themes/foundry-linux/`)
 
 ---
 

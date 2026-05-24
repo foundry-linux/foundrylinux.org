@@ -423,14 +423,13 @@ looks like" below; do not regenerate those concepts.
     - All icons use `currentColor` for stroke — recolor by setting parent
       `color`, never by editing fills.
 4. [`site/styles.css`](../../site/styles.css) — background variants:
-    - `body[data-bg="flat"]` — `#000`.
+    - `body[data-bg="flat"]` — <span style="display:inline-block;width:12px;height:12px;background:#000;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#000`.
     - `body[data-bg="gradient"]` — `radial-gradient(ellipse 1200px 700px at
-      50% 0%, #1a1410 0%, #0a0807 40%, #000 80%)`.
+      50% 0%, #1a1410 0%, #0a0807 40%, #000 80%)` (<span style="display:inline-block;width:12px;height:12px;background:#1a1410;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#1a1410` → <span style="display:inline-block;width:12px;height:12px;background:#0a0807;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#0a0807` → <span style="display:inline-block;width:12px;height:12px;background:#000;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#000`).
     - `body[data-bg="textured"]` — same gradient + `feTurbulence`
       carbon-paper noise overlay. **Use `textured` as the default wallpaper
       background** unless a concept says otherwise.
-    - Chrome wordmark gradient: `linear-gradient(180deg, #f7f7f7 0%,
-      #b8b8b8 50%, #4a4a4a 100%)` with `-webkit-background-clip: text`.
+    - Chrome wordmark gradient: `linear-gradient(180deg, #f7f7f7 0%, #b8b8b8 50%, #4a4a4a 100%)` (<span style="display:inline-block;width:12px;height:12px;background:#f7f7f7;border-radius:2px;vertical-align:middle"></span> `#f7f7f7` → <span style="display:inline-block;width:12px;height:12px;background:#b8b8b8;border-radius:2px;vertical-align:middle"></span> `#b8b8b8` → <span style="display:inline-block;width:12px;height:12px;background:#4a4a4a;border-radius:2px;vertical-align:middle"></span> `#4a4a4a`) with `-webkit-background-clip: text`.
       Reuse for any text in the wallpaper.
 
 **Rules (binding):**
@@ -438,7 +437,7 @@ looks like" below; do not regenerate those concepts.
 1. Reuse the SVG icon components literally. Don't redraw an anvil —
    instantiate `AnvilIcon`. The line-art aesthetic comes from the actual
    source SVGs, not from interpretation.
-2. Single ember accent point (`#ff5b1a`) per wallpaper. Not ambient. If
+2. Single ember accent point (<span style="display:inline-block;width:12px;height:12px;background:#ff5b1a;border-radius:2px;vertical-align:middle"></span> `#ff5b1a`) per wallpaper. Not ambient. If
    the orange takes up more than ~5% of frame area at full saturation,
    scale it back.
 3. Center 60% of the frame is negative space. Hero elements live in
@@ -448,14 +447,14 @@ looks like" below; do not regenerate those concepts.
 5. Output: 3840 × 2160 PNG, plus 1920 × 1080 derivative.
 
 **Concept A — "Patent Drawing":** `AnvilIcon` at bottom-right quarter,
-rendered at `color: #b8b8b8`. Hairline dimensional callouts ("A", "B",
+rendered at `color:` <span style="display:inline-block;width:12px;height:12px;background:#b8b8b8;border-radius:2px;vertical-align:middle"></span> `#b8b8b8`. Hairline dimensional callouts ("A", "B",
 "Fig. 1") in `rgba(255,255,255,0.08)`. One ember-orange glow point at the
 anvil's strike face. Patent-style title block bottom-right reading
 "FOUNDRY LINUX / RESOLUTE 26.04 / FIG. 1". Wordmark top-left, chrome,
 max 1/8 frame width. Background: `textured`.
 
 **Concept B — "Quenching":** No icons. A single 3-px horizontal line of
-`#ff5b1a` (with `#ff8a3a` hottest centerpoint) across the lower third,
+<span style="display:inline-block;width:12px;height:12px;background:#ff5b1a;border-radius:2px;vertical-align:middle"></span> `#ff5b1a` (with <span style="display:inline-block;width:12px;height:12px;background:#ff8a3a;border-radius:2px;vertical-align:middle"></span> `#ff8a3a` hottest centerpoint) across the lower third,
 offset to the golden ratio (not centered). Faint vertical-bloom halo
 above (max 80 px). Hairline "surface" line a few pixels below. Background:
 `flat` with barely-visible radial gradient outward from the hot point.
@@ -463,7 +462,7 @@ No wordmark. The point is one note in silence.
 
 **Concept C — "Blueprint":** Full-canvas low-contrast schematic texture:
 `AnvilIcon`, `HammerIcon`, `SparksIcon`, `GearStackIcon` at ~30% opacity in
-silver (`#4a4a4a`) on a 12-column grid with hairline dimension lines and
+silver (<span style="display:inline-block;width:12px;height:12px;background:#4a4a4a;border-radius:2px;vertical-align:middle"></span> `#4a4a4a`) on a 12-column grid with hairline dimension lines and
 "Fig. 1"–"Fig. 4" labels. Schematic content denser at edges, thinner in
 middle 50%. One ember underline beneath one tool's label. Bottom-right:
 engineering title block with FOUNDRY LINUX chrome wordmark plus
@@ -472,8 +471,8 @@ revision/sheet/date fields in hairline silver. Background: `textured`.
 **Concept D — "Sparks":** Forge implied just off-frame lower-left. Scale
 up `SparksIcon` so sparks fan out from a virtual origin beyond the
 bottom-left corner. 8–14 individual spark strokes (20–200 px lengths),
-each starting `#ff5b1a` and fading to `#000` along their length. Faint
-ember glow gradient bleeds in from lower-left, fades to `#000` within 1/3
+each starting <span style="display:inline-block;width:12px;height:12px;background:#ff5b1a;border-radius:2px;vertical-align:middle"></span> `#ff5b1a` and fading to <span style="display:inline-block;width:12px;height:12px;background:#000;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#000` along their length. Faint
+ember glow gradient bleeds in from lower-left, fades to <span style="display:inline-block;width:12px;height:12px;background:#000;border-radius:2px;vertical-align:middle;border:1px solid #555"></span> `#000` within 1/3
 of frame width. Top-right: small FOUNDRY LINUX chrome wordmark.
 Background: `textured`. Should feel like "you just missed the hammer
 blow."
