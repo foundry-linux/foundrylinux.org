@@ -173,6 +173,7 @@ ISO_DST="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
 GRUB_PATCH="/tmp/foundry-grub-$$.cfg"
 echo "=== Patching grub.cfg ==="
 xorriso -osirrox on -dev "$ISO_SRC" -extract /boot/grub/grub.cfg "$GRUB_PATCH"
+chmod +w "$GRUB_PATCH"
 sed -i 's/^set default=0$/set default=0\nset timeout=5/' "$GRUB_PATCH"
 # Rename boot entries from live-build's generic "Debian GNU/Linux" labels.
 # The full menuentry line is: menuentry "Debian GNU/Linux - live" {
