@@ -1,8 +1,40 @@
 # HOWTO: Create a Kubuntu Remix with Live Boot ISO
 
-This guide documents how to build a bootable Kubuntu remix ISO using live-build — the approach Foundry Linux uses. It covers the full picture: directory layout, live-build configuration, essential hooks, autologin (with all the gotchas), branding surfaces, local package injection, and build + test workflow.
+This guide documents how to build a bootable Kubuntu remix ISO using live-build.
+It covers the full picture: directory layout, live-build configuration, essential
+hooks, autologin (with all the gotchas), branding surfaces, local package
+injection, and build + test workflow.
 
-The guide is written from hard-won experience: every "important" callout describes something that bit us in practice.
+The guide is written from hard-won experience building Foundry Linux. Every
+"important" callout describes something that bit us in practice.
+
+---
+
+## Parameters
+
+Replace every `{placeholder}` below with your distro's values. Pick them all
+before writing any config.
+
+| Parameter | Description | Example (Foundry Linux) |
+|-----------|-------------|------------------------|
+| `{distro}` | Short lowercase prefix; used in file/package names | `foundry` |
+| `{distro-slug}` | Lowercase hyphenated name; used in hostnames, paths | `foundry-linux` |
+| `{Distro Name}` | Human-readable name | `Foundry Linux` |
+| `{DISTRO}` | Uppercase short prefix; used in ISO volume label | `FOUNDRY` |
+| `{vendor}` | Reverse-domain org prefix for KDE Look-and-Feel ID | `org.foundrylinux` |
+| `{laf-id}` | Full Look-and-Feel package ID | `org.foundrylinux.foundry-linux` |
+| `{ColorSchemeName}` | CamelCase color scheme name (no spaces) | `FoundryLinux` |
+| `{ubuntu-codename}` | Ubuntu release codename for `lb config --distribution` | `resolute` (26.04 LTS) |
+| `{ubuntu-version}` | Ubuntu version string; used in Docker image tag | `26.04` |
+| `{iso-version}` | Semantic version for the ISO; read from `VERSION` file | `0.9.0` |
+| `{edition}` | Optional build variant (omit if you have only one) | `anvil`, `atelier` |
+| `{live-username}` | Username of the auto-created live account | `user` |
+| `{live-fullname}` | Display name for the live account | `Foundry Linux` |
+| `{live-hostname}` | Hostname in the live session | `foundry-linux` |
+| `{apt-repo-url}` | URL of your custom apt repository | `https://apt.foundrylinux.org` |
+| `{apt-key-url}` | URL of the apt repo signing key (GPG armored) | `https://apt.foundrylinux.org/key.gpg` |
+| `{sddm-theme}` | SDDM theme name (empty string = default) | `foundry-linux` |
+| `{wallpaper-path}` | Absolute path to wallpaper PNG inside the chroot | `/usr/share/backgrounds/foundry-linux-wallpaper.png` |
 
 ---
 
@@ -41,8 +73,8 @@ The tradeoffs:
   mirror lists and misses Ubuntu archive areas. Not documented prominently.
 - **Kubuntu seed bloat** — `kubuntu-desktop` pulls in KDE PIM, LibreOffice,
   games, and Snap. Plan for a purge hook early.
-- **Ubuntu archive access** — PPAs and `apt.foundrylinux.org` work normally;
-  signing key setup is a one-time workaround (see [Extra Apt Sources](#extra-apt-sources)).
+- **Ubuntu archive access** — PPAs and custom apt repos work normally;
+  signing key setup requires a one-time workaround (see [Extra Apt Sources](#extra-apt-sources)).
 
 ### Choosing a base Ubuntu release
 
@@ -53,7 +85,7 @@ targeting:
 ```sh
 lb config noauto \
     --mode ubuntu \
-    --distribution resolute \   # Ubuntu 26.04 LTS
+    --distribution {ubuntu-codename} \
     ...
 ```
 
@@ -67,7 +99,7 @@ maintenance quickly and PPAs frequently drop non-LTS support.
 On the build host:
 
 ```bash
-# Docker (required — the build runs inside ubuntu:26.04)
+# Docker (required — the build runs inside ubuntu:{ubuntu-version})
 # qemu-system-x86_64, ovmf (for smoke testing)
 sudo apt-get install -y docker.io qemu-system-x86 ovmf
 
@@ -75,41 +107,42 @@ sudo apt-get install -y docker.io qemu-system-x86 ovmf
 sudo apt-get install -y xorriso
 ```
 
-The build container installs live-build and all tooling at runtime — you don't need them locally.
+The build container installs live-build and all tooling at runtime — you don't
+need them locally.
 
 ---
 
 ## Directory Layout
 
 ```
-foundry-iso/
-├── VERSION                         # semantic version string, e.g. 0.9.0
+{distro-slug}-iso/
+├── VERSION                              # semantic version string, e.g. 0.9.0
 ├── config/
 │   ├── auto/
-│   │   └── config                  # runs lb config with all flags
+│   │   └── config                       # runs lb config with all flags
 │   ├── archives/
-│   │   ├── foundry.list.chroot     # extra apt sources inside chroot
-│   │   ├── foundry.key             # signing key (fetched at build time)
+│   │   ├── {distro}.list.chroot         # extra apt sources inside chroot
+│   │   ├── {distro}.key                 # signing key (fetched at build time)
 │   │   └── ...
-│   ├── hooks/                      # chroot hooks, run in numeric order
+│   ├── hooks/                           # chroot hooks, run in numeric order
 │   │   ├── 0010-enable-multiverse.hook.chroot
-│   │   ├── 0020-strip-kubuntu-bloat.hook.chroot
-│   │   ├── 0030-install-foundry-edition.hook.chroot
+│   │   ├── 0020-strip-base-bloat.hook.chroot
+│   │   ├── 0030-install-{distro}-edition.hook.chroot
 │   │   ├── 0040-firstboot-cleanup.hook.chroot
 │   │   ├── 1000-install-local-debs.hook.chroot
 │   │   ├── 1050-plymouth-theme.hook.chroot
 │   │   ├── 1100-live-autologin.hook.chroot
 │   │   ├── 1150-kde-color-scheme.hook.chroot
 │   │   └── 1200-live-ssh.hook.chroot
-│   ├── includes.chroot/            # files copied verbatim into chroot
-│   │   └── tmp/local-debs/         # .deb files injected at build time
+│   ├── includes.chroot/                 # files copied verbatim into chroot
+│   │   └── tmp/local-debs/             # .deb files injected at build time
 │   └── package-lists/
-│       └── foundry.list.chroot     # generated by auto/config (not tracked)
+│       └── {distro}.list.chroot        # generated by auto/config (not tracked)
 ├── scripts/
-│   ├── build-iso.sh                # main build entry point
-│   ├── genisoimage-wrapper.sh      # routes genisoimage → xorriso (large-file fix)
-│   └── boot-smoke.sh               # QEMU smoke test
-└── dist/                           # output ISOs land here
+│   ├── build-iso.sh                    # main build entry point
+│   ├── genisoimage-wrapper.sh          # routes genisoimage → xorriso (large-file fix)
+│   └── boot-smoke.sh                   # QEMU smoke test
+└── dist/                               # output ISOs land here
 ```
 
 ---
@@ -122,21 +155,23 @@ live-build reads this script before the build. Put all `lb config` flags here.
 #!/bin/sh
 set -e
 
-EDITION="${EDITION:?EDITION env var required: anvil or atelier}"
+# Optional: validate EDITION if you have build variants.
+# Remove this block if you have a single-edition build.
+EDITION="${EDITION:?EDITION env var required}"
 case "$EDITION" in
-  anvil|atelier) ;;
-  *) echo "EDITION must be one of: anvil, atelier" >&2; exit 1 ;;
+  {edition-1}|{edition-2}) ;;
+  *) echo "EDITION must be one of: {edition-1}, {edition-2}" >&2; exit 1 ;;
 esac
 
 lb config noauto \
     --mode ubuntu \
-    --distribution resolute \
+    --distribution {ubuntu-codename} \
     --architectures amd64 \
     --binary-images iso-hybrid \
     --archive-areas "main restricted universe multiverse" \
-    --bootappend-live "boot=casper live-media-path=live username=user quiet splash" \
-    --iso-application "Foundry Linux" \
-    --iso-volume "FOUNDRY-${EDITION^^}-${ISO_VERSION:-0.9.0}" \
+    --bootappend-live "boot=casper live-media-path=live username={live-username} quiet splash" \
+    --iso-application "{Distro Name}" \
+    --iso-volume "{DISTRO}-${EDITION^^}-${ISO_VERSION:-0.9.0}" \
     --linux-flavours generic \
     --bootloader grub2 \
     --initsystem systemd \
@@ -153,15 +188,15 @@ lb config noauto \
 printf 'EDITION=%s\n' "$EDITION" > config/hook-env.sh
 
 # Generate the per-edition package list.
-echo "foundry-${EDITION}"   > config/package-lists/foundry.list.chroot
-echo "kubuntu-desktop"     >> config/package-lists/foundry.list.chroot
-echo "calamares"           >> config/package-lists/foundry.list.chroot
-echo "casper"              >> config/package-lists/foundry.list.chroot
-echo "user-setup"          >> config/package-lists/foundry.list.chroot
+echo "{distro}-${EDITION}"   > config/package-lists/{distro}.list.chroot
+echo "kubuntu-desktop"      >> config/package-lists/{distro}.list.chroot
+echo "calamares"            >> config/package-lists/{distro}.list.chroot
+echo "casper"               >> config/package-lists/{distro}.list.chroot
+echo "user-setup"           >> config/package-lists/{distro}.list.chroot
 ```
 
 **Important:** `auto/config` generates `config/hook-env.sh` (for EDITION) and
-`config/package-lists/foundry.list.chroot` at build time. Both files are
+`config/package-lists/{distro}.list.chroot` at build time. Both files are
 gitignored — they're derived output, not source.
 
 ---
@@ -172,11 +207,13 @@ Place `.list.chroot` files in `config/archives/`. live-build copies them into
 `/etc/apt/sources.list.d/` during the chroot stage.
 
 ```
-# config/archives/foundry.list.chroot
-deb [signed-by=/etc/apt/trusted.gpg.d/foundry.key.gpg] https://apt.foundrylinux.org resolute main
+# config/archives/{distro}.list.chroot
+deb [signed-by=/etc/apt/trusted.gpg.d/{distro}.key.gpg] {apt-repo-url} {ubuntu-codename} main
 ```
 
-Signing keys (`.key` files) are fetched at build time by `build-iso.sh` using `curl | gpg --dearmor`. They are **not** tracked in git (gitignored) because they're secrets-adjacent and always re-fetched fresh.
+Signing keys (`.key` files) are fetched at build time by `build-iso.sh` using
+`curl | gpg --dearmor`. They are **not** tracked in git (gitignored) — always
+re-fetch fresh.
 
 **Important:** live-build 3.0\~a57 on Ubuntu 26.04 does not reliably copy
 `.key` files before running `apt-get update`. Copy the keys explicitly into
@@ -185,7 +222,7 @@ Signing keys (`.key` files) are fetched at build time by `build-iso.sh` using `c
 ```bash
 lb bootstrap
 mkdir -p chroot/etc/apt/trusted.gpg.d/
-cp config/archives/foundry.key chroot/etc/apt/trusted.gpg.d/foundry.key.gpg
+cp config/archives/{distro}.key chroot/etc/apt/trusted.gpg.d/{distro}.key.gpg
 lb chroot
 ```
 
@@ -195,7 +232,8 @@ lb chroot
 
 Hooks are Bash scripts in `config/hooks/` with the suffix `.hook.chroot`. They
 run inside the chroot in numeric prefix order. All must begin with
-`set -euo pipefail` and `source /root/config/hook-env.sh` (to get EDITION).
+`set -euo pipefail`. Hooks that need the edition variant should also
+`source /root/config/hook-env.sh` to get `$EDITION`.
 
 ### `0010-enable-multiverse.hook.chroot`
 
@@ -208,20 +246,23 @@ add-apt-repository -y multiverse
 apt-get update -qq
 ```
 
-### `0020-strip-kubuntu-bloat.hook.chroot`
+### `0020-strip-base-bloat.hook.chroot`
 
-Kubuntu ships dozens of packages that don't belong in a focused remix. Purge them early so they don't bloat the squashfs. Add a matching `.list.chroot.purge` file in `config/package-lists/` for packages live-build can strip during installation.
+Kubuntu ships dozens of packages that don't belong in a focused remix. Purge
+them early so they don't bloat the squashfs. Add a matching `.list.chroot.purge`
+file in `config/package-lists/` for packages live-build can strip during
+installation.
 
-### `0030-install-foundry-edition.hook.chroot`
+### `0030-install-{distro}-edition.hook.chroot`
 
-Install the edition metapackage if available in the apt repo:
+Install the edition metapackage if available in your apt repo:
 
 ```bash
 #!/bin/bash
 set -euo pipefail
 source /root/config/hook-env.sh
-if apt-cache show "foundry-${EDITION}" &>/dev/null; then
-  apt-get install -y "foundry-${EDITION}"
+if apt-cache show "{distro}-${EDITION}" &>/dev/null; then
+  apt-get install -y "{distro}-${EDITION}"
 fi
 ```
 
@@ -239,7 +280,8 @@ if ls /tmp/local-debs/*.deb &>/dev/null 2>&1; then
 fi
 ```
 
-The build script copies `local-debs/*.deb` into `config/includes.chroot/tmp/local-debs/` before `lb chroot` runs.
+The build script copies `local-debs/*.deb` into `config/includes.chroot/tmp/local-debs/`
+before `lb chroot` runs.
 
 **Why not `config/packages.chroot/`?** live-build's local-repo code path for
 that directory calls `gpg --batch --gen-key` inside the chroot. In gnupg 2.4+
@@ -249,7 +291,8 @@ entirely.
 
 ### `1100-live-autologin.hook.chroot`
 
-This is the most complex hook. See the [Autologin section](#autologin) below for full details.
+This is the most complex hook. See the [Autologin section](#autologin) below for
+full details.
 
 ---
 
@@ -261,17 +304,17 @@ initramfs script.
 
 ### How the live session starts
 
-1. **GRUB** boots the kernel with `boot=casper username=user quiet splash` on
-   the cmdline.
+1. **GRUB** boots the kernel with `boot=casper username={live-username} quiet splash`
+   on the cmdline.
 2. **casper** (initramfs) runs `casper-bottom/` scripts in numeric order:
    - `15autologin` — detects the desktop session and writes `/etc/sddm.conf`
-     with `[Autologin]\nUser=user\nSession=<session>`
-   - `25adduser` — creates the `user` account, reads credentials from
+     with `[Autologin]\nUser={live-username}\nSession=<session>`
+   - `25adduser` — creates the live account, reads credentials from
      `/etc/casper.conf` bundled inside the initramfs
 3. **systemd** starts, SDDM reads `/etc/sddm.conf` and autologs in.
 4. **live-config** scripts run on the live desktop as systemd services.
-   Its `0085-sddm` script reads `username=user` from the kernel cmdline and
-   overwrites `/etc/sddm.conf`.
+   Its `0085-sddm` script reads `username={live-username}` from the kernel
+   cmdline and overwrites `/etc/sddm.conf`.
 
 ### Bug 1 — live-config destroys autologin at every boot
 
@@ -324,16 +367,16 @@ new = (
 )
 ```
 
-### Defence in depth — `16foundry-autologin`
+### Defence in depth — `16{distro}-autologin`
 
-Add a casper-bottom script numbered 16 so it runs immediately after `15autologin`.
-It corrects `Session=` or `Session=plasma.desktop` in-place, and writes a full
-autologin block if `sddm.conf` is absent:
+Add a casper-bottom script numbered 16 so it runs immediately after
+`15autologin`. It corrects `Session=` or `Session=plasma.desktop` in-place,
+and writes a full autologin block if `sddm.conf` is absent:
 
 ```sh
 #!/bin/sh
 PREREQ=""
-DESCRIPTION="Configuring SDDM autologin for Foundry Linux live session..."
+DESCRIPTION="Configuring SDDM autologin for {Distro Name} live session..."
 prereqs() { echo "$PREREQ"; }
 case $1 in prereqs) prereqs; exit 0 ;; esac
 . /scripts/casper-functions
@@ -344,7 +387,7 @@ if [ -f /root/etc/sddm.conf ]; then
            /root/etc/sddm.conf
 else
     printf '[Autologin]\nUser=%s\nSession=plasma\nRelogin=false\n' \
-        "${USERNAME:-user}" > /root/etc/sddm.conf
+        "${USERNAME:-{live-username}}" > /root/etc/sddm.conf
 fi
 log_end_msg
 ```
@@ -356,9 +399,9 @@ bundles it into the initrd, and `25adduser` reads it to create the live user:
 
 ```bash
 cat > /etc/casper.conf <<'EOF'
-export USERNAME="user"
-export USERFULLNAME="Foundry Linux"
-export HOST="foundry-linux"
+export USERNAME="{live-username}"
+export USERFULLNAME="{live-fullname}"
+export HOST="{live-hostname}"
 export BUILD_SYSTEM="Ubuntu"
 EOF
 ```
@@ -371,16 +414,16 @@ conf.d files are loaded before `/etc/sddm.conf`; casper's write wins.
 
 ```bash
 mkdir -p /etc/sddm.conf.d
-cat > /etc/sddm.conf.d/30-foundry-live.conf <<EOF
+cat > /etc/sddm.conf.d/30-{distro}-live.conf <<EOF
 [Theme]
-Current=${SDDM_THEME}
+Current={sddm-theme}
 EOF
 ```
 
 ### Regenerate initramfs
 
 After writing casper.conf, patching `15autologin`, and installing
-`16foundry-autologin`, run:
+`16{distro}-autologin`, run:
 
 ```bash
 update-initramfs -u
@@ -393,62 +436,59 @@ the hook writes `casper.conf`, so a second pass is mandatory.
 
 ## Branding Surfaces
 
-| Surface | Mechanism | Files |
-|---------|-----------|-------|
+| Surface | Mechanism | Key parameter |
+|---------|-----------|---------------|
 | GRUB menu | `config/binary_grub/grub.cfg` or post-processed via xorriso | Colors, background image, timeout |
-| Plymouth boot splash | `update-alternatives --set default.plymouth` in a hook | `.plymouth` file, theme assets |
-| SDDM greeter | `/etc/sddm.conf.d/30-foundry-live.conf` → `Current=<theme>` | SDDM theme directory |
-| Plasma splash screen | `includes.chroot/etc/xdg/ksplashrc` + Look-and-Feel package | `org.foundrylinux.foundry-linux` |
-| Desktop wallpaper | Plasma autostart `.desktop` in `/etc/skel/.config/autostart/` | PNG via `plasma-apply-wallpaperimage` |
-| Lock screen wallpaper | `includes.chroot/etc/xdg/kscreenlockerrc` | System-wide default for all users |
-| KDE color scheme | `foundry-kde-theme` deb → `/usr/share/color-schemes/` + skel `kdeglobals` | `FoundryLinux.colors` |
-| Calamares installer | `calamares-settings-<distro>` package | Branding YAML, slideshow assets |
-
-**Not covered by wallpapers:**
-- **Desktop shortcuts** — `.desktop` icons on the live user's desktop default to Kubuntu branding.
+| Plymouth boot splash | `update-alternatives --set default.plymouth` in a hook | Plymouth theme name |
+| SDDM greeter | `/etc/sddm.conf.d/30-{distro}-live.conf` → `Current=` | `{sddm-theme}` |
+| Plasma splash screen | `includes.chroot/etc/xdg/ksplashrc` + Look-and-Feel package | `{laf-id}` |
+| Desktop wallpaper | Plasma autostart `.desktop` in `/etc/skel/.config/autostart/` | `{wallpaper-path}` |
+| Lock screen wallpaper | `includes.chroot/etc/xdg/kscreenlockerrc` | `{wallpaper-path}` |
+| KDE color scheme | Hook → `/usr/share/color-schemes/` + `/etc/xdg/kdeglobals` | `{ColorSchemeName}` |
+| Calamares installer | `calamares-settings-{distro-slug}` package | Branding YAML, slideshow |
 
 ### Plasma Splash Screen (KSplashQML)
 
 The animated loading screen shown between SDDM autologin and the Plasma desktop
-appearing is a KSplash Look-and-Feel package. The cleanest way to ship it is via
-`config/includes.chroot/` — no hook or package required.
+appearing is a KSplash Look-and-Feel package. Ship it via `config/includes.chroot/`
+— no hook or package required.
 
 **File layout:**
 ```
 config/includes.chroot/
 ├── etc/xdg/
-│   ├── ksplashrc                       # system-wide KSplash theme pointer
-│   └── kscreenlockerrc                 # system-wide lock screen wallpaper
+│   ├── ksplashrc                        # system-wide KSplash theme pointer
+│   └── kscreenlockerrc                  # system-wide lock screen wallpaper
 └── usr/share/plasma/look-and-feel/
-    └── org.foundrylinux.foundry-linux/
-        ├── metadata.json               # Look-and-Feel package declaration
+    └── {laf-id}/
+        ├── metadata.json                # Look-and-Feel package declaration
         └── contents/
             └── splash/
-                └── Splash.qml          # QML splash animation
+                └── Splash.qml           # QML splash animation
 ```
 
 **`ksplashrc`:**
 ```ini
 [KSplash]
-Theme=org.foundrylinux.foundry-linux
+Theme={laf-id}
 ```
 
 **`kscreenlockerrc`:**
 ```ini
 [Greeter][Wallpaper][org.kde.image][General]
-Image=file:///usr/share/backgrounds/foundry-linux-wallpaper.png
+Image=file://{wallpaper-path}
 ```
 
 **`metadata.json`:**
 ```json
 {
     "KPlugin": {
-        "Id": "org.foundrylinux.foundry-linux",
-        "Name": "Foundry Linux",
-        "Description": "Foundry Linux Plasma splash screen",
+        "Id": "{laf-id}",
+        "Name": "{Distro Name}",
+        "Description": "{Distro Name} Plasma splash screen",
         "ServiceTypes": ["Plasma/LookAndFeel"],
         "Version": "1.0.0",
-        "Website": "https://foundrylinux.org"
+        "Website": "https://{distro-slug}.example.com"
     }
 }
 ```
@@ -460,7 +500,7 @@ import QtQuick.Controls 2.15
 
 Rectangle {
     id: root
-    color: "#1a1a1a"
+    color: "#1a1a1a"          // brand background colour
 
     property int stage: 0
 
@@ -469,7 +509,7 @@ Rectangle {
     }
 
     Image {
-        source: "file:///usr/share/plymouth/themes/foundry-linux/logo.png"
+        source: "file:///usr/share/plymouth/themes/{distro-slug}/logo.png"
         anchors.centerIn: parent
         opacity: root.stage >= 1 ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: 500 } }
@@ -483,46 +523,23 @@ or `update-initramfs` needed for xdg config files.
 ### KDE Color Scheme
 
 A `.colors` file sets the application color palette used across all KDE apps.
-Foundry Linux ships this as a proper `.deb` (`foundry-kde-theme`) rather than
-a raw `includes.chroot/` file, so it can be versioned and published to the
-apt repo independently.
+Place it via a hook or directly in `includes.chroot/usr/share/color-schemes/`.
 
-**Source:** `foundry-apt/packages/foundry-kde-theme/data/color-schemes/FoundryLinux.colors`  
-**Installed to:** `/usr/share/color-schemes/FoundryLinux.colors`  
-**Package:** `foundry-kde-theme` (built and added to `foundry-iso/local-debs/`)
-
-The live-autologin hook wires it into `/etc/skel/.config/kdeglobals`:
-```bash
-# In 1100-live-autologin.hook.chroot:
-if [[ -f /usr/share/color-schemes/FoundryLinux.colors ]]; then
-  mkdir -p /etc/skel/.config
-  cat >> /etc/skel/.config/kdeglobals <<'EOF'
-[General]
-ColorScheme=FoundryLinux
-EOF
-fi
-```
-
-**`FoundryLinux.colors`** palette (warm dark, red accent):
+Wire it as the system default via `/etc/xdg/kdeglobals`:
 ```ini
 [General]
-ColorScheme=FoundryLinux
-Name=Foundry Linux
+ColorScheme={ColorSchemeName}
 
-[Colors:Window]
-BackgroundNormal=26,23,20    ; #1a1714 surface
-ForegroundNormal=242,237,230 ; #f2ede6 on-surface
-DecorationFocus=248,0,0      ; #f80000 accent
-
-; ... remaining groups (Button, View, Selection, Tooltip, Header,
-;     Complementary, WM) follow the same palette
+[KDE]
+LookAndFeelPackage={laf-id}
 ```
 
 ---
 
 ## Local Package Injection
 
-For packages not yet published to an apt repo (e.g. a Calamares settings package in development):
+For packages not yet published to an apt repo (e.g. a Calamares settings
+package in development):
 
 ```bash
 # In build-iso.sh, before running lb chroot:
@@ -538,14 +555,18 @@ The hook `1000-install-local-debs.hook.chroot` installs them at chroot time.
 
 ## Build Script (`scripts/build-iso.sh`)
 
-The build runs inside an `ubuntu:26.04` Docker container. Key steps:
+The build runs inside an `ubuntu:{ubuntu-version}` Docker container. Key steps:
 
 ```bash
+# Fetch signing keys before starting the container
+curl -fsSL {apt-key-url} | gpg --dearmor > config/archives/{distro}.key
+
 docker run --rm --privileged \
   -e EDITION="$EDITION" \
   -e ISO_VERSION="$ISO_VERSION" \
   -v "$REPO_ROOT:/work" -w /work \
-  ubuntu:26.04 bash -c '
+  ubuntu:{ubuntu-version} bash -c '
+    set -euo pipefail
     apt-get install -y live-build curl gpg apt-utils ca-certificates \
       xorriso genisoimage isolinux grub-efi-amd64-bin grub-pc-bin mtools dosfstools
 
@@ -557,7 +578,8 @@ docker run --rm --privileged \
 
     lb bootstrap
     # Copy apt keys explicitly (live-build 3.0~a57 timing bug)
-    cp config/archives/foundry.key chroot/etc/apt/trusted.gpg.d/foundry.key.gpg
+    mkdir -p chroot/etc/apt/trusted.gpg.d/
+    cp config/archives/{distro}.key chroot/etc/apt/trusted.gpg.d/{distro}.key.gpg
     # Pre-install gnupg so apt-utils postinst finds it
     chroot chroot apt-get install -y --no-install-recommends gnupg
     lb chroot
@@ -576,8 +598,8 @@ xorriso:
 exec xorriso -as mkisofs -iso-level 3 "$@"
 ```
 
-Copy this to `/usr/local/bin/genisoimage` and `chroot/usr/bin/genisoimage`
-before `lb binary` runs.
+Copy this to `/usr/local/bin/genisoimage` (in the container) and
+`chroot/usr/bin/genisoimage` before `lb binary` runs.
 
 ### isohybrid stub
 
@@ -639,7 +661,7 @@ To read files from the squashfs without mounting (no root required):
 
 ```bash
 # Extract the squashfs file itself
-xorriso -osirrox on -indev foundry-anvil-0.9.0-amd64.iso \
+xorriso -osirrox on -indev {distro}-{edition}-{iso-version}-amd64.iso \
   -extract /live/filesystem.squashfs /tmp/fs.squashfs
 
 # Read a specific file from the squashfs
@@ -648,7 +670,7 @@ unsquashfs -cat /tmp/fs.squashfs /etc/casper.conf
 unsquashfs -cat /tmp/fs.squashfs /var/lib/live/config/sddm
 
 # Extract grub.cfg from the ISO
-xorriso -osirrox on -indev foundry-anvil-0.9.0-amd64.iso \
+xorriso -osirrox on -indev {distro}-{edition}-{iso-version}-amd64.iso \
   -extract /boot/grub/grub.cfg /tmp/grub.cfg
 ```
 
@@ -656,12 +678,13 @@ xorriso -osirrox on -indev foundry-anvil-0.9.0-amd64.iso \
 
 ## Verifying Hooks Ran
 
-After `lb chroot` completes, check the chroot directory directly:
+After `lb chroot` completes, check the chroot directory directly before
+`lb binary` packages it:
 
 ```bash
-SDDM_CONF="chroot/etc/sddm.conf.d/30-foundry-live.conf"
-[[ -f "$SDDM_CONF" ]] || { echo "ERROR: hook 1100 did not run"; exit 1; }
-grep -q "DisplayServer=\|Current=" "$SDDM_CONF" || { cat "$SDDM_CONF"; exit 1; }
+SDDM_CONF="chroot/etc/sddm.conf.d/30-{distro}-live.conf"
+[[ -f "$SDDM_CONF" ]] || { echo "ERROR: autologin hook did not run"; exit 1; }
+grep -q "Current=" "$SDDM_CONF" || { cat "$SDDM_CONF"; exit 1; }
 
 CASPER_CONF="chroot/etc/casper.conf"
 [[ -f "$CASPER_CONF" ]] || { echo "ERROR: casper.conf missing"; exit 1; }
@@ -674,26 +697,27 @@ grep -q "USERNAME=" "$CASPER_CONF" || { cat "$CASPER_CONF"; exit 1; }
 
 ```bash
 # Build
-EDITION=anvil bash scripts/build-iso.sh
+EDITION={edition} bash scripts/build-iso.sh
 
 # Boot in QEMU (requires OpenGL support on host)
-# task iso-smoke  — or directly:
-bash test/boot-smoke.sh dist/foundry-anvil-0.9.0-amd64.iso
+bash test/boot-smoke.sh dist/{distro}-{edition}-{iso-version}-amd64.iso
 ```
 
 The QEMU invocation uses:
-- `--privileged` / `-enable-kvm -cpu host` — for KVM acceleration
-- `-device virtio-vga-gl -display gtk,gl=on` — VirtGL so kwin_wayland has a DRM device
+- `-enable-kvm -cpu host` — KVM acceleration (requires `/dev/kvm` access)
+- `-device virtio-vga-gl -display gtk,gl=on` — VirtGL so kwin_wayland has a
+  DRM device; required for Plasma 6 Wayland
 - `-drive if=pflash … OVMF_CODE_4M.fd` — UEFI firmware (required for > 4 GiB ISOs)
 - `-netdev user,id=n0,hostfwd=tcp::2222-:22` — port-forward for SSH debug access
 
-**SSH into the live session** (hook 1200 enables it):
-```bash
-ssh -p 2222 user@localhost    # password: live
-ssh -p 2222 root@localhost    # password: foundry
-```
+**Memory:** 3072 MiB minimum for a Plasma 6 live session. Set with
+`QEMU_MEM=4096`.
 
-**Memory:** default is 3072 MiB. Override with `QEMU_MEM=4096 task iso-smoke`.
+**SSH into the live session** (if hook 1200 or equivalent is installed):
+```bash
+ssh -p 2222 {live-username}@localhost   # password: live
+ssh -p 2222 root@localhost             # password: (set in hook)
+```
 
 ---
 
@@ -721,31 +745,31 @@ implement any subset — even just the color scheme — without touching the oth
 
 | Layer | Controls | Location | Effort |
 |-------|----------|----------|--------|
-| **Color Scheme** | Application color palette (all KDE/Qt apps) | `/usr/share/color-schemes/Name.colors` | 1 day |
-| **Look and Feel** | Meta-package: wires all layers together | `/usr/share/plasma/look-and-feel/org.distro.name/` | 1 day |
-| **Plasma Style** | Panel, widget, system tray backgrounds | `/usr/share/plasma/desktoptheme/Name/` | 3–5 days |
-| **Window Decoration** | Title bars, borders, close/min/max buttons | `/usr/share/aurorae/themes/Name/` (SVG) | 2–4 days |
-| **Application Style** | Qt widget rendering (buttons, menus, inputs) | `/usr/share/Kvantum/Name/` (Kvantum) | 1–2 days |
-| **GTK Theme** | GTK2/3/4 apps (Firefox, GIMP, Blender…) | `/usr/share/themes/Name/gtk-{3,4}.0/gtk.css` | 5–10 days |
-| **Icon Theme** | Every icon in every app and file manager | `/usr/share/icons/Name/` | 1 day (inherit) |
-| **Cursor Theme** | All pointer states and animations | `/usr/share/icons/NameCursors/cursors/` | 1 day (inherit) |
+| **Color Scheme** | Application color palette (all KDE/Qt apps) | `/usr/share/color-schemes/{ColorSchemeName}.colors` | 1 day |
+| **Look and Feel** | Meta-package: wires all layers together | `/usr/share/plasma/look-and-feel/{laf-id}/` | 1 day |
+| **Plasma Style** | Panel, widget, system tray backgrounds | `/usr/share/plasma/desktoptheme/{Distro Name}/` | 3–5 days |
+| **Window Decoration** | Title bars, borders, close/min/max buttons | `/usr/share/aurorae/themes/{Distro Name}/` (SVG) | 2–4 days |
+| **Application Style** | Qt widget rendering (buttons, menus, inputs) | `/usr/share/Kvantum/{Distro Name}/` (Kvantum) | 1–2 days |
+| **GTK Theme** | GTK2/3/4 apps (Firefox, GIMP, Blender…) | `/usr/share/themes/{Distro Name}/gtk-{3,4}.0/gtk.css` | 5–10 days |
+| **Icon Theme** | Every icon in every app and file manager | `/usr/share/icons/{Distro Name}/` | 1 day (inherit) |
+| **Cursor Theme** | All pointer states and animations | `/usr/share/icons/{Distro Name}Cursors/cursors/` | 1 day (inherit) |
 
-### Kubuntu without a custom theme is fine
+### You don't need a custom KDE theme to ship a distinct distro
 
-Kubuntu ships **no custom KDE theme** beyond wallpapers — Breeze Dark defaults
-are enough to feel like a distinct distro once GRUB, Plymouth, SDDM, and
-the installer are branded. Foundry Linux is already at that bar.
+Kubuntu itself ships **no custom KDE theme** beyond wallpapers — Breeze Dark
+defaults are enough to feel like a distinct distro once GRUB, Plymouth, SDDM,
+and the installer are branded.
 
-If you want the accent colour to propagate into KDE apps (panels, selections,
-focus rings), the **Color Scheme** is the highest-leverage single step — one
-INI file changes the orange accent across every KDE application and the Plasma
-shell without touching SVGs or CSS.
+If you want your accent colour in KDE apps (panels, selections, focus rings),
+the **Color Scheme** is the highest-leverage single step — one INI file changes
+the accent across every KDE application and the Plasma shell without touching
+SVGs or CSS.
 
 ### Color Scheme
 
-INI file format, placed at `/usr/share/color-schemes/Name.colors`. Start from
-`/usr/share/color-schemes/BreezeDark.colors` in a running Kubuntu install and
-edit the palette values.
+INI file format, placed at `/usr/share/color-schemes/{ColorSchemeName}.colors`.
+Start from `/usr/share/color-schemes/BreezeDark.colors` in a running Kubuntu
+install and edit the palette values.
 
 Key groups: `Colors:Window`, `Colors:Button`, `Colors:View`, `Colors:Selection`,
 `Colors:Tooltip`, `Colors:Header`, `Colors:Complementary`, `WM`.
@@ -753,18 +777,17 @@ Key groups: `Colors:Window`, `Colors:Button`, `Colors:View`, `Colors:Selection`,
 Wire it as the system default via `/etc/xdg/kdeglobals`:
 ```ini
 [General]
-ColorScheme=Name
+ColorScheme={ColorSchemeName}
 ```
 
 ### Look and Feel
 
-The Look-and-Feel package (`/usr/share/plasma/look-and-feel/`) is a meta-layer
-that wires everything else together. It's also the home of the Plasma splash
-screen (KSplashQML).
+The Look-and-Feel package is a meta-layer that wires everything else together
+and is the home of the Plasma splash screen (KSplashQML).
 
 Minimum required files:
 ```
-org.distro.name/
+{laf-id}/
 ├── metadata.json              # KPlugin descriptor
 └── contents/
     ├── defaults               # INI: ColorScheme, IconTheme, etc.
@@ -775,43 +798,43 @@ org.distro.name/
 `contents/defaults`:
 ```ini
 [kdeglobals]
-ColorScheme=Name
+ColorScheme={ColorSchemeName}
 IconTheme=breeze-dark
 
 [kscreenlockerrc]
 [Greeter][Wallpaper][org.kde.image][General]
-Image=file:///usr/share/backgrounds/name-wallpaper.png
+Image=file://{wallpaper-path}
 ```
 
 Point the system at it via `/etc/xdg/kdeglobals`:
 ```ini
 [KDE]
-LookAndFeelPackage=org.distro.name
+LookAndFeelPackage={laf-id}
 ```
 
 ### Plasma Style (Shell Theme)
 
 Controls panel backgrounds, widget popups, notifications, tooltips. Built from
-SVGz files under `/usr/share/plasma/desktoptheme/Name/`. Inherit from Breeze
-Dark (`InheritsPlasmaTheme=true` in `metadata.desktop`) and override only what
-differs. SVG element IDs are semantic (`#center`, `#shadow`, `#top-left`) and
-Plasma maps them to the appropriate visual regions.
+SVGz files under `/usr/share/plasma/desktoptheme/{Distro Name}/`. Inherit from
+Breeze Dark (`InheritsPlasmaTheme=true` in `metadata.desktop`) and override
+only what differs. SVG element IDs are semantic (`#center`, `#shadow`,
+`#top-left`) and Plasma maps them to the appropriate visual regions.
 
 ### Window Decoration (Aurorae)
 
-SVG-based window decoration at `/usr/share/aurorae/themes/Name/`. Copy from
-`/usr/share/aurorae/themes/Breeze/`, recolour the SVG, update `metadata.desktop`
-with border/button sizes. No C++ required.
+SVG-based window decoration at `/usr/share/aurorae/themes/{Distro Name}/`. Copy
+from `/usr/share/aurorae/themes/Breeze/`, recolour the SVG, update
+`metadata.desktop` with border/button sizes. No C++ required.
 
 ### Application Style (Kvantum)
 
-Config-file driven Qt style at `/usr/share/Kvantum/Name/`. Override just the
-delta from an existing dark Kvantum theme (e.g. `BreezeEvolution`):
+Config-file driven Qt style at `/usr/share/Kvantum/{Distro Name}/`. Override
+just the delta from an existing dark Kvantum theme (e.g. `BreezeEvolution`):
 ```ini
 [GeneralColors]
 window.color=#0a0a0a
 base.color=#1a1a1a
-highlight.color=#ff5b1a
+highlight.color=#ff5b1a   # brand accent
 ```
 Requires the `kvantum` package installed and the user selecting it in System
 Settings → Application Style.
@@ -819,12 +842,12 @@ Settings → Application Style.
 ### Icon and Cursor Themes
 
 Inherit from `breeze-dark` / `breeze_cursors` and ship only the overrides
-(custom app icon for distro-specific apps, etc.). Full custom icon sets are
-200+ icons at 6–8 sizes — 10+ days of design work.
+(custom app icons for distro-specific apps). Full custom icon sets are 200+
+icons at 6–8 sizes — 10+ days of design work.
 
 ### Packaging
 
-Ship all theme layers in a single `distro-kde-theme` package:
+Ship all theme layers in a single `{distro}-kde-theme` package:
 
 ```
 debian/
@@ -846,5 +869,5 @@ debian/
 | Apt key errors during `lb chroot` | live-build copies keys too late | Copy keys to `chroot/etc/apt/trusted.gpg.d/` manually after `lb bootstrap` |
 | `gpg --batch --gen-key` fails in chroot | gnupg 2.4+ `agent_genkey` needs a TTY | Use `includes.chroot/ + hook` instead of `packages.chroot/` for local debs |
 | Hook appears to not have run | `lb binary` cached stale chroot | `chattr -R -i .build/ chroot/ && rm -rf .build/ chroot/` before rebuild |
-| GPU acceleration missing on real hardware | `LIBGL_ALWAYS_SOFTWARE=1` in `/etc/environment` | Never set this in the hook; it forces llvmpipe everywhere via pam\_env |
+| GPU acceleration missing on real hardware | `LIBGL_ALWAYS_SOFTWARE=1` in `/etc/environment` | Never set this in hooks; it forces llvmpipe everywhere via pam\_env |
 | EFI boot doesn't work | live-build 3.0\~a57 doesn't build EFI images | Run post-build EFI injection with xorriso + grub-mkimage |
