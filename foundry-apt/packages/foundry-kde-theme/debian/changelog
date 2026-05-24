@@ -1,0 +1,7 @@
+foundry-kde-theme (1.0.0) resolute; urgency=medium
+
+  * Initial release: FoundryLinux.colors KDE color scheme.
+    Near-black background (#0a0a0a), warm-white text (#f7f7f7),
+    orange accent (#ff5b1a) across all color groups.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 25 May 2026 00:00:00 +0000

@@ -1,0 +1,21 @@
+Source: foundry-kde-theme
+Section: kde
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org
+Rules-Requires-Root: no
+
+Package: foundry-kde-theme
+Architecture: all
+Depends: ${misc:Depends}, plasma-workspace
+Description: KDE Plasma desktop theme for Foundry Linux
+ Desktop theme components for the Foundry Linux distribution.
+ Ships the KDE color scheme (FoundryLinux.colors) establishing the
+ near-black background, warm-white text, and orange (#ff5b1a) accent
+ palette used across all KDE applications and the Plasma shell.
+ .
+ More theme layers (Plasma Style, Look and Feel, Aurorae window
+ decoration, Kvantum application style) will be added to this package
+ as they are implemented.
