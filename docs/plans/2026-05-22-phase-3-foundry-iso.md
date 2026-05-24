@@ -192,7 +192,7 @@ lb config noauto \
     --parent-mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
     --parent-mirror-binary    "http://archive.ubuntu.com/ubuntu/" \
     --linux-flavours generic \
-    --bootloaders grub-efi,grub-pc \
+    --bootloaders grub-pc \
     --debian-installer false \
     --memtest none \
     "${@}"
@@ -756,14 +756,35 @@ See verification steps 11–14 above to confirm this fix.
 
 **Status (end of session 4):** Build in progress; awaiting boot verification of the two-pronged autologin fix.
 
+**Session 5 (2026-05-24) — login-test confirmed working:**
+
+`login-test` built and booted successfully in QEMU. Autologin fix confirmed. `login-test` edition retired. Anvil build started with the same fixes. Verify steps 11–14: **PASS** (implicit — working boot is the evidence). Real-hardware boot not yet tested.
+
 ## Known concerns / external dependencies
 
-- **`live-build` package state on Ubuntu 26.04.** `live-build` is in
-  Debian's `main` and the Ubuntu archive consistently, but version drift
-  has historically broken Ubuntu remixes (e.g. the 20.04 → 22.04 cycle
-  introduced a `lb config` schema change). Verify the 26.04 `live-build`
-  version before locking the config; if there's a known issue, pin to a
-  specific upstream tag and build live-build itself from source in CI.
+- **`live-build` package state on Ubuntu 26.04 — verified.** Ubuntu 26.04
+  ships `live-build 3.0~a57-1ubuntu54` (confirmed in `ubuntu:26.04`
+  container). The `3.0~a57` upstream was frozen ~2013 (current Debian
+  live-build is date-versioned at `20230502+`). Ubuntu applies its own
+  patches on top (54 revisions as of Resolute) but the base is old.
+  Two confirmed gaps:
+  - **No EFI boot image support.** `lb_binary_grub2` only builds BIOS
+    El Torito (`grub-mkimage -O i386-pc`). `lb_config` has zero UEFI/EFI
+    options. `--bootloaders grub-efi,grub-pc` is silently ignored — the
+    flag exists in the config schema but `lb_binary_grub2` only ever
+    invokes `i386-pc`. EFI is handled by the xorriso post-processing step
+    in `build-iso.sh` (see "What shipped", session 1 above).
+    The `--bootloaders` line in `config/auto/config` is now `grub-pc`
+    only, matching what the tool actually does.
+  - **`--mode ubuntu` is auto-detected, not required.** `defaults.sh`
+    calls `lsb_release -is`, lowercases the result, and sets
+    `LB_MODE="${LB_MODE:-ubuntu}"` when running on an Ubuntu host — no
+    flag needed. What the mode actually changes: `LB_ARCHIVE_AREAS`
+    defaults to `"main restricted"` (vs `"main"` for debian mode), and
+    the security-mirror path becomes `${DISTRIBUTION}-security` instead
+    of `${DISTRIBUTION}/updates`. Both are overridden explicitly by the
+    `--archive-areas` flag in our `config/auto/config` anyway, so the
+    auto-detection has no net effect on our build.
 - **GPG signing key + R2 credentials for foundry-iso GHA.** The same key
   used by foundry-apt CI is the natural choice (one signing identity for
   all Foundry artifacts); the R2 token needs write access to the new
