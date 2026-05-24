@@ -1,3 +1,11 @@
+foundry-kde-theme (1.0.1) resolute; urgency=medium
+
+  * Ship FoundryLinux-ForgeHorizon wallpaper to /usr/share/wallpapers/.
+  * Add /etc/xdg/plasma-org.kde.plasma.desktop-appletsrc to set wallpaper
+    as system default for new KDE user sessions.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 24 May 2026 00:00:00 +0000
+
 foundry-kde-theme (1.0.0) resolute; urgency=medium
 
   * Initial release: FoundryLinux.colors KDE color scheme.

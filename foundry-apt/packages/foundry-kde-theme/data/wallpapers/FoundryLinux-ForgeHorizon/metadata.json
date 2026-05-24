@@ -1,0 +1,18 @@
+{
+    "KPackageStructure": "Wallpaper/Images",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "packages@foundrylinux.org",
+                "Name": "Foundry Linux"
+            }
+        ],
+        "Category": "",
+        "Description": "Forge Horizon — default wallpaper for Foundry Linux",
+        "Id": "FoundryLinux-ForgeHorizon",
+        "License": "CC-BY-SA-4.0",
+        "Name": "Forge Horizon",
+        "Version": "1.0",
+        "Website": "https://foundrylinux.org"
+    }
+}

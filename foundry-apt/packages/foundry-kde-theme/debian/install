@@ -1,1 +1,5 @@
 data/color-schemes/FoundryLinux.colors  usr/share/color-schemes/
+data/wallpapers/FoundryLinux-ForgeHorizon/metadata.json  usr/share/wallpapers/FoundryLinux-ForgeHorizon/
+data/wallpapers/FoundryLinux-ForgeHorizon/contents/images/1920x1080.png  usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/
+data/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png  usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/
+data/xdg/plasma-org.kde.plasma.desktop-appletsrc  etc/xdg/
