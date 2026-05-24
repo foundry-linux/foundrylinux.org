@@ -1,0 +1,11 @@
+# live-build build artifacts
+.build/
+.lock
+cache/
+chroot/
+chroot.*
+binary.contents
+binary.packages
+
+# generated at build time by auto/config
+config/hook-env.sh

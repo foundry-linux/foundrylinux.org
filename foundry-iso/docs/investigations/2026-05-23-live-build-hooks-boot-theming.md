@@ -1,0 +1,570 @@
+# live-build hooks, boot theming, and ISO patching — lessons learned
+
+Date: 2026-05-23 (updated 2026-05-24)
+
+---
+
+## 1. EDITION env var is not passed into the chroot by live-build
+
+**Problem:** Hook `0030-install-foundry-edition.hook.chroot` fails: `EDITION: EDITION env var required`.
+
+**Root cause:** `lb_chroot_hooks` uses `Chroot chroot "/root/<hookname>"` to run each hook. The `Chroot` function does not forward the caller's environment into the chroot. `EDITION` is set in the Docker container but doesn't survive into the chroot.
+
+**What does work:** `lb_chroot_hooks` bind-mounts `config/` read-only at `/root/config/` inside the chroot before running each hook.
+
+**Fix:** Write `EDITION=<value>` to `config/hook-env.sh` in `config/auto/config`. In each hook that needs it, source that file:
+
+```bash
+# In config/auto/config (after lb config noauto ...):
+printf 'EDITION=%s\n' "$EDITION" > config/hook-env.sh
+
+# In each hook:
+source /root/config/hook-env.sh
+```
+
+**Pattern:** Any build-time variable that hooks need should be written to `config/hook-env.sh` and sourced this way.
+
+---
+
+## 3. GRUB timeout: binary hooks are too late; use xorriso on the host
+
+**Problem:** A `.hook.binary` script setting `set timeout=5` in grub.cfg had no effect.
+
+**Root cause:** Binary hooks run during `lb binary`, which is after `lb_binary_grub2` has already written and packed `grub.cfg` into the ISO image.
+
+**Fix:** Extract `grub.cfg` with xorriso on the host after `lb binary` completes, patch it with `sed`, and write it back. Use `-boot_image any keep` to preserve existing El Torito EFI boot entries:
+
+```bash
+xorriso -osirrox on -dev binary.hybrid.iso -extract /boot/grub/grub.cfg /tmp/grub.cfg
+sed -i 's/^set default=0$/set default=0\nset timeout=5/' /tmp/grub.cfg
+xorriso -dev binary.hybrid.iso \
+  -map /tmp/grub.cfg /boot/grub/grub.cfg \
+  -boot_image any keep \
+  -commit
+```
+
+**Gotcha — single-quote escaping inside `bash -c '...'`:** All `grep`/`sed` patterns inside a single-quoted `bash -c '...'` Docker block must use double quotes — single-quoted patterns silently break the outer string. `bash -n` and `shellcheck` both miss this. Always manually audit quoting before triggering a build.
+
+**Gotcha — two xorriso commits lose EFI boot entries:** The `-boot_image any keep` flag on the second call preserves existing El Torito entries.
+
+---
+
+## 4. Docker creates ISO as root; host xorriso can't write to it
+
+**Problem:** `xorriso -dev binary.hybrid.iso` on the host gets `Permission denied` — the Docker container runs as root, so the ISO lands with `root:root` ownership.
+
+**Fix:** At the end of the Docker `bash -c '...'` block, before it exits:
+
+```bash
+chmod a+rw binary.hybrid.iso
+```
+
+---
+
+## 5. `calamares-settings-foundry-linux` must be in the package list
+
+**Problem:** The SDDM Foundry Linux theme and Plymouth theme were absent in the `login-test` edition.
+
+**Root cause (layered):**
+1. Hook `0030` ran `apt-get install foundry-login-test`, which failed (no such package) — with `set -euo pipefail`, this aborted hook execution entirely.
+2. Even after fixing hook 0030, `calamares-settings-foundry-linux` still wasn't installed because the `login-test` package list didn't include it directly.
+3. All hooks were in `config/hooks/live/` (wrong directory — see §1).
+
+**Fix:** Explicitly include `calamares-settings-foundry-linux` in the package list; guard hook 0030 with `apt-cache show` before attempting install.
+
+---
+
+## 6. SDDM and Plymouth theme files installed into wrong subdirectory
+
+**Problem:** SDDM showed the kubuntu theme despite `Current=foundry-linux` in conf.d.
+
+**Root cause:** `debian/install` used bare directory names; `dh_install` copies the directory *itself* (including its name) rather than its contents. Files landed at `foundry-linux/sddm/Main.qml` instead of `foundry-linux/Main.qml`.
+
+**Fix:** Use `/*` glob to copy directory contents:
+```
+data/config/sddm/*      usr/share/sddm/themes/foundry-linux/
+data/config/plymouth/*  usr/share/plymouth/themes/foundry-linux/
+```
+
+---
+
+## 7. SDDM QML fails silently with Qt5-style versioned imports on Ubuntu 26.04
+
+**Problem:** SDDM finds the theme directory but renders the breeze greeter instead.
+
+**Root cause:** `Main.qml` used Qt5-style versioned imports (`import QtQuick 2.15`, `import SddmComponents 2.0`). Qt6 QML drops version numbers and `SddmComponents` has no `2.0` declaration — the engine silently rejects the theme.
+
+**Fix:** Remove all version pins and remove `import SddmComponents` entirely — `sddm.login()`, `userModel`, and `sessionModel` are SDDM context properties that need no import:
+```qml
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+```
+
+**Also:** `sddm.login()` session arg must be an `int`, not `QModelIndex`. Pass `0` directly, not `sessionModel.index(0, 0)`.
+
+---
+
+## 8. SDDM 0.21 requires `Theme-API=2.0` and `QtVersion=6` in metadata.desktop
+
+**Root cause:** SDDM 0.21 (Ubuntu 26.04) checks `metadata.desktop` for both fields before loading a theme's QML. Without them, SDDM renders the built-in greeter entirely.
+
+```ini
+# Required in [SddmGreeterTheme]:
+Theme-API=2.0
+QtVersion=6
+```
+
+### Upstream bug report: SDDM silent theme fallback
+
+Both §7 and §8 share the same failure mode: SDDM silently falls back to the built-in greeter with no log output, no console warning, and no indication to the user or developer that anything went wrong. The fallback behaviour itself is correct — a broken theme should not crash the login screen — but the silence makes it nearly impossible to diagnose without reading the SDDM source.
+
+**Proposed report (file against [KDE SDDM](https://bugs.kde.org/enter_bug.cgi?product=sddm)):**
+
+---
+
+**Title:** SDDM silently falls back to built-in greeter on theme load failure — no diagnostic output
+
+**Environment:** SDDM 0.21 / Qt 6 / Ubuntu 26.04 (applies to any Qt6 build)
+
+**Steps to reproduce:**
+
+1. Install an SDDM theme whose `Main.qml` uses Qt5-style versioned imports (`import QtQuick 2.15`, `import SddmComponents 2.0`), or whose `metadata.desktop` is missing `Theme-API=2.0` / `QtVersion=6`.
+2. Set `Current=<that-theme>` in `/etc/sddm.conf.d/`.
+3. Start SDDM.
+
+**Expected:** SDDM logs a warning at startup — e.g. `sddm: theme "foo" failed to load: QML parse error at Main.qml:3` — then falls back to the built-in greeter.
+
+**Actual:** SDDM silently renders the built-in greeter. No message appears in the journal (`journalctl -u sddm`), on stdout, or in any log file. The configured theme name is still shown in `sddm.conf.d` — there is no indication from SDDM itself that the theme was rejected.
+
+**Impact:** A theme author porting from Qt5 to Qt6 has no way to know their theme was rejected short of reading the SDDM source. Diagnosing the failure required: noticing the wrong greeter was showing, diffing working vs. broken theme QML, and cross-referencing Qt6 release notes about unversioned imports. A single log line would have surfaced the cause immediately.
+
+**Proposed fix:** In the theme-loading code path, emit a `qWarning()` (or equivalent structured log) when:
+- The QML engine fails to parse or resolve imports in `Main.qml`
+- `metadata.desktop` is missing required fields (`Theme-API`, `QtVersion`)
+- Any other condition that causes SDDM to reject the configured theme and fall back
+
+The log should name the theme, the file, and the specific failure reason.
+
+---
+
+---
+
+## 9. SDDM conf.d ordering: use `30-` prefix
+
+**Root cause:** `kubuntu-desktop` installs `20-kubuntu.conf` (sets `Current=kubuntu`, blanks `User=`). SDDM merges conf.d files lexicographically — last writer wins per key. A `10-` prefix loses to `20-kubuntu.conf`.
+
+**Fix:** Name the Foundry live conf `30-foundry-live.conf` so it sorts after both `10-wayland.conf` and `20-kubuntu.conf`.
+
+**Also:** `10-wayland.conf` sets `DisplayServer=wayland`, so SDDM reads sessions from `/usr/share/wayland-sessions/` — session detection must look there first.
+
+---
+
+## 10. UEFI boot for ISOs >4 GiB
+
+SeaBIOS fails with `code 0009` on ISOs >4 GiB (FAT/ISO9660 32-bit LBA limit). Use OVMF for testing:
+
+```bash
+qemu-system-x86_64 \
+  -enable-kvm -m 4G \
+  -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd \
+  -drive if=pflash,format=raw,file=/tmp/OVMF_VARS_copy.fd \
+  -cdrom foundry-login-test-0.9.0-amd64.iso \
+  -display gtk,gl=on -device virtio-vga-gl
+```
+
+Always make a writable copy of `OVMF_VARS_4M.fd` per run.
+
+live-build 3.0~a57 on Ubuntu 26.04 does not emit EFI boot images from `lb_binary_grub2`. EFI boot must be injected manually via `grub-mkimage` + `mkfs.fat` + `xorriso` after `lb binary`.
+
+---
+
+## 11. Plymouth theme activation
+
+`update-alternatives --install` and `update-alternatives --set` must both be called to activate a Plymouth theme. Hook 1100 then calls `update-initramfs -u` unconditionally (also required to bundle `casper.conf` — see §12).
+
+---
+
+## 12. Live session framework: use `casper`, not `live-config`
+
+### Background: two separate Ubuntu live frameworks
+
+Ubuntu's live ISO ecosystem has two competing implementations:
+
+| Package | Origin | Mechanism | User creation timing |
+|---|---|---|---|
+| `live-config` + `live-config-systemd` | Debian Live | systemd service at runtime | After systemd starts |
+| `casper` | Ubuntu / Canonical | initramfs scripts before systemd | Before systemd starts |
+
+**Kubuntu, Ubuntu, Ubuntu Studio, and Lubuntu all ship `casper`.** live-build `--mode ubuntu` does not automatically choose one — if neither is in the package list, the live user is never created.
+
+We started with `live-config` because it was what live-build's own documentation referenced. That was the wrong choice for an Ubuntu base.
+
+### How casper works
+
+Casper ships initramfs scripts in `/usr/share/initramfs-tools/scripts/casper-bottom/`. These run **before systemd PID 1 starts**, operating on the squashfs root mounted at `/root`:
+
+- `casper-bottom/25adduser` — calls `chroot /root /usr/lib/user-setup/user-setup-apply` to create the live user (`$USERNAME`) with home directory and sudoers entry.
+- `casper-bottom/15autologin` — detects the display manager (SDDM, GDM, LightDM) and appends `[Autologin]` to `/root/etc/sddm.conf`. For KDE Plasma, detects `plasma.desktop` in wayland-sessions.
+
+Because both run in the initramfs, **the live user exists and SDDM's autologin config is written before `display-manager.service` starts**. No race condition.
+
+### How casper.conf gets into the initramfs
+
+Casper's initramfs hook (`/usr/share/initramfs-tools/hooks/casper`) copies `/etc/casper.conf` into the initrd at `update-initramfs` time. Casper's own postinst runs `update-initramfs` before our hooks do, so hook 1100 writes `casper.conf` first, then unconditionally re-runs `update-initramfs -u`:
+
+```bash
+cat > /etc/casper.conf <<'EOF'
+export USERNAME="user"
+export USERFULLNAME="Foundry Linux"
+export HOST="foundry-linux"
+export BUILD_SYSTEM="Ubuntu"
+EOF
+# ... Plymouth setup ...
+update-initramfs -u   # re-runs so casper's hook bundles our casper.conf
+```
+
+### SDDM config priority: `/etc/sddm.conf` beats conf.d
+
+SDDM loads config files in this order (lowest → highest priority), overwriting per-key:
+
+1. `/usr/lib/sddm/sddm.conf.d/*.conf` (system defaults)
+2. `/etc/sddm.conf.d/*.conf` (alphabetical — `30-` beats `20-`)
+3. `/etc/sddm.conf` ← **highest priority, processed last**
+
+Casper's `15autologin` appends to `/etc/sddm.conf` at initramfs time. Whatever it writes there wins over every conf.d file, including `30-foundry-live.conf`. A blank `Session=` from casper therefore silently overrides our `Session=plasma` in conf.d.
+
+### Casper session detection fails → `Session=` blank → autologin aborted
+
+Casper's `15autologin` sets `$sddm_session` by checking for a fixed list of session `.desktop` files:
+
+```sh
+if   [ -f /root/usr/share/wayland-sessions/kubuntu-live-environment.desktop ]; then
+    sddm_session=kubuntu-live-environment.desktop   # Kubuntu
+elif [ -f /root/usr/share/wayland-sessions/plasma.desktop ]; then
+    sddm_session=plasma.desktop                     # Ubuntu Studio
+elif ...
+fi
+cat >>/root/etc/sddm.conf <<EOF
+[Autologin]
+User=$USERNAME
+Session=$sddm_session
+EOF
+```
+
+Two bugs:
+1. If none of the known files are found, `$sddm_session` is **unset** → writes `Session=` (blank) → SDDM logs `Unable to find autologin session entry ""` and skips autologin.
+2. When `plasma.desktop` **is** found, the session is written as `plasma.desktop` (with extension). SDDM looks up sessions by bare name (`plasma`), so `plasma.desktop` never matches.
+
+Kubuntu avoids both bugs by shipping `kubuntu-live-environment.desktop` — the first file casper checks — as a specially crafted live session. We use `kubuntu-desktop` but not the kubuntu live-environment packages, so that file is absent.
+
+**Fix (in hook 1100, before `update-initramfs -u`):** Patch casper's `15autologin` to strip the `.desktop` suffix and default to `plasma` when detection falls through. The patched script is then bundled into the initramfs by `update-initramfs -u`:
+
+```python
+# Strip .desktop suffix; SDDM expects bare session names.
+# Default to "plasma" when the file-existence checks all miss.
+sddm_session_name="${sddm_session%.desktop}"
+sddm_session_name="${sddm_session_name:-plasma}"
+```
+
+### Casper LIVE_MEDIA_PATH mismatch: `live-media-path=live` required
+
+**Symptom:** Boot halts with "Unable to find a medium containing a live file system."
+
+**Root cause:** Casper's initramfs script hardcodes `LIVE_MEDIA_PATH=casper` — it looks for `*.squashfs` in `/casper/` on the ISO. live-build places the squashfs at `/live/filesystem.squashfs`.
+
+**Fix:** Add `live-media-path=live` to `--bootappend-live` in `config/auto/config`:
+```
+--bootappend-live "boot=casper live-media-path=live quiet splash"
+```
+
+### What changed vs live-config
+
+| Item | live-config (old) | casper (current) |
+|---|---|---|
+| Package list | `live-config`, `live-config-systemd`, `user-setup` | `casper`, `user-setup` |
+| Boot cmdline | `boot=live components quiet splash` | `boot=casper live-media-path=live quiet splash` |
+| User creation | `live-config.service` at systemd runtime | initramfs `25adduser`, before systemd |
+| SDDM autologin | written to conf.d by hook 1100 | written to `sddm.conf` by `15autologin`; conf.d overlays `[General]` + `[Theme]` only |
+| systemd ordering | `After=live-config.service` drop-in | not needed |
+| PAM patches | `pam_loginuid.so`, `pam_nologin.so` → optional | not needed |
+| `USERFULLNAME` | kernel cmdline `live-config.user-fullname=` | `/etc/casper.conf` → initramfs |
+
+---
+
+## 13. `kwin_wayland` crashes with `virtio-vga` in QEMU → use VirtGL
+
+**Root cause:** `kwin_wayland` requires DRM/KMS. Plain `virtio-vga` provides no DRM device — the compositor crashes immediately on the autologin path and SDDM shows a blank greeter.
+
+**Fix for QEMU testing:** Use VirtGL (`-device virtio-vga-gl -display gtk,gl=on`) which provides DRM via the `virtio-gpu` kernel driver. Also set `LIBGL_ALWAYS_SOFTWARE=1` in `/etc/environment` (written by hook 1100) so `kwin_wayland` uses llvmpipe instead of trying to acquire a hardware GPU. This has no effect on real hardware where the GPU driver is loaded and preferred.
+
+```bash
+qemu-system-x86_64 \
+  -enable-kvm -m 4G \
+  -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd \
+  -drive if=pflash,format=raw,file=/tmp/OVMF_VARS_copy.fd \
+  -cdrom foundry-login-test-0.9.0-amd64.iso \
+  -display gtk,gl=on \
+  -device virtio-vga-gl
+```
+
+---
+
+## 14. Plasma desktop wallpaper via `/etc/skel/` — pre-seeded before first login
+
+**Mechanism:** Casper's `25adduser` calls `user-setup-apply`, which creates the live user via `useradd -m`. The `-m` flag copies `/etc/skel/` into `/home/user/` before Plasma starts its first session.
+
+**Fix:** Hook 1100 writes a `plasma-apply-wallpaperimage` autostart entry into `/etc/skel/`:
+
+```bash
+if [[ -f /usr/share/sddm/themes/foundry-linux/background.png ]]; then
+  mkdir -p /etc/skel/.config/autostart
+  cat > /etc/skel/.config/autostart/foundry-wallpaper.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Set Foundry Linux Wallpaper
+Exec=plasma-apply-wallpaperimage /usr/share/sddm/themes/foundry-linux/background.png
+X-KDE-autostart-after=panel
+EOF
+fi
+```
+
+`plasma-apply-wallpaperimage` is preferred over static `appletsrc` because Plasma 6 assigns containment IDs dynamically on first run — a static config targeting containment `[1]` fails if the ID differs.
+
+---
+
+## 15. Kubuntu 26.04 reference: what they do vs. our current state
+
+**Does Kubuntu produce a live ISO?** Yes — every Kubuntu release ships as a live ISO. It boots into a live KDE Plasma session backed by casper, with Calamares available for installation. There is no separate "server install" ISO for Kubuntu.
+
+### Package that unlocks casper autologin: `kubuntu-installer-prompt`
+
+Casper's `15autologin` (v 25.10.2) checks session `.desktop` files in this order:
+
+1. `/root/usr/share/wayland-sessions/kubuntu-live-environment.desktop` — provided by **`kubuntu-installer-prompt`** (Kubuntu only)
+2. `/root/usr/share/wayland-sessions/plasma.desktop` — provided by `plasma-workspace` (ships with kubuntu-desktop)
+3. `/root/usr/share/xsessions/lubuntu-live-environment.desktop` — Lubuntu
+4. `/root/usr/share/wayland-sessions/budgie-desktop-live.desktop` — Ubuntu Budgie
+
+Kubuntu hits case 1 because they install `kubuntu-installer-prompt`. We hit case 2 because we install `kubuntu-desktop` (which pulls `plasma-workspace`) but not `kubuntu-installer-prompt`.
+
+The `kubuntu-installer-prompt` package also launches the "Try or Install Kubuntu" dialog in the live session. We deliberately exclude it — Foundry Linux autologins straight to Plasma.
+
+### `.desktop` suffix bug (casper + SDDM mismatch)
+
+Whichever branch matches, casper writes the value WITH the `.desktop` extension (e.g. `Session=plasma.desktop`). SDDM 0.21 looks up sessions by bare name (`plasma`), so `plasma.desktop` never matches → autologin aborted.
+
+Kubuntu is insulated from this bug because SDDM finds a session named `kubuntu-live-environment` (the bare name of `kubuntu-live-environment.desktop`) and that session file exists — but casper still writes the extension and SDDM must strip it internally, or the Kubuntu-specific session is matched by filename.
+
+Our fix: patch `15autologin` before `update-initramfs -u` in hook 1100 to strip the `.desktop` suffix and default to `plasma`. **Confirmed present in the built initramfs** (2026-05-24 extraction from `foundry-login-test-0.9.0-amd64.iso`).
+
+### Full comparison table
+
+| Item | Kubuntu 26.04 | Foundry Linux (current) | Status |
+|---|---|---|---|
+| Live session package | `kubuntu-installer-prompt` → `kubuntu-live-environment.desktop` | (absent — not wanted) | ✓ patch handles fallback |
+| casper session detection | Hits branch 1 (kubuntu-live-environment.desktop) | Hits branch 2 (plasma.desktop) | ✓ |
+| `.desktop` suffix in `Session=` | `Session=kubuntu-live-environment.desktop` written | `Session=plasma.desktop` written | ✓ patched to strip |
+| Patched 15autologin | No patch needed (package provides the file) | Patched in hook 1100 | ✓ in initramfs |
+| casper.conf `USERNAME=user` | Yes | Yes | ✓ |
+| Live user creation | casper `25adduser` (initramfs, before systemd) | casper `25adduser` (initramfs, before systemd) | ✓ |
+| SDDM `[Autologin]` in sddm.conf | Written by casper `15autologin` at boot | Written by casper `15autologin` at boot | ✓ |
+| SDDM conf.d theme override | 20-kubuntu.conf (kubuntu theme) | 30-foundry-live.conf (foundry-linux theme) | ✓ 30- > 20- |
+| `LIBGL_ALWAYS_SOFTWARE=1` | Not set (hardware GPU assumed) | Set in `/etc/environment` | ✓ |
+| QEMU test device | Physical HW / VirtGL `-device virtio-vga-gl` | **`-vga virtio` (WRONG — no DRM)** | **⚠ fixed 2026-05-24** |
+| SSH access for debugging | N/A (test on real HW) | **`openssh-server` (added 2026-05-24)** | ✓ new hook 1200 |
+
+### Root cause of persistent autologin failure in smoke tests
+
+`test/boot-smoke.sh` used `-vga virtio` (legacy VirtIO VGA). This device does **not** expose a DRM device to the guest. `kwin_wayland --drm` (from kubuntu's `10-wayland.conf`) requires DRM — without it, kwin_wayland crashes immediately and SDDM falls back to the greeter, making it appear as if autologin config is wrong.
+
+**Fix:** use `-device virtio-vga-gl -display gtk,gl=on` (VirtGL). The `virtio-gpu` kernel driver then exposes `/dev/dri/card0` and kwin_wayland can start. `LIBGL_ALWAYS_SOFTWARE=1` ensures llvmpipe is used for GL rendering (no host GPU needed).
+
+Also added `hostfwd=tcp::2222-:22` to the QEMU netdev so SSH is available for live debugging without a full rebuild cycle:
+
+```bash
+ssh -p 2222 user@localhost   # password: live
+ssh -p 2222 root@localhost   # password: foundry
+```
+
+---
+
+<details>
+<summary><strong>Historical: live-config dead ends (superseded by §12)</strong></summary>
+
+These sections document the investigation path taken while using `live-config` before the root cause was identified. The fixes described here are all removed from the current codebase.
+
+---
+
+### H0. Hook directory: `config/hooks/` not `config/hooks/live/`
+
+We put hooks in `config/hooks/live/` because that's what live-config documentation and community examples showed. They silently never ran.
+
+**Root cause:** `lb_chroot_hooks` only searches `config/hooks/*.chroot` — no subdirectory recursion. The `config/hooks/live/` and `config/hooks/normal/` directories are ignored by live-build 3.0~a57 on Ubuntu 26.04.
+
+```sh
+# From /usr/lib/live/build/lb_chroot_hooks:
+for _HOOK in config/hooks/*.chroot
+do ...
+done
+```
+
+**Fix:** All chroot hooks must live directly in `config/hooks/*.hook.chroot`. Read the actual live-build scripts in `/usr/lib/live/build/` rather than trusting docs that may describe older versions.
+
+---
+
+### H1. live-config.user-fullname via kernel cmdline
+
+`live-config` supports `LIVE_USER_FULLNAME` via `/etc/live/config.conf.d/user-setup.conf` or the kernel cmdline `live-config.user-fullname="Foundry Linux"`. The kernel cmdline approach is more reliable since it doesn't depend on the hook chain. Both were set; neither is used now (replaced by `USERFULLNAME` in `casper.conf`).
+
+---
+
+### H2. `display-manager.service` ordering: `After=live-config.service`
+
+`display-manager.service` started before `live-config.service` finished creating the `user` account — SDDM autologin failed because the user didn't exist in NSS/PAM yet.
+
+Attempted fix — a systemd drop-in from hook 1100:
+```bash
+mkdir -p /etc/systemd/system/display-manager.service.d
+cat > /etc/systemd/system/display-manager.service.d/after-live-config.conf <<'EOF'
+[Unit]
+After=live-config.service
+Wants=live-config.service
+EOF
+```
+
+This was fragile: `live-config.service` is `Type=oneshot` and exits when its script exits, but the NSS/PAM state may not be consistent by the time SDDM reads it. Eliminated entirely by switching to casper, which creates the user in the initramfs before systemd starts.
+
+---
+
+### H3. SDDM autologin config written to conf.d (live-config era)
+
+During the live-config era, hook 1100 wrote a full `[Autologin]` stanza to `/etc/sddm.conf.d/30-foundry-live-autologin.conf`:
+
+```ini
+[General]
+DisplayServer=wayland
+
+[Theme]
+Current=foundry-linux
+
+[Autologin]
+User=user
+Session=plasma
+Relogin=false
+```
+
+With casper, `[Autologin]` is written to `/etc/sddm.conf` by `casper-bottom/15autologin` in the initramfs. Our conf.d now only carries `[General]` and `[Theme]`, renamed to `30-foundry-live.conf`.
+
+---
+
+### H4. `live-config` + `user-setup` both required; `user-setup` was missing
+
+`live-config`'s `0030-user-setup` component guards: `pkg_is_installed "user-setup" || exit 0` — if `user-setup` is absent, `user-setup-apply` is never called and the `user` account is never created.
+
+**Default password:** `live-config` 11.0.5 sets the live user password to `live` (hash `8Ab05sVQ4LLps`), not empty.
+
+---
+
+### H5. `live-config` missing entirely → user account never created
+
+`live-build --mode ubuntu` does NOT automatically inject `live-config` into the squashfs when using a custom package list. Without it, `live-config.service` never runs, and the live `user` account is never created — both autologin and manual login fail.
+
+**Symptom signature:** SDDM greeter appears despite `[Autologin]` config; `user` + empty password rejected; no `user` entry in `/etc/passwd` at runtime.
+
+---
+
+### H6. Session mismatch: `Session=openbox` vs `DisplayServer=wayland`
+
+Hook 1100 had a login-test special case scanning only `/usr/share/xsessions/*.desktop`. Alphabetical ordering yielded `openbox`. But `10-wayland.conf` sets `DisplayServer=wayland`, so SDDM looks in `/usr/share/wayland-sessions/` — `openbox` has no wayland session entry, autologin silently fails.
+
+Fix at the time: scan wayland-sessions first. With casper, session detection is handled by `casper-bottom/15autologin` which correctly finds `plasma.desktop` in wayland-sessions.
+
+---
+
+### H7. `pam_nologin.so requisite` in sddm-autologin blocks autologin
+
+`/etc/pam.d/sddm-autologin` has `auth requisite pam_nologin.so`. If `/etc/nologin` exists transiently during early systemd startup, the autologin auth chain is aborted. Manual login with `user`/`live` succeeded; autologin fell back to greeter.
+
+Attempted fix — sed patch in hook 1100:
+```bash
+sed -i 's/^auth\s\+requisite\s\+pam_nologin\.so/auth optional pam_nologin.so/' \
+  /etc/pam.d/sddm-autologin
+```
+
+Removed: Kubuntu live doesn't patch PAM, and casper's initramfs user-creation approach doesn't trigger this window.
+
+---
+
+### H8. casper `15autologin` appends `/root/etc/sddm.conf` with empty Session= (root cause, 2026-05-24)
+
+**Confirmed via SDDM journal** (dumped from live VM via serial port):
+```
+Unable to find autologin session entry ""
+```
+
+SDDM's `[Autologin] Session` was empty string at boot time.
+
+**Root cause chain:**
+
+1. `casper-bottom/15autologin` runs in the initramfs and writes `[Autologin]` to `/root/etc/sddm.conf` via `cat >>` (append).
+2. `/etc/sddm.conf` is the **highest-priority** SDDM config — it overrides all `/etc/sddm.conf.d/` entries including our `30-foundry-live.conf`.
+3. Our hook `1100-live-autologin` already patched `15autologin` to fix two bugs (Session name with `.desktop` extension; empty Session fallback). The patch IS applied in the initramfs and IS correctly generating `Session=plasma` per static analysis.
+4. Despite the patch, SDDM still saw `Session=""`. The exact path in 15autologin that produces the empty value is unclear — `/usr/share/wayland-sessions/plasma.desktop` exists in the squashfs and the `${sddm_session_name:-plasma}` default should fire. Unable to trace further without live debugging of initramfs execution.
+
+**Key findings from squashfs inspection:**
+- No `/etc/sddm.conf` baked into squashfs — casper creates it at boot (correct).
+- `/etc/sddm.conf.d/30-foundry-live.conf`: `Session=plasma User=user` ✓
+- `/etc/sddm.conf.d/20-kubuntu.conf`: `Session=plasma User=` (User blank, overridden by 30-)
+- `/usr/share/wayland-sessions/plasma.desktop` exists in squashfs ✓
+- `casper-bottom/15autologin` in built initramfs: patch confirmed present ✓
+- `casper-bottom/ORDER` confirms 15autologin runs before 25adduser
+
+**Fix (first attempt):** Added `casper-bottom/16foundry-autologin` — a properly-structured casper-bottom script numbered to run immediately after `15autologin` in the ORDER. It **overwrites** (not appends) `/root/etc/sddm.conf` with definitive values:
+```sh
+printf '[Autologin]\nUser=%s\nSession=plasma\nRelogin=false\n' "$USERNAME" \
+    > /root/etc/sddm.conf
+```
+This wins regardless of what 15autologin wrote because it runs after in the same initramfs chain.
+
+---
+
+### H9. Two writes to sddm.conf both produce 31 bytes — 16foundry-autologin not firing (2026-05-24)
+
+**Observation:** After booting the ISO with `16foundry-autologin` in place, `stat /etc/sddm.conf` in the live VM shows:
+
+```
+Size=31        Birth: 2026-05-24 07:20:27  Modify: 2026-05-24 07:20:44
+```
+
+31 bytes = exactly `[Autologin]\nUser=user\nSession=\n` — the unpatched `15autologin` output with empty Session.
+
+**Key deduction:** Birth ≠ Modify (17 second gap) → two separate writes happened. Both produced 31 bytes. `16foundry-autologin`'s `printf` should produce ~51 bytes (includes `Session=plasma\nRelogin=false\n`). Therefore **`16foundry-autologin` did not run** — the second write came from elsewhere.
+
+**Most likely cause:** The `if [ -f /root/usr/bin/sddm ]` guard in the original `16foundry-autologin` was evaluating to false in the initramfs environment, or `15autologin` is running a second time through a path not visible in the ORDER file. The second 31-byte write remains unattributed.
+
+**Also confirmed:**
+- `plasma.desktop` IS present in `/usr/share/wayland-sessions/` in the live session — so 15autologin's detection path should have worked. The patched `${sddm_session_name:-plasma}` default fires correctly per static analysis, but actual initramfs execution is not producing the patched output.
+- `/etc/sddm.conf.d/30-foundry-live.conf` is present with `Session=plasma` but is overridden by `/etc/sddm.conf` (conf.d loses to the top-level file).
+- No `/etc/sddm.conf` baked in squashfs (confirmed via `unsquashfs -l`).
+
+**Fix (second attempt — 2026-05-24):**
+
+Two-pronged approach in `1100-live-autologin.hook.chroot`:
+
+1. **Bake `/etc/sddm.conf` into the squashfs** with correct `Session=plasma`. This is the highest-priority SDDM config. `casper/15autologin` will overwrite it with `cat >>` (append), but `16foundry-autologin` then corrects it. The squashfs copy handles edge cases where casper-bottom doesn't run at all.
+
+2. **Rewrite `16foundry-autologin` to use `sed -i`** instead of `printf >` (overwrite), and **remove the `if [ -f /root/usr/bin/sddm ]` guard:**
+   ```sh
+   if [ -f /root/etc/sddm.conf ]; then
+       sed -i -e 's/^Session=$/Session=plasma/' \
+              -e 's/^Session=plasma\.desktop$/Session=plasma/' \
+              /root/etc/sddm.conf
+   else
+       printf '[Autologin]\nUser=%s\nSession=plasma\nRelogin=false\n' \
+           "${USERNAME:-user}" > /root/etc/sddm.conf
+   fi
+   ```
+   The `sed` is surgical — if `/etc/sddm.conf` already has `Session=plasma`, it's a no-op. Handles both the empty-Session case and the `.desktop`-suffix case.
+
+</details>

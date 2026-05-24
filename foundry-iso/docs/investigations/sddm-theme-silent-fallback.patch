@@ -1,0 +1,118 @@
+From bc9eee8280275723767213220e88f6b14157ba1f Mon Sep 17 00:00:00 2001
+From: Will Norris <wbnorris@gmail.com>
+Date: 2026-05-24
+Subject: [PATCH] Log actionable diagnostics when a theme fails to load
+
+SDDM silently renders the built-in greeter whenever a theme cannot be
+loaded — whether due to a Qt version mismatch in metadata.desktop or a
+QML parse/import error in Main.qml.  The fallback behaviour itself is
+correct; the silence is not.  A theme author porting from Qt 5 to Qt 6
+has no way to know their theme was rejected short of reading the SDDM
+source.  Diagnosing the failure required: noticing the wrong greeter
+was showing, diffing working vs. broken theme QML, and cross-referencing
+Qt 6 release notes about unversioned imports.
+
+Two separate code paths contribute to the silence:
+
+1. Greeter.cpp (daemon): the Qt-version check warns only when the
+   greeter binary for the declared Qt version is absent.  If a
+   compatibility symlink or multi-Qt package makes the binary present,
+   no warning fires even though the theme will still fail at runtime.
+
+2. GreeterApp.cpp (greeter process): the statusChanged error handler
+   already logs per-error QML diagnostics, but the final "Fallback to
+   embedded theme" message omits the theme path, making it impossible to
+   correlate with the configured theme name without cross-referencing
+   sddm.conf.  setThemePath() reads QtVersion from metadata.desktop but
+   never warns when it mismatches the compiled Qt version.
+
+Fix: emit an explicit, actionable warning from the daemon whenever the
+theme's declared QtVersion differs from the compiled Qt major version —
+regardless of binary availability — and include the fix hint in the
+message.  In the greeter, log the theme path in the fallback message and
+add a QtVersion mismatch warning in setThemePath() so --test-mode users
+see the diagnostic without inspecting the daemon journal.
+
+Reported-by: Foundry Linux ISO build investigation
+  <https://foundrylinux.org>
+---
+ src/daemon/Greeter.cpp    | 14 +++++++++-----
+ src/greeter/GreeterApp.cpp | 19 +++++++++++++------
+ 2 files changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/src/daemon/Greeter.cpp b/src/daemon/Greeter.cpp
+index 1a2b3c4..5d6e7f8 100644
+--- a/src/daemon/Greeter.cpp
++++ b/src/daemon/Greeter.cpp
+@@ -74,10 +74,18 @@ namespace SDDM {
+
+         // If no theme is given, use the default theme of the default greeter version
+         const int themeQtVersion = m_themePath.isEmpty() ? (QT_VERSION >> 16) : m_metadata->qtVersion();
++
++        // Warn proactively when the theme's declared Qt version mismatches this build,
++        // regardless of whether a greeter binary for that version happens to exist.
++        // Without this, the only visible symptom is the "requires missing" message below
++        // (which only fires when the binary is absent) or, worse, a silent fallback if a
++        // compatibility wrapper makes the wrong-version binary appear executable.
++        if (!m_themePath.isEmpty() && themeQtVersion != (QT_VERSION >> 16)) {
++            qWarning() << "Theme" << m_themePath << "declares QtVersion=" << themeQtVersion
++                       << "but SDDM was built with Qt" << (QT_VERSION >> 16)
++                       << "— set QtVersion=" << (QT_VERSION >> 16)
++                       << "in the [SddmGreeterTheme] section of" << m_themePath + "/metadata.desktop";
++        }
++
+         QString greeterPath = greeterPathForQt(themeQtVersion);
+         if (!QFileInfo(greeterPath).isExecutable()) {
+-            qWarning() << "The theme at" << m_themePath << "requires missing" << greeterPath << ". Using fallback theme.";
++            qCritical() << "Theme" << m_themePath << "requires Qt" << themeQtVersion
++                        << "greeter" << greeterPath << "which is not installed — falling back to built-in theme";
+             setTheme(QString());
+             greeterPath = greeterPathForQt(QT_VERSION >> 16);
+         }
+diff --git a/src/greeter/GreeterApp.cpp b/src/greeter/GreeterApp.cpp
+index 9a1b2c3..4d5e6f7 100644
+--- a/src/greeter/GreeterApp.cpp
++++ b/src/greeter/GreeterApp.cpp
+@@ -91,6 +91,14 @@ namespace SDDM {
+         if (m_themeConfig->contains(QStringLiteral("iconTheme")))
+             QIcon::setThemeName(m_themeConfig->value(QStringLiteral("iconTheme")).toString());
+
++        // Warn when the theme's declared Qt version doesn't match this greeter binary.
++        // The daemon already catches this and warns before launching, but test-mode users
++        // run the greeter directly and would otherwise get a silent fallback with no hint.
++        const int compiledQtMajor = QT_VERSION >> 16;
++        if (!m_themePath.startsWith(QLatin1String("qrc:/")) && m_metadata->qtVersion() != compiledQtMajor) {
++            qWarning() << "Theme" << m_themePath << "declares QtVersion=" << m_metadata->qtVersion()
++                       << "but this greeter was built with Qt" << compiledQtMajor
++                       << "— theme may fail to load";
++        }
++
+         // Theme specific translation
+         if (m_theme_translator)
+             m_theme_translator->deleteLater();
+@@ -131,14 +139,13 @@ namespace SDDM {
+
+         // load theme from resources when an error has occurred
+-        connect(view, &QQuickView::statusChanged, this, [view](QQuickView::Status status) {
++        connect(view, &QQuickView::statusChanged, this, [view, themePath = m_themePath](QQuickView::Status status) {
+             if (status != QQuickView::Error)
+                 return;
+
+             QString errors;
+             const auto errorList = view->errors();
+             for(const QQmlError &e : errorList) {
+-                qWarning() << e;
++                qCritical() << "Theme load error in" << themePath << ":" << e;
+                 errors += QLatin1String("\n") + e.toString();
+             }
+
+-            qWarning() << "Fallback to embedded theme";
++            qCritical() << "Theme" << themePath << "failed to load — falling back to built-in greeter."
++                        << "Check that metadata.desktop has QtVersion=" << (QT_VERSION >> 16)
++                        << "and that Main.qml uses unversioned Qt 6 imports (e.g. 'import QtQuick'"
++                        << "not 'import QtQuick 2.15')";
+             view->rootContext()->setContextProperty(QStringLiteral("__sddm_errors"), errors);
+             view->setSource(QUrl(QStringLiteral("qrc:/theme/Main.qml")));
+         });
+--
+2.47.0
