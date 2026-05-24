@@ -13,7 +13,12 @@ apt-get purge -y --auto-remove \
     kdeconnect krdc krfb ktorrent \
     snapd snap-store \
     usb-creator-kde system-config-printer-kde kcharselect kfind \
+    plasma-welcome \
     2>/dev/null || true
+
+# Remove Kubuntu-specific desktop shortcuts from the live user skeleton.
+rm -f /etc/skel/Desktop/org.kfocus.web.howtos.desktop
+rm -f /etc/skel/Desktop/org.kubuntu.web.home.desktop
 
 apt-get autoremove -y
 apt-get clean

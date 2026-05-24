@@ -173,7 +173,10 @@ GRUB_PATCH="/tmp/foundry-grub-$$.cfg"
 echo "=== Patching grub.cfg ==="
 xorriso -osirrox on -dev "$ISO_SRC" -extract /boot/grub/grub.cfg "$GRUB_PATCH"
 sed -i 's/^set default=0$/set default=0\nset timeout=5/' "$GRUB_PATCH"
-# (live-config.user-fullname removed — casper reads USERFULLNAME from /etc/casper.conf in the initramfs)
+# Rename boot entries from live-build's generic "Debian GNU/Linux" labels.
+sed -i "s/Debian GNU\/Linux - live$/Foundry Linux - Live/" "$GRUB_PATCH"
+sed -i "s/Debian GNU\/Linux - live (fail-safe mode)$/Foundry Linux - Live (safe mode)/" "$GRUB_PATCH"
+sed -i "s/Debian GNU\/Linux - live, kernel/Foundry Linux - Live, kernel/" "$GRUB_PATCH"
 # Strip live-build's default tga background lines — tga.mod is absent from the
 # EFI grub image, causing "file not found" noise on every boot.
 sed -i '/^insmod tga$/d' "$GRUB_PATCH"
