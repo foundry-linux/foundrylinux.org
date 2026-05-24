@@ -308,6 +308,11 @@ tasks:
           SRC_DIR: foundry-iso
           WORK_DIR: /tmp/foundry-iso-sync
 
+  iso-deps:
+    desc: "Install host dependencies needed to build and smoke-test the ISO"
+    cmds:
+      - sudo apt-get install -y docker.io qemu-system-x86 ovmf xorriso
+
   iso-build:
     desc: "Build the ISO locally (EDITION=anvil|atelier, default: anvil)"
     dir: foundry-iso
