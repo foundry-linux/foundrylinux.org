@@ -3,11 +3,12 @@ set -euo pipefail
 
 source /root/config/hook-env.sh
 
-# SDDM conf.d: override kubuntu's 20-kubuntu.conf which sets [Autologin] User=
-# (blank), disabling autologin.  conf.d files win over /etc/sddm.conf in
-# lexicographic order; our 30- prefix beats kubuntu's 20-.  casper creates the
-# live user in the initramfs (no race), so setting User=user here is safe.
+# SDDM conf.d: kubuntu's 20-kubuntu.conf explicitly sets [Autologin] User=
+# (blank), which disables autologin.  Even though our 30-foundry-live.conf is
+# read after it, SDDM 0.21's merge semantics are unclear — remove the source
+# of ambiguity entirely.
 mkdir -p /etc/sddm.conf.d
+rm -f /etc/sddm.conf.d/20-kubuntu.conf
 if [[ -d /usr/share/sddm/themes/foundry-linux ]]; then
   SDDM_THEME="foundry-linux"
 else
@@ -40,6 +41,14 @@ User=user
 Session=${SESSION}
 Relogin=false
 EOF
+
+# Block live-config's 0085-sddm from overwriting /etc/sddm.conf at boot.
+# grub.cfg passes username=user on the kernel cmdline; live-config reads it as
+# LIVE_USERNAME and runs 0085-sddm, which writes Session= (blank) because
+# x-session-manager doesn't resolve to startplasma-x11 on a Wayland-only system.
+# Pre-creating the component state file tells live-config sddm is already done.
+mkdir -p /var/lib/live/config
+touch /var/lib/live/config/sddm
 
 # casper.conf is bundled into the initramfs by casper's initramfs hook
 # (/usr/share/initramfs-tools/hooks/casper copies /etc/casper.conf into the
