@@ -1,5 +1,5 @@
-; World Foundry KDE color scheme
-; Palette: worldfoundry.org/src/styles/global.css
+; Foundry Linux KDE color scheme
+; Palette derived from worldfoundry.org/src/styles/global.css
 ;   surface      #1a1714  (26,23,20)   warm near-black
 ;   surface-hi   #241f1b  (36,31,27)   raised surfaces
 ;   on-surface   #f2ede6  (242,237,230) warm white
@@ -134,8 +134,8 @@ ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [General]
-ColorScheme=World Foundry
-Name=World Foundry
+ColorScheme=FoundryLinux
+Name=Foundry Linux
 shadeSortColumn=true
 
 [KDE]
