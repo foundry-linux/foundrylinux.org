@@ -11,6 +11,9 @@ else
   SDDM_THEME=""
 fi
 cat > /etc/sddm.conf.d/30-foundry-live.conf <<EOF
+[General]
+DisplayServer=wayland
+
 [Theme]
 Current=${SDDM_THEME}
 EOF
