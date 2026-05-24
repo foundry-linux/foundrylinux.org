@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+
+# Add a prominent "Install Foundry Linux" launcher to the live desktop.
+# Without this, Calamares is buried in the applications menu with no
+# obvious entry point for users who boot the live session to install.
+mkdir -p /etc/skel/Desktop
+cat > /etc/skel/Desktop/install-foundry-linux.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Install Foundry Linux
+GenericName=System Installer
+Comment=Install Foundry Linux to your computer
+Exec=sh -c "sudo -E calamares"
+Icon=calamares
+Terminal=false
+StartupNotify=true
+Categories=Qt;System;
+EOF
+chmod +x /etc/skel/Desktop/install-foundry-linux.desktop
