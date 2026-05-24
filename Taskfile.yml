@@ -320,12 +320,6 @@ tasks:
     cmds:
       - EDITION='{{.EDITION | default "anvil"}}' bash scripts/build-iso.sh
 
-  iso-login-test:
-    desc: "Quick login-test edition: sddm+openbox only, no kubuntu-desktop (~5 min)"
-    dir: foundry-iso
-    cmds:
-      - EDITION=login-test bash scripts/build-iso.sh
-
   iso-clean:
     desc: "Clean live-build artifacts and dist/"
     dir: foundry-iso

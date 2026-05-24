@@ -11,8 +11,8 @@ set -euo pipefail
 
 EDITION="${EDITION:?EDITION env var required: anvil or atelier}"
 case "$EDITION" in
-  anvil|atelier|login-test) ;;
-  *) echo "EDITION must be one of: anvil, atelier, login-test" >&2; exit 1 ;;
+  anvil|atelier) ;;
+  *) echo "EDITION must be one of: anvil, atelier" >&2; exit 1 ;;
 esac
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
