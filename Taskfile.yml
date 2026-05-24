@@ -323,6 +323,7 @@ tasks:
     generates:
       - dist/foundry-{{.EDITION | default "anvil"}}-*.iso
     cmds:
+      - task: iso-bump
       - EDITION='{{.EDITION | default "anvil"}}' bash scripts/build-iso.sh
 
   iso-clean:
