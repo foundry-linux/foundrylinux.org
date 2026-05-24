@@ -1,3 +1,13 @@
+; World Foundry KDE color scheme
+; Palette: worldfoundry.org/src/styles/global.css
+;   surface      #1a1714  (26,23,20)   warm near-black
+;   surface-hi   #241f1b  (36,31,27)   raised surfaces
+;   on-surface   #f2ede6  (242,237,230) warm white
+;   muted        #b8aea3  (184,174,163)
+;   accent       #f80000  (248,0,0)     molten red
+;   accent-dark  #b40000  (180,0,0)
+;   border       #3a322c  (58,50,44)
+
 [ColorEffects:Disabled]
 Color=56,56,56
 ColorAmount=0
@@ -19,122 +29,122 @@ IntensityAmount=0
 IntensityEffect=0
 
 [Colors:Button]
-BackgroundAlternate=30,30,30
-BackgroundNormal=26,26,26
-DecorationFocus=255,91,26
-DecorationHover=255,91,26
-ForegroundInactive=144,144,144
+BackgroundAlternate=36,31,27
+BackgroundNormal=36,31,27
+DecorationFocus=248,0,0
+DecorationHover=248,0,0
+ForegroundInactive=184,174,163
 ForegroundLink=29,153,243
 ForegroundNegative=218,68,83
-ForegroundNeutral=246,116,0
-ForegroundNormal=247,247,247
+ForegroundNeutral=220,100,0
+ForegroundNormal=242,237,230
 ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [Colors:Complementary]
-BackgroundAlternate=20,20,20
-BackgroundNormal=10,10,10
-DecorationFocus=255,91,26
-DecorationHover=255,91,26
-ForegroundInactive=144,144,144
+BackgroundAlternate=36,31,27
+BackgroundNormal=26,23,20
+DecorationFocus=248,0,0
+DecorationHover=248,0,0
+ForegroundInactive=184,174,163
 ForegroundLink=29,153,243
 ForegroundNegative=218,68,83
-ForegroundNeutral=246,116,0
-ForegroundNormal=247,247,247
+ForegroundNeutral=220,100,0
+ForegroundNormal=242,237,230
 ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [Colors:Header]
-BackgroundAlternate=20,20,20
-BackgroundNormal=26,26,26
-DecorationFocus=255,91,26
-DecorationHover=255,91,26
-ForegroundInactive=144,144,144
+BackgroundAlternate=36,31,27
+BackgroundNormal=36,31,27
+DecorationFocus=248,0,0
+DecorationHover=248,0,0
+ForegroundInactive=184,174,163
 ForegroundLink=29,153,243
 ForegroundNegative=218,68,83
-ForegroundNeutral=246,116,0
-ForegroundNormal=247,247,247
+ForegroundNeutral=220,100,0
+ForegroundNormal=242,237,230
 ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [Colors:Header][Inactive]
-BackgroundAlternate=26,26,26
-BackgroundNormal=10,10,10
-DecorationFocus=255,91,26
-DecorationHover=255,91,26
-ForegroundInactive=144,144,144
+BackgroundAlternate=36,31,27
+BackgroundNormal=26,23,20
+DecorationFocus=248,0,0
+DecorationHover=248,0,0
+ForegroundInactive=184,174,163
 ForegroundLink=29,153,243
 ForegroundNegative=218,68,83
-ForegroundNeutral=246,116,0
-ForegroundNormal=247,247,247
+ForegroundNeutral=220,100,0
+ForegroundNormal=242,237,230
 ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [Colors:Selection]
-BackgroundAlternate=200,65,10
-BackgroundNormal=255,91,26
-DecorationFocus=255,91,26
-DecorationHover=255,91,26
-ForegroundActive=247,247,247
+BackgroundAlternate=180,0,0
+BackgroundNormal=248,0,0
+DecorationFocus=248,0,0
+DecorationHover=248,0,0
+ForegroundActive=242,237,230
 ForegroundInactive=200,180,170
 ForegroundLink=253,188,75
 ForegroundNegative=218,68,83
-ForegroundNeutral=246,116,0
-ForegroundNormal=247,247,247
+ForegroundNeutral=220,100,0
+ForegroundNormal=242,237,230
 ForegroundPositive=39,174,96
 ForegroundVisited=200,160,220
 
 [Colors:Tooltip]
-BackgroundAlternate=20,20,20
-BackgroundNormal=26,26,26
-DecorationFocus=255,91,26
-DecorationHover=255,91,26
-ForegroundInactive=144,144,144
+BackgroundAlternate=36,31,27
+BackgroundNormal=36,31,27
+DecorationFocus=248,0,0
+DecorationHover=248,0,0
+ForegroundInactive=184,174,163
 ForegroundLink=29,153,243
 ForegroundNegative=218,68,83
-ForegroundNeutral=246,116,0
-ForegroundNormal=247,247,247
+ForegroundNeutral=220,100,0
+ForegroundNormal=242,237,230
 ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [Colors:View]
-BackgroundAlternate=26,26,26
-BackgroundNormal=13,13,13
-DecorationFocus=255,91,26
-DecorationHover=255,91,26
-ForegroundInactive=144,144,144
+BackgroundAlternate=36,31,27
+BackgroundNormal=17,14,11
+DecorationFocus=248,0,0
+DecorationHover=248,0,0
+ForegroundInactive=184,174,163
 ForegroundLink=29,153,243
 ForegroundNegative=218,68,83
-ForegroundNeutral=246,116,0
-ForegroundNormal=247,247,247
+ForegroundNeutral=220,100,0
+ForegroundNormal=242,237,230
 ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [Colors:Window]
-BackgroundAlternate=20,20,20
-BackgroundNormal=10,10,10
-DecorationFocus=255,91,26
-DecorationHover=255,91,26
-ForegroundInactive=144,144,144
+BackgroundAlternate=36,31,27
+BackgroundNormal=26,23,20
+DecorationFocus=248,0,0
+DecorationHover=248,0,0
+ForegroundInactive=184,174,163
 ForegroundLink=29,153,243
 ForegroundNegative=218,68,83
-ForegroundNeutral=246,116,0
-ForegroundNormal=247,247,247
+ForegroundNeutral=220,100,0
+ForegroundNormal=242,237,230
 ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [General]
-ColorScheme=Foundry Linux
-Name=Foundry Linux
+ColorScheme=World Foundry
+Name=World Foundry
 shadeSortColumn=true
 
 [KDE]
 contrast=4
 
 [WM]
-activeBackground=26,26,26
-activeBlend=247,247,247
-activeForeground=247,247,247
-inactiveBackground=10,10,10
-inactiveBlend=144,144,144
-inactiveForeground=144,144,144
+activeBackground=36,31,27
+activeBlend=242,237,230
+activeForeground=242,237,230
+inactiveBackground=26,23,20
+inactiveBlend=184,174,163
+inactiveForeground=184,174,163

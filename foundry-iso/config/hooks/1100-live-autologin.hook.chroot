@@ -51,6 +51,15 @@ X-KDE-autostart-after=panel
 EOF
 fi
 
+# Set Foundry Linux color scheme as default for the live user.
+if [[ -f /usr/share/color-schemes/FoundryLinux.colors ]]; then
+  mkdir -p /etc/skel/.config
+  cat >> /etc/skel/.config/kdeglobals <<'EOF'
+[General]
+ColorScheme=FoundryLinux
+EOF
+fi
+
 # Activate the Foundry Linux Plymouth theme if the package installed it.
 # Skipped in minimal builds (e.g. login-test) where calamares-settings is absent.
 if [[ -f /usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth ]]; then
