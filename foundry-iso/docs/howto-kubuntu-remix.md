@@ -38,59 +38,13 @@ before writing any config.
 
 ---
 
-## Build Path Choices: Debian live-cd vs K/Ubuntu
+## Approach
 
-Before starting, pick your base. The two paths differ in what you inherit,
-what's already working, and what will fight you.
-
-### Debian live-cd (pure live-build)
-
-Start from a Debian base, pull a desktop environment yourself. You control
-everything but own everything. Ubuntu-specific tools (casper, ubiquity/
-calamares, snap) require explicit work to include or exclude.
-
-Good for: minimal, custom, or Debian-compatible builds. Bad for: anything
-targeting hardware that Ubuntu supports but Debian doesn't (Wi-Fi firmware,
-graphics drivers, kernel patches).
-
-### K/Ubuntu (this guide's approach)
-
-Start from an existing Kubuntu seed and remix it. live-build wraps the Ubuntu
-infrastructure (casper for live session, Launchpad PPAs, Ubuntu kernel) and
-you get Canonical's hardware support, LTS guarantees, and the Ubuntu live-
-session stack for free.
-
-The tradeoffs:
-- **casper quirks** — Ubuntu's live session stack differs from Debian's
-  `live-config`. casper runs its own initramfs scripts that interact with
-  live-config in non-obvious ways (see [Autologin](#autologin) for the full
-  fallout). Documentation is sparse; behaviour is driven by scripts, not docs.
-- **live-build version mismatch** — live-build on Ubuntu lags the upstream
-  Debian version. Ubuntu 26.04 ships live-build 3.0\~a57 (2013-era), which
-  lacks EFI boot image support entirely. Several flags documented upstream
-  don't work or behave differently.
-- **`--mode ubuntu`** — required flag; without it, live-build generates Debian
-  mirror lists and misses Ubuntu archive areas. Not documented prominently.
-- **Kubuntu seed bloat** — `kubuntu-desktop` pulls in KDE PIM, LibreOffice,
-  games, and Snap. Plan for a purge hook early.
-- **Ubuntu archive access** — PPAs and custom apt repos work normally;
-  signing key setup requires a one-time workaround (see [Extra Apt Sources](#extra-apt-sources)).
-
-### Choosing a base Ubuntu release
-
-Ubuntu releases name their live-build distributions after their codename
-(`noble`, `resolute`, etc.). Match `--distribution` to the release you're
-targeting:
-
-```sh
-lb config noauto \
-    --mode ubuntu \
-    --distribution {ubuntu-codename} \
-    ...
-```
-
-Use an LTS release for production ISOs — non-LTS releases lose package
-maintenance quickly and PPAs frequently drop non-LTS support.
+This guide uses live-build in `--mode ubuntu` against a Kubuntu seed: you get
+Canonical's hardware support, LTS kernel, and the Ubuntu live-session stack
+(`casper`) without managing debootstrap from scratch. Use an LTS codename
+(`noble`, `resolute`, …) for `--distribution` — non-LTS releases lose PPA
+support quickly.
 
 ---
 
