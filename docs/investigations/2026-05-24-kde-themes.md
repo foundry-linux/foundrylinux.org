@@ -10,20 +10,22 @@ Kubuntu, notably, ships **no custom KDE theme** beyond wallpapers — Breeze Dar
 
 ## What's Already Done
 
-From `foundry-apt/packages/calamares-settings-foundry-linux/`:
+| Layer | Status | Package | Location |
+|---|---|---|---|
+| GRUB boot menu | ✓ done | `calamares-settings-foundry-linux` | `/usr/share/grub/themes/foundry-linux/` |
+| Plymouth boot splash | ✓ done | `calamares-settings-foundry-linux` | `/usr/share/plymouth/themes/foundry-linux/` |
+| SDDM login screen | ✓ done | `calamares-settings-foundry-linux` | `/usr/share/sddm/themes/foundry-linux/` |
+| Wallpaper | ✓ done | `calamares-settings-foundry-linux` | `/usr/share/backgrounds/foundry-linux-wallpaper.png` |
+| **Color Scheme** | **✓ done** | **`foundry-kde-theme`** | **`/usr/share/color-schemes/FoundryLinux.colors`** |
 
-| Layer | Status | Location |
-|---|---|---|
-| GRUB boot menu | ✓ done | `/usr/share/grub/themes/foundry-linux/` |
-| Plymouth boot splash | ✓ done | `/usr/share/plymouth/themes/foundry-linux/` |
-| SDDM login screen | ✓ done | `/usr/share/sddm/themes/foundry-linux/` |
-| Wallpaper | ✓ done | `/usr/share/backgrounds/foundry-linux-wallpaper.png` |
-
-Established color palette:
-- Background: `#0a0a0a`
-- Text: `#f7f7f7`
-- Accent (orange): `#ff5b1a`
-- Input field: `#1a1a1a`
+Established color palette (from `FoundryLinux.colors`):
+- Background (window bg): `#0a0a0a`
+- Surface-hi (raised widgets): `#141414`
+- Widget bg (buttons/inputs): `#1a1a1a`
+- Text (on-surface): `#f7f7f7`
+- Muted (inactive/secondary): `#909090`
+- Accent (forge orange): `#ff5b1a`
+- Accent-dark (selection alt): `#c8410a`
 
 ---
 
