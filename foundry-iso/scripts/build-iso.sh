@@ -174,21 +174,29 @@ echo "=== Patching grub.cfg ==="
 xorriso -osirrox on -dev "$ISO_SRC" -extract /boot/grub/grub.cfg "$GRUB_PATCH"
 sed -i 's/^set default=0$/set default=0\nset timeout=5/' "$GRUB_PATCH"
 # Rename boot entries from live-build's generic "Debian GNU/Linux" labels.
-sed -i "s/Debian GNU\/Linux - live$/Foundry Linux - Live/" "$GRUB_PATCH"
-sed -i "s/Debian GNU\/Linux - live (fail-safe mode)$/Foundry Linux - Live (safe mode)/" "$GRUB_PATCH"
-sed -i "s/Debian GNU\/Linux - live, kernel/Foundry Linux - Live, kernel/" "$GRUB_PATCH"
+# The full menuentry line is: menuentry "Debian GNU/Linux - live" {
+# so match the quoted title including surrounding quotes, not just the title.
+sed -i 's/menuentry "Debian GNU\/Linux - live" {/menuentry "Foundry Linux - Live" {/' "$GRUB_PATCH"
+sed -i 's/menuentry "Debian GNU\/Linux - live (fail-safe mode)" {/menuentry "Foundry Linux - Live (safe mode)" {/' "$GRUB_PATCH"
+sed -i 's/menuentry "Debian GNU\/Linux - live, kernel/menuentry "Foundry Linux - Live, kernel/' "$GRUB_PATCH"
 # Insert "Install Foundry Linux" entry immediately after the first menuentry
 # block, reusing its linux/initrd lines with automatic-calamares appended.
+# Note: live-build uses tabs (not spaces) between linux/initrd and their args,
+# so the regex must use \s+ not ' +' to match whitespace.
 python3 - "$GRUB_PATCH" <<'PYEOF'
 import sys, re
 path = sys.argv[1]
 with open(path) as f:
     content = f.read()
-linux_line  = re.search(r'^( *linux +.+)$',  content, re.MULTILINE).group(1)
-initrd_line = re.search(r'^( *initrd +.+)$', content, re.MULTILINE).group(1)
+linux_match  = re.search(r'^(linux\s+.+)$',  content, re.MULTILINE)
+initrd_match = re.search(r'^(initrd\s+.+)$', content, re.MULTILINE)
+if not linux_match or not initrd_match:
+    print('ERROR: could not find linux/initrd lines in grub.cfg', file=sys.stderr)
+    sys.exit(1)
+linux_line  = linux_match.group(1)
+initrd_line = initrd_match.group(1)
 install_entry = (
     '\nmenuentry "Install Foundry Linux" {\n'
-    '  set gfxpayload=keep\n'
     f'{linux_line} automatic-calamares\n'
     f'{initrd_line}\n'
     '}\n'

@@ -13,8 +13,14 @@ apt-get purge -y --auto-remove \
     kdeconnect krdc krfb ktorrent \
     snapd snap-store \
     usb-creator-kde system-config-printer-kde kcharselect kfind \
-    plasma-welcome \
     2>/dev/null || true
+
+# Disable plasma-welcome (Kubuntu's first-run welcome app) — purging it
+# fails because kubuntu-desktop depends on it.  Overriding the XDG autostart
+# entry with Hidden=true prevents it launching in any session.
+mkdir -p /etc/xdg/autostart
+printf '[Desktop Entry]\nHidden=true\n' \
+  > /etc/xdg/autostart/org.kde.plasma-welcome.desktop
 
 # Remove Kubuntu-specific desktop shortcuts from the live user skeleton.
 rm -f /etc/skel/Desktop/org.kfocus.web.howtos.desktop
