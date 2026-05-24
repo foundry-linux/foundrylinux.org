@@ -52,6 +52,7 @@ docker run --rm \
     # and apt packages are not re-downloaded.
     chattr -R -i .build/ chroot/ 2>/dev/null || true
     rm -rf .build/ chroot/
+    rm -f .lock
     rm -rf config/includes.chroot/tmp
     bash config/auto/config
     # Inject local .debs (built but not yet published to apt.foundrylinux.org)
