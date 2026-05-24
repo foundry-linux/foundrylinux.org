@@ -647,6 +647,20 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
     ```
     Expected: `Session=plasma`.
 
+    **Result (2026-05-24, session 6, `foundry-anvil-0.9.0-amd64.iso`):**
+    Verified via Docker (no sudo available). The squashfs has no `/etc/sddm.conf`
+    (casper writes it at boot), but `/etc/sddm.conf.d/30-foundry-live.conf` is
+    present and correct:
+    ```
+    [General]
+    DisplayServer=wayland
+
+    [Theme]
+    Current=foundry-linux
+    ```
+    `20-kubuntu.conf` (from the kubuntu-settings package) also sets
+    `Session=plasma` in its `[Autologin]` stanza. **PASS.**
+
 12. **`16foundry-autologin` is in the initramfs ORDER.**
     ```bash
     ISO=foundry-iso/dist/foundry-login-test-0.9.0-amd64.iso
@@ -664,6 +678,20 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
     ```
     Expected: `16foundry-autologin` immediately follows `15autologin`.
 
+    **Result (2026-05-24, session 6, `foundry-anvil-0.9.0-amd64.iso`):**
+    Verified via Docker (`lsinitramfs` + `unmkinitramfs` with `zstd`).
+    Initrd is `live/initrd.img-7.0.0-15-generic`.
+    ```
+    scripts/casper-bottom/16foundry-autologin
+    ```
+    ORDER lines 9/11/13:
+    ```
+    9:/scripts/casper-bottom/15autologin "$@"
+    11:/scripts/casper-bottom/16foundry-autologin "$@"
+    13:/scripts/casper-bottom/18hostname "$@"
+    ```
+    **PASS.**
+
 13. **`/etc/sddm.conf` in the live session has `Session=plasma`.**
     Boot the ISO in QEMU. From the serial log or a root terminal:
     ```bash
@@ -674,12 +702,22 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
     the full `Relogin=false` block, or ~37 bytes if the squashfs value
     persisted from baking).
 
+    **Result (2026-05-24, session 6):** Not directly verified — SSH into the
+    live session timed out during banner exchange (QEMU user networking starved by
+    kwin_wayland GL workload). Squashfs and initramfs checks (steps 11–12) confirm
+    the correct config is in place; step 14 (visual autologin) is positive evidence.
+    Deferred to next hardware test.
+
 14. **Autologin goes straight to Plasma desktop without SDDM greeter.**
     Boot the ISO in QEMU. Within 60 seconds of GRUB selecting the live
     entry, the Plasma desktop shell (taskbar, desktop icons) must be
     visible **without any SDDM login prompt appearing**.
     Expected: desktop appears; `journalctl -u sddm | grep -i autologin`
     shows successful autologin, not `Unable to find autologin session entry ""`.
+
+    **Result (2026-05-24, session 6, `foundry-anvil-0.9.0-amd64.iso`):**
+    QEMU booted via UEFI (OVMF + `virtio-vga-gl`). Plasma desktop appeared
+    without SDDM greeter. **PASS (visual).**
 
 ## What shipped (2026-05-23)
 
@@ -759,6 +797,29 @@ See verification steps 11–14 above to confirm this fix.
 **Session 5 (2026-05-24) — login-test confirmed working:**
 
 `login-test` built and booted successfully in QEMU. Autologin fix confirmed. `login-test` edition retired. Anvil build started with the same fixes. Verify steps 11–14: **PASS** (implicit — working boot is the evidence). Real-hardware boot not yet tested.
+
+**Session 6 (2026-05-24) — anvil ISO first boot: branding gaps found and fixed:**
+
+First anvil build failed at the chroot-verification step in `build-iso.sh`:
+`ERROR: DisplayServer missing from sddm conf`. Root cause: hook 1100 wrote
+`30-foundry-live.conf` with only `[Theme]`, missing `[General]` + `DisplayServer=wayland`.
+Fixed by adding the `[General]` section. Verification steps 11–12 confirmed from
+squashfs/initramfs (Docker). Verification step 14 confirmed visually: autologin
+fired, Plasma desktop appeared with no SDDM greeter.
+
+Booting the rebuilt anvil ISO exposed four additional branding gaps:
+
+1. **`plasma-welcome` launched on first login** — Kubuntu's "Welcome to Ubuntu running KDE Plasma!" app. Never added to the purge list. Fix: added `plasma-welcome` to `0020-strip-kubuntu-bloat.hook.chroot`.
+
+2. **Kubuntu desktop shortcuts on the live Desktop** — `org.kfocus.web.howtos.desktop` ("HOW-TO Guides") was in `/etc/skel/Desktop/`. Also guarded against `org.kubuntu.web.home.desktop`. Fix: `rm -f` both in hook 0020.
+
+3. **GRUB menu entries said "Debian GNU/Linux - live"** — live-build's default labels. Fix: `build-iso.sh` now `sed`s them to "Foundry Linux - Live" / "Foundry Linux - Live (safe mode)" / "Foundry Linux - Live, kernel …" during grub.cfg post-processing.
+
+4. **No install button** — Calamares was installed but reachable only via the applications menu (buried). No desktop shortcut, no GRUB install entry. Fixes:
+   - New hook `1110-live-install-button.hook.chroot`: writes `install-foundry-linux.desktop` to `/etc/skel/Desktop/`; writes `/usr/local/bin/foundry-autoinstall.sh` + XDG autostart `foundry-autoinstall.desktop` that execs `sudo calamares` when `automatic-calamares` is found on `/proc/cmdline`.
+   - `build-iso.sh` grub.cfg patch now injects an "Install Foundry Linux" GRUB menuentry immediately after the first live entry, with `automatic-calamares` appended to the kernel cmdline.
+
+All four fixes committed; anvil rebuild in progress.
 
 ## Known concerns / external dependencies
 
