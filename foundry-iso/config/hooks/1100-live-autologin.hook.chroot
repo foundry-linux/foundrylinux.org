@@ -3,43 +3,16 @@ set -euo pipefail
 
 source /root/config/hook-env.sh
 
-# SDDM conf.d: kubuntu's 20-kubuntu.conf explicitly sets [Autologin] User=
-# (blank), which disables autologin.  Even though our 30-foundry-live.conf is
-# read after it, SDDM 0.21's merge semantics are unclear — remove the source
-# of ambiguity entirely.
+# SDDM theme: set to foundry-linux if installed, otherwise fall back to default.
 mkdir -p /etc/sddm.conf.d
-rm -f /etc/sddm.conf.d/20-kubuntu.conf
 if [[ -d /usr/share/sddm/themes/foundry-linux ]]; then
   SDDM_THEME="foundry-linux"
 else
   SDDM_THEME=""
 fi
-SESSION=$(basename "$(ls /usr/share/wayland-sessions/*.desktop /usr/share/xsessions/*.desktop 2>/dev/null | head -1)" .desktop 2>/dev/null || true)
-SESSION="${SESSION:-plasma}"
 cat > /etc/sddm.conf.d/30-foundry-live.conf <<EOF
-[General]
-DisplayServer=wayland
-
 [Theme]
 Current=${SDDM_THEME}
-
-[Autologin]
-User=user
-Session=${SESSION}
-Relogin=false
-EOF
-
-# Bake /etc/sddm.conf into the squashfs with correct autologin settings.
-# /etc/sddm.conf is the highest-priority SDDM config (overrides all conf.d).
-# casper's 15autologin overwrites this at live boot with Session= (blank) when
-# session detection falls through; 16foundry-autologin then fixes it via sed.
-# Having the correct value baked in here handles the case where casper-bottom
-# scripts fail to run or are absent entirely.
-cat > /etc/sddm.conf <<EOF
-[Autologin]
-User=user
-Session=${SESSION}
-Relogin=false
 EOF
 
 # Block live-config's 0085-sddm from overwriting /etc/sddm.conf at boot.
@@ -61,12 +34,6 @@ export USERFULLNAME="Foundry Linux"
 export HOST="foundry-linux"
 export BUILD_SYSTEM="Ubuntu"
 EOF
-
-# Force software rendering so kwin_wayland uses llvmpipe rather than trying to
-# acquire a DRM/KMS device.  Without this, kwin_wayland crashes in QEMU (even
-# with virtio-vga-gl) causing autologin to fall back to the greeter.  Has no
-# effect on real hardware where the GPU driver is loaded and preferred anyway.
-echo "LIBGL_ALWAYS_SOFTWARE=1" >> /etc/environment
 
 # Set the Foundry Linux wallpaper via a Plasma autostart entry.
 # The static skel appletsrc approach requires knowing the containment ID, which
@@ -95,21 +62,9 @@ if [[ -f /usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth ]]; the
 fi
 
 # Patch casper's 15autologin before it gets bundled into the initramfs.
-# Two problems with the stock script:
-#
-# 1. It checks for a fixed list of session .desktop files at initramfs time.
-#    If none of its known files are found, $sddm_session is left unset and it
-#    appends "Session=" (blank) to /etc/sddm.conf.  Since /etc/sddm.conf is
-#    the highest-priority file in SDDM's config load chain (processed last),
-#    that blank Session= overwrites every conf.d file including ours.
-#
-# 2. When it does find a file (e.g. plasma.desktop), it sets the session to
-#    "plasma.desktop" (with extension).  SDDM looks up sessions by the bare
-#    name without extension, so "plasma.desktop" never matches → autologin
-#    fails.
-#
-# Fix: replace the heredoc block with one that strips the .desktop suffix and
-# defaults to "plasma" when detection falls through.
+# Stock script sets sddm_session=plasma.desktop (with extension); SDDM expects
+# bare names so autologin fails.  Strip the suffix and default to "plasma" when
+# detection falls through entirely.
 python3 - <<'PYEOF'
 import sys
 
@@ -146,9 +101,8 @@ print("Patched 15autologin")
 PYEOF
 
 # Add a casper-bottom script numbered 16 so it runs immediately after casper's
-# 15autologin in the initramfs ORDER.  It uses sed to fix Session= (blank) or
-# Session=plasma.desktop in-place, ensuring autologin is never broken regardless
-# of what 15autologin's session detection produced.
+# 15autologin in the initramfs ORDER.  Defense-in-depth: fixes Session= (blank)
+# or Session=plasma.desktop in-place after 15autologin runs.
 cat > /usr/share/initramfs-tools/scripts/casper-bottom/16foundry-autologin << 'EOF'
 #!/bin/sh
 PREREQ=""
@@ -160,10 +114,6 @@ case $1 in prereqs) prereqs; exit 0 ;; esac
 . /scripts/casper-functions
 log_begin_msg "$DESCRIPTION"
 
-# Fix any Session= (empty or wrong) that casper's 15autologin may have written.
-# Unconditional: sddm.conf is written by 15autologin regardless of whether sddm
-# is installed, and we must correct it regardless. The sed is a no-op when the
-# line is already correct.
 if [ -f /root/etc/sddm.conf ]; then
     sed -i -e 's/^Session=$/Session=plasma/' \
            -e 's/^Session=plasma\.desktop$/Session=plasma/' \
