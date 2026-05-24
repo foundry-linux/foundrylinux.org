@@ -1,5 +1,6 @@
 # Memory Index
 
+- [Keep live-build investigation doc updated](feedback_live_investigation_doc.md) — append new root causes/fixes to docs/investigations/2026-05-23-live-build-hooks-boot-theming.md each session.
 - [site/index.html is generated — never edit directly](feedback_site_generated_file.md) — edit site/*.jsx or scripts/ssr-render.js, then run task site-build.
 - [Iterate the /package skill as we package](feedback_package_skill_iterate.md) — every real /package run is a feedback loop for the skill itself; commit the refinement alongside the package.
 - [Always build packages in Docker containers](feedback_build_in_containers.md) — never on the host; host deps silently satisfy Build-Depends and mask CI failures.
@@ -12,6 +13,7 @@
 - [Always smoke-test after uploads automatically](feedback_smoke_test_after_upload.md) — never ask; curl remote checksum, compare to local, verify size. PASS before proceeding.
 - [Foundry Linux audience: game devs new to Linux](project_foundry_audience.md) — NOT traditional Linux users; they don't care about Linux, it's just the platform. Frame UX/hosting as "downloading a game tool", not "downloading a distro".
 - [VM downloads are a planned distribution channel](project_vm_distribution.md) — VirtualBox/VMware/QEMU rows are intentional strategy, not placeholders. Add alongside, never replace.
+- [Check for running VMs before launching a new one](feedback_vm_before_launch.md) — launching a second VM OOM-crashed the machine; check first, prompt to close if fresh boot needed, otherwise give in-VM instructions.
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 

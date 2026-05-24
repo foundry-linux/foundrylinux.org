@@ -625,6 +625,63 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
     Expected: install completes (slower — atelier is ~3× the disk write);
     all atelier-tier tools present.
 
+11. **Squashfs contains correct `/etc/sddm.conf`.**
+    ```bash
+    ISO=foundry-iso/dist/foundry-login-test-0.9.0-amd64.iso
+    # Extract and inspect sddm.conf from the squashfs
+    sudo unsquashfs -d /tmp/squashfs-check \
+      "$(isoinfo -l -i "$ISO" 2>/dev/null | grep -i filesystem.squashfs | \
+        awk '{print $NF}' || true)" etc/sddm.conf 2>/dev/null || true
+    # Simpler: mount ISO and unsquashfs in-place
+    MNTDIR=$(mktemp -d)
+    sudo mount -o loop,ro "$ISO" "$MNTDIR"
+    sudo unsquashfs -l "$MNTDIR/live/filesystem.squashfs" etc/sddm.conf
+    sudo umount "$MNTDIR" && rmdir "$MNTDIR"
+    ```
+    Expected: `etc/sddm.conf` is listed; when extracted, it contains
+    `Session=plasma` (not blank).
+
+    From a live VM (after booting — run as root):
+    ```bash
+    unsquashfs -d /tmp/sq-check /cdrom/live/filesystem.squashfs etc/sddm.conf
+    cat /tmp/sq-check/etc/sddm.conf
+    ```
+    Expected: `Session=plasma`.
+
+12. **`16foundry-autologin` is in the initramfs ORDER.**
+    ```bash
+    ISO=foundry-iso/dist/foundry-login-test-0.9.0-amd64.iso
+    MNTDIR=$(mktemp -d)
+    sudo mount -o loop,ro "$ISO" "$MNTDIR"
+    lsinitramfs "$MNTDIR/live/initrd.img" | grep foundry-autologin
+    sudo umount "$MNTDIR" && rmdir "$MNTDIR"
+    ```
+    Expected: line like `scripts/casper-bottom/16foundry-autologin`.
+
+    Also verify ORDER placement:
+    ```bash
+    # inside the mounted initramfs or live VM's /run/initramfs/scripts/
+    grep -n "foundry-autologin\|15autologin\|18hostname" scripts/casper-bottom/ORDER
+    ```
+    Expected: `16foundry-autologin` immediately follows `15autologin`.
+
+13. **`/etc/sddm.conf` in the live session has `Session=plasma`.**
+    Boot the ISO in QEMU. From the serial log or a root terminal:
+    ```bash
+    cat /etc/sddm.conf
+    ```
+    Expected: `Session=plasma` (not blank, not `plasma.desktop`).
+    The file size should be ≥ 31 bytes (ideally ~51 bytes if casper wrote
+    the full `Relogin=false` block, or ~37 bytes if the squashfs value
+    persisted from baking).
+
+14. **Autologin goes straight to Plasma desktop without SDDM greeter.**
+    Boot the ISO in QEMU. Within 60 seconds of GRUB selecting the live
+    entry, the Plasma desktop shell (taskbar, desktop icons) must be
+    visible **without any SDDM login prompt appearing**.
+    Expected: desktop appears; `journalctl -u sddm | grep -i autologin`
+    shows successful autologin, not `Unable to find autologin session entry ""`.
+
 ## What shipped (2026-05-23)
 
 Both ISOs built, signed, and live on iso.foundrylinux.org:
@@ -634,10 +691,71 @@ Both ISOs built, signed, and live on iso.foundrylinux.org:
 
 Torrents, magnet links, manifests, and iso.foundrylinux.org index all live. Homepage updated.
 
-**Boot test findings (2026-05-23):**
+**Boot test findings (2026-05-23, session 1):**
 
 - **BIOS El Torito boot**: SeaBIOS says "Booting from DVD/CD…" then stalls in QEMU (SeaBIOS + ATAPI emulation). El Torito boot catalog and `grub_eltorito` stub are present; likely works on real hardware but unconfirmed. Further investigation needed.
 - **UEFI boot**: Missing from both ISOs — `live-build 3.0~a57-1ubuntu54` does not generate EFI boot images in `binary_grub2`. Fix: `build-iso.sh` now post-processes the ISO with xorriso after `lb binary` — runs `grub-mkimage` (from `grub-efi-amd64-bin`, already in the build container) to produce `BOOTX64.EFI`, packs it into a 1 MiB FAT12 image, appends it as a GPT partition type 0xEF, and wires it as a second El Torito entry (`platform_id=0xef`). This runs inside the same Docker container as `lb binary` before the ISO is moved to `dist/`. The existing ISOs on R2 **do not have EFI boot** — a rebuild is needed to ship the fix.
+
+**Login + autologin investigation (2026-05-23, session 2) — `login-test` edition:**
+
+The `login-test` edition exists to iterate the SDDM login screen and autologin path without rebuilding the full 4–15 GB anvil/atelier ISOs. The session resolved a chain of independent blockers that all had to be fixed together for autologin to work:
+
+1. **`live-config` + `user-setup` were absent from the package list.** Without them, the live `user` account is never created at boot — both autologin and manual login fail. Fixed by adding all three (`live-config`, `live-config-systemd`, `user-setup`) to every edition's package list in `config/auto/config`. The `user-setup` package is separately required because `live-config`'s `0030-user-setup` component does `pkg_is_installed "user-setup" || exit 0` before calling `user-setup-apply`.
+
+2. **Default live user password is `live`, not empty.** `live-config 11.0.5` sets the password hash `8Ab05sVQ4LLps` (= "live") by default. Manual login worked once `user-setup` was installed, using `user` / `live`.
+
+3. **`pam_nologin.so requisite` in `sddm-autologin` blocks autologin at boot.** `/etc/nologin` exists transiently during early systemd startup; if SDDM's autologin hits this window, `pam_nologin.so requisite` aborts the auth chain and SDDM falls back to the greeter. Fixed in hook 1100 by patching to `optional` via `sed -i`.
+
+4. **`kwin_wayland` crashes with `virtio-vga` in QEMU → blank greeter.** After fixing the PAM blocker, autologin fires and starts the Wayland plasma session, but `kwin_wayland` crashes immediately on `virtio-vga` (QEMU's virtual GPU lacks full DRM/KMS). SDDM's crash recovery shows a blank greeter (not the prefilled autologin greeter). Fixed for `login-test` by forcing `DisplayServer=x11` in `30-foundry-live-autologin.conf` — production editions (anvil, atelier) keep Wayland.
+
+5. **Plasma desktop wallpaper** — Foundry Linux orange-glow background pre-seeded via `/etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc`. `live-config` creates the live user via `useradd -m` (copies skel), so the wallpaper config is in place before Plasma starts its first session.
+
+**Current status (end of session 2):** `login-test` build 5 (`foundry-login-test-0.9.0-amd64.iso`, ~1.1 GB) has all five fixes. Manual login with `user`/`live` boots to KDE Plasma desktop. Autologin with `DisplayServer=x11` is pending final verification — QEMU was launched but autologin result not yet confirmed.
+
+**anvil and atelier ISOs** do not yet have the `live-config`/`user-setup` fix (added to package list but ISOs not rebuilt). Rebuilt ISOs are needed before the live boot UX works on those editions.
+
+**Login + autologin investigation (2026-05-24, session 3) — root cause found: wrong live framework:**
+
+All the autologin workarounds in session 2 (`After=live-config.service` systemd drop-in, PAM patches, `LIBGL_ALWAYS_SOFTWARE=1`) were treating symptoms. The root cause: **we used `live-config` (Debian live) instead of `casper` (Ubuntu/Canonical live)**. Kubuntu, Ubuntu, Ubuntu Studio, and Lubuntu all ship `casper`; `live-config` is a Debian project package.
+
+The key difference: casper creates the live user and writes the SDDM autologin config **in the initramfs** (via `casper-bottom/25adduser` and `casper-bottom/15autologin`), before systemd PID 1 starts. There is no race condition. `live-config` did the same via `live-config.service` at systemd runtime, making it inherently racy with `display-manager.service`.
+
+Changes made (2026-05-24):
+- **Package list**: replaced `live-config` + `live-config-systemd` with `casper` (all editions)
+- **Boot cmdline**: `boot=live components` → `boot=casper` in `config/auto/config`
+- **`/etc/casper.conf`**: written by hook 1100 before `update-initramfs -u` so casper's initramfs hook bundles it. Sets `USERNAME=user`, `USERFULLNAME="Foundry Linux"`.
+- **Hook 1100 simplified**: removed `[Autologin]` SDDM stanza (casper writes it to `/etc/sddm.conf`), removed `After=live-config.service` drop-in, removed PAM patches, removed `/etc/live/config.conf.d/` write. Kept: SDDM `[General]`/`[Theme]` in conf.d, wallpaper autostart in `/etc/skel/`, Plymouth, `LIBGL_ALWAYS_SOFTWARE=1`, final `update-initramfs -u`.
+- **`build-iso.sh`**: removed `live-config.user-fullname` kernel param injection; updated verification to check `casper.conf` instead.
+- **Investigation doc**: §18 added with full background on both frameworks, casper's initramfs mechanism, and the complete before/after table.
+
+Wallpaper note: casper's `25adduser` calls `user-setup-apply` which calls `useradd -m` — same mechanism as live-config. The `/etc/skel/` wallpaper autostart approach still applies unchanged.
+
+Build 14 failed immediately: casper defaults `LIVE_MEDIA_PATH=casper` — looks in `/casper/` for the squashfs, but live-build puts it in `/live/`. Fix: add `live-media-path=live` to `--bootappend-live`. Build 15 in progress.
+
+**Status (end of session 3):** Build 15 running; awaiting boot verification.
+
+**Autologin root-cause analysis (2026-05-24, session 4) — two-write diagnosis:**
+
+After booting the session-3 ISO (`login-test` build 15), `stat /etc/sddm.conf` in the live VM showed:
+
+```
+Size=31  Birth=07:20:27  Modify=07:20:44
+```
+
+31 bytes = `[Autologin]\nUser=user\nSession=\n` — the empty-Session output. Birth ≠ Modify (17 second gap) proves **two separate writes** happened, both producing 31 bytes. This rules out `16foundry-autologin` running correctly (`printf` with `Session=plasma` would be ~51 bytes). Most likely: the `if [ -f /root/usr/bin/sddm ]` guard in `16foundry-autologin` failed, or a second run of `15autologin` clobbered the fix.
+
+Confirmed via VM diagnostics:
+- `plasma.desktop` is in `/usr/share/wayland-sessions/` in the live session ✓
+- `/etc/sddm.conf.d/30-foundry-live.conf` has `Session=plasma` ✓ (but overridden by `/etc/sddm.conf`)
+- No `etc/sddm.conf` in squashfs (casper writes it at boot) ✓
+
+Fix (2026-05-24, session 4) — two-pronged, in `1100-live-autologin.hook.chroot`:
+1. **Bake `/etc/sddm.conf` into the squashfs** with `Session=plasma` — backstop if casper-bottom doesn't run.
+2. **Rewrite `16foundry-autologin`** to use `sed -i` (not `printf >`), remove `if [ -f /root/usr/bin/sddm ]` guard, handle both `Session=` (blank) and `Session=plasma.desktop` patterns. Fall back to full `printf` write if the file doesn't exist at all.
+
+See verification steps 11–14 above to confirm this fix.
+
+**Status (end of session 4):** Build in progress; awaiting boot verification of the two-pronged autologin fix.
 
 ## Known concerns / external dependencies
 

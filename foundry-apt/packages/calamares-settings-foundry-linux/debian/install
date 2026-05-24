@@ -2,5 +2,5 @@ data/branding/foundry-linux  usr/share/calamares/branding/
 data/settings.conf           etc/calamares/
 data/config/foundry-linux-wallpaper.png  usr/share/backgrounds/
 data/config/grub             usr/share/grub/themes/foundry-linux/
-data/config/plymouth         usr/share/plymouth/themes/foundry-linux/
-data/config/sddm             usr/share/sddm/themes/foundry-linux/
+data/config/plymouth/*       usr/share/plymouth/themes/foundry-linux/
+data/config/sddm/*           usr/share/sddm/themes/foundry-linux/

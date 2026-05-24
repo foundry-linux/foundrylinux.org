@@ -1,0 +1,28 @@
+#!/bin/bash
+set -euo pipefail
+
+# Enable SSH on the live session for debug access.
+# Connect with: ssh -p 2222 user@localhost   (password: live)
+#               ssh -p 2222 root@localhost   (password: foundry)
+# Requires: boot with -netdev user,id=n0,hostfwd=tcp::2222-:22
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openssh-server
+
+# Allow password auth and root login for debug convenience.
+# Only the live session is exposed; this config is not for production.
+cat > /etc/ssh/sshd_config.d/50-live-debug.conf <<'EOF'
+PasswordAuthentication yes
+PermitEmptyPasswords no
+PermitRootLogin yes
+UseDNS no
+EOF
+
+# Enable sshd so it starts with the live session.
+systemctl enable ssh.service
+
+# Set a known root password for live debug use.
+echo 'root:foundry' | chpasswd
+
+# The live user account ('user') is created at boot by casper's 25adduser with
+# password hash U6aMy0wojraho (= 'live').  SSH will accept that password once
+# the account exists — no pre-configuration needed here.

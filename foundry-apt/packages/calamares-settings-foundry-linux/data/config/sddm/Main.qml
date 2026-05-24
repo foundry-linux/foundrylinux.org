@@ -1,10 +1,9 @@
 // Foundry Linux SDDM login theme
 // Requires SDDM 0.20+ (KDE Plasma 6)
 
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import SddmComponents 2.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 Rectangle {
     id: root
@@ -81,7 +80,7 @@ Rectangle {
                 font.pixelSize: 14
                 background: Rectangle { color: "#1a1a1a"; radius: 2 }
                 color: "#ebe8e2"
-                Keys.onReturnPressed: sddm.login(userInput.text, passInput.text, sessionModel.index(0, 0))
+                Keys.onReturnPressed: sddm.login(userInput.text, passInput.text, 0)
             }
 
             // Login button
@@ -99,7 +98,7 @@ Rectangle {
                     color: parent.pressed ? "#cc4a14" : "#ff5b1a"
                     radius: 2
                 }
-                onClicked: sddm.login(userInput.text, passInput.text, sessionModel.index(0, 0))
+                onClicked: sddm.login(userInput.text, passInput.text, 0)
             }
         }
     }

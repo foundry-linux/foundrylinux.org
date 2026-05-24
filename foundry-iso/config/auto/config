@@ -2,10 +2,10 @@
 set -e
 
 # Edition is driven by env; CI sets it per matrix axis (anvil | atelier).
-EDITION="${EDITION:?EDITION env var required: anvil or atelier}"
+EDITION="${EDITION:?EDITION env var required: anvil, atelier, or login-test}"
 case "$EDITION" in
-  anvil|atelier) ;;
-  *) echo "EDITION must be one of: anvil, atelier" >&2; exit 1 ;;
+  anvil|atelier|login-test) ;;
+  *) echo "EDITION must be one of: anvil, atelier, login-test" >&2; exit 1 ;;
 esac
 
 lb config noauto \
@@ -14,7 +14,7 @@ lb config noauto \
     --architectures amd64 \
     --binary-images iso-hybrid \
     --archive-areas "main restricted universe multiverse" \
-    --bootappend-live "boot=live components quiet splash" \
+    --bootappend-live "boot=casper live-media-path=live username=user quiet splash" \
     --iso-application "Foundry Linux" \
     --iso-volume "FOUNDRY-${EDITION^^}-${ISO_VERSION:-0.9.0}" \
     --iso-preparer "foundry-linux" \
@@ -40,11 +40,36 @@ lb config noauto \
     --zsync false \
     "${@}"
 
+# Export EDITION for chroot hooks. live-build's Chroot() doesn't pass the parent
+# environment into the chroot, but it bind-mounts config/ at /root/config/ (ro)
+# before running hooks. Hooks source this file to recover EDITION.
+printf 'EDITION=%s\n' "$EDITION" > config/hook-env.sh
+
 # Write the per-edition package list so live-build pulls it during chroot.
 # Note: calamares-settings-foundry-linux is installed via hook (see
 # config/hooks/normal/1000-install-local-debs.hook.chroot) to avoid lb's
 # packages.chroot/ local-repo signing path, which breaks with gnupg 2.4+
 # in containers (--secret-keyring is obsolete, agent_genkey fails w/o TTY).
-echo "foundry-${EDITION}"                    > config/package-lists/foundry.list.chroot
-echo "kubuntu-desktop"                       >> config/package-lists/foundry.list.chroot
-echo "calamares"                             >> config/package-lists/foundry.list.chroot
+if [[ "$EDITION" == "login-test" ]]; then
+  # Smallest working KDE/SDDM setup for login screen iteration.
+  # kubuntu-desktop brings SDDM + Plasma + the kubuntu SDDM theme so the
+  # display manager is known-good; we layer Foundry theming on top via hooks.
+  # calamares-settings-foundry-linux ships the SDDM theme + Plymouth theme.
+  # casper creates the live 'user' account in the initramfs (before systemd),
+  # eliminating the race between display-manager.service and user creation
+  # that afflicted live-config.
+  cat > config/package-lists/foundry.list.chroot <<'EOF'
+kubuntu-desktop
+openbox
+calamares
+calamares-settings-foundry-linux
+casper
+user-setup
+EOF
+else
+  echo "foundry-${EDITION}"                  > config/package-lists/foundry.list.chroot
+  echo "kubuntu-desktop"                    >> config/package-lists/foundry.list.chroot
+  echo "calamares"                          >> config/package-lists/foundry.list.chroot
+  echo "casper"                            >> config/package-lists/foundry.list.chroot
+  echo "user-setup"                        >> config/package-lists/foundry.list.chroot
+fi

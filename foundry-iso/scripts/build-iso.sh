@@ -11,8 +11,8 @@ set -euo pipefail
 
 EDITION="${EDITION:?EDITION env var required: anvil or atelier}"
 case "$EDITION" in
-  anvil|atelier) ;;
-  *) echo "EDITION must be one of: anvil, atelier" >&2; exit 1 ;;
+  anvil|atelier|login-test) ;;
+  *) echo "EDITION must be one of: anvil, atelier, login-test" >&2; exit 1 ;;
 esac
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -46,7 +46,12 @@ docker run --rm \
       xorriso genisoimage isolinux grub-efi-amd64-bin grub-pc-bin mtools dosfstools
     cp /work/scripts/genisoimage-wrapper.sh /usr/local/bin/genisoimage
     chmod +x /usr/local/bin/genisoimage
-    lb clean --purge 2>/dev/null || true
+    # Wipe sentinels + chroot so every run starts clean.  live-build sets chattr +i
+    # on sentinel files; raw rm -rf fails on those even as root.  Strip immutable
+    # flags first, then delete.  .cache/ is left intact so the bootstrap tarball
+    # and apt packages are not re-downloaded.
+    chattr -R -i .build/ chroot/ 2>/dev/null || true
+    rm -rf .build/ chroot/
     rm -rf config/includes.chroot/tmp
     bash config/auto/config
     # Inject local .debs (built but not yet published to apt.foundrylinux.org)
@@ -74,6 +79,25 @@ docker run --rm \
     chroot chroot apt-get install -y --no-install-recommends gnupg
     # Stage 2
     lb chroot
+
+    # Verify hooks ran — catch cached-chroot silences before packaging starts.
+    # Checks the chroot directory directly; no squashfs extraction needed.
+    echo "=== Verifying chroot hook output ==="
+    SDDM_CONF="chroot/etc/sddm.conf.d/30-foundry-live.conf"
+    if [[ ! -f "$SDDM_CONF" ]]; then
+      echo "ERROR: $SDDM_CONF absent — hook 1100 did not run" >&2; exit 1
+    fi
+    grep -q "DisplayServer=" "$SDDM_CONF" || \
+      { echo "ERROR: DisplayServer missing from sddm conf — old chroot cached?"; cat "$SDDM_CONF"; exit 1; }
+    echo "PASS: $(cat "$SDDM_CONF")"
+    CASPER_CONF="chroot/etc/casper.conf"
+    if [[ ! -f "$CASPER_CONF" ]]; then
+      echo "ERROR: $CASPER_CONF absent — hook 1100 did not write casper.conf" >&2; exit 1
+    fi
+    grep -q "USERNAME=" "$CASPER_CONF" || \
+      { echo "ERROR: USERNAME= missing from casper.conf"; cat "$CASPER_CONF"; exit 1; }
+    echo "PASS: $(cat "$CASPER_CONF")"
+
     # lb_binary_iso runs genisoimage and isohybrid inside the chroot via binary.sh.
     # Pre-populate both before lb binary so Check_package picks them up correctly:
     #   - genisoimage wrapper: routes through xorriso --allow-limited-size (squashfs > 4 GiB)
@@ -127,11 +151,6 @@ GCFG
     mcopy -i "$EFI_IMG" "$EFI_WORK/EFI/BOOT/BOOTX64.EFI" ::/EFI/BOOT/BOOTX64.EFI
 
     echo "=== Injecting EFI partition into ISO ==="
-    # -dev edits in-place; -map adds efi.img as a real ISO file, creating a
-    # pending session so -commit actually writes.  -boot_image registers the
-    # El Torito EFI entry pointing at that file.
-    # (-indev/-outdev with -append_partition alone creates no session data and
-    # silently produces no output — discovered during testing 2026-05-23.)
     xorriso \
       -dev binary.hybrid.iso \
       -map "$EFI_IMG" /boot/grub/efi.img \
@@ -142,11 +161,29 @@ GCFG
       -commit
     rm -rf "$EFI_WORK"
     echo "=== EFI boot support injected ==="
+    # Make the ISO world-writable so the host user can run xorriso without sudo.
+    chmod a+rw binary.hybrid.iso
   '
 
-# live-build writes the ISO to the working directory as binary.hybrid.iso
+# Patch grub.cfg on the host (avoids bash -c single-quote escaping issues).
+# -boot_image any keep preserves El Torito entries from the EFI injection above.
 ISO_SRC="$REPO_ROOT/binary.hybrid.iso"
 ISO_DST="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
+GRUB_PATCH="/tmp/foundry-grub-$$.cfg"
+echo "=== Patching grub.cfg ==="
+xorriso -osirrox on -dev "$ISO_SRC" -extract /boot/grub/grub.cfg "$GRUB_PATCH"
+sed -i 's/^set default=0$/set default=0\nset timeout=5/' "$GRUB_PATCH"
+# (live-config.user-fullname removed — casper reads USERFULLNAME from /etc/casper.conf in the initramfs)
+# Strip live-build's default tga background lines — tga.mod is absent from the
+# EFI grub image, causing "file not found" noise on every boot.
+sed -i '/^insmod tga$/d' "$GRUB_PATCH"
+sed -i '/^background_image /d' "$GRUB_PATCH"
+xorriso -dev "$ISO_SRC" \
+  -map "$GRUB_PATCH" /boot/grub/grub.cfg \
+  -boot_image any keep \
+  -commit
+rm -f "$GRUB_PATCH"
+echo "=== grub.cfg patched ==="
 
 if [[ -f "$ISO_SRC" ]]; then
   mv "$ISO_SRC" "$ISO_DST"

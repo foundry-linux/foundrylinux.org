@@ -297,7 +297,7 @@ tasks:
     cmds:
       - bash scripts/bump-version.sh
       - git add VERSION
-      - git commit -m "chore(foundry-iso): bump ISO version to $(cat VERSION)"
+      - 'git commit -m "chore(foundry-iso): bump ISO version to $(cat VERSION)"'
 
   iso-tag-bump:
     desc: "Sync and auto-increment patch tag on foundry-iso (e.g. v0.0.3 → v0.0.4)"
@@ -319,6 +319,12 @@ tasks:
       - dist/foundry-{{.EDITION | default "anvil"}}-*.iso
     cmds:
       - EDITION='{{.EDITION | default "anvil"}}' bash scripts/build-iso.sh
+
+  iso-login-test:
+    desc: "Quick login-test edition: sddm+openbox only, no kubuntu-desktop (~5 min)"
+    dir: foundry-iso
+    cmds:
+      - EDITION=login-test bash scripts/build-iso.sh
 
   iso-clean:
     desc: "Clean live-build artifacts and dist/"

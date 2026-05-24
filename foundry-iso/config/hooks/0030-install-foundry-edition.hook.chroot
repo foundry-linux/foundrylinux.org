@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+# live-build doesn't pass parent env into the chroot; recover EDITION from the
+# config bind-mount (config/ is mounted ro at /root/config/ during hook runs).
+# shellcheck source=/dev/null
+source /root/config/hook-env.sh
+case "$EDITION" in
+  anvil|atelier|login-test) ;;
+  *) echo "EDITION must be one of: anvil, atelier, login-test" >&2; exit 1 ;;
+esac
+
+if apt-cache show "foundry-${EDITION}" &>/dev/null; then
+  echo "=== Installing foundry-${EDITION} ==="
+  apt-get install -y "foundry-${EDITION}"
+  echo "=== foundry-${EDITION} installed ==="
+else
+  echo "=== No foundry-${EDITION} metapackage (e.g. login-test edition) — skipping ==="
+fi

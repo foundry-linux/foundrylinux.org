@@ -1,3 +1,28 @@
+calamares-settings-foundry-linux (1.0.3) resolute; urgency=medium
+
+  * Add Theme-API=2.0 and QtVersion=6 to SDDM metadata.desktop — SDDM 0.21
+    requires these fields to load a theme; without them it falls back to the
+    built-in gray greeter. Fix sddm.login() session arg: pass 0 (int) not
+    sessionModel.index(0,0) (QModelIndex).
+
+ -- Will Norris <wbnorris@gmail.com>  Fri, 23 May 2026 15:00:00 +0700
+
+calamares-settings-foundry-linux (1.0.2) resolute; urgency=medium
+
+  * Fix SDDM Main.qml: use Qt6-style unversioned imports and drop
+    SddmComponents import entirely — sddm/userModel/sessionModel are SDDM
+    context properties, no module import required. Qt5-versioned imports
+    cause silent parse failure on Ubuntu 26.04 Qt6.
+
+ -- Will Norris <wbnorris@gmail.com>  Sat, 23 May 2026 12:30:00 +0700
+
+calamares-settings-foundry-linux (1.0.1) resolute; urgency=medium
+
+  * Fix SDDM and Plymouth theme install paths: use /* glob so files land
+    directly in themes/foundry-linux/ not in a sddm/ or plymouth/ subdirectory.
+
+ -- Will Norris <wbnorris@gmail.com>  Sat, 23 May 2026 12:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.0) resolute; urgency=medium
 
   * Initial release. Calamares branding + settings for Foundry Linux 26.04
