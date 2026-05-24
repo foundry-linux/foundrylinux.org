@@ -4,48 +4,142 @@ Date: 2026-05-24
 
 ## Changes from base Kubuntu
 
-Everything below is delta on top of `kubuntu-desktop` in the `live-build` chroot. Graphics files are referenced by path only.
+Unified diffs of every file we change vs stock `kubuntu-desktop` + `casper`.
+Graphics files (SDDM theme, Plymouth theme, wallpaper) are shipped by
+`calamares-settings-foundry-linux` and referenced by path only — see
+[`foundry-apt/packages/calamares-settings-foundry-linux/`](../../foundry-apt/packages/calamares-settings-foundry-linux/).
 
 ### Packages added (`foundry.list.chroot`)
-| Package | Purpose |
-|---|---|
-| `openbox` | Fallback window manager for installer-only mode |
-| `calamares` | Graphical installer |
-| `calamares-settings-foundry-linux` | Branding: SDDM theme, Plymouth theme, wallpaper, Calamares config |
-| `casper` | Ubuntu live-session framework (creates live user, writes SDDM autologin) |
-| `user-setup` | Casper dependency for user account creation |
+`openbox`, `calamares`, `calamares-settings-foundry-linux`, `casper`, `user-setup`
 
 ### Packages removed (`strip.list.chroot.purge`)
-`libreoffice-*`, Kontact/KMail/Akonadi suite, KDE PIM, DigiKam, KDE games, KDEConnect, KRDC/KRFB, KTorrent, snapd/snap-store, usb-creator-kde, system-config-printer-kde
+`libreoffice-*`, Kontact/KMail/Akonadi, KDE PIM, DigiKam, KDE games, KDEConnect, KRDC/KRFB, KTorrent, `snapd`/`snap-store`, `usb-creator-kde`, `system-config-printer-kde`
 
-### SDDM config delta (`1100-live-autologin.hook.chroot`)
-| File | Action | Why |
-|---|---|---|
-| `/etc/sddm.conf.d/20-kubuntu.conf` | **Removed** | Sets `[Autologin] User=` blank, disables autologin |
-| `/etc/sddm.conf.d/30-foundry-live.conf` | **Added** | `DisplayServer=wayland`, Foundry theme, `User=user Session=plasma` |
-| `/etc/sddm.conf` | **Baked** | Highest-priority fallback with correct autologin if casper scripts fail |
-| `/var/lib/live/config/sddm` | **Pre-created (empty)** | Blocks `live-config`'s `0085-sddm` from overwriting sddm.conf with `Session=` blank |
+### File diffs
 
-### Casper initramfs patches (`1100-live-autologin.hook.chroot`)
-| Script | Change |
-|---|---|
-| `casper-bottom/15autologin` | Python patch: strip `.desktop` suffix from session name; default to `plasma` |
-| `casper-bottom/16foundry-autologin` | **New**: sed-fixes `Session=` and `Session=plasma.desktop` after 15autologin runs |
+> Note: the `Ubuntu Budgie` elif in `15autologin` is a casper 26.04.2 upstream
+> addition (vs the 25.10.2 baseline); our patch is the `sddm_session_name` block
+> and the `Session=$sddm_session_name` substitution.
 
-### casper.conf
-`USERNAME=user`, `USERFULLNAME="Foundry Linux"`, `HOST=foundry-linux`, `BUILD_SYSTEM=Ubuntu`
+```diff
+--- a/casper-bottom/15autologin
++++ b/casper-bottom/15autologin
+@@ -59,12 +59,20 @@
+     # Lubuntu
+     elif [ -f /root/usr/share/xsessions/lubuntu-live-environment.desktop ]; then
+         sddm_session=lubuntu-live-environment.desktop
++    # Ubuntu Budgie
++    elif [ -f /root/usr/share/wayland-sessions/budgie-desktop-live.desktop ]; then
++        sddm_session=budgie-desktop-live.desktop
+     fi
+ 
++    # Strip .desktop suffix if present; SDDM expects bare session names.
++    # Default to "plasma" when the file-existence checks above all missed
++    # (e.g. none of the known kubuntu/studio/lubuntu/budgie files exist).
++    sddm_session_name="${sddm_session%.desktop}"
++    sddm_session_name="${sddm_session_name:-plasma}"
+     cat >>/root/etc/sddm.conf <<EOF
+ [Autologin]
+ User=$USERNAME
+-Session=$sddm_session
++Session=$sddm_session_name
+ EOF
+ fi
+--- a/casper-bottom/16foundry-autologin
++++ b/casper-bottom/16foundry-autologin
+@@ -0,0 +1,24 @@
++#!/bin/sh
++PREREQ=""
++DESCRIPTION="Configuring SDDM autologin for Foundry Linux live session..."
++
++prereqs() { echo "$PREREQ"; }
++case $1 in prereqs) prereqs; exit 0 ;; esac
++
++. /scripts/casper-functions
++log_begin_msg "$DESCRIPTION"
++
++# Fix any Session= (empty or wrong) that casper's 15autologin may have written.
++if [ -f /root/etc/sddm.conf ]; then
++    sed -i -e 's/^Session=$/Session=plasma/' \
++           -e 's/^Session=plasma\.desktop$/Session=plasma/' \
++           /root/etc/sddm.conf
++else
++    printf '[Autologin]\nUser=%s\nSession=plasma\nRelogin=false\n' \
++        "${USERNAME:-user}" > /root/etc/sddm.conf
++fi
++
++log_end_msg
+--- a/etc/sddm.conf.d/20-kubuntu.conf
++++ b/etc/sddm.conf.d/20-kubuntu.conf
+@@ -1,4 +0,0 @@
+-[Autologin]
+-Relogin=false
+-Session=plasma
+-User=
+--- a/etc/sddm.conf.d/30-foundry-live.conf
++++ b/etc/sddm.conf.d/30-foundry-live.conf
+@@ -0,0 +1,10 @@
++[General]
++DisplayServer=wayland
++
++[Theme]
++Current=foundry-linux
++
++[Autologin]
++User=user
++Session=plasma
++Relogin=false
+--- a/etc/sddm.conf
++++ b/etc/sddm.conf
+@@ -0,0 +1,4 @@
++[Autologin]
++User=user
++Session=plasma
++Relogin=false
+--- a/etc/casper.conf
++++ b/etc/casper.conf
+@@ -1,14 +1,4 @@
+-# This file should go in /etc/casper.conf
+-# Supported variables are:
+-# USERNAME, USERFULLNAME, HOST, BUILD_SYSTEM, FLAVOUR
+-
+-export USERNAME="ubuntu"
+-export USERFULLNAME="Live session user"
+-export HOST="ubuntu"
++export USERNAME="user"
++export USERFULLNAME="Foundry Linux"
++export HOST="foundry-linux"
+ export BUILD_SYSTEM="Ubuntu"
+-
+-# USERNAME and HOSTNAME as specified above won't be honoured and will be set to
+-# flavour string acquired at boot time, unless you set FLAVOUR to any
+-# non-empty string.
+-
+-# export FLAVOUR="Ubuntu"
+--- a/etc/environment
++++ b/etc/environment
+@@ -1 +1,2 @@
+ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
++LIBGL_ALWAYS_SOFTWARE=1
+--- a/etc/skel/.config/autostart/foundry-wallpaper.desktop
++++ b/etc/skel/.config/autostart/foundry-wallpaper.desktop
+@@ -0,0 +1,5 @@
++[Desktop Entry]
++Type=Application
++Name=Set Foundry Linux Wallpaper
++Exec=plasma-apply-wallpaperimage /usr/share/sddm/themes/foundry-linux/background.png
++X-KDE-autostart-after=panel
+--- a/var/lib/live/config/sddm
++++ b/var/lib/live/config/sddm
+@@ -0,0 +1 @@
++(empty — blocks live-config 0085-sddm from overwriting /etc/sddm.conf)
+```
 
-### Environment
-`LIBGL_ALWAYS_SOFTWARE=1` appended to `/etc/environment` — forces llvmpipe in QEMU; ignored on real hardware with GPU driver loaded.
-
-### Wallpaper autostart (`/etc/skel/.config/autostart/foundry-wallpaper.desktop`)
-`plasma-apply-wallpaperimage /usr/share/sddm/themes/foundry-linux/background.png` — runs at session start to set the desktop wallpaper. (Image: [`calamares-settings-foundry-linux/.../background.png`](../../foundry-apt/packages/calamares-settings-foundry-linux/))
-
-### Plymouth theme (`1050-plymouth-theme.hook.chroot`, `1100-live-autologin.hook.chroot`)
-`update-alternatives` sets `/usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth` as the default Plymouth theme. (Assets in `calamares-settings-foundry-linux` package.)
-
-### SDDM theme
-`/usr/share/sddm/themes/foundry-linux/` — `Main.qml`, `background.png`, `metadata.desktop`. (Shipped by `calamares-settings-foundry-linux`.)
+### Graphics files (not diffed — binary/QML assets in `calamares-settings-foundry-linux`)
+- `/usr/share/sddm/themes/foundry-linux/Main.qml`
+- `/usr/share/sddm/themes/foundry-linux/background.png`
+- `/usr/share/sddm/themes/foundry-linux/metadata.desktop`
+- `/usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth` (+ assets)
 
 ---
 
