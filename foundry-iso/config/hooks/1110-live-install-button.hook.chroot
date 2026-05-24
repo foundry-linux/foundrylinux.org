@@ -18,3 +18,22 @@ StartupNotify=true
 Categories=Qt;System;
 EOF
 chmod +x /etc/skel/Desktop/install-foundry-linux.desktop
+
+# When booted from the GRUB "Install Foundry Linux" entry, the kernel cmdline
+# contains automatic-calamares.  An XDG autostart entry detects this and
+# launches Calamares immediately after the Plasma session is ready.
+cat > /usr/local/bin/foundry-autoinstall.sh <<'EOF'
+#!/bin/sh
+grep -q "automatic-calamares" /proc/cmdline && exec sudo -E calamares
+EOF
+chmod +x /usr/local/bin/foundry-autoinstall.sh
+
+mkdir -p /etc/xdg/autostart
+cat > /etc/xdg/autostart/foundry-autoinstall.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Foundry Linux Auto-Install
+Exec=/usr/local/bin/foundry-autoinstall.sh
+Terminal=false
+X-KDE-autostart-after=panel
+EOF

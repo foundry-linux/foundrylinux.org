@@ -177,6 +177,29 @@ sed -i 's/^set default=0$/set default=0\nset timeout=5/' "$GRUB_PATCH"
 sed -i "s/Debian GNU\/Linux - live$/Foundry Linux - Live/" "$GRUB_PATCH"
 sed -i "s/Debian GNU\/Linux - live (fail-safe mode)$/Foundry Linux - Live (safe mode)/" "$GRUB_PATCH"
 sed -i "s/Debian GNU\/Linux - live, kernel/Foundry Linux - Live, kernel/" "$GRUB_PATCH"
+# Insert "Install Foundry Linux" entry immediately after the first menuentry
+# block, reusing its linux/initrd lines with automatic-calamares appended.
+python3 - "$GRUB_PATCH" <<'PYEOF'
+import sys, re
+path = sys.argv[1]
+with open(path) as f:
+    content = f.read()
+linux_line  = re.search(r'^( *linux +.+)$',  content, re.MULTILINE).group(1)
+initrd_line = re.search(r'^( *initrd +.+)$', content, re.MULTILINE).group(1)
+install_entry = (
+    '\nmenuentry "Install Foundry Linux" {\n'
+    '  set gfxpayload=keep\n'
+    f'{linux_line} automatic-calamares\n'
+    f'{initrd_line}\n'
+    '}\n'
+)
+# Inject after the closing brace of the first menuentry block.
+idx = content.index('\n}') + 2
+content = content[:idx] + install_entry + content[idx:]
+with open(path, 'w') as f:
+    f.write(content)
+print('Injected Install Foundry Linux GRUB entry')
+PYEOF
 # Strip live-build's default tga background lines — tga.mod is absent from the
 # EFI grub image, causing "file not found" noise on every boot.
 sed -i '/^insmod tga$/d' "$GRUB_PATCH"
