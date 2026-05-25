@@ -9,7 +9,7 @@
 
 set -euo pipefail
 
-EDITION="${EDITION:?EDITION env var required: anvil or atelier}"
+EDITION="${EDITION:-anvil}"
 case "$EDITION" in
   anvil|atelier) ;;
   *) echo "EDITION must be one of: anvil, atelier" >&2; exit 1 ;;
