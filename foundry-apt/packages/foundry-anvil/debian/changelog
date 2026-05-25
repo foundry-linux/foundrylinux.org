@@ -1,3 +1,9 @@
+foundry-anvil (1.0.3) resolute; urgency=medium
+
+  * Add btop to Depends for system monitoring out of the box.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 26 May 2026 00:00:00 +0700
+
 foundry-anvil (1.0.2) resolute; urgency=medium
 
   * Add foundry-welcome to Depends so the welcome screen is included in

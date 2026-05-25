@@ -10,19 +10,20 @@ Rules-Requires-Root: no
 Package: foundry-anvil
 Architecture: all
 Depends: ${misc:Depends},
+ bash-completion,
+ btop,
  firefox,
- worldfoundry,
- foundry-retro-tools,
  foundry-emulators-computers,
  foundry-emulators-consoles,
  foundry-game-frameworks,
  foundry-image-cli,
- task,
- sudo,
+ foundry-retro-tools,
+ foundry-welcome,
  libvte-2.91-0,
- bash-completion,
  man-db,
- foundry-welcome
+ sudo,
+ task,
+ worldfoundry
 Description: Foundry Linux base layer — full kit, devbox image preinstall
  The base "Foundry Linux" install for game-makers, level designers,
  and digital artists: the WorldFoundry authoring stack (Blender + 10
