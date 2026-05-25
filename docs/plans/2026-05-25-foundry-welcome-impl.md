@@ -24,5 +24,18 @@ Steps from the 2026-05-24 plan, executed here:
 1. Build in Docker
 2. Install smoke test (foundry-welcome opens, 3 pages, nav works)
 3. Sentinel check (second run exits immediately)
-4. QEMU ISO test (deferred — boot verification in next session)
+4. QEMU ISO test — **PASS** (2026-05-25, QEMU boot)
+
+   Page 1 — Welcome logo:
+
+   <img src="screenshots/welcome-page1.png" width="700">
+
+   Page 2 — What's Installed (3D & Art + Retro Game Dev sections visible, scrollable):
+
+   <img src="screenshots/welcome-page2.png" width="700">
+
+   Page 3 — Community & Support (Done button closes dialog):
+
+   <img src="screenshots/welcome-page3.png" width="700">
+
 5. Re-login test (deferred)

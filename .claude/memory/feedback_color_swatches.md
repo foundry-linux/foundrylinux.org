@@ -19,6 +19,8 @@ Place the swatch immediately before or after the hex value in tables and prose.
 
 **How to apply:** Any time a color (by hex, RGB, name, or CSS variable) is shown in a response, table, or doc — add the swatch. Sweep existing docs when this rule is first established.
 
+**Placement rule for md-to-pdf.sh rendering:** Swatches must be outside all backtick code spans. The pattern `` `code` <span...></span> `#hex` `` is safe. Swatches accidentally placed inside a code span (e.g. `` `gradient <span...></span>` ``) will render as escaped HTML. The script now protects `<span>` elements before the code-span regex, but correct placement is still required. See fix: `python-tui-lib` commit `1766121`.
+
 ## Foundry Linux design tokens
 
 | Token | Swatch | Hex | RGB | Role |

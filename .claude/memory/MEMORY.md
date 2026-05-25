@@ -1,6 +1,6 @@
 # Memory Index
 
-- [Always show color swatches with color values](feedback_color_swatches.md) — inline HTML span swatch before every hex/RGB/name; Foundry palette tokens recorded here.
+- [Always show color swatches with color values](feedback_color_swatches.md) — inline HTML span swatch before every hex/RGB/name; placement rules for md-to-pdf.sh; Foundry palette tokens recorded here.
 - [Keep live-build investigation doc updated](feedback_live_investigation_doc.md) — append new root causes/fixes to docs/investigations/2026-05-23-live-build-hooks-boot-theming.md each session.
 - [site/index.html is generated — never edit directly](feedback_site_generated_file.md) — edit site/*.jsx or scripts/ssr-render.js, then run task site-build.
 - [Iterate the /package skill as we package](feedback_package_skill_iterate.md) — every real /package run is a feedback loop for the skill itself; commit the refinement alongside the package.
