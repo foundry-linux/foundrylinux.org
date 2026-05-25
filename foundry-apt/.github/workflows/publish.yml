@@ -46,7 +46,8 @@ jobs:
               apt-get install -y --no-install-recommends \
                 build-essential debhelper dpkg-dev devscripts fakeroot lintian \
                 curl ca-certificates pkg-config sudo \
-                zip python3
+                zip python3 \
+                cmake qt6-base-dev qt6-declarative-dev
               bash scripts/build-all.sh
             '
 

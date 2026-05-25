@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Foundry Welcome
+GenericName=Welcome Center
+Comment=Welcome to Foundry Linux
+Exec=foundry-welcome
+Icon=foundry-linux
+Categories=System;
+Keywords=welcome;setup;intro;

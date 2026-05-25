@@ -139,6 +139,15 @@ log_end_msg
 EOF
 chmod +x /usr/share/initramfs-tools/scripts/casper-bottom/16foundry-autologin
 
+# Suppress plasma-welcome; foundry-welcome replaces it.
+# Set loaded=false in kded6rc so KDED never activates the plasma_welcome module.
+mkdir -p /etc/skel/.config
+printf '[Module-plasma_welcome]\nloaded=false\n' >> /etc/skel/.config/kded6rc
+
+# Remove Kubuntu's extra welcome page — it references Kubuntu branding we
+# don't want on the Foundry Linux desktop.
+rm -f /usr/share/plasma/plasma-welcome/extra-pages/01-Kubuntu.qml
+
 # Regenerate the initramfs bundling:
 # - the patched 15autologin
 # - the new 16foundry-autologin

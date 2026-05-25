@@ -1,0 +1,25 @@
+Source: foundry-welcome
+Section: misc
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               cmake (>= 3.16),
+               qt6-base-dev,
+               qt6-declarative-dev
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org
+Rules-Requires-Root: no
+
+Package: foundry-welcome
+Architecture: amd64
+Depends: ${misc:Depends}, ${shlibs:Depends},
+         qml6-module-org-kde-kirigami
+Description: Welcome Center for Foundry Linux
+ A simple QML/Kirigami application shown on first login to the Foundry Linux
+ live session and installed desktop. Displays three panels: an introduction
+ to Foundry Linux, a summary of pre-installed tools, and links to community
+ resources and documentation.
+ .
+ Shown once per user (sentinel file ~/.config/foundry-welcome-shown). On
+ the live ISO the sentinel never persists across reboots so it appears on
+ every live-session login.
