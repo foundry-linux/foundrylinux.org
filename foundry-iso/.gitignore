@@ -4,6 +4,8 @@
 cache/
 chroot/
 chroot.*
+binary/
+binary.hybrid.iso
 binary.contents
 binary.packages
 

@@ -15,3 +15,7 @@ packages/**/debian/*/
 !packages/**/debian/source/
 !packages/**/debian/patches/
 packages/**/*.deb
+# dpkg-source artifacts (source packages) that land in packages/ root
+packages/*.dsc
+packages/*.tar.xz
+packages/*.tar.gz
