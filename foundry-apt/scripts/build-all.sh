@@ -84,6 +84,17 @@ for pkgdir in packages/*/; do
     fi
 
     if [[ -x "$pkgdir/build.sh" ]]; then
+        # Skip if the current changelog version is already in dist/.
+        if [[ -f "$pkgdir/debian/changelog" ]]; then
+            _ver=$(dpkg-parsechangelog -l "$pkgdir/debian/changelog" -SVersion 2>/dev/null || true)
+            if [[ -n "$_ver" ]]; then
+                _existing=$(ls "${REPO_ROOT}/dist/${name}_${_ver}_"*.deb 2>/dev/null | head -1 || true)
+                if [[ -n "$_existing" ]]; then
+                    echo "SKIP $name (dist/$(basename "$_existing") already current)"
+                    continue
+                fi
+            fi
+        fi
         echo "=== Running $name/build.sh ==="
         if ! bash "$pkgdir/build.sh"; then
             echo "FAIL $name (build.sh exited non-zero)" >&2

@@ -29,6 +29,10 @@ curl -fsSL https://apt.worldfoundry.org/key.gpg \
   | gpg --dearmor > "$REPO_ROOT/config/archives/worldfoundry.key"
 curl -fsSL https://dl.cloudsmith.io/public/task/task/gpg.046FD1186CA342F0.key \
   | gpg --dearmor > "$REPO_ROOT/config/archives/cloudsmith-task.key"
+# Mozilla key must be binary (dearmored) — apt on 26.04 rejects ASCII-armored
+# keys in trusted.gpg.d/, and live-build copies config/archives/*.key verbatim.
+curl -fsSL https://packages.mozilla.org/apt/repo-signing-key.gpg \
+  | gpg --dearmor > "$REPO_ROOT/config/archives/mozilla.key"
 
 echo "=== Building foundry-${EDITION} ISO (inside ubuntu:26.04 container) ==="
 docker run --rm \
@@ -74,6 +78,7 @@ docker run --rm \
     cp config/archives/foundry.key        chroot/etc/apt/trusted.gpg.d/foundry.key.gpg
     cp config/archives/worldfoundry.key  chroot/etc/apt/trusted.gpg.d/worldfoundry.key.gpg
     cp config/archives/cloudsmith-task.key chroot/etc/apt/trusted.gpg.d/cloudsmith-task.key.gpg
+    cp config/archives/mozilla.key        chroot/etc/apt/trusted.gpg.d/mozilla.key.gpg
     # Pre-install gnupg so apt-utils postinst finds gpg during lb_chroot_archives.
     # Debootstrap minbase does not include gpg; lb_chroot_archives installs apt-utils
     # whose postinst calls gpg and exits non-zero if not found, aborting the build.
