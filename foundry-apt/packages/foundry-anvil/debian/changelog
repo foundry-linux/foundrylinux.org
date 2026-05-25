@@ -1,3 +1,10 @@
+foundry-anvil (1.0.2) resolute; urgency=medium
+
+  * Add foundry-welcome to Depends so the welcome screen is included in
+    the ISO and installs by default.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 25 May 2026 00:00:00 +0700
+
 foundry-anvil (1.0.1) resolute; urgency=medium
 
   * Add firefox (from packages.mozilla.org official deb repo) as a dependency.

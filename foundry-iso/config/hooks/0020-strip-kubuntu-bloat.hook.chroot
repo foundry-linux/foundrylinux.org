@@ -16,11 +16,15 @@ apt-get purge -y --auto-remove \
     >/dev/null 2>&1 || true
 
 # Disable plasma-welcome (Kubuntu's first-run welcome app) — purging it
-# fails because kubuntu-desktop depends on it.  Overriding the XDG autostart
-# entry with Hidden=true prevents it launching in any session.
-mkdir -p /etc/xdg/autostart
-printf '[Desktop Entry]\nHidden=true\n' \
-  > /etc/xdg/autostart/org.kde.plasma-welcome.desktop
+# fails because kubuntu-desktop depends on it.  plasma-welcome is launched
+# by a kded6 plugin (kded_plasma_welcome.so), NOT an XDG autostart file,
+# so the correct suppression is to tell kded6 not to autoload that module.
+mkdir -p /etc/xdg
+cat >> /etc/xdg/kded6rc <<'EOF'
+
+[Module-plasma_welcome]
+autoload=false
+EOF
 
 # Suppress the "Install Language Support" nag (language-selector).
 # The live session has no guaranteed network and game devs don't need this.

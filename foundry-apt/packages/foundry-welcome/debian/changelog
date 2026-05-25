@@ -1,3 +1,12 @@
+foundry-welcome (1.0.2) resolute; urgency=medium
+
+  * Add src/qml/pages/qmldir so Qt6 can resolve CommunityPage, IntroPage,
+    and ToolsPage from the "import ./pages" directory import in main.qml.
+    Without qmldir, Qt6 refuses to import a subdirectory and the app crashes
+    on startup with "CommunityPage is not a type".
+
+ -- Will Norris <wbnorris@gmail.com>  Sun, 25 May 2026 00:00:00 +0700
+
 foundry-welcome (1.0.1) resolute; urgency=medium
 
   * Add build.sh so package builds via dpkg-buildpackage on the target Ubuntu
