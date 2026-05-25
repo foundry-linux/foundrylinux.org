@@ -36,6 +36,19 @@ Categories=Qt;System;
 EOF
 chmod +x /etc/skel/Desktop/install-foundry-linux.desktop
 
+# KDE Plasma 6 requires GVfs metadata::trusted to execute .desktop files on
+# the Desktop without showing an "Open with" dialog. Set it at session start.
+mkdir -p /etc/skel/.config/autostart
+cat > /etc/skel/.config/autostart/trust-install-button.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Trust Install Button
+Exec=gio set /home/user/Desktop/install-foundry-linux.desktop metadata::trusted true
+OnlyShowIn=KDE;
+X-KDE-autostart-after=panel
+NoDisplay=true
+EOF
+
 # When booted from the GRUB "Install Foundry Linux" entry, the kernel cmdline
 # contains automatic-calamares.  An XDG autostart entry detects this and
 # launches Calamares immediately after the Plasma session is ready.
