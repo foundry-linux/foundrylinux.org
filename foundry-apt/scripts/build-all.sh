@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Build every package under packages/ into dist/.
+# Build packages under packages/ into dist/.
+#
+# Usage:
+#   bash scripts/build-all.sh            # build all packages (skip already-current .debs)
+#   bash scripts/build-all.sh foundry-welcome   # build one package by name
 #
 # Two layouts supported:
 #
@@ -21,7 +25,9 @@ cd "$(dirname "$0")/.."
 
 REPO_ROOT="$(pwd)"
 mkdir -p dist
-rm -f dist/*.deb
+
+# Optional single-package filter (first positional arg).
+PKG_FILTER="${1:-}"
 
 build_canonical() {
     local pkgdir="$1" name="$2"
@@ -36,6 +42,14 @@ build_canonical() {
     if [[ -z "$ver" ]]; then
         echo "FAIL $name (could not parse version from debian/changelog)" >&2
         return 1
+    fi
+
+    # Skip if a .deb for this exact version already exists in dist/.
+    local existing
+    existing=$(ls "${REPO_ROOT}/dist/${name}_${ver}_"*.deb 2>/dev/null | head -1 || true)
+    if [[ -n "$existing" ]]; then
+        echo "SKIP $name (dist/$(basename "$existing") already current)"
+        return 0
     fi
 
     builddir=$(mktemp -d -t "${name}-build-XXXXXX")
@@ -64,8 +78,13 @@ fail=0
 for pkgdir in packages/*/; do
     name=$(basename "$pkgdir")
 
+    # Single-package filter.
+    if [[ -n "$PKG_FILTER" && "$name" != "$PKG_FILTER" ]]; then
+        continue
+    fi
+
     if [[ -x "$pkgdir/build.sh" ]]; then
-        echo "=== Running $name/build.sh (legacy build.sh wrapper) ==="
+        echo "=== Running $name/build.sh ==="
         if ! bash "$pkgdir/build.sh"; then
             echo "FAIL $name (build.sh exited non-zero)" >&2
             fail=1

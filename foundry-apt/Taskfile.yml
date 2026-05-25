@@ -7,9 +7,9 @@ tasks:
       - task --list
 
   build:
-    desc: "Build all .debs into dist/"
+    desc: "Build .debs into dist/ (PKG=name to build one; skips already-current packages)"
     cmds:
-      - bash scripts/build-all.sh
+      - bash scripts/build-all.sh {{.PKG}}
 
   clean:
     desc: "Remove dist/ and public/"
