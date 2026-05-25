@@ -122,3 +122,13 @@ fi
 echo
 echo "=== dist/ ==="
 ls -lh dist/
+
+# When running as root inside a Docker container, bind-mounted files land as
+# root on the host. Re-own dist/*.deb to match the directory's host owner so
+# the caller doesn't end up with root-owned artifacts.
+if [[ $EUID -eq 0 ]]; then
+    volume_owner=$(stat -c '%u:%g' .)
+    if [[ "$volume_owner" != "0:0" ]]; then
+        chown "$volume_owner" dist/*.deb 2>/dev/null || true
+    fi
+fi
