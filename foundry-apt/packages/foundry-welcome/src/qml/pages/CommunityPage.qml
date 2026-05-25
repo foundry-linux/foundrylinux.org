@@ -35,12 +35,11 @@ Item {
                   url: "https://foundrylinux.org/community" },
             ]
 
-            Kirigami.BasicListItem {
+            QQC2.ItemDelegate {
                 required property var modelData
                 Layout.fillWidth: true
                 icon.name: modelData.icon
-                label: modelData.label
-                subtitle: modelData.url
+                text: modelData.label + "\n" + modelData.url
                 onClicked: Qt.openUrlExternally(modelData.url)
             }
         }
