@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+# Pin firefox* to Mozilla's official deb repo so it wins over Ubuntu's snap redirect.
+cat > /etc/apt/preferences.d/mozilla-firefox <<'EOF'
+Package: firefox*
+Pin: release o=Mozilla
+Pin-Priority: 1001
+EOF
+apt-get update -qq

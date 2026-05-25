@@ -10,6 +10,7 @@ Rules-Requires-Root: no
 Package: foundry-anvil
 Architecture: all
 Depends: ${misc:Depends},
+ firefox,
  worldfoundry,
  foundry-retro-tools,
  foundry-emulators-computers,

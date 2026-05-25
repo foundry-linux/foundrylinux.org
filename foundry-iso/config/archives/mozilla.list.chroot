@@ -1,0 +1,1 @@
+deb [signed-by=/etc/apt/trusted.gpg.d/mozilla.key.gpg] https://packages.mozilla.org/apt mozilla main
