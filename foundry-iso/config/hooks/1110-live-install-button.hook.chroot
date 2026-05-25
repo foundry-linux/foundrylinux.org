@@ -21,8 +21,15 @@ exec sudo -E calamares
 EOF
 chmod +x /usr/local/bin/launch-calamares.sh
 
-mkdir -p /etc/skel/Desktop
-cat > /etc/skel/Desktop/install-foundry-linux.desktop <<'EOF'
+# Install the desktop file to a system-trusted location (/usr/share/applications/).
+# Plasma 6's folder view calls KFileItem::targetUrl() when activating files, which
+# resolves symlinks to their targets.  Files whose target path is under a
+# QStandardPaths::ApplicationsLocation dir (e.g. /usr/share/applications/) pass
+# KDesktopFile::isAuthorizedDesktopFile() without needing GIO metadata::trusted.
+# This is the only reliable trust mechanism on overlayfs (which has nouserxattr)
+# when gvfsd is not installed.
+mkdir -p /usr/share/applications
+cat > /usr/share/applications/install-foundry-linux.desktop <<'EOF'
 [Desktop Entry]
 Type=Application
 Name=Install Foundry Linux
@@ -34,20 +41,12 @@ Terminal=false
 StartupNotify=true
 Categories=Qt;System;
 EOF
-chmod +x /etc/skel/Desktop/install-foundry-linux.desktop
 
-# KDE Plasma 6 requires GVfs metadata::trusted to execute .desktop files on
-# the Desktop without showing an "Open with" dialog. Set it at session start.
-mkdir -p /etc/skel/.config/autostart
-cat > /etc/skel/.config/autostart/trust-install-button.desktop <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=Trust Install Button
-Exec=gio set /home/user/Desktop/install-foundry-linux.desktop metadata::trusted true
-OnlyShowIn=KDE;
-X-KDE-autostart-after=panel
-NoDisplay=true
-EOF
+# Desktop icon is a symlink → system path, so it's trusted by location.
+# adduser/casper copy /etc/skel/ with cp -a, which preserves symlinks.
+mkdir -p /etc/skel/Desktop
+ln -sf /usr/share/applications/install-foundry-linux.desktop \
+    /etc/skel/Desktop/install-foundry-linux.desktop
 
 # When booted from the GRUB "Install Foundry Linux" entry, the kernel cmdline
 # contains automatic-calamares.  An XDG autostart entry detects this and
