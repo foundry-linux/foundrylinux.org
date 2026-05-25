@@ -23,13 +23,6 @@ images:
     productIcon:   "logo.png"
     productWelcome: "banner.png"
 
-# Sidebar / navigation colours — forge palette (near-black + ember orange).
-sidebar:
-    background:  "#0e0e0e"
-    text:        "#e0e0e0"
-    textSelect:  "#ffffff"
-    select:      "#ff5b1a"
-
 # Slideshow shown while packages install (QML file, 4–6 slides).
 slideshow:               "slideshow.qml"
 slideshowAPI:            2
