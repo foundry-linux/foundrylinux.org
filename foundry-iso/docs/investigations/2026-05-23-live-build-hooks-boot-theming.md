@@ -389,6 +389,29 @@ ssh -p 2222 root@localhost   # password: foundry
 
 ---
 
+## 16. plasma-welcome: purge it rather than suppressing via kded6rc
+
+**Problem:** plasma-welcome launched at first boot despite two layers of kded6rc suppression:
+- `/etc/xdg/kded6rc` → `[Module-plasma_welcome] autoload=false` (system-wide, hook 0020)
+- `/etc/skel/.config/kded6rc` → `[Module-plasma_welcome] loaded=false` (user skel, hook 1100)
+
+**Root cause (two compounding mistakes):**
+
+1. **Wrong key in user skel.** `loaded` tracks whether a kded6 module is currently active in a session; `autoload` is what kded6 reads at startup to decide whether to load the module. Setting `loaded=false` has no suppression effect.
+
+2. **System-level kded6rc not consulted for module autoload.** kded6 reads the `autoload` key from the user-level `~/.config/kded6rc`. When `autoload` is absent from the user config, kded6 falls back to the value embedded in the plugin's metadata (`X-KDE-Kded-autoload=true`), not to `/etc/xdg/kded6rc`. The system config is therefore ineffective for module suppression.
+
+**Root cause of the original wrong comment:** Hook 0020 originally said "purging plasma-welcome fails because kubuntu-desktop depends on it." This was incorrect — `apt-cache show kubuntu-desktop` and `apt-cache show kubuntu-settings-desktop` both list `plasma-welcome` under `Recommends`, not `Depends`. Purging it is clean.
+
+**Fix (2026-05-25):** Purge `plasma-welcome` in hook 0020 instead of suppressing via config. Removed all kded6rc suppression and QML page removal from both hooks — none of it is needed once the package is gone.
+
+```bash
+# In hook 0020:
+apt-get purge -y plasma-welcome >/dev/null 2>&1 || true
+```
+
+---
+
 <details>
 <summary><strong>Historical: live-config dead ends (superseded by §12)</strong></summary>
 

@@ -15,16 +15,10 @@ apt-get purge -y --auto-remove \
     usb-creator-kde system-config-printer-kde kcharselect kfind \
     >/dev/null 2>&1 || true
 
-# Disable plasma-welcome (Kubuntu's first-run welcome app) — purging it
-# fails because kubuntu-desktop depends on it.  plasma-welcome is launched
-# by a kded6 plugin (kded_plasma_welcome.so), NOT an XDG autostart file,
-# so the correct suppression is to tell kded6 not to autoload that module.
-mkdir -p /etc/xdg
-cat >> /etc/xdg/kded6rc <<'EOF'
-
-[Module-plasma_welcome]
-autoload=false
-EOF
+# Purge plasma-welcome (Kubuntu's first-run welcome app) — foundry-welcome replaces it.
+# Both kubuntu-desktop and kubuntu-settings-desktop list plasma-welcome only as
+# Recommends (not Depends), so this purge is clean with no broken dependencies.
+apt-get purge -y plasma-welcome >/dev/null 2>&1 || true
 
 # Suppress the "Install Language Support" nag (language-selector).
 # The live session has no guaranteed network and game devs don't need this.
