@@ -22,6 +22,11 @@ mkdir -p /etc/xdg/autostart
 printf '[Desktop Entry]\nHidden=true\n' \
   > /etc/xdg/autostart/org.kde.plasma-welcome.desktop
 
+# Suppress the "Install Language Support" nag (language-selector).
+# The live session has no guaranteed network and game devs don't need this.
+printf '[Desktop Entry]\nHidden=true\n' \
+  > /etc/xdg/autostart/language-selector.desktop
+
 # Remove Kubuntu-specific desktop shortcuts from the live user skeleton.
 rm -f /etc/skel/Desktop/org.kfocus.web.howtos.desktop
 rm -f /etc/skel/Desktop/org.kubuntu.web.home.desktop
