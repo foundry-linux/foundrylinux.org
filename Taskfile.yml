@@ -323,20 +323,38 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        # Find the newest .deb for this package name in foundry-apt/dist/
         deb=$(ls -t foundry-apt/dist/{{.PACKAGE}}_*.deb 2>/dev/null | head -1)
         if [[ -z "$deb" ]]; then
           echo "ERROR: no .deb found for {{.PACKAGE}} in foundry-apt/dist/" >&2
           exit 1
         fi
-        # Remove any old version(s) of this package from local-debs
         rm -f foundry-iso/local-debs/{{.PACKAGE}}_*.deb
         cp "$deb" foundry-iso/local-debs/
         echo "Staged: $(basename "$deb") → foundry-iso/local-debs/"
 
+  iso-sync-local-debs:
+    desc: "Upgrade any package in foundry-iso/local-debs/ to its newest version from foundry-apt/dist/ (runs automatically before iso-build)"
+    cmds:
+      - |
+        set -euo pipefail
+        shopt -s nullglob
+        for staged in foundry-iso/local-debs/*.deb; do
+          pkg=$(dpkg-deb --field "$staged" Package)
+          newest=$(ls -t foundry-apt/dist/"${pkg}"_*.deb 2>/dev/null | head -1 || true)
+          [[ -z "$newest" ]] && continue
+          staged_ver=$(dpkg-deb --field "$staged" Version)
+          newest_ver=$(dpkg-deb --field "$newest" Version)
+          if dpkg --compare-versions "$newest_ver" gt "$staged_ver"; then
+            rm -f foundry-iso/local-debs/"${pkg}"_*.deb
+            cp "$newest" foundry-iso/local-debs/
+            echo "Updated: ${pkg}  ${staged_ver} → ${newest_ver}"
+          fi
+        done
+
   iso-build:
     desc: "Build the ISO locally (EDITION=anvil|atelier, default: anvil)"
     dir: foundry-iso
+    deps: [iso-sync-local-debs]
     sources:
       - ../foundry-apt/packages/**/*
       - config/**/*
