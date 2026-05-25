@@ -352,18 +352,27 @@ tasks:
         done
 
   iso-build:
-    desc: "Build the ISO locally (EDITION=anvil|atelier, default: anvil)"
+    desc: "Build the ISO locally (EDITION=anvil|atelier|all, default: anvil)"
     dir: foundry-iso
     deps: [iso-sync-local-debs]
+    vars:
+      EDITIONS:
+        sh: |
+          if [[ '{{.EDITION | default "anvil"}}' == "all" ]]; then
+            echo "anvil atelier"
+          else
+            echo '{{.EDITION | default "anvil"}}'
+          fi
     sources:
       - ../foundry-apt/packages/**/*
       - config/**/*
       - scripts/build-iso.sh
     generates:
-      - dist/foundry-{{.EDITION | default "anvil"}}-*.iso
+      - dist/foundry-*-*.iso
     cmds:
       - task: iso-bump
-      - EDITION='{{.EDITION | default "anvil"}}' bash scripts/build-iso.sh
+      - for: { var: EDITIONS }
+        cmd: EDITION="{{.ITEM}}" bash scripts/build-iso.sh
 
   iso-clean:
     desc: "Clean live-build artifacts and dist/"
@@ -375,16 +384,34 @@ tasks:
         rm -rf dist/
 
   iso-smoke:
-    desc: "Boot the locally-built ISO in QEMU (EDITION=anvil|atelier, default: anvil)"
+    desc: "Boot the locally-built ISO in QEMU (EDITION=anvil|atelier|all, default: anvil)"
     dir: foundry-iso
+    vars:
+      EDITIONS:
+        sh: |
+          if [[ '{{.EDITION | default "anvil"}}' == "all" ]]; then
+            echo "anvil atelier"
+          else
+            echo '{{.EDITION | default "anvil"}}'
+          fi
     cmds:
-      - bash test/boot-smoke.sh dist/foundry-{{.EDITION | default "anvil"}}-$(cat VERSION)-amd64.iso
+      - for: { var: EDITIONS }
+        cmd: bash test/boot-smoke.sh dist/foundry-{{.ITEM}}-$(cat VERSION)-amd64.iso
 
   iso-sign:
-    desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier)"
+    desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier|all, default: anvil)"
     dir: foundry-iso
+    vars:
+      EDITIONS:
+        sh: |
+          if [[ '{{.EDITION | default "anvil"}}' == "all" ]]; then
+            echo "anvil atelier"
+          else
+            echo '{{.EDITION | default "anvil"}}'
+          fi
     cmds:
-      - EDITION='{{.EDITION | default "anvil"}}' bash scripts/sign-iso.sh
+      - for: { var: EDITIONS }
+        cmd: EDITION="{{.ITEM}}" bash scripts/sign-iso.sh
 
   iso-build-vms:
     desc: "Build VM images (qcow2, VMDK, OVA) from the anvil ISO"
@@ -411,10 +438,19 @@ tasks:
       - bash scripts/generate-iso-index.sh
 
   iso-upload:
-    desc: "Upload signed ISO + checksums + torrent to R2 (EDITION=anvil|atelier; loads creds from .foundry/bootstrap.env)"
+    desc: "Upload signed ISO + checksums + torrent to R2 (EDITION=anvil|atelier|all; loads creds from .foundry/bootstrap.env)"
     dir: foundry-iso
+    vars:
+      EDITIONS:
+        sh: |
+          if [[ '{{.EDITION | default "anvil"}}' == "all" ]]; then
+            echo "anvil atelier"
+          else
+            echo '{{.EDITION | default "anvil"}}'
+          fi
     cmds:
-      - EDITION='{{.EDITION | default "anvil"}}' bash scripts/upload-iso.sh
+      - for: { var: EDITIONS }
+        cmd: EDITION="{{.ITEM}}" bash scripts/upload-iso.sh
 
   iso-upload-index:
     desc: "Upload dist/index.html to the foundry-iso R2 bucket (loads creds from .foundry/bootstrap.env)"

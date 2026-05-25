@@ -825,3 +825,220 @@ debian/
 | Hook appears to not have run | `lb binary` cached stale chroot | `chattr -R -i .build/ chroot/ && rm -rf .build/ chroot/` before rebuild |
 | GPU acceleration missing on real hardware | `LIBGL_ALWAYS_SOFTWARE=1` in `/etc/environment` | Never set this in hooks; it forces llvmpipe everywhere via pam\_env |
 | EFI boot doesn't work | live-build 3.0\~a57 doesn't build EFI images | Run post-build EFI injection with xorriso + grub-mkimage |
+
+---
+
+## Build Pipeline & Task Commands
+
+This section covers the full end-to-end build pipeline for the **Foundry Linux** ISO as wired in the top-level `Taskfile.yml`. All `task` commands are run from the repo root (`~/SRC/foundrylinux.org/`), not from inside `foundry-iso/`.
+
+---
+
+### Pipeline overview
+
+```
+foundry-apt packages
+        │
+        │  task iso-stage-deb PACKAGE=…   (one-off, for packages in active dev)
+        │  task iso-sync-local-debs        (auto-runs as dep of iso-build)
+        ▼
+foundry-iso/local-debs/*.deb
+        │
+        │  task iso-build [EDITION=anvil|atelier|all]
+        ▼
+   lb bootstrap  →  lb chroot  →  lb binary
+   (debootstrap)   (hooks run)   (squashfs + ISO)
+        │
+        │  (inside build-iso.sh, on host)
+        ▼
+   EFI injection  →  grub.cfg patch  →  dist/foundry-{edition}-{ver}-amd64.iso
+        │
+        ├──  task iso-smoke [EDITION=anvil|atelier|all]   boot in QEMU, assert KDE + calamares appear
+        ├──  task iso-sign  [EDITION=anvil|atelier|all]   GPG-sign + SHA-256, emit manifest JSON
+        ├──  task iso-upload [EDITION=anvil|atelier|all]  rclone to R2 foundry-iso bucket
+        ├──  task iso-generate-index        generate dist/index.html
+        └──  task iso-upload-index          push index.html to R2
+```
+
+---
+
+### Stage 0 — host setup (one-time)
+
+```bash
+task iso-deps
+# installs: docker.io  qemu-system-x86  ovmf  xorriso
+```
+
+Docker is the only hard requirement for the build itself. qemu-system-x86 and ovmf are needed only for smoke testing. xorriso is needed for the host-side grub.cfg patching step that runs outside the container.
+
+---
+
+### Stage 1 — stage local .debs
+
+Local `.deb` files in `foundry-iso/local-debs/` are injected into the ISO before apt-repo publication.
+
+```bash
+# Enroll a package into local-debs/ for the first time
+task iso-stage-deb PACKAGE=calamares-settings-foundry-linux
+
+# (subsequent builds auto-upgrade it — no manual action needed)
+```
+
+`iso-stage-deb` is a one-time enrollment decision per package: "I want this in the ISO before it's published to the apt repo." Once enrolled, `iso-sync-local-debs` — which runs automatically as a `deps:` entry on `iso-build` — upgrades it to the newest build from `foundry-apt/dist/` on every subsequent build.
+
+The two tasks have different roles and can't be collapsed: `iso-sync-local-debs` only knows about packages already in `local-debs/`; it has no way to decide which of the many packages in `foundry-apt/dist/` should be promoted. That decision is always manual, made once per package.
+
+---
+
+### Stage 2 — build the ISO
+
+```bash
+# Anvil edition (default)
+task iso-build
+
+# Atelier edition
+EDITION=atelier task iso-build
+
+# Both editions in sequence
+EDITION=all task iso-build
+```
+
+`iso-build` does several things in sequence:
+
+1. Runs `task iso-sync-local-debs` (auto-dep — upgrades any staged debs).
+2. Runs `task iso-bump` — increments `foundry-iso/VERSION` and commits it.
+3. Invokes `EDITION=… bash scripts/build-iso.sh` which:
+   - Fetches apt signing keys (foundrylinux.org, worldfoundry.org, cloudsmith, mozilla).
+   - Launches an `ubuntu:26.04` Docker container with `--privileged`.
+   - Inside the container: wipes `.build/` + `chroot/`, runs `lb bootstrap`, copies keys into `chroot/etc/apt/trusted.gpg.d/`, pre-installs gnupg, runs `lb chroot` (hooks execute here), runs `lb binary`.
+   - Post-container (on host): injects EFI boot partition via xorriso + grub-mkimage, patches grub.cfg (sets timeout, renames menu entries, injects "Install Foundry Linux" entry).
+4. Moves the finished ISO to `dist/foundry-{edition}-{version}-amd64.iso`.
+
+**Task source/generates caching:** `iso-build` declares `sources:` (config/, scripts/, foundry-apt/packages/) and `generates:` (dist/*.iso). Task will skip the build if sources haven't changed since the ISO was last written.
+
+To force a clean rebuild:
+
+```bash
+task iso-clean   # wipes chroot/ and dist/; preserves cache/
+task iso-build
+```
+
+---
+
+### Stage 3 — smoke test
+
+```bash
+task iso-smoke                    # anvil (default)
+EDITION=atelier task iso-smoke    # atelier
+EDITION=all task iso-smoke        # both in sequence
+```
+
+Boots the ISO in headless QEMU (KVM + VirtGL + OVMF UEFI) and asserts that both the Plasma desktop and Calamares installer are reachable within 120 s. Requires `/dev/kvm` access and a GPU that supports VirtGL (or mesa software rendering will kick in).
+
+---
+
+### Stage 4 — sign
+
+```bash
+task iso-sign                     # anvil
+EDITION=atelier task iso-sign     # atelier
+EDITION=all task iso-sign         # both
+```
+
+GPG-signs `dist/foundry-{edition}-{version}-amd64.iso` and writes:
+- `dist/foundry-{edition}-{version}-amd64.iso.sha256`
+- `dist/foundry-{edition}-{version}-amd64.iso.sig`
+- `dist/manifest-{edition}-{version}.json`
+
+Requires the Foundry Linux GPG signing key to be available locally. In CI, it's injected as a GitHub Actions secret.
+
+---
+
+### Stage 5 — upload
+
+```bash
+task iso-upload                   # anvil
+EDITION=atelier task iso-upload   # atelier
+EDITION=all task iso-upload       # both
+
+task iso-generate-index           # generate dist/index.html from manifest JSON files
+task iso-upload-index             # push index.html to R2
+```
+
+Uploads the signed ISO + checksums to `r2://foundry-iso/`. Reads credentials from `.foundry/bootstrap.env` (not committed — created by `task iso-bootstrap-r2` on first run). Also updates the `foundry-{edition}-latest-amd64.iso` pointer object in R2.
+
+---
+
+### All-in-one: local publish
+
+```bash
+task iso-publish                  # build + bump + sign + upload + index (anvil)
+EDITION=atelier task iso-publish  # same for atelier
+EDITION=all     task iso-publish  # both editions in sequence
+```
+
+This is the single command for a full local release cycle. It calls `iso-build` → `iso-bump` → `iso-sign` → `iso-upload` → `iso-generate-index` → `iso-upload-index` in order.
+
+Note: `iso-build` already calls `iso-bump` internally, so `iso-publish` bumps the version twice. This is harmless (the second bump is a no-op if VERSION didn't change between the two calls) but worth knowing.
+
+---
+
+### CI path: tag-triggered build
+
+The GitHub Actions workflow at `foundry-linux/foundry-iso` triggers on tag push. To drive it from the Taskfile:
+
+```bash
+# 1. Sync local foundry-iso/ tree to the remote repo
+task iso-sync
+
+# 2a. Push a specific tag to trigger a CI build
+task iso-release TAG=v0.0.5
+
+# 2b. Or sync + auto-increment the patch tag in one step
+task iso-tag-bump
+```
+
+CI builds inside an `ubuntu:26.04` container (same as local), runs both editions in parallel, signs with the GitHub Actions GPG secret, and uploads to R2.
+
+---
+
+### VM images
+
+```bash
+task iso-build-vms    # convert anvil ISO → qcow2 + VMDK + OVA
+task iso-upload-vms   # upload VM images to R2
+```
+
+Run after `iso-build` (anvil). The VM images are built from the already-built ISO in `dist/` — they do not rebuild the ISO.
+
+---
+
+### Utility tasks
+
+| Task | Purpose |
+|------|---------|
+| `task iso-list` | List ISOs in R2 and local `dist/` |
+| `task iso-prune KEEP=3` | Dry-run prune: keep newest 3 versions per edition |
+| `task iso-prune KEEP=3 DRY_RUN=0` | Apply the prune |
+| `task iso-prune BEFORE=2026-04-01` | Prune ISOs older than a date |
+| `task iso-clean` | Wipe `chroot/`, `.build/`, `dist/`; preserve `cache/` |
+| `task iso-bootstrap-r2` | One-time: create R2 bucket + `iso.foundrylinux.org` binding + GHA secrets |
+
+---
+
+### Task dependency graph
+
+```
+iso-publish
+├── iso-build  ──deps──►  iso-sync-local-debs
+│   └── (calls) iso-bump
+├── iso-bump   (version bump + commit)
+├── iso-sign
+├── iso-upload
+├── iso-generate-index
+└── iso-upload-index
+
+iso-tag-bump
+├── iso-sync   (git archive → foundry-linux/foundry-iso remote)
+└── (auto-increments patch tag, pushes → triggers CI)
+```
