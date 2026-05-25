@@ -1,5 +1,6 @@
 # Memory Index
 
+- [Check free space before large extractions](feedback_tmp_size.md) — only 2.6 GB was free when a 4.4 GB squashfs was extracted; check df -h first.
 - [Always show color swatches with color values](feedback_color_swatches.md) — inline HTML span swatch before every hex/RGB/name; placement rules for md-to-pdf.sh; Foundry palette tokens recorded here.
 - [Keep live-build investigation doc updated](feedback_live_investigation_doc.md) — append new root causes/fixes to docs/investigations/2026-05-23-live-build-hooks-boot-theming.md each session.
 - [site/index.html is generated — never edit directly](feedback_site_generated_file.md) — edit site/*.jsx or scripts/ssr-render.js, then run task site-build.
