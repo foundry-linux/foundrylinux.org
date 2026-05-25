@@ -1,7 +1,0 @@
-foundry-welcome (1.0.0) resolute; urgency=medium
-
-  * Initial release. QML/Kirigami welcome screen for Foundry Linux:
-    intro page, tools summary, and community links. Show-once sentinel at
-    ~/.config/foundry-welcome-shown; XDG autostart via /etc/xdg/autostart.
-
- -- Will Norris <wbnorris@gmail.com>  Sun, 25 May 2026 00:00:00 +0700
