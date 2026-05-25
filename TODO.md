@@ -80,7 +80,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 
 ### Housekeeping
-- [ ] **Automate local-deb staging** — add a Taskfile task (e.g. `task stage-local-deb PACKAGE=<name>`) that copies the latest built `.deb` from `foundry-apt/dist/` to `foundry-iso/local-debs/`, replacing the old version. Currently a manual copy step sits between `task build` (in `foundry-apt`) and `task iso-build`.
+- [x] **Automate local-deb staging** — `task iso-stage-deb PACKAGE=<name>` copies latest `.deb` from `foundry-apt/dist/` to `foundry-iso/local-debs/`, replacing old version.
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
 - [ ] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
 

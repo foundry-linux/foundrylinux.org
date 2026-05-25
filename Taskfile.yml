@@ -313,6 +313,27 @@ tasks:
     cmds:
       - sudo apt-get install -y docker.io qemu-system-x86 ovmf xorriso
 
+  iso-stage-deb:
+    desc: "Copy latest built .deb for PACKAGE from foundry-apt/dist/ to foundry-iso/local-debs/ (usage: task iso-stage-deb PACKAGE=calamares-settings-foundry-linux)"
+    vars:
+      PACKAGE: '{{.PACKAGE | default ""}}'
+    preconditions:
+      - sh: '[ -n "{{.PACKAGE}}" ]'
+        msg: "PACKAGE is required — e.g. task iso-stage-deb PACKAGE=calamares-settings-foundry-linux"
+    cmds:
+      - |
+        set -euo pipefail
+        # Find the newest .deb for this package name in foundry-apt/dist/
+        deb=$(ls -t foundry-apt/dist/{{.PACKAGE}}_*.deb 2>/dev/null | head -1)
+        if [[ -z "$deb" ]]; then
+          echo "ERROR: no .deb found for {{.PACKAGE}} in foundry-apt/dist/" >&2
+          exit 1
+        fi
+        # Remove any old version(s) of this package from local-debs
+        rm -f foundry-iso/local-debs/{{.PACKAGE}}_*.deb
+        cp "$deb" foundry-iso/local-debs/
+        echo "Staged: $(basename "$deb") → foundry-iso/local-debs/"
+
   iso-build:
     desc: "Build the ISO locally (EDITION=anvil|atelier, default: anvil)"
     dir: foundry-iso
