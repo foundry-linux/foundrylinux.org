@@ -67,7 +67,25 @@ docker run --rm \
     # obsolete).  includes.chroot/ copies files verbatim; a hook installs them.
     mkdir -p config/includes.chroot/tmp/local-debs
     if ls /work/local-debs/*.deb &>/dev/null; then
-      cp /work/local-debs/*.deb config/includes.chroot/tmp/local-debs/
+      # Deduplicate: for each package name keep only the newest version.
+      # local-debs/ can accumulate stale builds; blindly copying all would
+      # install an old version when a newer one is also present.
+      declare -A _latest_deb
+      for _deb in /work/local-debs/*.deb; do
+        _pkg=$(dpkg-deb --field "$_deb" Package)
+        _ver=$(dpkg-deb --field "$_deb" Version)
+        if [[ -n "${_latest_deb[$_pkg]+x}" ]]; then
+          _cur=$(dpkg-deb --field "${_latest_deb[$_pkg]}" Version)
+          dpkg --compare-versions "$_ver" gt "$_cur" && _latest_deb[$_pkg]="$_deb"
+        else
+          _latest_deb[$_pkg]="$_deb"
+        fi
+      done
+      for _deb in "${_latest_deb[@]}"; do
+        echo "  staging local deb: $(basename "$_deb")"
+        cp "$_deb" config/includes.chroot/tmp/local-debs/
+      done
+      unset _latest_deb _deb _pkg _ver _cur
     fi
     # Stage 1: debootstrap only
     lb bootstrap
