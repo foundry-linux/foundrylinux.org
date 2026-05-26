@@ -54,6 +54,18 @@ X-KDE-autostart-after=panel
 EOF
 fi
 
+# Pre-seed ~/.config/foundry-welcome with FirstRunDone=false so the KDE autostart
+# condition (X-KDE-autostart-condition=foundry-welcome:General:FirstRunDone:false)
+# passes on first boot.  kreadconfig6 returns "" for absent keys, not "false",
+# so without this the condition fails and foundry-welcome never launches.
+# The app writes FirstRunDone=true to this file on exit, disabling autostart
+# on subsequent logins without ever exec'ing the binary again.
+mkdir -p /etc/skel/.config
+cat > /etc/skel/.config/foundry-welcome <<'EOF'
+[General]
+FirstRunDone=false
+EOF
+
 # Set Foundry Linux color scheme as default for the live user.
 if [[ -f /usr/share/color-schemes/FoundryLinux.colors ]]; then
   mkdir -p /etc/skel/.config

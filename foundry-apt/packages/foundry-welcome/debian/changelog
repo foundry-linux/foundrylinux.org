@@ -1,3 +1,14 @@
+foundry-welcome (1.0.4) resolute; urgency=medium
+
+  * Use X-KDE-autostart-condition properly: write FirstRunDone=true to
+    ~/.config/foundry-welcome (KConfig/IniFormat) on exit so the condition
+    skips the binary entirely on subsequent logins. Pre-seed the file with
+    FirstRunDone=false in /etc/skel/.config/foundry-welcome so kreadconfig6
+    returns "false" (not "") on first boot and the condition passes.
+    Remove the old sentinel-file approach (foundry-welcome-shown).
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 26 May 2026 00:00:00 +0700
+
 foundry-welcome (1.0.3) resolute; urgency=medium
 
   * Remove X-KDE-autostart-condition from autostart.desktop. The condition
