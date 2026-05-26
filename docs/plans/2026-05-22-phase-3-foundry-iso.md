@@ -810,9 +810,9 @@ Missing configs added in 1.0.7:
 - `grubcfg.conf` — `GRUB_TIMEOUT=5`, `GRUB_DEFAULT=0`, `GRUB_DISTRIBUTOR=Foundry Linux`
 - `packages.conf` — `backend: apt`; removes `calamares`, `live-boot*`, `live-config*`, `live-tools` post-install
 
-Also fixed: `1200-live-ssh.hook.chroot` now drops `live-ethernet.nmconnection` so NetworkManager auto-connects all Ethernet interfaces. Previously, `ens2` stayed `DOWN` in QEMU (and on hardware with unpredictable NIC names), making SSH unreachable despite sshd running.
+Also fixed: `1200-live-ssh.hook.chroot` now creates `/etc/NetworkManager/system-connections/live-ethernet.nmconnection` so NetworkManager auto-connects all Ethernet interfaces. Previously, `ens2` stayed `DOWN` in QEMU (and on hardware with unpredictable NIC names), making SSH unreachable despite sshd running. A follow-up fix (0.9.17) added the required `uuid` field — NM 1.48+ silently ignores keyfile profiles without it.
 
-Install on `foundry-anvil-0.9.16` reached the Summary screen and proceeded past unpackfs. Step 9 in progress.
+Step 9 status: rsync error 11 (RERR_FILEIO) during squashfs extraction in QEMU — likely CDROM I/O limitation for 4.7 GB reads under QEMU. Need to test on real hardware (192.168.4.32). Building 0.9.17 with Calamares + NM fixes; squashfs artifact verification and real-hardware install test pending.
 
 ## Known concerns / external dependencies
 
