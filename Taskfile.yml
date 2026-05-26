@@ -359,7 +359,7 @@ tasks:
         for newest in foundry-apt/dist/*.deb; do
           pkg=$(dpkg-deb --field "$newest" Package)
           newest_ver=$(dpkg-deb --field "$newest" Version)
-          staged=$(ls foundry-iso/local-debs/"${pkg}"_*.deb 2>/dev/null | head -1 || true)
+          staged=$(find foundry-iso/local-debs -maxdepth 1 -name "${pkg}_*.deb" 2>/dev/null | head -1 || true)
           if [[ -z "$staged" ]]; then
             cp "$newest" foundry-iso/local-debs/
             echo "Staged:  ${pkg}  (new)  ${newest_ver}"
