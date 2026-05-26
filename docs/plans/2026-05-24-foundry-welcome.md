@@ -121,4 +121,6 @@ foundry-iso/config/includes.chroot/tmp/local-debs/foundry-welcome_1.0.0_amd64.de
 2. **Install smoke test**: install .deb in container, run `foundry-welcome` — confirm window opens with 3 pages, Skip/Next nav works
 3. **Sentinel check**: run a second time — confirm it exits immediately with no window
 4. **QEMU ISO test**: boot the ISO, log in — confirm `foundry-welcome` opens (not plasma-welcome), shows 3 Foundry-branded pages
+
+   **Result (2026-05-26, `foundry-anvil-0.9.15-amd64.iso`):** foundry-welcome appeared on first boot. **PASS.**
 5. **Re-login test**: log out and back in — confirm welcome does not reappear
