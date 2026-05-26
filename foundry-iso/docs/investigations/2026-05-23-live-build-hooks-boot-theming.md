@@ -1,6 +1,6 @@
 # live-build hooks, boot theming, and ISO patching — lessons learned
 
-Date: 2026-05-23 (updated 2026-05-24)
+Date: 2026-05-23 (updated 2026-05-26)
 
 ---
 
@@ -408,6 +408,73 @@ ssh -p 2222 root@localhost   # password: foundry
 ```bash
 # In hook 0020:
 apt-get purge -y plasma-welcome >/dev/null 2>&1 || true
+```
+
+---
+
+## 17. Live session NIC stays DOWN — NM ignores keyfile without uuid
+
+**Problem:** In QEMU (and on real hardware with non-eth0 NIC names like `ens2`, `enp3s0`), the Ethernet interface stays DOWN even after hook 1200 creates `/etc/NetworkManager/system-connections/live-ethernet.nmconnection`. `ssh -p 2222 root@localhost` is unreachable.
+
+**Root cause:** NetworkManager 1.48+ (Ubuntu 26.04) silently ignores keyfile connection profiles that are missing the `uuid` field. The file is present, permissions are correct, but NM never loads the profile at boot.
+
+**Symptoms to distinguish this from other NM issues:**
+- `ip link show` shows the interface (e.g., `ens2`) in `DOWN` state with no IP address.
+- `nmcli connection show` does not list the `Live-Ethernet` connection at all.
+- `journalctl -u NetworkManager | grep keyfile` shows a warning like `plugin keyfile: ignored: missing uuid`.
+
+**Fix:** Add `uuid` to the `[connection]` stanza in the nmconnection file:
+
+```ini
+[connection]
+id=Live-Ethernet
+uuid=4a6b8c2d-1e3f-4a5b-9c0d-7e8f1a2b3c4d
+type=ethernet
+autoconnect=true
+autoconnect-priority=-100
+```
+
+Any valid RFC 4122 UUID works; a static value is fine for a live-session-only profile.
+
+**QEMU SSH workflow:** Launch QEMU with port forwarding, then SSH with password auth only:
+
+```bash
+# Copy OVMF vars and launch
+cp /usr/share/OVMF/OVMF_VARS_4M.fd /tmp/OVMF_VARS_copy.fd
+qemu-system-x86_64 \
+  -enable-kvm -m 4G \
+  -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd \
+  -drive if=pflash,format=raw,file=/tmp/OVMF_VARS_copy.fd \
+  -cdrom foundry-iso/dist/foundry-anvil-<version>-amd64.iso \
+  -display gtk,gl=on \
+  -device virtio-vga-gl \
+  -netdev user,id=n0,hostfwd=tcp::2222-:22 \
+  -device e1000,netdev=n0
+
+# SSH (disable pubkey auth to avoid "Too many authentication failures"):
+ssh -p 2222 -o IdentitiesOnly=yes -o PubkeyAuthentication=no root@localhost   # password: foundry
+ssh -p 2222 -o IdentitiesOnly=yes -o PubkeyAuthentication=no user@localhost    # password: live
+
+# Or use sshpass:
+sshpass -p 'foundry' ssh -o IdentitiesOnly=yes -o PubkeyAuthentication=no -p 2222 root@localhost
+```
+
+**Real hardware SSH (live machine on LAN):**
+```bash
+sshpass -p 'foundry' ssh -o IdentitiesOnly=yes -o PubkeyAuthentication=no root@<ip>
+```
+
+**Artifact verification before QEMU test:** Always confirm the squashfs contains the expected versions using `unsquashfs` before testing:
+
+```bash
+# Mount ISO and check dpkg status + NM connection file
+sudo mount -o loop,ro foundry-anvil-X.Y.Z-amd64.iso /mnt/iso
+sudo unsquashfs -d /tmp/sq /mnt/iso/live/filesystem.squashfs \
+  var/lib/dpkg/status \
+  etc/NetworkManager/system-connections
+grep -A3 "Package: calamares-settings-foundry-linux" /tmp/sq/var/lib/dpkg/status
+grep -A3 "Package: foundry-welcome" /tmp/sq/var/lib/dpkg/status
+cat /tmp/sq/etc/NetworkManager/system-connections/live-ethernet.nmconnection
 ```
 
 ---
