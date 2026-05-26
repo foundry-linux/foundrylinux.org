@@ -429,6 +429,29 @@ tasks:
       - for: { var: EDITIONS }
         cmd: bash test/boot-smoke.sh dist/foundry-{{.ITEM}}-$(cat VERSION)-amd64.iso
 
+  iso-qemu:
+    desc: "Boot latest anvil ISO in QEMU for interactive testing (SSH via port 2222)"
+    dir: foundry-iso
+    cmds:
+      - |
+        set -euo pipefail
+        ISO="dist/foundry-anvil-$(cat VERSION)-amd64.iso"
+        if [[ ! -f "$ISO" ]]; then
+          echo "ERROR: $ISO not found — run 'task iso-build' first" >&2; exit 1
+        fi
+        cp /usr/share/OVMF/OVMF_VARS_4M.fd /tmp/OVMF_VARS_copy.fd
+        echo "Booting $ISO"
+        echo "SSH:  sshpass -p foundry ssh -o IdentitiesOnly=yes -o PubkeyAuthentication=no -p 2222 root@localhost"
+        qemu-system-x86_64 \
+          -enable-kvm -m 4G \
+          -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd \
+          -drive if=pflash,format=raw,file=/tmp/OVMF_VARS_copy.fd \
+          -cdrom "$ISO" \
+          -display gtk,gl=on \
+          -device virtio-vga-gl \
+          -netdev user,id=n0,hostfwd=tcp::2222-:22 \
+          -device e1000,netdev=n0
+
   iso-sign:
     desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier|all, default: anvil)"
     dir: foundry-iso
