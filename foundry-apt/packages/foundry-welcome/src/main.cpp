@@ -1,7 +1,9 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QSettings>
 #include <QStandardPaths>
+#include <QFileInfo>
+#include <QDir>
+#include <QFile>
 #include <QUrl>
 
 int main(int argc, char *argv[])
@@ -9,6 +11,12 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setApplicationName("foundry-welcome");
     app.setOrganizationName("foundrylinux");
+
+    const QString sentinel = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+                             + "/foundry-welcome-shown";
+    if (QFile::exists(sentinel)) {
+        return 0;
+    }
 
     // Allow overriding QML location for development testing.
     const char *qmlEnv = qgetenv("FOUNDRY_WELCOME_QML_DIR").constData();
@@ -26,15 +34,10 @@ int main(int argc, char *argv[])
 
     app.exec();
 
-    // Write FirstRunDone=true so the X-KDE-autostart-condition in
-    // /etc/xdg/autostart/foundry-welcome.desktop skips us on subsequent logins.
-    // kreadconfig6 reads ~/.config/foundry-welcome; QSettings IniFormat writes
-    // the same path when given an absolute filename.
-    const QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
-                               + "/foundry-welcome";
-    QSettings settings(configPath, QSettings::IniFormat);
-    settings.beginGroup("General");
-    settings.setValue("FirstRunDone", QString("true"));
+    // Write sentinel so the welcome screen doesn't appear again.
+    QDir().mkpath(QFileInfo(sentinel).absolutePath());
+    QFile f(sentinel);
+    (void)f.open(QIODevice::WriteOnly);
 
     return 0;
 }
