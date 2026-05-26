@@ -557,6 +557,8 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
    Expected: build exits 0 (~30 min); ISO size between 3.0 GB and 4.0 GB
    (target ~3.5 GB).
 
+   **Result (2026-05-26, `foundry-anvil-0.9.16`):** Build exited 0; ISO 5.0 GB (larger than target — investigate package list trimming post-v1). **PASS.**
+
 4. **Local atelier ISO build succeeds.**
    ```
    cd foundry-iso
@@ -794,34 +796,23 @@ Fix (2026-05-24, session 4) — two-pronged, in `1100-live-autologin.hook.chroot
 
 See verification steps 11–14 above to confirm this fix.
 
-**Status (end of session 4):** Build in progress; awaiting boot verification of the two-pronged autologin fix.
+**Session 5 (2026-05-24):** `login-test` booted, autologin confirmed. Edition retired. Anvil build started with same fixes. Steps 11–14: PASS.
 
-**Session 5 (2026-05-24) — login-test confirmed working:**
+**Session 6 (2026-05-24):** First anvil boot exposed four branding gaps — `plasma-welcome` launching, Kubuntu desktop shortcuts, "Debian GNU/Linux" GRUB labels, no install button. All fixed in hooks 0020 and 1110 and `build-iso.sh`. Autologin confirmed on rebuilt ISO (steps 11–14 PASS).
 
-`login-test` built and booted successfully in QEMU. Autologin fix confirmed. `login-test` edition retired. Anvil build started with the same fixes. Verify steps 11–14: **PASS** (implicit — working boot is the evidence). Real-hardware boot not yet tested.
+**Session 7 (2026-05-26) — Calamares install: missing module configs + live NIC fix:**
 
-**Session 6 (2026-05-24) — anvil ISO first boot: branding gaps found and fixed:**
+End-to-end install test (step 9) failed immediately with "Bad unpackfs configuration — There is no configuration information." Root cause: `calamares-settings-foundry-linux` shipped `settings.conf` and branding but no `etc/calamares/modules/` directory. Calamares requires per-module config files for any module that has required fields.
 
-First anvil build failed at the chroot-verification step in `build-iso.sh`:
-`ERROR: DisplayServer missing from sddm conf`. Root cause: hook 1100 wrote
-`30-foundry-live.conf` with only `[Theme]`, missing `[General]` + `DisplayServer=wayland`.
-Fixed by adding the `[General]` section. Verification steps 11–12 confirmed from
-squashfs/initramfs (Docker). Verification step 14 confirmed visually: autologin
-fired, Plasma desktop appeared with no SDDM greeter.
+Missing configs added in 1.0.7:
+- `unpackfs.conf` — squashfs source: `/cdrom/live/filesystem.squashfs`
+- `displaymanager.conf` — `sddm` + `plasma` desktop
+- `grubcfg.conf` — `GRUB_TIMEOUT=5`, `GRUB_DEFAULT=0`, `GRUB_DISTRIBUTOR=Foundry Linux`
+- `packages.conf` — `backend: apt`; removes `calamares`, `live-boot*`, `live-config*`, `live-tools` post-install
 
-Booting the rebuilt anvil ISO exposed four additional branding gaps:
+Also fixed: `1200-live-ssh.hook.chroot` now drops `live-ethernet.nmconnection` so NetworkManager auto-connects all Ethernet interfaces. Previously, `ens2` stayed `DOWN` in QEMU (and on hardware with unpredictable NIC names), making SSH unreachable despite sshd running.
 
-1. **`plasma-welcome` launched on first login** — Kubuntu's "Welcome to Ubuntu running KDE Plasma!" app. Never added to the purge list. Fix: added `plasma-welcome` to `0020-strip-kubuntu-bloat.hook.chroot`.
-
-2. **Kubuntu desktop shortcuts on the live Desktop** — `org.kfocus.web.howtos.desktop` ("HOW-TO Guides") was in `/etc/skel/Desktop/`. Also guarded against `org.kubuntu.web.home.desktop`. Fix: `rm -f` both in hook 0020.
-
-3. **GRUB menu entries said "Debian GNU/Linux - live"** — live-build's default labels. Fix: `build-iso.sh` now `sed`s them to "Foundry Linux - Live" / "Foundry Linux - Live (safe mode)" / "Foundry Linux - Live, kernel …" during grub.cfg post-processing.
-
-4. **No install button** — Calamares was installed but reachable only via the applications menu (buried). No desktop shortcut, no GRUB install entry. Fixes:
-   - New hook `1110-live-install-button.hook.chroot`: writes `install-foundry-linux.desktop` to `/etc/skel/Desktop/`; writes `/usr/local/bin/foundry-autoinstall.sh` + XDG autostart `foundry-autoinstall.desktop` that execs `sudo calamares` when `automatic-calamares` is found on `/proc/cmdline`.
-   - `build-iso.sh` grub.cfg patch now injects an "Install Foundry Linux" GRUB menuentry immediately after the first live entry, with `automatic-calamares` appended to the kernel cmdline.
-
-All four fixes committed; anvil rebuild in progress.
+Install on `foundry-anvil-0.9.16` reached the Summary screen and proceeded past unpackfs. Step 9 in progress.
 
 ## Known concerns / external dependencies
 
