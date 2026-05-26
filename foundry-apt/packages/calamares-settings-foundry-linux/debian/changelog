@@ -1,3 +1,11 @@
+calamares-settings-foundry-linux (1.0.7) resolute; urgency=medium
+
+  * Add missing Calamares module configs: unpackfs (squashfs source path),
+    displaymanager (sddm + plasma), grubcfg (GRUB_TIMEOUT/DEFAULT), and
+    packages (apt backend, remove live packages post-install).
+
+ -- Will Norris <wbnorris@gmail.com>  Tue, 26 May 2026 00:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.6) resolute; urgency=medium
 
   * Fix Calamares crash on launch: add required style: map to branding.desc

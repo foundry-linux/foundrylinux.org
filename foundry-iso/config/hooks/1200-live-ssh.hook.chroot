@@ -26,3 +26,25 @@ echo 'root:foundry' | chpasswd
 # The live user account ('user') is created at boot by casper's 25adduser with
 # password hash U6aMy0wojraho (= 'live').  SSH will accept that password once
 # the account exists — no pre-configuration needed here.
+
+# Ensure all Ethernet interfaces get a DHCP lease automatically.
+# Without this, NetworkManager leaves interfaces like ens2 DOWN in QEMU and on
+# real hardware with unfamiliar NIC names, making SSH unreachable.
+mkdir -p /etc/NetworkManager/system-connections
+cat > /etc/NetworkManager/system-connections/live-ethernet.nmconnection <<'EOF'
+[connection]
+id=Live-Ethernet
+type=ethernet
+autoconnect=true
+autoconnect-priority=-100
+
+[ethernet]
+
+[ipv4]
+method=auto
+
+[ipv6]
+method=auto
+addr-gen-mode=stable-privacy
+EOF
+chmod 600 /etc/NetworkManager/system-connections/live-ethernet.nmconnection
