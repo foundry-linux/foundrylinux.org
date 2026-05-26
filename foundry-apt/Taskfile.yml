@@ -11,6 +11,38 @@ tasks:
     cmds:
       - bash scripts/build-all.sh {{.PKG}}
 
+  dist-prune:
+    desc: "Remove old versions from dist/, keeping only the newest build per package"
+    cmds:
+      - |
+        set -euo pipefail
+        shopt -s nullglob
+        declare -A newest
+        # First pass: find the newest .deb per package name.
+        for deb in dist/*.deb; do
+          pkg=$(dpkg-deb --field "$deb" Package)
+          if [[ -z "${newest[$pkg]:-}" ]]; then
+            newest[$pkg]="$deb"
+          else
+            cur_ver=$(dpkg-deb --field "${newest[$pkg]}" Version)
+            this_ver=$(dpkg-deb --field "$deb" Version)
+            if dpkg --compare-versions "$this_ver" gt "$cur_ver"; then
+              newest[$pkg]="$deb"
+            fi
+          fi
+        done
+        # Second pass: delete anything that isn't the newest.
+        removed=0
+        for deb in dist/*.deb; do
+          pkg=$(dpkg-deb --field "$deb" Package)
+          if [[ "$deb" != "${newest[$pkg]}" ]]; then
+            echo "Removing: $(basename "$deb")"
+            rm "$deb"
+            (( removed++ )) || true
+          fi
+        done
+        [[ $removed -eq 0 ]] && echo "dist/: nothing to prune." || echo "Pruned $removed old .deb(s)."
+
   clean:
     desc: "Remove dist/ and public/"
     cmds:
