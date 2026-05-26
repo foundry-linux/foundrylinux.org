@@ -454,7 +454,7 @@ tasks:
           -cdrom "$ISO" \
           -drive file="$DISK",format=qcow2,if=virtio \
           -display gtk,gl=on \
-          -device virtio-vga-gl \
+          -device virtio-vga-gl,xres=1920,yres=1080 \
           -netdev user,id=n0,hostfwd=tcp::2222-:22 \
           -device e1000,netdev=n0
 
