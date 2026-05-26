@@ -1,3 +1,14 @@
+vgmstream (2083-1foundry5) resolute; urgency=medium
+
+  * Rebuild against ubuntu:26.04's ffmpeg 8 / libavcodec62. Previous
+    1foundry3 and 1foundry4 entries claimed to target libavcodec62 but the
+    resulting debs still carried libavcodec61 — both were host builds, not
+    docker builds, so dpkg-shlibdeps resolved against the host's ffmpeg 7.
+    This build is confirmed in docker run ubuntu:26.04 where libavcodec-dev
+    resolves to 7:8.0.1-3ubuntu2. No source changes.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 26 May 2026 00:00:00 +0000
+
 vgmstream (2083-1foundry4) resolute; urgency=medium
 
   * No source changes — re-issue of 1foundry3 after fixing the CI build

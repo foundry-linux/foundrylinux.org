@@ -1,3 +1,13 @@
+ppsspp (1.20.4-2foundry1) resolute; urgency=medium
+
+  * Rebuild against ubuntu:26.04's ffmpeg 8 / libavcodec62. The 26.04
+    repos moved from ffmpeg 7.x (libavcodec61) to ffmpeg 8.x (libavcodec62)
+    on 2026-05-26, making the 1foundry1 binary uninstallable. No source
+    changes — dpkg-shlibdeps auto-resolves to libavcodec62 in the new
+    ubuntu:26.04 build environment.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Mon, 26 May 2026 00:00:00 +0000
+
 ppsspp (1.20.4-1foundry1) stable; urgency=low
 
   * Initial packaging for Foundry Linux apt repo.
