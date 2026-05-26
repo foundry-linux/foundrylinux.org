@@ -658,3 +658,42 @@ Two-pronged approach in `1100-live-autologin.hook.chroot`:
    The `sed` is surgical — if `/etc/sddm.conf` already has `Session=plasma`, it's a no-op. Handles both the empty-Session case and the `.desktop`-suffix case.
 
 </details>
+
+---
+
+## 18. live-build sanitises `system-connections/` — write NM config from initramfs instead
+
+**Problem:** Hook 1200 creates `/etc/NetworkManager/system-connections/live-ethernet.nmconnection` in the chroot (with uuid, type=ethernet, method=auto) but the file is missing from the 0.9.19 squashfs. The live session has no automatic Ethernet — the NIC stays DOWN.
+
+**Evidence:** Build log line 8923 shows `ls: cannot access '/etc/NetworkManager/system-connections': No such file or directory` during the package installation phase (before hooks run). Lines 10745-10749 show NM's postinst creating its service symlinks and `WARNING: NetworkManager could not reload connections`. After hook 1200 completes (confirmed by ssh.service symlinks being created), the file is absent in the squashfs (verified via Docker + unsquashfs inspection).
+
+**Root cause:** live-build's network-sanitisation step (part of `lb_chroot_hacks` or a system hook that runs AFTER all `.hook.chroot` files) removes the contents of `/etc/NetworkManager/system-connections/` before compressing the squashfs. This is intentional — live-build doesn't want build-machine network credentials leaking into the live image. Our NM profile gets caught in this sweep even though it's not a build-machine credential.
+
+**Fix (0.9.20):** Write the NM connection profile from the initramfs via a `casper-bottom/17foundry-nm` script, added in hook 1100 before `update-initramfs -u`. casper-bottom scripts run after the overlayfs is mounted (so writes go to the tmpfs writable layer), and after the squashfs is already read-only — build-time cleanup can never remove them.
+
+```sh
+# In hook 1100, before update-initramfs -u:
+cat > /usr/share/initramfs-tools/scripts/casper-bottom/17foundry-nm << 'EOF'
+#!/bin/sh
+# ... standard casper-bottom boilerplate ...
+mkdir -p /root/etc/NetworkManager/system-connections
+cat > /root/etc/NetworkManager/system-connections/live-ethernet.nmconnection << 'NMEOF'
+[connection]
+id=Live-Ethernet
+uuid=4a6b8c2d-1e3f-4a5b-9c0d-7e8f1a2b3c4d
+type=ethernet
+autoconnect=true
+autoconnect-priority=-100
+[ethernet]
+[ipv4]
+method=auto
+[ipv6]
+method=auto
+addr-gen-mode=stable-privacy
+NMEOF
+chmod 600 /root/etc/NetworkManager/system-connections/live-ethernet.nmconnection
+EOF
+chmod +x /usr/share/initramfs-tools/scripts/casper-bottom/17foundry-nm
+```
+
+**Pattern:** Any file that live-build might sanitise from the chroot (network config, machine-specific files) should be written via a `casper-bottom` initramfs script rather than a `.hook.chroot` file. `.hook.chroot` files are correct for persistent distro config; live-session transient config belongs in casper-bottom.

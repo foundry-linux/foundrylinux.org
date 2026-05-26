@@ -147,9 +147,51 @@ log_end_msg
 EOF
 chmod +x /usr/share/initramfs-tools/scripts/casper-bottom/16foundry-autologin
 
+# Create an NM connection profile at live boot rather than build time.
+# live-build's network-sanitisation hook removes system-connections/ contents
+# from the chroot before squashfs compression, so hook 1200 can't persist
+# this file.  Running from the initramfs (after the overlayfs is mounted)
+# writes to the tmpfs writable layer instead, which survives for the session.
+cat > /usr/share/initramfs-tools/scripts/casper-bottom/17foundry-nm << 'EOF'
+#!/bin/sh
+PREREQ=""
+DESCRIPTION="Setting up NetworkManager live Ethernet connection..."
+
+prereqs() { echo "$PREREQ"; }
+case $1 in prereqs) prereqs; exit 0 ;; esac
+
+. /scripts/casper-functions
+log_begin_msg "$DESCRIPTION"
+
+mkdir -p /root/etc/NetworkManager/system-connections
+chmod 700 /root/etc/NetworkManager/system-connections
+cat > /root/etc/NetworkManager/system-connections/live-ethernet.nmconnection << 'NMEOF'
+[connection]
+id=Live-Ethernet
+uuid=4a6b8c2d-1e3f-4a5b-9c0d-7e8f1a2b3c4d
+type=ethernet
+autoconnect=true
+autoconnect-priority=-100
+
+[ethernet]
+
+[ipv4]
+method=auto
+
+[ipv6]
+method=auto
+addr-gen-mode=stable-privacy
+NMEOF
+chmod 600 /root/etc/NetworkManager/system-connections/live-ethernet.nmconnection
+
+log_end_msg
+EOF
+chmod +x /usr/share/initramfs-tools/scripts/casper-bottom/17foundry-nm
+
 # Regenerate the initramfs bundling:
 # - the patched 15autologin
 # - the new 16foundry-autologin
+# - the new 17foundry-nm
 # - /etc/casper.conf (USERNAME=user for 25adduser)
 # casper's postinst runs update-initramfs before we write casper.conf,
 # so a second pass is always required regardless.

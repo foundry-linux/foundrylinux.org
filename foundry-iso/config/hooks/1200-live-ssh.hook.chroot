@@ -27,6 +27,16 @@ echo 'root:foundry' | chpasswd
 # password hash U6aMy0wojraho (= 'live').  SSH will accept that password once
 # the account exists — no pre-configuration needed here.
 
+# Ubuntu's NM package ships /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf
+# which sets unmanaged-devices=*,except:type:wifi,except:type:gsm,except:type:cdma —
+# ethernet is explicitly excluded from management.  Override it from /etc/NetworkManager/conf.d/
+# (higher priority than /usr/lib/) to add ethernet to the managed set.
+mkdir -p /etc/NetworkManager/conf.d
+cat > /etc/NetworkManager/conf.d/11-foundry-live-ethernet.conf <<'EOF'
+[keyfile]
+unmanaged-devices=*,except:type:wifi,except:type:gsm,except:type:cdma,except:type:ethernet
+EOF
+
 # Ensure all Ethernet interfaces get a DHCP lease automatically.
 # Without this, NetworkManager leaves interfaces like ens2 DOWN in QEMU and on
 # real hardware with unfamiliar NIC names, making SSH unreachable.
