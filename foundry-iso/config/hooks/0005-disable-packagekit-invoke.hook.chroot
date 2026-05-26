@@ -1,0 +1,9 @@
+#!/bin/bash
+# PackageKit installs a DPkg::Post-Invoke that tries to notify it of apt
+# changes over dbus. dbus is never running in the live-build chroot, so
+# every apt-get call after packagekit is installed fails with
+# "E: Sub-process returned an error code". Neutralise it early so the
+# rest of the build proceeds cleanly.
+set -euo pipefail
+mkdir -p /etc/apt/apt.conf.d
+echo 'DPkg::Post-Invoke "";' > /etc/apt/apt.conf.d/90-no-packagekit-invoke
