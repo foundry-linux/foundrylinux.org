@@ -330,6 +330,7 @@ tasks:
           echo "ERROR: no .deb found for ${PKG} in foundry-apt/dist/" >&2
           exit 1
         fi
+        mkdir -p foundry-iso/local-debs
         rm -f foundry-iso/local-debs/"${PKG}"_*.deb
         cp "$deb" foundry-iso/local-debs/
         echo "Staged: $(basename "$deb") → foundry-iso/local-debs/"
@@ -346,6 +347,7 @@ tasks:
         set -euo pipefail
         MANIFEST=foundry-iso/local-debs.list
         [[ -f "$MANIFEST" ]] || { echo "No local-debs.list — nothing to sync."; exit 0; }
+        mkdir -p foundry-iso/local-debs
         any=0
         while IFS= read -r pkg || [[ -n "$pkg" ]]; do
           # Skip blank lines and comments.
@@ -371,7 +373,7 @@ tasks:
             fi
           fi
         done < "$MANIFEST"
-        [[ $any -eq 0 ]] && echo "local-debs: all packages up to date."
+        if [[ $any -eq 0 ]]; then echo "local-debs: all packages up to date."; fi
 
   iso-build:
     desc: "Build the ISO locally (EDITION=anvil|atelier|all, default: anvil)"
