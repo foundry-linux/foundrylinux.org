@@ -435,9 +435,9 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        ISO="dist/foundry-anvil-$(cat VERSION)-amd64.iso"
-        if [[ ! -f "$ISO" ]]; then
-          echo "ERROR: $ISO not found — run 'task iso-build' first" >&2; exit 1
+        ISO=$(ls -t dist/foundry-anvil-*-amd64.iso 2>/dev/null | head -1 || true)
+        if [[ -z "$ISO" ]]; then
+          echo "ERROR: no ISO found in dist/ — run 'task iso-build' first" >&2; exit 1
         fi
         DISK=/tmp/foundry-test-disk.qcow2
         if [[ ! -f "$DISK" ]]; then
