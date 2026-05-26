@@ -194,6 +194,7 @@ GCFG
 ISO_SRC="$REPO_ROOT/binary.hybrid.iso"
 ISO_DST="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
 GRUB_PATCH="/tmp/foundry-grub-$$.cfg"
+trap 'rm -f "$GRUB_PATCH"' EXIT
 echo "=== Patching grub.cfg ==="
 xorriso -osirrox on -dev "$ISO_SRC" -extract /boot/grub/grub.cfg "$GRUB_PATCH"
 chmod +w "$GRUB_PATCH"
