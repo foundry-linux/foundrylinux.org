@@ -8,6 +8,6 @@ set -euo pipefail
 
 if ls /tmp/local-debs/*.deb &>/dev/null 2>&1; then
     echo "=== Installing local debs ==="
-    apt-get install -y /tmp/local-debs/*.deb
+    apt-get install -y --allow-downgrades /tmp/local-debs/*.deb
     rm -rf /tmp/local-debs
 fi

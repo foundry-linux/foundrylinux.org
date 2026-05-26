@@ -1,5 +1,8 @@
 | Date | Change |
 |------|--------|
+| [2026-05-26](https://github.com/foundry-linux/foundrylinux.org/commit/ffb7416) | docs(iso): add session 7 notes; trim session 5-6; mark step 3 PASS |
+| [2026-05-26](https://github.com/foundry-linux/foundrylinux.org/commit/0cfaa52) | docs: record verification results for foundry-welcome + ISO step 13 |
+| [2026-05-24](https://github.com/foundry-linux/foundrylinux.org/commit/7829063) | docs(iso): session 6 — branding fixes + verification step 11-14 results |
 | [2026-05-24](https://github.com/foundry-linux/foundrylinux.org/commit/b5dd8a7) | docs(iso): session 5 progress + add color swatches to KDE theme spec |
 | [2026-05-24](https://github.com/foundry-linux/foundrylinux.org/commit/504432e) | docs: add colour swatches to KDE docs; drop gen-wallpapers.py |
 | [2026-05-24](https://github.com/foundry-linux/foundrylinux.org/commit/0f95e5a) | fix(iso): two-pronged autologin fix + virtio-vga-gl QEMU; add live SSH |
