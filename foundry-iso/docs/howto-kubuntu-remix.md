@@ -729,6 +729,11 @@ The QEMU invocation uses:
 **Memory:** 3072 MiB minimum for a Plasma 6 live session. Set with
 `QEMU_MEM=4096`.
 
+**Window size:** The GTK QEMU window opens at a small default size. Drag any
+corner to resize it — QEMU's `zoom-to-fit=on` flag makes the guest display
+scale to fill whatever size you drag it to, so you get a full-resolution view
+at any window size.
+
 **SSH into the live session** (if hook 1200 or equivalent is installed):
 ```bash
 ssh -p 2222 {live-username}@localhost   # password: live

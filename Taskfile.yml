@@ -314,7 +314,7 @@ tasks:
       - sudo apt-get install -y docker.io qemu-system-x86 ovmf xorriso
 
   iso-stage-deb:
-    desc: "Enroll PACKAGE into foundry-iso/local-debs.list and stage its latest .deb (usage: task iso-stage-deb PACKAGE=foundry-anvil)"
+    desc: "DEPRECATED: iso-sync-local-debs now syncs all of foundry-apt/dist/ automatically. This task is a no-op kept for backwards compat."
     vars:
       PACKAGE: '{{.PACKAGE | default ""}}'
     preconditions:
@@ -347,39 +347,34 @@ tasks:
       - bash scripts/build-all.sh
 
   iso-sync-local-debs:
-    desc: "Sync all packages in foundry-iso/local-debs.list to their newest built version from foundry-apt/dist/ (runs automatically before iso-build)"
+    desc: "Sync every .deb in foundry-apt/dist/ into foundry-iso/local-debs/ so local builds always shadow the published apt repo (runs automatically before iso-build)"
     deps: [apt-build]
     cmds:
       - |
         set -euo pipefail
-        MANIFEST=foundry-iso/local-debs.list
-        [[ -f "$MANIFEST" ]] || { echo "No local-debs.list — nothing to sync."; exit 0; }
-        mkdir -p foundry-iso/local-debs
+        shopt -s nullglob
+        ROOT="{{.ROOT_DIR}}"
+        mkdir -p "$ROOT/foundry-iso/local-debs"
         any=0
-        while IFS= read -r pkg || [[ -n "$pkg" ]]; do
-          # Skip blank lines and comments.
-          [[ -z "$pkg" || "$pkg" == \#* ]] && continue
-          newest=$(ls -t foundry-apt/dist/"${pkg}"_*.deb 2>/dev/null | head -1 || true)
-          if [[ -z "$newest" ]]; then
-            echo "WARN: ${pkg} listed in local-debs.list but no .deb found in foundry-apt/dist/ — skipping"
-            continue
-          fi
+        for newest in "$ROOT"/foundry-apt/dist/*.deb; do
+          [[ -f "$newest" ]] || continue
+          pkg=$(dpkg-deb --field "$newest" Package)
           newest_ver=$(dpkg-deb --field "$newest" Version)
-          staged=$(ls foundry-iso/local-debs/"${pkg}"_*.deb 2>/dev/null | head -1 || true)
+          staged=$(ls "$ROOT/foundry-iso/local-debs/${pkg}"_*.deb 2>/dev/null | head -1 || true)
           if [[ -z "$staged" ]]; then
-            cp "$newest" foundry-iso/local-debs/
+            cp "$newest" "$ROOT/foundry-iso/local-debs/"
             echo "Staged:  ${pkg}  (new)  ${newest_ver}"
             any=1
           else
             staged_ver=$(dpkg-deb --field "$staged" Version)
             if dpkg --compare-versions "$newest_ver" gt "$staged_ver"; then
-              rm -f foundry-iso/local-debs/"${pkg}"_*.deb
-              cp "$newest" foundry-iso/local-debs/
+              rm -f "$ROOT/foundry-iso/local-debs/${pkg}"_*.deb
+              cp "$newest" "$ROOT/foundry-iso/local-debs/"
               echo "Updated: ${pkg}  ${staged_ver} → ${newest_ver}"
               any=1
             fi
           fi
-        done < "$MANIFEST"
+        done
         if [[ $any -eq 0 ]]; then echo "local-debs: all packages up to date."; fi
 
   iso-build:
@@ -453,8 +448,8 @@ tasks:
           -drive if=pflash,format=raw,file=/tmp/OVMF_VARS_copy.fd \
           -cdrom "$ISO" \
           -drive file="$DISK",format=qcow2,if=virtio \
-          -display gtk,gl=on \
-          -device virtio-vga-gl,xres=1920,yres=1080 \
+          -display gtk,zoom-to-fit=on \
+          -device VGA \
           -netdev user,id=n0,hostfwd=tcp::2222-:22 \
           -device e1000,netdev=n0
 
