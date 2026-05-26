@@ -3,5 +3,4 @@ Type=Application
 Name=Foundry Welcome
 Exec=foundry-welcome
 X-KDE-autostart-after=panel
-X-KDE-autostart-condition=foundry-welcome:General:FirstRunDone:false
 NoDisplay=true

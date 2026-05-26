@@ -399,7 +399,69 @@ the hook writes `casper.conf`, so a second pass is mandatory.
 | Desktop wallpaper | Plasma autostart `.desktop` in `/etc/skel/.config/autostart/` | `{wallpaper-path}` |
 | Lock screen wallpaper | `includes.chroot/etc/xdg/kscreenlockerrc` | `{wallpaper-path}` |
 | KDE color scheme | Hook → `/usr/share/color-schemes/` + `/etc/xdg/kdeglobals` | `{ColorSchemeName}` |
-| Calamares installer | `calamares-settings-{distro-slug}` package | Branding YAML, slideshow |
+| Calamares installer | `calamares-settings-{distro-slug}` package | Branding YAML, slideshow, sidebar colors |
+
+### Calamares Branding (`branding.desc`)
+
+Calamares 3.3+ requires a `style:` map in `branding.desc`. Without it, the YAML
+parser raises `invalid node; first invalid key: "style"` and Calamares crashes
+before showing any UI. The `style:` map controls sidebar colors:
+
+```yaml
+---
+componentName: {distro-slug}
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo:  true
+
+windowExpanding:    normal
+windowSize:         800px,520px
+windowPlacement:    center
+
+sidebar:    widget
+navigation: widget
+
+strings:
+    productName:         "{Distro Name}"
+    shortProductName:    "{Distro}"
+    version:             "{ubuntu-version}"
+    shortVersion:        "{ubuntu-version}"
+    versionedName:       "{Distro Name} {ubuntu-version}"
+    shortVersionedName:  "{Distro} {ubuntu-version}"
+    bootloaderEntryName: "{Distro Name}"
+    productUrl:          "https://{distro-slug}.example.com/"
+    supportUrl:          "https://{distro-slug}.example.com/docs"
+    knownIssuesUrl:      "https://github.com/{org}/{distro-slug}/issues"
+    releaseNotesUrl:     "https://{distro-slug}.example.com/"
+
+images:
+    productLogo:    "logo.png"
+    productIcon:    "logo.png"
+    productWelcome: "banner.png"
+
+style:
+    SidebarBackground:        "#0a0a0a"   # dark background
+    SidebarText:              "#f7f7f7"   # light text
+    SidebarTextCurrent:       "#0a0a0a"   # text on accent background
+    SidebarBackgroundCurrent: "#ff5b1a"   # accent colour for current step
+
+slideshow:    "slideshow.qml"
+slideshowAPI: 2
+```
+
+`settings.conf` also needs two keys that became required in Calamares 3.3:
+
+```yaml
+hide-back-and-next-during-exec: false
+quit-at-end: false
+```
+
+Without them you get `Required settings.conf key … is missing` warnings, but
+they're non-fatal — still worth adding to stay clean.
+
+**Important:** `sidebar:` and `navigation:` in `branding.desc` are panel layout
+keys (`widget`, `none`, or `qml`), not theming keys. Sidebar colors go in the
+`style:` map, not as a top-level `sidebar:` key.
 
 ### Plasma Splash Screen (KSplashQML)
 
@@ -825,6 +887,11 @@ debian/
 | Hook appears to not have run | `lb binary` cached stale chroot | `chattr -R -i .build/ chroot/ && rm -rf .build/ chroot/` before rebuild |
 | GPU acceleration missing on real hardware | `LIBGL_ALWAYS_SOFTWARE=1` in `/etc/environment` | Never set this in hooks; it forces llvmpipe everywhere via pam\_env |
 | EFI boot doesn't work | live-build 3.0\~a57 doesn't build EFI images | Run post-build EFI injection with xorriso + grub-mkimage |
+| XDG autostart app skipped on every boot (`Skipped due to 'exec-condition'`) | `X-KDE-autostart-condition` key absent from config → `kreadconfig6` returns empty string → condition fails | Pre-seed the config file in `/etc/skel/.config/<app>` with the expected key/value so it exists on first boot |
+| Desktop `.desktop` file unlaunchable (Plasma 6, overlayfs) | `gio set metadata::trusted` fails — overlayfs has `nouserxattr` and `gvfsd` is not installed, so GIO has nowhere to store the trust bit | Install the `.desktop` file to `/usr/share/applications/` and put a symlink in `skel/Desktop/`. Plasma's folder view calls `KFileItem::targetUrl()` which resolves the symlink to the system path, passing `isAuthorizedDesktopFile()` by location rather than metadata |
+| `gio: Setting attribute metadata::trusted not supported` | `gvfsd` not running (or not installed); overlayfs mounted with `nouserxattr` — GIO has no xattr fallback and no daemon fallback | See above. The `gio set metadata::trusted` approach is unreliable on live sessions; use the symlink-to-system-path approach instead |
+| Calamares crashes at launch: `invalid node; first invalid key: "style"` | `branding.desc` is missing the required `style:` map (Calamares 3.3+); the YAML parser raises a fatal error when it tries to iterate over an absent node | Add a `style:` block with `SidebarBackground`, `SidebarText`, `SidebarTextCurrent`, `SidebarBackgroundCurrent`. Also add `windowExpanding`, `windowSize`, `windowPlacement`, `sidebar`, `navigation` (warnings if absent, not fatal) |
+| `Required settings.conf key hide-back-and-next-during-exec is missing` | Calamares 3.3 added two required keys | Add `hide-back-and-next-during-exec: false` and `quit-at-end: false` to `settings.conf` |
 
 ---
 

@@ -4,6 +4,13 @@ componentName: foundry-linux
 welcomeStyleCalamares: false
 welcomeExpandingLogo:  true
 
+windowExpanding:    normal
+windowSize:         800px,520px
+windowPlacement:    center
+
+sidebar:    widget
+navigation: widget
+
 strings:
     productName:      "Foundry Linux"
     shortProductName: "Foundry"
@@ -18,11 +25,15 @@ strings:
     releaseNotesUrl:  "https://foundrylinux.org/"
 
 images:
-    # logo.png: 256×256 — placed here as a placeholder; replace with real asset.
-    productLogo:   "logo.png"
-    productIcon:   "logo.png"
+    productLogo:    "logo.png"
+    productIcon:    "logo.png"
     productWelcome: "banner.png"
 
-# Slideshow shown while packages install (QML file, 4–6 slides).
-slideshow:               "slideshow.qml"
-slideshowAPI:            2
+style:
+    SidebarBackground:        "#0a0a0a"
+    SidebarText:              "#f7f7f7"
+    SidebarTextCurrent:       "#0a0a0a"
+    SidebarBackgroundCurrent: "#ff5b1a"
+
+slideshow:    "slideshow.qml"
+slideshowAPI: 2

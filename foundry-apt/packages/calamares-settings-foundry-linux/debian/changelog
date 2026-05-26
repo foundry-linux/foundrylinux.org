@@ -1,3 +1,14 @@
+calamares-settings-foundry-linux (1.0.6) resolute; urgency=medium
+
+  * Fix Calamares crash on launch: add required style: map to branding.desc
+    (SidebarBackground, SidebarText, SidebarTextCurrent, SidebarBackgroundCurrent).
+    Calamares 3.3+ raises "invalid node; first invalid key: style" without it.
+  * Add missing window layout keys (windowExpanding, windowSize, windowPlacement,
+    sidebar, navigation) to suppress branding warnings on startup.
+  * Add required settings.conf keys hide-back-and-next-during-exec and quit-at-end.
+
+ -- Will Norris <wbnorris@gmail.com>  Sun, 25 May 2026 00:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.5) resolute; urgency=medium
 
   * Remove invalid sidebar: key from branding.desc — caused yaml-cpp fatal

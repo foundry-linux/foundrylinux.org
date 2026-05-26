@@ -54,18 +54,6 @@ X-KDE-autostart-after=panel
 EOF
 fi
 
-# Pre-seed the foundry-welcome config so the KDE autostart condition passes.
-# The autostart desktop file uses:
-#   X-KDE-autostart-condition=foundry-welcome:General:FirstRunDone:false
-# kde-systemd-start-condition calls kreadconfig6 --file foundry-welcome, which
-# reads ~/.config/foundry-welcome.  If the file is absent the key is missing,
-# the condition evaluates false, and the service is skipped on every boot.
-mkdir -p /etc/skel/.config
-cat > /etc/skel/.config/foundry-welcome <<'EOF'
-[General]
-FirstRunDone=false
-EOF
-
 # Set Foundry Linux color scheme as default for the live user.
 if [[ -f /usr/share/color-schemes/FoundryLinux.colors ]]; then
   mkdir -p /etc/skel/.config

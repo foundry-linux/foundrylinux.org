@@ -1,3 +1,15 @@
+foundry-welcome (1.0.3) resolute; urgency=medium
+
+  * Remove X-KDE-autostart-condition from autostart.desktop. The condition
+    checked kreadconfig6 for FirstRunDone=false in ~/.config/foundry-welcome,
+    but the app uses a separate sentinel file (~/.config/foundry-welcome-shown).
+    On first boot the config key is absent so kreadconfig6 returns "" not
+    "false" — the condition always fails and the welcome screen never appears.
+    The app's own sentinel logic already prevents re-showing; the condition is
+    redundant and broken.
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 26 May 2026 00:00:00 +0700
+
 foundry-welcome (1.0.2) resolute; urgency=medium
 
   * Add src/qml/pages/qmldir so Qt6 can resolve CommunityPage, IntroPage,
