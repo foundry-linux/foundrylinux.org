@@ -348,28 +348,27 @@ tasks:
 
   iso-sync-local-debs:
     desc: "Sync every .deb in foundry-apt/dist/ into foundry-iso/local-debs/ so local builds always shadow the published apt repo (runs automatically before iso-build)"
+    dir: "{{.ROOT_DIR}}"
     deps: [apt-build]
     cmds:
       - |
         set -euo pipefail
         shopt -s nullglob
-        ROOT="{{.ROOT_DIR}}"
-        mkdir -p "$ROOT/foundry-iso/local-debs"
+        mkdir -p foundry-iso/local-debs
         any=0
-        for newest in "$ROOT"/foundry-apt/dist/*.deb; do
-          [[ -f "$newest" ]] || continue
+        for newest in foundry-apt/dist/*.deb; do
           pkg=$(dpkg-deb --field "$newest" Package)
           newest_ver=$(dpkg-deb --field "$newest" Version)
-          staged=$(ls "$ROOT/foundry-iso/local-debs/${pkg}"_*.deb 2>/dev/null | head -1 || true)
+          staged=$(ls foundry-iso/local-debs/"${pkg}"_*.deb 2>/dev/null | head -1 || true)
           if [[ -z "$staged" ]]; then
-            cp "$newest" "$ROOT/foundry-iso/local-debs/"
+            cp "$newest" foundry-iso/local-debs/
             echo "Staged:  ${pkg}  (new)  ${newest_ver}"
             any=1
           else
             staged_ver=$(dpkg-deb --field "$staged" Version)
             if dpkg --compare-versions "$newest_ver" gt "$staged_ver"; then
-              rm -f "$ROOT/foundry-iso/local-debs/${pkg}"_*.deb
-              cp "$newest" "$ROOT/foundry-iso/local-debs/"
+              rm -f foundry-iso/local-debs/"${pkg}"_*.deb
+              cp "$newest" foundry-iso/local-debs/
               echo "Updated: ${pkg}  ${staged_ver} → ${newest_ver}"
               any=1
             fi
