@@ -55,3 +55,5 @@ echo "kubuntu-desktop"                    >> config/package-lists/foundry.list.c
 echo "calamares"                          >> config/package-lists/foundry.list.chroot
 echo "casper"                            >> config/package-lists/foundry.list.chroot
 echo "user-setup"                        >> config/package-lists/foundry.list.chroot
+echo "language-pack-en"                  >> config/package-lists/foundry.list.chroot
+echo "language-pack-kde-en"              >> config/package-lists/foundry.list.chroot
