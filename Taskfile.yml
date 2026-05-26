@@ -340,8 +340,15 @@ tasks:
           echo "Enrolled: ${PKG} → ${MANIFEST}"
         fi
 
+  apt-build:
+    desc: "Build all foundry-apt .debs into foundry-apt/dist/"
+    dir: foundry-apt
+    cmds:
+      - bash scripts/build-all.sh
+
   iso-sync-local-debs:
     desc: "Sync all packages in foundry-iso/local-debs.list to their newest built version from foundry-apt/dist/ (runs automatically before iso-build)"
+    deps: [apt-build]
     cmds:
       - |
         set -euo pipefail
