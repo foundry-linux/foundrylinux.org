@@ -439,6 +439,11 @@ tasks:
         if [[ ! -f "$ISO" ]]; then
           echo "ERROR: $ISO not found — run 'task iso-build' first" >&2; exit 1
         fi
+        DISK=/tmp/foundry-test-disk.qcow2
+        if [[ ! -f "$DISK" ]]; then
+          qemu-img create -f qcow2 "$DISK" 40G
+          echo "Created test disk: $DISK (40G)"
+        fi
         cp /usr/share/OVMF/OVMF_VARS_4M.fd /tmp/OVMF_VARS_copy.fd
         echo "Booting $ISO"
         echo "SSH:  sshpass -p foundry ssh -o IdentitiesOnly=yes -o PubkeyAuthentication=no -p 2222 root@localhost"
@@ -447,6 +452,7 @@ tasks:
           -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd \
           -drive if=pflash,format=raw,file=/tmp/OVMF_VARS_copy.fd \
           -cdrom "$ISO" \
+          -drive file="$DISK",format=qcow2,if=virtio \
           -display gtk,gl=on \
           -device virtio-vga-gl \
           -netdev user,id=n0,hostfwd=tcp::2222-:22 \
