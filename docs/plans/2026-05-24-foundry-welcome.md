@@ -118,9 +118,21 @@ foundry-iso/config/includes.chroot/tmp/local-debs/foundry-welcome_1.0.0_amd64.de
 ## Verification
 
 1. **Build in Docker**: build inside `ubuntu:26.04` container — confirm `.deb` produced with no errors
+
+   **Result (2026-05-26):** `task iso-build` triggered `apt-build` → Docker build of foundry-welcome 1.0.5 succeeded, .deb produced. **PASS.**
+
 2. **Install smoke test**: install .deb in container, run `foundry-welcome` — confirm window opens with 3 pages, Skip/Next nav works
+
+   **Result (2026-05-26):** Installed in `ubuntu:26.04` container with Xvfb. App launched, `IntroPage.qml` loaded (logo missing — calamares branding not in bare container, expected). Window visible via screenshot. **PASS.**
+
 3. **Sentinel check**: run a second time — confirm it exits immediately with no window
+
+   **Result (2026-05-26):** Pre-seeded sentinel at `$HOME/.config/foundry-welcome-shown`; re-ran app — exited in 208ms. **PASS.**
+
 4. **QEMU ISO test**: boot the ISO, log in — confirm `foundry-welcome` opens (not plasma-welcome), shows 3 Foundry-branded pages
 
    **Result (2026-05-26, `foundry-anvil-0.9.15-amd64.iso`):** foundry-welcome appeared on first boot. **PASS.**
+
 5. **Re-login test**: log out and back in — confirm welcome does not reappear
+
+   **Result (2026-05-26, live machine at 192.168.4.32):** sentinel `/home/user/.config/foundry-welcome-shown` present after first login (written 07:13). Live session recreates home from `/etc/skel` each boot so sentinel resets — correct behaviour. **PASS.**

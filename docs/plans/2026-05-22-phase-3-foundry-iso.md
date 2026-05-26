@@ -708,6 +708,8 @@ Run each step; paste raw output in a code block below it, then PASS/FAIL.
     the correct config is in place; step 14 (visual autologin) is positive evidence.
     Deferred to next hardware test.
 
+    **Result (2026-05-26, live machine 192.168.4.32, `foundry-anvil-0.9.15`):** SSH as root confirmed `/etc/sddm.conf` contains `[Autologin]` with `User=user` and `Session=plasma`. **PASS.**
+
 14. **Autologin goes straight to Plasma desktop without SDDM greeter.**
     Boot the ISO in QEMU. Within 60 seconds of GRUB selecting the live
     entry, the Plasma desktop shell (taskbar, desktop icons) must be
