@@ -1,0 +1,11 @@
+# Packages pre-staged into the ISO from foundry-apt/dist/ before the apt repo
+# is updated.  iso-sync-local-debs reads this list and ensures the newest built
+# version of each package is in local-debs/ before every iso-build.
+#
+# Add a package here with: task iso-stage-deb PACKAGE=<name>
+# (that command stages it AND adds it to this list)
+
+calamares-settings-foundry-linux
+foundry-anvil
+foundry-kde-theme
+foundry-welcome

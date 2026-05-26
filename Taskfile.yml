@@ -314,42 +314,64 @@ tasks:
       - sudo apt-get install -y docker.io qemu-system-x86 ovmf xorriso
 
   iso-stage-deb:
-    desc: "Copy latest built .deb for PACKAGE from foundry-apt/dist/ to foundry-iso/local-debs/ (usage: task iso-stage-deb PACKAGE=calamares-settings-foundry-linux)"
+    desc: "Enroll PACKAGE into foundry-iso/local-debs.list and stage its latest .deb (usage: task iso-stage-deb PACKAGE=foundry-anvil)"
     vars:
       PACKAGE: '{{.PACKAGE | default ""}}'
     preconditions:
       - sh: '[ -n "{{.PACKAGE}}" ]'
-        msg: "PACKAGE is required — e.g. task iso-stage-deb PACKAGE=calamares-settings-foundry-linux"
+        msg: "PACKAGE is required — e.g. task iso-stage-deb PACKAGE=foundry-anvil"
     cmds:
       - |
         set -euo pipefail
-        deb=$(ls -t foundry-apt/dist/{{.PACKAGE}}_*.deb 2>/dev/null | head -1)
+        MANIFEST=foundry-iso/local-debs.list
+        PKG="{{.PACKAGE}}"
+        deb=$(ls -t foundry-apt/dist/"${PKG}"_*.deb 2>/dev/null | head -1 || true)
         if [[ -z "$deb" ]]; then
-          echo "ERROR: no .deb found for {{.PACKAGE}} in foundry-apt/dist/" >&2
+          echo "ERROR: no .deb found for ${PKG} in foundry-apt/dist/" >&2
           exit 1
         fi
-        rm -f foundry-iso/local-debs/{{.PACKAGE}}_*.deb
+        rm -f foundry-iso/local-debs/"${PKG}"_*.deb
         cp "$deb" foundry-iso/local-debs/
         echo "Staged: $(basename "$deb") → foundry-iso/local-debs/"
+        # Add to manifest if not already listed (ignoring comment lines).
+        if ! grep -qxF "$PKG" "$MANIFEST" 2>/dev/null; then
+          echo "$PKG" >> "$MANIFEST"
+          echo "Enrolled: ${PKG} → ${MANIFEST}"
+        fi
 
   iso-sync-local-debs:
-    desc: "Upgrade any package in foundry-iso/local-debs/ to its newest version from foundry-apt/dist/ (runs automatically before iso-build)"
+    desc: "Sync all packages in foundry-iso/local-debs.list to their newest built version from foundry-apt/dist/ (runs automatically before iso-build)"
     cmds:
       - |
         set -euo pipefail
-        shopt -s nullglob
-        for staged in foundry-iso/local-debs/*.deb; do
-          pkg=$(dpkg-deb --field "$staged" Package)
+        MANIFEST=foundry-iso/local-debs.list
+        [[ -f "$MANIFEST" ]] || { echo "No local-debs.list — nothing to sync."; exit 0; }
+        any=0
+        while IFS= read -r pkg || [[ -n "$pkg" ]]; do
+          # Skip blank lines and comments.
+          [[ -z "$pkg" || "$pkg" == \#* ]] && continue
           newest=$(ls -t foundry-apt/dist/"${pkg}"_*.deb 2>/dev/null | head -1 || true)
-          [[ -z "$newest" ]] && continue
-          staged_ver=$(dpkg-deb --field "$staged" Version)
-          newest_ver=$(dpkg-deb --field "$newest" Version)
-          if dpkg --compare-versions "$newest_ver" gt "$staged_ver"; then
-            rm -f foundry-iso/local-debs/"${pkg}"_*.deb
-            cp "$newest" foundry-iso/local-debs/
-            echo "Updated: ${pkg}  ${staged_ver} → ${newest_ver}"
+          if [[ -z "$newest" ]]; then
+            echo "WARN: ${pkg} listed in local-debs.list but no .deb found in foundry-apt/dist/ — skipping"
+            continue
           fi
-        done
+          newest_ver=$(dpkg-deb --field "$newest" Version)
+          staged=$(ls foundry-iso/local-debs/"${pkg}"_*.deb 2>/dev/null | head -1 || true)
+          if [[ -z "$staged" ]]; then
+            cp "$newest" foundry-iso/local-debs/
+            echo "Staged:  ${pkg}  (new)  ${newest_ver}"
+            any=1
+          else
+            staged_ver=$(dpkg-deb --field "$staged" Version)
+            if dpkg --compare-versions "$newest_ver" gt "$staged_ver"; then
+              rm -f foundry-iso/local-debs/"${pkg}"_*.deb
+              cp "$newest" foundry-iso/local-debs/
+              echo "Updated: ${pkg}  ${staged_ver} → ${newest_ver}"
+              any=1
+            fi
+          fi
+        done < "$MANIFEST"
+        [[ $any -eq 0 ]] && echo "local-debs: all packages up to date."
 
   iso-build:
     desc: "Build the ISO locally (EDITION=anvil|atelier|all, default: anvil)"
