@@ -94,9 +94,16 @@ for fname in sorted(os.listdir(meta_dir)):
         parts = []
         if desc_long:
             for para in re.split(r'\n\n+', desc_long.strip()):
-                joined = ' '.join(line.strip() for line in para.splitlines() if line.strip())
-                if joined:
-                    parts.append(f'<p class="pkg-long">{fmt_desc(joined)}</p>')
+                lines = [line.strip() for line in para.splitlines() if line.strip()]
+                if not lines:
+                    continue
+                if all(l.startswith('* ') for l in lines):
+                    items = ''.join(
+                        f'<li>{fmt_desc(re.sub(r"  +", " ", l[2:]))}</li>' for l in lines
+                    )
+                    parts.append(f'<ul class="pkg-long">{items}</ul>')
+                else:
+                    parts.append(f'<p class="pkg-long">{fmt_desc(" ".join(lines))}</p>')
         if depends:
             chips = "".join(f'<span class="dep">{esc(d)}</span>' for d in depends)
             parts.append(f'<div class="pkg-deps">{chips}</div>')
@@ -283,6 +290,7 @@ cat > "$OUT" <<HTML
     margin-top: .5rem; font-size: 11px; line-height: 1.55;
     color: var(--ink-soft); word-break: break-word;
   }
+  ul.pkg-long { padding-left: 1.2em; }
   .pkg-long code {
     font-family: var(--font-mono); font-size: 10.5px;
     background: rgba(255,255,255,0.07); padding: .1em .3em;
