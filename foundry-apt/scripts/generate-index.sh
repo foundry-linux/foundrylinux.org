@@ -282,9 +282,10 @@ cat > "$OUT" <<HTML
   .pkg-details summary {
     cursor: pointer; font-size: 11px; color: var(--ink-faint);
     font-family: var(--font-mono); letter-spacing: .05em;
-    list-style: none; display: inline; transition: color 0.15s;
+    list-style: none; display: inline;
   }
-  .pkg-details summary:hover { color: var(--accent); }
+  .pkg-details summary::before { transition: color 0.15s; }
+  .pkg-details summary:hover::before { color: var(--accent); }
   .pkg-details summary::marker,
   .pkg-details summary::-webkit-details-marker { display: none; }
   .pkg-details summary::before { content: "▸ "; }
