@@ -1,31 +1,20 @@
 {
-  "generated_at": "2026-05-28T04:54:48Z",
-  "foundry_release_sha": "44d0345350b5e01fdd7aed12ad1263e985782651b1bf4f53e2f025ee98679a4d",
+  "generated_at": "2026-05-28T16:47:56Z",
+  "foundry_release_sha": "744c221e2ec8906edbac3cba7b155156ce17a747e68add1bff55cf84da0630b6",
   "worldfoundry_release_sha": "cfa2c71c432fd89bdc5f538c1da760f0c5cd456be82004f9623cd0d8eab8bef1",
-  "inputs_sha": "c2104748628dbe8ace33211506fda9c42a10a44078c02c3b45d4eaf5d3498b44",
+  "inputs_sha": "96192c48713850984a0dfe635dbb3a074b64c73c7fadc55f2640c89fbbbc3b4c",
   "editions": [
     {
       "slug": "anvil",
       "title": "Anvil",
-      "blurb": "Base edition \u2014 full WorldFoundry stack, retro toolkit, light emulators, game frameworks, image tools. The Distrobox devbox image installs this and nothing else.",
+      "blurb": "Base edition — full WorldFoundry stack, retro toolkit, light emulators, game frameworks, image tools. The Distrobox devbox image installs this and nothing else.",
       "install_command": "sudo apt install foundry-anvil",
       "metapackage": "foundry-anvil",
-      "installed_size_kb": 4187525,
-      "package_count": 809,
+      "installed_size_kb": 4711295,
+      "package_count": 1160,
       "direct_depends": [
-        "bash-completion",
-        "btop",
-        "firefox",
-        "foundry-emulators-computers",
-        "foundry-emulators-consoles",
-        "foundry-game-frameworks",
-        "foundry-image-cli",
-        "foundry-retro-tools",
-        "foundry-welcome",
-        "libvte-2.91-0",
-        "man-db",
-        "sudo",
-        "worldfoundry"
+        "foundry-core",
+        "foundry-desktop"
       ]
     },
     {
@@ -34,8 +23,8 @@
       "blurb": "Anvil + heavy graphics and audio production: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint, the DAW stack, and trackers.",
       "install_command": "sudo apt install foundry-sprite",
       "metapackage": "foundry-sprite",
-      "installed_size_kb": 5457804,
-      "package_count": 1102,
+      "installed_size_kb": 5921880,
+      "package_count": 1406,
       "direct_depends": [
         "foundry-anvil",
         "foundry-pixel-art",
@@ -50,8 +39,8 @@
       "blurb": "Sprite + everything else: ROM-bundled vintage emulators, heavy console emulators, FOSS engine reimplementations, free games, mobile development, cross-repo dev deps. Around 10 GB on top of bare Ubuntu.",
       "install_command": "sudo apt install foundry-atelier",
       "metapackage": "foundry-atelier",
-      "installed_size_kb": 19374115,
-      "package_count": 1313,
+      "installed_size_kb": 19836405,
+      "package_count": 1610,
       "direct_depends": [
         "foundry-sprite",
         "foundry-emulators-vintage",
@@ -69,7 +58,7 @@
       "slug": "worldfoundry-gdk",
       "title": "World Foundry GDK",
       "role": "Game Development Kit",
-      "blurb": "Cross-platform engine and 10 CLI authoring tools \u2014 cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, blender-asset-finder-cli. Plus the engine build-deps (build-essential, cmake, libx11-dev, libgl) via worldfoundry-development.",
+      "blurb": "Cross-platform engine and 10 CLI authoring tools — cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, blender-asset-finder-cli. Plus the engine build-deps (build-essential, cmake, libx11-dev, libgl) via worldfoundry-development.",
       "icon": "WorldFoundryIcon",
       "metapackages": [
         "worldfoundry",
@@ -316,7 +305,7 @@
     {
       "slug": "blender",
       "title": "Blender",
-      "role": "3D \u00b7 Animation \u00b7 WF",
+      "role": "3D · Animation · WF",
       "blurb": "Blender preconfigured with the WorldFoundry add-ons (editor exporter + level importer/exporter) and the blender-asset-finder.",
       "icon": "BlenderIcon",
       "metapackages": [
@@ -364,8 +353,8 @@
     {
       "slug": "retro-tools",
       "title": "Retro toolkit",
-      "role": "Disassembly \u00b7 RE \u00b7 audio",
-      "blurb": "Retro-porting and reverse-engineering toolchain. MAME, Ghidra, radare2, binwalk, and the 6502 / Z80 / m68k / 6800-family assemblers and disassemblers \u2014 the bench for getting old code running again.",
+      "role": "Disassembly · RE · audio",
+      "blurb": "Retro-porting and reverse-engineering toolchain. MAME, Ghidra, radare2, binwalk, and the 6502 / Z80 / m68k / 6800-family assemblers and disassemblers — the bench for getting old code running again.",
       "icon": "AssemblerIcon",
       "metapackages": [
         "foundry-retro-tools"
@@ -427,7 +416,7 @@
           "summary": "Motorola 6800/6809/6309 family disassembler",
           "upstream": {
             "status": "vendored",
-            "note": "Small, self-contained, debhelper build, no patches \u2014 natural first ITP target."
+            "note": "Small, self-contained, debhelper build, no patches — natural first ITP target."
           }
         },
         {
@@ -439,7 +428,7 @@
           "summary": "NSA software reverse engineering framework",
           "upstream": {
             "status": "vendored",
-            "note": "Debian licensing review ongoing \u2014 NSA-origin code, no ITP yet."
+            "note": "Debian licensing review ongoing — NSA-origin code, no ITP yet."
           }
         },
         {
@@ -548,8 +537,8 @@
     {
       "slug": "emulators",
       "title": "Emulators",
-      "role": "Arcade \u00b7 console \u00b7 vintage",
-      "blurb": "MAME plus a four-way split \u2014 light console (mednafen, fceux, stella), heavy console (dolphin-emu, pcsx2, yuzu, retroarch), vintage home computers (dosbox-x, hatari, fs-uae, openmsx), and multiverse vintage (vice, atari800).",
+      "role": "Arcade · console · vintage",
+      "blurb": "MAME plus a four-way split — light console (mednafen, fceux, stella), heavy console (dolphin-emu, pcsx2, yuzu, retroarch), vintage home computers (dosbox-x, hatari, fs-uae, openmsx), and multiverse vintage (vice, atari800).",
       "icon": "MameIcon",
       "metapackages": [
         "foundry-emulators",
@@ -842,8 +831,8 @@
     {
       "slug": "game-frameworks",
       "title": "Game frameworks",
-      "role": "Engines \u00b7 SDKs \u00b7 shaders",
-      "blurb": "2D/3D game-dev frameworks, headers, and shader tools \u2014 Tiled, SDL2/3, SFML, Allegro5, libtcod, glslang, spirv-cross, spirv-tools.",
+      "role": "Engines · SDKs · shaders",
+      "blurb": "2D/3D game-dev frameworks, headers, and shader tools — Tiled, SDL2/3, SFML, Allegro5, libtcod, glslang, spirv-cross, spirv-tools.",
       "icon": "GamepadIcon",
       "metapackages": [
         "foundry-game-frameworks"
@@ -956,7 +945,7 @@
     {
       "slug": "image-tools",
       "title": "Image tools",
-      "role": "Paint \u00b7 pixel \u00b7 CLI",
+      "role": "Paint · pixel · CLI",
       "blurb": "Raster and vector paint plus pixel-art suites: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint. Plus the ImageMagick / GraphicsMagick CLIs in Anvil.",
       "icon": "SparksIcon",
       "metapackages": [
@@ -1072,8 +1061,8 @@
     {
       "slug": "audio-production",
       "title": "Audio & trackers",
-      "role": "DAW \u00b7 trackers \u00b7 chiptune",
-      "blurb": "Audio production stack \u2014 Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx \u2014 and the tracker suite (MilkyTracker, Schism, Furnace, openmpt123).",
+      "role": "DAW · trackers · chiptune",
+      "blurb": "Audio production stack — Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx — and the tracker suite (MilkyTracker, Schism, Furnace, openmpt123).",
       "icon": "LibvgmIcon",
       "metapackages": [
         "foundry-daw",
@@ -1209,8 +1198,8 @@
     {
       "slug": "games",
       "title": "Games & reimplementations",
-      "role": "FOSS engines \u00b7 free games",
-      "blurb": "Free games (0 A.D., SuperTuxKart, Widelands, Warzone 2100, OpenTTD, Freeciv, Freedoom, Hedgewars) and FOSS engine reimplementations (VCMI, OpenRCT2, Fheroes2, Exult, Sauerbraten \u2014 bring your own data).",
+      "role": "FOSS engines · free games",
+      "blurb": "Free games (0 A.D., SuperTuxKart, Widelands, Warzone 2100, OpenTTD, Freeciv, Freedoom, Hedgewars) and FOSS engine reimplementations (VCMI, OpenRCT2, Fheroes2, Exult, Sauerbraten — bring your own data).",
       "icon": "SpriteIcon",
       "metapackages": [
         "foundry-free-games",
@@ -1610,7 +1599,7 @@
     {
       "slug": "mobile-dev",
       "title": "Mobile development",
-      "role": "Android \u00b7 iOS",
+      "role": "Android · iOS",
       "blurb": "Android (OpenJDK 17, adb, NDK r26c) and Linux-side iOS tooling (libimobiledevice, ideviceinstaller, usbmuxd, ifuse).",
       "icon": "VgmstreamIcon",
       "metapackages": [
@@ -1703,49 +1692,573 @@
     {
       "slug": "foundry-core",
       "title": "Foundry Core",
-      "role": "Base \u00b7 existing Ubuntu",
-      "blurb": "The complete Foundry Linux developer toolkit with zero KDE dependencies. Safe to install on any Ubuntu flavour \u2014 GNOME, XFCE, Budgie, or KDE.",
+      "role": "Base · existing Ubuntu",
+      "blurb": "The complete Foundry Linux developer toolkit with zero KDE dependencies. Safe to install on any Ubuntu flavour — GNOME, XFCE, Budgie, or KDE.",
       "icon": "SparksIcon",
       "metapackages": [
         "foundry-core"
       ],
-      "package_count": 0,
-      "installed_size_kb": 0,
-      "packages": []
+      "in_edition_tier": "anvil",
+      "installed_size_kb": 1737339,
+      "package_count": 47,
+      "packages": [
+        {
+          "name": "bash-completion",
+          "origin": "ubuntu-main",
+          "section": "shells",
+          "version": "1:2.16.0-8build1",
+          "installed_size_kb": 1952,
+          "summary": "programmable completion for the bash shell",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          }
+        },
+        {
+          "name": "binutils-m68k-linux-gnu",
+          "origin": "ubuntu-universe",
+          "section": "universe/devel",
+          "version": "2.46-3ubuntu2",
+          "installed_size_kb": 5469,
+          "summary": "GNU binary utilities, for m68k-linux-gnu target",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "binwalk",
+          "origin": "ubuntu-universe",
+          "section": "universe/devel",
+          "version": "2.4.3+dfsg1-2build1",
+          "installed_size_kb": 16,
+          "summary": "tool library for analyzing binary blobs and executable code",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "btop",
+          "origin": "ubuntu-universe",
+          "section": "universe/utils",
+          "version": "1.4.6-2",
+          "installed_size_kb": 1762,
+          "summary": "Modern and colorful command line resource monitor that shows usage and stats",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "cc65",
+          "origin": "ubuntu-universe",
+          "section": "universe/otherosfs",
+          "version": "2.19-2build1",
+          "installed_size_kb": 32056,
+          "summary": "complete cross development package for 65(C)02 systems",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "dasm",
+          "origin": "ubuntu-universe",
+          "section": "universe/otherosfs",
+          "version": "2.20.15~20201109+really2.20.14.1-3build1",
+          "installed_size_kb": 661,
+          "summary": "Macro assembler with support for several 8-bit microprocessors",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "desmume",
+          "origin": "ubuntu-universe",
+          "section": "universe/games",
+          "version": "0.9.13-4build1",
+          "installed_size_kb": 3549,
+          "summary": "Nintendo DS emulator",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "dosbox-x",
+          "origin": "ubuntu-universe",
+          "section": "universe/otherosfs",
+          "version": "2026.01.02+dfsg-2",
+          "installed_size_kb": 11984,
+          "summary": "DOS emulator with complete, accurate hardware emulation",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "f9dasm",
+          "origin": "foundry",
+          "section": "devel",
+          "version": "1.83-1foundry3",
+          "installed_size_kb": 177,
+          "summary": "Motorola 6800/6809/6309 family disassembler",
+          "upstream": {
+            "status": "vendored",
+            "note": "Small, self-contained, debhelper build, no patches — natural first ITP target."
+          }
+        },
+        {
+          "name": "fceux",
+          "origin": "ubuntu-universe",
+          "section": "universe/games",
+          "version": "2.6.5+dfsg1-2build4",
+          "installed_size_kb": 4652,
+          "summary": "all-in-one NES/Famicom Emulator",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "firefox",
+          "origin": "ubuntu-main",
+          "section": "web",
+          "version": "1:1snap1-0ubuntu8",
+          "installed_size_kb": 121,
+          "summary": "Installs Firefox snap and provides some system integration",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          }
+        },
+        {
+          "name": "frotz",
+          "origin": "ubuntu-universe",
+          "section": "universe/games",
+          "version": "2.55+dfsg-3",
+          "installed_size_kb": 314,
+          "summary": "interpreter of Z-code story-files",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "fs-uae",
+          "origin": "ubuntu-universe",
+          "section": "universe/otherosfs",
+          "version": "3.2.35-2",
+          "installed_size_kb": 14619,
+          "summary": "Cross-platform Amiga emulator based on UAE/WinUAE",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "ghidra",
+          "origin": "foundry",
+          "section": "devel",
+          "version": "12.1-1foundry1",
+          "installed_size_kb": 884774,
+          "summary": "NSA software reverse engineering framework",
+          "upstream": {
+            "status": "vendored",
+            "note": "Debian licensing review ongoing — NSA-origin code, no ITP yet."
+          }
+        },
+        {
+          "name": "glslang-tools",
+          "origin": "ubuntu-universe",
+          "section": "universe/libdevel",
+          "version": "16.2.0-2",
+          "installed_size_kb": 8749,
+          "summary": "OpenGL and OpenGL ES shader front end and validator -- tools",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "graphicsmagick",
+          "origin": "ubuntu-universe",
+          "section": "universe/graphics",
+          "version": "1.4+really1.3.46-2",
+          "installed_size_kb": 5816,
+          "summary": "collection of image processing tools",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "hatari",
+          "origin": "ubuntu-universe",
+          "section": "universe/otherosfs",
+          "version": "2.6.1+dfsg-2",
+          "installed_size_kb": 18517,
+          "summary": "Emulator for the Atari ST, STE, TT, and Falcon computers",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "imagemagick",
+          "origin": "ubuntu-universe",
+          "section": "universe/graphics",
+          "version": "8:7.1.2.18+dfsg1-1",
+          "installed_size_kb": 78,
+          "summary": "image manipulation programs -- binaries",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "liballegro5-dev",
+          "origin": "ubuntu-universe",
+          "section": "universe/libdevel",
+          "version": "2:5.2.11.3+dfsg-1",
+          "installed_size_kb": 874,
+          "summary": "development files for the Allegro 5 library",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "libsdl2-dev",
+          "origin": "ubuntu-universe",
+          "section": "universe/libdevel",
+          "version": "2.32.10+dfsg-6",
+          "installed_size_kb": 6412,
+          "summary": "Simple DirectMedia Layer development files",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "libsdl3-dev",
+          "origin": "ubuntu-universe",
+          "section": "universe/libdevel",
+          "version": "3.4.2+ds-1ubuntu1",
+          "installed_size_kb": 9854,
+          "summary": "Simple DirectMedia Layer, version 3 development files",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "libsfml-dev",
+          "origin": "ubuntu-universe",
+          "section": "universe/libdevel",
+          "version": "3.0.2+dfsg-2",
+          "installed_size_kb": 1217,
+          "summary": "Simple and Fast Multimedia Library - Development Files",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "libtcod-dev",
+          "origin": "ubuntu-universe",
+          "section": "universe/libdevel",
+          "version": "1.24.0+dfsg-2",
+          "installed_size_kb": 968,
+          "summary": "development files for the libtcod roguelike library",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "libvgm",
+          "origin": "foundry",
+          "section": "sound",
+          "version": "0.1+git20260406.d115188-1foundry1",
+          "installed_size_kb": 3683,
+          "summary": "chip-register VGM playback library with player utilities",
+          "upstream": {
+            "status": "vendored",
+            "note": "Upstream has no tagged releases; pinned to a commit by sha256. ITP impractical until upstream stabilises."
+          }
+        },
+        {
+          "name": "libvte-2.91-0",
+          "origin": "ubuntu-main",
+          "section": "libs",
+          "version": "0.84.0-2",
+          "installed_size_kb": 976,
+          "summary": "Terminal emulator widget for GTK 3 - runtime files",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          }
+        },
+        {
+          "name": "mame",
+          "origin": "ubuntu-universe",
+          "section": "universe/games",
+          "version": "0.285+dfsg1-1",
+          "installed_size_kb": 444083,
+          "summary": "Multiple Arcade Machine Emulator (MAME)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "mame-tools",
+          "origin": "ubuntu-universe",
+          "section": "universe/utils",
+          "version": "0.285+dfsg1-1",
+          "installed_size_kb": 18536,
+          "summary": "Tools for MAME",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "man-db",
+          "origin": "ubuntu-main",
+          "section": "doc",
+          "version": "2.13.1-1build1",
+          "installed_size_kb": 3045,
+          "summary": "tools for reading manual pages",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          }
+        },
+        {
+          "name": "mednafen",
+          "origin": "ubuntu-universe",
+          "section": "universe/games",
+          "version": "1.32.1+dfsg-2build2",
+          "installed_size_kb": 20259,
+          "summary": "multi-platform emulator, including NES, GB/A, Lynx, PC Engine",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "openmsx",
+          "origin": "ubuntu-universe",
+          "section": "universe/otherosfs",
+          "version": "21.0+dfsg-3",
+          "installed_size_kb": 11241,
+          "summary": "MSX emulator that aims for perfection",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "openmsx-data",
+          "origin": "ubuntu-universe",
+          "section": "universe/otherosfs",
+          "version": "21.0+dfsg-3",
+          "installed_size_kb": 6125,
+          "summary": "datafiles for openMSX, an MSX emulator",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "ppsspp",
+          "origin": "foundry",
+          "section": "otherosfs",
+          "version": "1.20.4-2foundry1",
+          "installed_size_kb": 37073,
+          "summary": "fast and portable PSP emulator",
+          "upstream": {
+            "status": "vendored"
+          }
+        },
+        {
+          "name": "radare2",
+          "origin": "ubuntu-universe",
+          "section": "universe/devel",
+          "version": "6.0.7+ds-1",
+          "installed_size_kb": 3895,
+          "summary": "free and advanced command line hexadecimal editor",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "scummvm",
+          "origin": "ubuntu-universe",
+          "section": "universe/games",
+          "version": "2026.1.0+dfsg-1build1",
+          "installed_size_kb": 119490,
+          "summary": "engine for several graphical adventure games",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "snes9x-gtk",
+          "origin": "foundry",
+          "section": "otherosfs",
+          "version": "1.63-1foundry1",
+          "installed_size_kb": 7100,
+          "summary": "portable Super Nintendo Entertainment System emulator",
+          "upstream": {
+            "status": "vendored"
+          }
+        },
+        {
+          "name": "sox",
+          "origin": "ubuntu-universe",
+          "section": "universe/sound",
+          "version": "14.7.0.9+ds1-1",
+          "installed_size_kb": 201,
+          "summary": "Swiss army knife of sound processing",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "spirv-cross",
+          "origin": "ubuntu-universe",
+          "section": "universe/utils",
+          "version": "2021.01.15+1.4.335.0-1",
+          "installed_size_kb": 2609,
+          "summary": "Convert SPIR-V to other shader languages (CLI tool)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "spirv-tools",
+          "origin": "ubuntu-universe",
+          "section": "universe/libdevel",
+          "version": "2026.1-1",
+          "installed_size_kb": 23081,
+          "summary": "API and commands for processing SPIR-V modules (tools)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "stella",
+          "origin": "ubuntu-universe",
+          "section": "universe/otherosfs",
+          "version": "7.0+dfsg-2build1",
+          "installed_size_kb": 9590,
+          "summary": "Atari 2600 Emulator for SDL & the X Window System",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "sudo",
+          "origin": "ubuntu-main",
+          "section": "admin",
+          "version": "1.9.17p2-1ubuntu3",
+          "installed_size_kb": 3472,
+          "summary": "Provide limited super user privileges to specific users",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          }
+        },
+        {
+          "name": "tiled",
+          "origin": "ubuntu-universe",
+          "section": "universe/utils",
+          "version": "1.11.90-1",
+          "installed_size_kb": 5190,
+          "summary": "general purpose tile map editor",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "vgmstream",
+          "origin": "foundry",
+          "section": "sound",
+          "version": "2083-1foundry5",
+          "installed_size_kb": 2588,
+          "summary": "Video-game audio decoder (CLI)",
+          "upstream": {
+            "status": "vendored",
+            "note": "Tracks vgmstream rXXXX revisions; ITP after upstream stabilises a release cadence."
+          }
+        },
+        {
+          "name": "worldfoundry-blender-addons",
+          "origin": "worldfoundry",
+          "section": "metapackages",
+          "version": "1.1.3",
+          "installed_size_kb": 9,
+          "summary": "WorldFoundry Blender add-ons + Blender itself",
+          "upstream": {
+            "status": "n/a-firstparty"
+          }
+        },
+        {
+          "name": "worldfoundry-cli",
+          "origin": "worldfoundry",
+          "section": "metapackages",
+          "version": "1.0.3",
+          "installed_size_kb": 8,
+          "summary": "WorldFoundry authoring CLI tools (headless / build-server set)",
+          "upstream": {
+            "status": "n/a-firstparty"
+          }
+        },
+        {
+          "name": "xa65",
+          "origin": "ubuntu-universe",
+          "section": "universe/devel",
+          "version": "2.4.1-0.1build1",
+          "installed_size_kb": 296,
+          "summary": "cross-assembler and utility suite for 65xx/65816 processors",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "z80asm",
+          "origin": "ubuntu-universe",
+          "section": "universe/devel",
+          "version": "1.8-2build1",
+          "installed_size_kb": 99,
+          "summary": "assembler for the Zilog Z80 microprocessor",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "z80dasm",
+          "origin": "ubuntu-universe",
+          "section": "universe/devel",
+          "version": "1.1.6-1build1",
+          "installed_size_kb": 99,
+          "summary": "disassembler for the Zilog Z80 microprocessor",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          }
+        }
+      ]
     },
     {
       "slug": "foundry-desktop",
       "title": "Foundry Desktop",
-      "role": "KDE \u00b7 ISO only",
-      "blurb": "KDE desktop integration shipped on the Foundry Linux ISO \u2014 first-login welcome app and Plasma colour scheme. Not needed on existing Ubuntu installs.",
+      "role": "KDE · ISO only",
+      "blurb": "KDE desktop integration shipped on the Foundry Linux ISO — first-login welcome app and Plasma colour scheme. Not needed on existing Ubuntu installs.",
       "icon": "SparksIcon",
       "metapackages": [
         "foundry-desktop"
       ],
+      "in_edition_tier": "anvil",
+      "installed_size_kb": 4510,
       "package_count": 2,
-      "installed_size_kb": 512,
       "packages": [
-        {
-          "name": "foundry-welcome",
-          "origin": "foundry",
-          "upstream": {
-            "status": "n/a-firstparty"
-          },
-          "version": "1.0.0",
-          "architecture": "amd64",
-          "installed_size_kb": 420,
-          "summary": "First-login welcome application for Foundry Linux (QML/Kirigami)"
-        },
         {
           "name": "foundry-kde-theme",
           "origin": "foundry",
+          "section": "kde",
+          "version": "1.0.1",
+          "installed_size_kb": 4460,
+          "summary": "KDE Plasma desktop theme for Foundry Linux",
           "upstream": {
             "status": "n/a-firstparty"
-          },
-          "version": "1.0.1",
-          "architecture": "all",
-          "installed_size_kb": 92,
-          "summary": "KDE Plasma colour scheme and shell theme for Foundry Linux"
+          }
+        },
+        {
+          "name": "foundry-welcome",
+          "origin": "foundry",
+          "section": "misc",
+          "version": "1.0.5",
+          "installed_size_kb": 50,
+          "summary": "Welcome Center for Foundry Linux",
+          "upstream": {
+            "status": "n/a-firstparty"
+          }
         }
       ]
     }
@@ -1773,27 +2286,48 @@
     {
       "name": "f9dasm",
       "pulled_by": [
-        "foundry-retro-tools"
+        "foundry-retro-tools",
+        "foundry-core"
       ],
       "upstream": {
         "status": "vendored",
-        "note": "Small, self-contained, debhelper build, no patches \u2014 natural first ITP target."
+        "note": "Small, self-contained, debhelper build, no patches — natural first ITP target."
+      }
+    },
+    {
+      "name": "foundry-kde-theme",
+      "pulled_by": [
+        "foundry-desktop"
+      ],
+      "upstream": {
+        "status": "n/a-firstparty"
+      }
+    },
+    {
+      "name": "foundry-welcome",
+      "pulled_by": [
+        "foundry-desktop"
+      ],
+      "upstream": {
+        "status": "n/a-firstparty"
       }
     },
     {
       "name": "ghidra",
       "pulled_by": [
-        "foundry-retro-tools"
+        "foundry-retro-tools",
+        "foundry-core"
       ],
       "upstream": {
         "status": "vendored",
-        "note": "Debian licensing review ongoing \u2014 NSA-origin code, no ITP yet."
+        "note": "Debian licensing review ongoing — NSA-origin code, no ITP yet."
       }
     },
     {
       "name": "libvgm",
       "pulled_by": [
-        "foundry-retro-tools"
+        "foundry-retro-tools",
+        "foundry-core"
       ],
       "upstream": {
         "status": "vendored",
@@ -1803,7 +2337,8 @@
     {
       "name": "ppsspp",
       "pulled_by": [
-        "foundry-emulators"
+        "foundry-emulators",
+        "foundry-core"
       ],
       "upstream": {
         "status": "vendored"
@@ -1812,7 +2347,8 @@
     {
       "name": "snes9x-gtk",
       "pulled_by": [
-        "foundry-emulators"
+        "foundry-emulators",
+        "foundry-core"
       ],
       "upstream": {
         "status": "vendored"
@@ -1821,7 +2357,8 @@
     {
       "name": "vgmstream",
       "pulled_by": [
-        "foundry-retro-tools"
+        "foundry-retro-tools",
+        "foundry-core"
       ],
       "upstream": {
         "status": "vendored",
@@ -1829,15 +2366,15 @@
       }
     }
   ],
-  "grand_total_installed_size_kb": 19374115,
+  "grand_total_installed_size_kb": 19836405,
   "upstream_summary": {
     "vendored": 6,
     "debian-itp": 0,
     "in-debian-unstable": 0,
-    "in-ubuntu-universe": 94,
+    "in-ubuntu-universe": 95,
     "in-ubuntu-multiverse": 12,
-    "in-ubuntu-main": 6,
-    "n/a-firstparty": 14,
+    "in-ubuntu-main": 11,
+    "n/a-firstparty": 16,
     "n/a-proprietary": 0,
     "unknown": 0
   },

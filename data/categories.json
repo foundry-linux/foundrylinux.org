@@ -1,6 +1,5 @@
 {
   "_comment": "Hand-curated category schema driving /packages and the home Forge. See docs/plans/2026-05-21-packages-page.md §2. Edit this; the generator never writes here.",
-
   "editions": [
     {
       "slug": "anvil",
@@ -24,7 +23,6 @@
       "metapackage": "foundry-atelier"
     }
   ],
-
   "categories": [
     {
       "slug": "worldfoundry-gdk",
@@ -32,7 +30,11 @@
       "role": "Game Development Kit",
       "blurb": "Cross-platform engine and 10 CLI authoring tools — cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, blender-asset-finder-cli. Plus the engine build-deps (build-essential, cmake, libx11-dev, libgl) via worldfoundry-development.",
       "icon": "WorldFoundryIcon",
-      "metapackages": ["worldfoundry", "worldfoundry-cli", "worldfoundry-development"],
+      "metapackages": [
+        "worldfoundry",
+        "worldfoundry-cli",
+        "worldfoundry-development"
+      ],
       "in_edition_tier": "anvil"
     },
     {
@@ -41,7 +43,9 @@
       "role": "3D · Animation · WF",
       "blurb": "Blender preconfigured with the WorldFoundry add-ons (editor exporter + level importer/exporter) and the blender-asset-finder.",
       "icon": "BlenderIcon",
-      "metapackages": ["worldfoundry-blender-addons"],
+      "metapackages": [
+        "worldfoundry-blender-addons"
+      ],
       "in_edition_tier": "anvil"
     },
     {
@@ -50,7 +54,9 @@
       "role": "Disassembly · RE · audio",
       "blurb": "Retro-porting and reverse-engineering toolchain. MAME, Ghidra, radare2, binwalk, and the 6502 / Z80 / m68k / 6800-family assemblers and disassemblers — the bench for getting old code running again.",
       "icon": "AssemblerIcon",
-      "metapackages": ["foundry-retro-tools"],
+      "metapackages": [
+        "foundry-retro-tools"
+      ],
       "in_edition_tier": "anvil"
     },
     {
@@ -59,7 +65,13 @@
       "role": "Arcade · console · vintage",
       "blurb": "MAME plus a four-way split — light console (mednafen, fceux, stella), heavy console (dolphin-emu, pcsx2, yuzu, retroarch), vintage home computers (dosbox-x, hatari, fs-uae, openmsx), and multiverse vintage (vice, atari800).",
       "icon": "MameIcon",
-      "metapackages": ["foundry-emulators", "foundry-emulators-computers", "foundry-emulators-consoles", "foundry-emulators-consoles-heavy", "foundry-emulators-vintage"],
+      "metapackages": [
+        "foundry-emulators",
+        "foundry-emulators-computers",
+        "foundry-emulators-consoles",
+        "foundry-emulators-consoles-heavy",
+        "foundry-emulators-vintage"
+      ],
       "in_edition_tier": "spans"
     },
     {
@@ -68,7 +80,9 @@
       "role": "Engines · SDKs · shaders",
       "blurb": "2D/3D game-dev frameworks, headers, and shader tools — Tiled, SDL2/3, SFML, Allegro5, libtcod, glslang, spirv-cross, spirv-tools.",
       "icon": "GamepadIcon",
-      "metapackages": ["foundry-game-frameworks"],
+      "metapackages": [
+        "foundry-game-frameworks"
+      ],
       "in_edition_tier": "anvil"
     },
     {
@@ -77,7 +91,11 @@
       "role": "Paint · pixel · CLI",
       "blurb": "Raster and vector paint plus pixel-art suites: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint. Plus the ImageMagick / GraphicsMagick CLIs in Anvil.",
       "icon": "SparksIcon",
-      "metapackages": ["foundry-art", "foundry-pixel-art", "foundry-image-cli"],
+      "metapackages": [
+        "foundry-art",
+        "foundry-pixel-art",
+        "foundry-image-cli"
+      ],
       "in_edition_tier": "sprite"
     },
     {
@@ -86,7 +104,10 @@
       "role": "DAW · trackers · chiptune",
       "blurb": "Audio production stack — Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx — and the tracker suite (MilkyTracker, Schism, Furnace, openmpt123).",
       "icon": "LibvgmIcon",
-      "metapackages": ["foundry-daw", "foundry-trackers"],
+      "metapackages": [
+        "foundry-daw",
+        "foundry-trackers"
+      ],
       "in_edition_tier": "sprite"
     },
     {
@@ -95,7 +116,10 @@
       "role": "FOSS engines · free games",
       "blurb": "Free games (0 A.D., SuperTuxKart, Widelands, Warzone 2100, OpenTTD, Freeciv, Freedoom, Hedgewars) and FOSS engine reimplementations (VCMI, OpenRCT2, Fheroes2, Exult, Sauerbraten — bring your own data).",
       "icon": "SpriteIcon",
-      "metapackages": ["foundry-free-games", "foundry-game-reimplementations"],
+      "metapackages": [
+        "foundry-free-games",
+        "foundry-game-reimplementations"
+      ],
       "in_edition_tier": "atelier"
     },
     {
@@ -104,22 +128,63 @@
       "role": "Android · iOS",
       "blurb": "Android (OpenJDK 17, adb, NDK r26c) and Linux-side iOS tooling (libimobiledevice, ideviceinstaller, usbmuxd, ifuse).",
       "icon": "VgmstreamIcon",
-      "metapackages": ["foundry-android-development", "foundry-ios-development"],
+      "metapackages": [
+        "foundry-android-development",
+        "foundry-ios-development"
+      ],
       "in_edition_tier": "atelier"
+    },
+    {
+      "slug": "foundry-core",
+      "title": "Foundry Core",
+      "role": "Base · existing Ubuntu",
+      "blurb": "The complete Foundry Linux developer toolkit with zero KDE dependencies. Safe to install on any Ubuntu flavour — GNOME, XFCE, Budgie, or KDE.",
+      "icon": "SparksIcon",
+      "metapackages": [
+        "foundry-core"
+      ],
+      "in_edition_tier": "anvil"
+    },
+    {
+      "slug": "foundry-desktop",
+      "title": "Foundry Desktop",
+      "role": "KDE · ISO only",
+      "blurb": "KDE desktop integration shipped on the Foundry Linux ISO — first-login welcome app and Plasma colour scheme. Not needed on existing Ubuntu installs.",
+      "icon": "SparksIcon",
+      "metapackages": [
+        "foundry-desktop"
+      ],
+      "in_edition_tier": "anvil"
     }
   ],
-
   "out_of_catalogue": [],
-
   "_forge_home_page_layout": {
     "_comment": "Six cards on the home page, in 3×2 grid. Each card resolves to a `category_slug` (above) at SSR time, pulling its install_command, package count, and headline size from packages-data.json. The card copy fields (title, role, icon) are duplicated from the category for clarity — if they diverge from the category, SSR uses the category as source of truth and warns.",
     "cards": [
-      { "category_slug": "worldfoundry-gdk", "row": 1 },
-      { "category_slug": "blender",          "row": 1 },
-      { "category_slug": "retro-tools",      "row": 1 },
-      { "category_slug": "emulators",        "row": 2 },
-      { "category_slug": "audio-production", "row": 2 },
-      { "category_slug": "games",            "row": 2 }
+      {
+        "category_slug": "worldfoundry-gdk",
+        "row": 1
+      },
+      {
+        "category_slug": "blender",
+        "row": 1
+      },
+      {
+        "category_slug": "retro-tools",
+        "row": 1
+      },
+      {
+        "category_slug": "emulators",
+        "row": 2
+      },
+      {
+        "category_slug": "audio-production",
+        "row": 2
+      },
+      {
+        "category_slug": "games",
+        "row": 2
+      }
     ]
   }
 }
