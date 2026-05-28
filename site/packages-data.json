@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-22T16:50:53Z",
-  "foundry_release_sha": "b702ac78267cec290f4a2eccbc8f884a243d37df3c3cb1afbe098f58d801621c",
+  "generated_at": "2026-05-28T04:54:48Z",
+  "foundry_release_sha": "44d0345350b5e01fdd7aed12ad1263e985782651b1bf4f53e2f025ee98679a4d",
   "worldfoundry_release_sha": "cfa2c71c432fd89bdc5f538c1da760f0c5cd456be82004f9623cd0d8eab8bef1",
   "inputs_sha": "c2104748628dbe8ace33211506fda9c42a10a44078c02c3b45d4eaf5d3498b44",
   "editions": [
@@ -10,19 +10,22 @@
       "blurb": "Base edition — full WorldFoundry stack, retro toolkit, light emulators, game frameworks, image tools. The Distrobox devbox image installs this and nothing else.",
       "install_command": "sudo apt install foundry-anvil",
       "metapackage": "foundry-anvil",
-      "installed_size_kb": 3905201,
-      "package_count": 745,
+      "installed_size_kb": 4187525,
+      "package_count": 809,
       "direct_depends": [
-        "worldfoundry",
-        "foundry-retro-tools",
+        "bash-completion",
+        "btop",
+        "firefox",
         "foundry-emulators-computers",
         "foundry-emulators-consoles",
         "foundry-game-frameworks",
         "foundry-image-cli",
-        "sudo",
+        "foundry-retro-tools",
+        "foundry-welcome",
         "libvte-2.91-0",
-        "bash-completion",
-        "man-db"
+        "man-db",
+        "sudo",
+        "worldfoundry"
       ]
     },
     {
@@ -31,8 +34,8 @@
       "blurb": "Anvil + heavy graphics and audio production: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint, the DAW stack, and trackers.",
       "install_command": "sudo apt install foundry-sprite",
       "metapackage": "foundry-sprite",
-      "installed_size_kb": 5239742,
-      "package_count": 1061,
+      "installed_size_kb": 5457804,
+      "package_count": 1102,
       "direct_depends": [
         "foundry-anvil",
         "foundry-pixel-art",
@@ -47,8 +50,8 @@
       "blurb": "Sprite + everything else: ROM-bundled vintage emulators, heavy console emulators, FOSS engine reimplementations, free games, mobile development, cross-repo dev deps. Around 10 GB on top of bare Ubuntu.",
       "install_command": "sudo apt install foundry-atelier",
       "metapackage": "foundry-atelier",
-      "installed_size_kb": 19157778,
-      "package_count": 1281,
+      "installed_size_kb": 19374115,
+      "package_count": 1313,
       "direct_depends": [
         "foundry-sprite",
         "foundry-emulators-vintage",
@@ -499,7 +502,7 @@
           "name": "vgmstream",
           "origin": "foundry",
           "section": "sound",
-          "version": "2083-1foundry4",
+          "version": "2083-1foundry5",
           "installed_size_kb": 2588,
           "summary": "Video-game audio decoder (CLI)",
           "upstream": {
@@ -556,8 +559,8 @@
         "foundry-emulators-vintage"
       ],
       "in_edition_tier": "spans",
-      "installed_size_kb": 611828,
-      "package_count": 23,
+      "installed_size_kb": 656001,
+      "package_count": 25,
       "packages": [
         {
           "name": "atari800",
@@ -747,6 +750,17 @@
           }
         },
         {
+          "name": "ppsspp",
+          "origin": "foundry",
+          "section": "otherosfs",
+          "version": "1.20.4-2foundry1",
+          "installed_size_kb": 37073,
+          "summary": "fast and portable PSP emulator",
+          "upstream": {
+            "status": "vendored"
+          }
+        },
+        {
           "name": "retroarch",
           "origin": "ubuntu-universe",
           "section": "universe/otherosfs",
@@ -777,6 +791,17 @@
           "summary": "engine for several graphical adventure games",
           "upstream": {
             "status": "in-ubuntu-universe"
+          }
+        },
+        {
+          "name": "snes9x-gtk",
+          "origin": "foundry",
+          "section": "otherosfs",
+          "version": "1.63-1foundry1",
+          "installed_size_kb": 7100,
+          "summary": "portable Super Nintendo Entertainment System emulator",
+          "upstream": {
+            "status": "vendored"
           }
         },
         {
@@ -1727,6 +1752,24 @@
       }
     },
     {
+      "name": "ppsspp",
+      "pulled_by": [
+        "foundry-emulators"
+      ],
+      "upstream": {
+        "status": "vendored"
+      }
+    },
+    {
+      "name": "snes9x-gtk",
+      "pulled_by": [
+        "foundry-emulators"
+      ],
+      "upstream": {
+        "status": "vendored"
+      }
+    },
+    {
       "name": "vgmstream",
       "pulled_by": [
         "foundry-retro-tools"
@@ -1737,9 +1780,9 @@
       }
     }
   ],
-  "grand_total_installed_size_kb": 19157778,
+  "grand_total_installed_size_kb": 19374115,
   "upstream_summary": {
-    "vendored": 4,
+    "vendored": 6,
     "debian-itp": 0,
     "in-debian-unstable": 0,
     "in-ubuntu-universe": 94,
@@ -1750,7 +1793,9 @@
     "unknown": 0
   },
   "audit": {
-    "unowned_packages": [],
+    "unowned_packages": [
+      "foundry-welcome"
+    ],
     "missing_metapackages": [],
     "out_of_catalogue": []
   }
