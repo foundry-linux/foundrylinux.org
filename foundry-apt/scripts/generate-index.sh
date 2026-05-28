@@ -392,7 +392,7 @@ cat > "$OUT" <<HTML
 <body>
 <div class="wrap">
   <nav class="back-nav">
-    <a href="https://foundrylinux.org">← foundrylinux.org</a>
+    <a href="https://foundrylinux.org"><svg viewBox="0 0 32 32" width="16" height="16" aria-hidden="true" style="vertical-align:middle;margin-right:4px" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 L28 12 L26 16 L22 16 L22 20 L10 20 L10 16 L6 16 Z"/><path d="M12 20 L11 24 L21 24 L20 20"/><path d="M9 24 L23 24 L23 27 L9 27 Z"/><line x1="16" y1="4" x2="16" y2="8"/><line x1="11" y1="6" x2="13" y2="9"/><line x1="21" y1="6" x2="19" y2="9"/></svg>foundrylinux.org</a>
     <span>/</span>
     <span>apt</span>
   </nav>
