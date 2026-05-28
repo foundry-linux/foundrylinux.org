@@ -139,6 +139,7 @@ cat > "$OUT" <<HTML
 <style>
   /* apt-index layout — colour/font variables from foundrylinux.org/styles.css */
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scrollbar-gutter: stable; }
   body { background: var(--bg); color: var(--ink); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
@@ -227,7 +228,8 @@ cat > "$OUT" <<HTML
     margin-bottom: .25rem;
   }
   .table-wrap { border: 1px solid var(--hairline); }
-  table { width: 100%; border-collapse: collapse; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th:first-child, td.col-pkg { width: 220px; }
   th {
     font-family: var(--font-mono);
     font-size: 10px;
