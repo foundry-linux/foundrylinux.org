@@ -196,31 +196,42 @@ const CHANNELS = [
   {
     num: '01',
     label: 'Existing Ubuntu',
-    hook: 'Already on 26.04? Add the repo.',
-    cmd: 'curl -fsSL https://foundrylinux.org/setup.sh | bash',
-    href: '#install',
+    hook: 'Already on 26.04? Add the repo — no reinstall.',
+    cmd: 'sudo apt install foundry-anvil',
+    href: '#path-apt',
+    inv: 'non-destructive',
   },
   {
     num: '02',
     label: 'Container',
-    hook: 'Any Linux, macOS, or Windows host.',
+    hook: 'Any host — Linux, macOS, or Windows via WSL.',
     cmd: 'distrobox create -i ghcr.io/foundry-linux/devbox:26.04',
     href: 'https://github.com/foundry-linux/foundry-devbox',
+    inv: 'isolated',
   },
   {
     num: '03',
-    label: 'ISO / USB',
-    hook: 'Fresh install — boot and click.',
-    cmd: 'foundry-anvil-latest-amd64.iso',
-    href: '#download',
+    label: 'Virtual machine',
+    hook: 'Sandboxed — VirtualBox, VMware, or QEMU. Your OS unchanged.',
+    cmd: 'foundry-anvil-latest-amd64.{ova,vmdk,qcow2}',
+    href: '#path-vm',
+    inv: 'isolated',
   },
   {
     num: '04',
-    label: 'VM',
-    hook: 'VirtualBox · VMware · QEMU.',
-    cmd: 'foundry-anvil-latest-amd64.{ova,vmdk,qcow2}',
-    href: '#download',
-    soon: false,
+    label: 'Dual boot',
+    hook: 'Keep Windows. Calamares offers "Install alongside" automatically.',
+    cmd: 'foundry-anvil-latest-amd64.iso → alongside Windows',
+    href: '#path-iso',
+    inv: 'additive',
+  },
+  {
+    num: '05',
+    label: 'Fresh install',
+    hook: 'Replace everything. Full branded desktop from first boot.',
+    cmd: 'foundry-anvil-latest-amd64.iso → erase disk',
+    href: '#path-iso',
+    inv: 'replaces-os',
   },
 ];
 
@@ -231,34 +242,32 @@ function Install() {
         <div className="section-head">
           <div>
             <span className="section-num">№ 02 · Install</span>
-            <h2 className="section-title">Add the forge<br />to your sources.</h2>
+            <h2 className="section-title">Pick your<br />path.</h2>
           </div>
           <p className="section-blurb">
-            Already running Ubuntu 26.04 LTS or any apt-compatible derivative?
-            Add the signed repo and pull what you need. Or boot straight from
-            the ISO and get the full branded desktop in one click.
+            Five ways in — ordered from least to most disruptive to your
+            current setup. Coming from Windows? Start at{" "}
+            <a href="#path-vm">Virtual machine</a> or{" "}
+            <a href="#path-iso">Dual boot</a>.
           </p>
         </div>
 
         <div className="channels-grid">
-          {CHANNELS.map(({ num, label, hook, cmd, href, soon }) => {
-            const inner = (
-              <>
-                <span className="channel-num">{num}</span>
-                <span className="channel-label">{label}</span>
-                <p className="channel-hook">{hook}</p>
-                <code className="channel-cmd">{cmd}</code>
-                {soon && <span className="channel-soon">SOON</span>}
-              </>
-            );
-            return soon
-              ? <div key={num} className="channel-card" data-soon="true">{inner}</div>
-              : <a key={num} className="channel-card" href={href}>{inner}</a>;
-          })}
+          {CHANNELS.map(({ num, label, hook, cmd, href, inv }) => (
+            <a key={num} className="channel-card" href={href} data-invasiveness={inv}>
+              <span className="channel-num">{num}</span>
+              <span className="channel-label">{label}</span>
+              <p className="channel-hook">{hook}</p>
+              <code className="channel-cmd">{cmd}</code>
+              <span className="channel-inv">{inv}</span>
+            </a>
+          ))}
         </div>
 
         <div className="install-wrap">
           <div className="install-left">
+
+            <div className="path-anchor" id="path-apt">path 01 · existing ubuntu</div>
             <div className="codeblock">
               <div className="codeblock-head">
                 <span>shell · root</span>
@@ -277,30 +286,9 @@ function Install() {
               </pre>
             </div>
 
-            <div className="download-vms" id="download">
+            <div className="path-anchor" id="path-vm">path 03 · virtual machine</div>
+            <div className="download-vms">
               <div className="codeblock-head">
-                <span>download · iso</span>
-                <DownloadIcon />
-              </div>
-              <ul className="vm-list">
-                <li className="vm-row">
-                  <span className="vm-type">Anvil</span>
-                  <span className="vm-file">foundry-anvil-latest-amd64.iso</span>
-                  <span className="vm-size">~5 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso" aria-label="Download Anvil ISO"><DownloadIcon /></a>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso.torrent" aria-label="Anvil torrent file"><TorrentIcon /></a>
-                  <a className="vm-dl" href="magnet:?xt=urn:btih:4475708175bc2ef9f9c764f406a43679221147ed&dn=foundry-anvil-0.9.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-anvil-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Anvil magnet link"><MagnetIcon /></a>
-                </li>
-                <li className="vm-row">
-                  <span className="vm-type">Atelier</span>
-                  <span className="vm-file">foundry-atelier-latest-amd64.iso</span>
-                  <span className="vm-size">~15 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso" aria-label="Download Atelier ISO"><DownloadIcon /></a>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso.torrent" aria-label="Atelier torrent file"><TorrentIcon /></a>
-                  <a className="vm-dl" href="magnet:?xt=urn:btih:bfb49155b514b79b36e544887f8b87af25d63bc6&dn=foundry-atelier-0.9.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-atelier-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Atelier magnet link"><MagnetIcon /></a>
-                </li>
-              </ul>
-              <div className="codeblock-head" style={{ marginTop: '1rem' }}>
                 <span>download · vms</span>
                 <DownloadIcon />
               </div>
@@ -325,6 +313,45 @@ function Install() {
                 </li>
               </ul>
             </div>
+
+            <div className="path-anchor" id="path-iso">path 04–05 · iso (dual boot or fresh install)</div>
+            <div className="download-vms">
+              <div className="codeblock-head">
+                <span>download · iso</span>
+                <DownloadIcon />
+              </div>
+              <ul className="vm-list">
+                <li className="vm-row">
+                  <span className="vm-type">Anvil</span>
+                  <span className="vm-file">foundry-anvil-latest-amd64.iso</span>
+                  <span className="vm-size">~5 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso" aria-label="Download Anvil ISO"><DownloadIcon /></a>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso.torrent" aria-label="Anvil torrent"><TorrentIcon /></a>
+                  <a className="vm-dl" href="magnet:?xt=urn:btih:4475708175bc2ef9f9c764f406a43679221147ed&dn=foundry-anvil-0.9.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-anvil-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Anvil magnet"><MagnetIcon /></a>
+                </li>
+                <li className="vm-row">
+                  <span className="vm-type">Atelier</span>
+                  <span className="vm-file">foundry-atelier-latest-amd64.iso</span>
+                  <span className="vm-size">~15 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso" aria-label="Download Atelier ISO"><DownloadIcon /></a>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso.torrent" aria-label="Atelier torrent"><TorrentIcon /></a>
+                  <a className="vm-dl" href="magnet:?xt=urn:btih:bfb49155b514b79b36e544887f8b87af25d63bc6&dn=foundry-atelier-0.9.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-atelier-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Atelier magnet"><MagnetIcon /></a>
+                </li>
+              </ul>
+              <div className="dualboot-callout">
+                <span className="dualboot-label">dual boot with windows</span>
+                <p>
+                  Boot the ISO, choose <em>Install alongside Windows Boot Manager</em> in
+                  the Calamares installer — it detects Windows and offers to shrink its
+                  partition automatically. No manual partitioning required. Give Foundry
+                  Linux at least 60 GB.{" "}
+                  <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">
+                    Ubuntu dual-boot guide →
+                  </a>
+                </p>
+              </div>
+            </div>
+
           </div>
 
           <div className="install-side">
