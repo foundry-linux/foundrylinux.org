@@ -11,6 +11,7 @@ Build-Depends: debhelper-compat (= 13),
                libao-dev
 Standards-Version: 4.7.0
 Homepage: https://github.com/ValleyBell/libvgm
+X-Repology-Project: libvgm
 Rules-Requires-Root: no
 
 Package: libvgm

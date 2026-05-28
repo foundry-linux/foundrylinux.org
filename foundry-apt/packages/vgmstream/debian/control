@@ -16,6 +16,7 @@ Build-Depends: debhelper-compat (= 13),
  libswresample-dev
 Standards-Version: 4.7.2
 Homepage: https://github.com/vgmstream/vgmstream
+X-Repology-Project: vgmstream
 Rules-Requires-Root: no
 
 Package: vgmstream

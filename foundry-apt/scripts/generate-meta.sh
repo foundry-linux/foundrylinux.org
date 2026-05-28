@@ -65,6 +65,25 @@ def parse_changelog_version(path):
     m = re.match(r"^\S+\s+\(([^)]+)\)", line)
     return m.group(1) if m else ""
 
+def parse_changelog_latest(path):
+    """Return the bullet-point body of the first debian/changelog stanza."""
+    lines, in_first = [], False
+    try:
+        with open(path) as f:
+            for line in f:
+                line = line.rstrip("\n")
+                if not in_first:
+                    if re.match(r"^\S", line):
+                        in_first = True
+                    continue
+                if line.startswith(" --"):
+                    break
+                lines.append(line.rstrip())
+    except FileNotFoundError:
+        return ""
+    body = "\n".join(l[2:] if l.startswith("  ") else l for l in lines).strip()
+    return body
+
 def clean_depends(raw):
     """Strip ${...} substitution vars and version constraints; return name list."""
     pkgs = []
@@ -178,6 +197,8 @@ def process(name, pkg_dir):
         "description_long":  desc_long,
         "installed_size_kb": inst_size,
         "deb_url":           deb_url,
+        "changelog_latest":  parse_changelog_latest(changelog_path),
+        "repology_project":  source_stanza.get("X-Repology-Project", ""),
     }
 
     with open(out_path, "w") as f:

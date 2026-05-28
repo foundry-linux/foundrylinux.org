@@ -5,6 +5,7 @@ Maintainer: Foundry Linux <packages@foundrylinux.org>
 Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.7.2
 Homepage: https://github.com/Arakula/f9dasm
+X-Repology-Project: f9dasm
 Rules-Requires-Root: no
 
 Package: f9dasm

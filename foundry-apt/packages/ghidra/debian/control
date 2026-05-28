@@ -6,6 +6,7 @@ Build-Depends: debhelper-compat (= 13),
  unzip
 Standards-Version: 4.7.2
 Homepage: https://ghidra-sre.org/
+X-Repology-Project: ghidra
 Rules-Requires-Root: no
 
 Package: ghidra

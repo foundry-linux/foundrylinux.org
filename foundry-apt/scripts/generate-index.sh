@@ -61,6 +61,8 @@ for i, fname in enumerate(sorted(os.listdir(meta_dir))):
     desc_long  = (p.get("description_long") or "").strip()
     depends    = p.get("depends") or []
     inst_kb    = p.get("installed_size_kb")
+    changelog  = p.get("changelog_latest", "")
+    repology   = p.get("repology_project", "")
 
     # Name cell — bold plain text only; meta badge goes on the version line
     section    = p.get("section", "")
@@ -91,6 +93,18 @@ for i, fname in enumerate(sorted(os.listdir(meta_dir))):
             for a in arches
         )
         ver_cell = f"{esc(ver)} ({links})"
+
+    # Wrap ver_cell with changelog hover tooltip
+    if changelog:
+        ver_cell = f'<span class="ver-wrap">{ver_cell}<span class="ver-tip">{esc(changelog)}</span></span>'
+
+    # Repology badge for vendored packages
+    if repology:
+        badge_url  = f"https://repology.org/badge/latest-versions/{esc(repology)}.svg"
+        badge_href = f"https://repology.org/project/{esc(repology)}/versions"
+        ver_cell  += (f'<a class="repology-badge" href="{badge_href}" target="_blank"'
+                      f' rel="noopener" aria-label="Repology versions">'
+                      f'<img src="{badge_url}" alt="latest versions" height="14"></a>')
 
     # Description cell with optional <details> for long desc + dep chips
     if desc_long or depends or inst_kb is not None:
@@ -144,6 +158,11 @@ cat > "$OUT" <<HTML
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${SITE_TITLE}</title>
+<meta property="og:type"        content="website" />
+<meta property="og:url"         content="${SITE_URL}/" />
+<meta property="og:title"       content="${SITE_TITLE}" />
+<meta property="og:description" content="${PKG_COUNT} signed packages for Ubuntu 26.04 (resolute)" />
+<meta name="twitter:card"       content="summary" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -276,6 +295,19 @@ cat > "$OUT" <<HTML
   }
   .pkg-home:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
   .col-ver { display: block; color: var(--ink-faint); font-size: 11px; margin-top: 4px; overflow-wrap: anywhere; }
+  .ver-wrap { position: relative; display: inline; }
+  .ver-tip {
+    display: none; position: absolute; left: 0; top: calc(100% + 3px);
+    z-index: 100; min-width: 260px; max-width: 420px;
+    background: #1c1c1c; border: 1px solid var(--hairline-strong);
+    padding: .5rem .75rem; font-size: 10.5px; line-height: 1.55;
+    color: var(--ink-soft); font-family: var(--font-mono);
+    white-space: pre-wrap; word-break: break-word; pointer-events: none;
+  }
+  .ver-wrap:hover .ver-tip { display: block; }
+  .repology-badge { display: block; margin-top: 5px; }
+  .repology-badge img { vertical-align: middle; opacity: 0.8; }
+  .repology-badge:hover img { opacity: 1; }
   td.col-desc { word-break: break-word; }
   /* ── Package details (long desc + dep chips) ── */
   .pkg-details { margin-top: .3rem; }
