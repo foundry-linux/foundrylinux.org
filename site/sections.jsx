@@ -192,30 +192,15 @@ function Forge() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Install / apt instructions
 
-// Cards 01–04; card 05 is rendered separately as the hero card.
-const CHANNELS = [
-  {
-    num: '01',
-    label: 'Existing Ubuntu',
-    hook: 'Already on 26.04? Add the repo — no reinstall.',
-    cmd: 'sudo apt install foundry-anvil',
-    href: '#path-apt',
-    inv: 'non-destructive',
-  },
+// Cards 02 and 04 stay in the middle row via map.
+// Cards 01, 03, 05 are rendered individually with two-zone layouts.
+const CHANNELS_MID = [
   {
     num: '02',
     label: 'Container',
     hook: 'Any host — Linux, macOS, or Windows via WSL.',
     cmd: 'distrobox create -i ghcr.io/foundry-linux/devbox:26.04',
     href: 'https://github.com/foundry-linux/foundry-devbox',
-    inv: 'isolated',
-  },
-  {
-    num: '03',
-    label: 'Virtual machine',
-    hook: 'Sandboxed — VirtualBox, VMware, or QEMU. Your OS unchanged.',
-    cmd: 'foundry-anvil-latest-amd64.{ova,vmdk,qcow2}',
-    href: '#path-vm',
     inv: 'isolated',
   },
   {
@@ -246,16 +231,76 @@ function Install() {
         </div>
 
         <div className="channels-grid">
-          {CHANNELS.map(({ num, label, hook, cmd, href, inv }) => (
-            <a key={num} className="channel-card" href={href} data-invasiveness={inv}>
-              <span className="channel-num">{num}</span>
-              <span className="channel-label">{label}</span>
-              <p className="channel-hook">{hook}</p>
-              <code className="channel-cmd">{cmd}</code>
-              <span className="channel-inv">{inv}</span>
-            </a>
-          ))}
-          {/* Card 05 — hero treatment: full-width, two-zone, embedded ISO downloads */}
+
+          {/* Card 01 — full-width, two-zone: left info + right apt codeblock */}
+          <div className="channel-card channel-card--wide" id="path-apt" data-invasiveness="non-destructive">
+            <div className="hero-left">
+              <span className="channel-num">01</span>
+              <span className="channel-label">Existing Ubuntu</span>
+              <p className="channel-hook">Already on 26.04? Add the repo — no reinstall.</p>
+              <span className="channel-inv">non-destructive</span>
+            </div>
+            <div className="hero-right hero-right--code">
+              <span className="hero-dl-label">shell · root</span>
+              <pre className="card-code">
+                <span className="step">① Add the Foundry archive</span>{"\n"}
+                <span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>{"\n"}
+                {"\n"}
+                <span className="step">② Install</span>{"\n"}
+                <span className="ember">sudo apt install</span> foundry-anvil{"\n"}
+                {"\n"}
+                <span className="cmt"># or pick a different edition:</span>{"\n"}
+                <span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>{"\n"}
+                <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~15 GB)</span>
+              </pre>
+            </div>
+          </div>
+
+          {/* Middle row: 02, 03 (VM downloads inline), 04 */}
+          <a className="channel-card" href="https://github.com/foundry-linux/foundry-devbox" data-invasiveness="isolated">
+            <span className="channel-num">02</span>
+            <span className="channel-label">Container</span>
+            <p className="channel-hook">Any host — Linux, macOS, or Windows via WSL.</p>
+            <code className="channel-cmd">distrobox create -i ghcr.io/foundry-linux/devbox:26.04</code>
+            <span className="channel-inv">isolated</span>
+          </a>
+
+          <div className="channel-card channel-card--vm" id="path-vm" data-invasiveness="isolated">
+            <span className="channel-num">03</span>
+            <span className="channel-label">Virtual machine</span>
+            <p className="channel-hook">Sandboxed — VirtualBox, VMware, or QEMU. Your OS unchanged.</p>
+            <ul className="card-vm-list">
+              <li>
+                <span className="card-vm-type">VirtualBox</span>
+                <span className="card-vm-file">foundry-anvil-latest-amd64.ova</span>
+                <span className="card-vm-size">11 GB</span>
+                <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.ova" aria-label="Download OVA"><DownloadIcon /></a>
+              </li>
+              <li>
+                <span className="card-vm-type">VMware</span>
+                <span className="card-vm-file">foundry-anvil-latest-amd64.vmdk</span>
+                <span className="card-vm-size">11 GB</span>
+                <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.vmdk" aria-label="Download VMDK"><DownloadIcon /></a>
+              </li>
+              <li>
+                <span className="card-vm-type">QEMU / KVM</span>
+                <span className="card-vm-file">foundry-anvil-latest-amd64.qcow2</span>
+                <span className="card-vm-size">5.1 GB</span>
+                <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.qcow2" aria-label="Download qcow2"><DownloadIcon /></a>
+              </li>
+            </ul>
+            <span className="channel-inv">isolated</span>
+          </div>
+
+          <a className="channel-card" href="#path-iso" data-invasiveness="additive">
+            <span className="channel-num">04</span>
+            <span className="channel-label">Dual boot</span>
+            <p className="channel-hook">Keep Windows. Boot from USB — the installer detects Windows and offers to shrink its partition automatically.</p>
+            <code className="channel-cmd">foundry-anvil-latest-amd64.iso → alongside Windows</code>
+            <span className="channel-inv">additive</span>
+          </a>
+
+          {/* Card 05 — hero: full-width, ember glow, embedded ISO downloads */}
           <div className="channel-card channel-card--hero" id="path-iso" data-invasiveness="replaces-os">
             <div className="hero-left">
               <span className="channel-num">05</span>
@@ -276,64 +321,15 @@ function Install() {
               </a>
               <p className="hero-dualboot">
                 Keeping Windows?{" "}
-                Choose <em>Install alongside Windows Boot Manager</em> in Calamares —
-                it shrinks your Windows partition automatically.{" "}
-                <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">Dual-boot guide →</a>
+                Boot from USB, and the installer will offer to shrink your Windows
+                partition automatically — no manual partitioning required.{" "}
+                <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">Step-by-step guide →</a>
               </p>
             </div>
           </div>
         </div>
 
-        <div className="install-wrap">
-          <div className="install-left">
-
-            <div className="codeblock" id="path-apt">
-              <div className="codeblock-head">
-                <span><span className="path-tag">path 01 · existing ubuntu</span> shell · root</span>
-                <div className="dots"><i /><i /><i /></div>
-              </div>
-              <pre>
-                <span className="step">① Add the Foundry archive</span>{"\n"}
-                <span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>{"\n"}
-                {"\n"}
-                <span className="step">② Install</span>{"\n"}
-                <span className="ember">sudo apt install</span> foundry-anvil{"\n"}
-                {"\n"}
-                <span className="cmt"># or pick a different edition:</span>{"\n"}
-                <span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>{"\n"}
-                <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~15 GB)</span>
-              </pre>
-            </div>
-
-            <div className="download-vms" id="path-vm">
-              <div className="codeblock-head">
-                <span><span className="path-tag">path 03 · virtual machine</span> download · vms</span>
-                <DownloadIcon />
-              </div>
-              <ul className="vm-list">
-                <li className="vm-row">
-                  <span className="vm-type">VirtualBox</span>
-                  <span className="vm-file">foundry-anvil-latest-amd64.ova</span>
-                  <span className="vm-size">11 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.ova" aria-label="Download Anvil OVA"><DownloadIcon /></a>
-                </li>
-                <li className="vm-row">
-                  <span className="vm-type">VMware</span>
-                  <span className="vm-file">foundry-anvil-latest-amd64.vmdk</span>
-                  <span className="vm-size">11 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.vmdk" aria-label="Download Anvil VMDK"><DownloadIcon /></a>
-                </li>
-                <li className="vm-row">
-                  <span className="vm-type">QEMU / KVM</span>
-                  <span className="vm-file">foundry-anvil-latest-amd64.qcow2</span>
-                  <span className="vm-size">5.1 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.qcow2" aria-label="Download Anvil qcow2"><DownloadIcon /></a>
-                </li>
-              </ul>
-            </div>
-
-
-          </div>
+        <div className="install-side-only">
 
           <div className="install-side">
             <h3>Signed by the smith.</h3>
@@ -370,6 +366,7 @@ function Install() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Editions
+
 
 function Editions() {
   const anvil   = findEdition('anvil');

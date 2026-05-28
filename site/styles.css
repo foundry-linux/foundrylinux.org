@@ -1030,6 +1030,94 @@ a.channel-card:hover {
   margin-right: 0.8em;
 }
 
+/* ── Wide card (01, shared base for two-zone full-width cards) ── */
+.channel-card--wide {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 28px 32px;
+}
+.channel-card--wide .channel-label { font-size: 24px; }
+@media (max-width: 700px) {
+  .channel-card--wide { flex-direction: column; }
+}
+
+/* ── Inline code in card 01 right panel ── */
+.hero-right--code { width: 420px; }
+.card-code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink);
+  white-space: pre;
+  margin: 0;
+  overflow-x: auto;
+}
+.card-code .step {
+  display: block;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+  margin: 14px 0 4px;
+}
+.card-code .step:first-child { margin-top: 0; }
+.card-code .cmt { color: var(--ink-faint); }
+.card-code .ember { color: var(--accent); }
+.card-code .str { color: #c0a878; }
+.card-code .kw { color: #d8d8d8; }
+@media (max-width: 700px) {
+  .hero-right--code { width: 100%; }
+  .card-code { white-space: pre-wrap; }
+}
+
+/* ── VM card (03) inline download list ── */
+.channel-card--vm { cursor: default; }
+.card-vm-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--hairline);
+  flex: 1;
+}
+.card-vm-list li {
+  display: grid;
+  grid-template-columns: 5em 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.card-vm-list li:last-child { border-bottom: none; }
+.card-vm-type {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.card-vm-file {
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10.5px;
+}
+.card-vm-size {
+  color: var(--ink-faint);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* ── install-side-only: sidebar without the left detail column ── */
+.install-side-only {
+  margin-top: 40px;
+  max-width: 480px;
+}
+
 /* ── Hero card (05 · Fresh install) ── */
 .channel-card--hero {
   grid-column: 1 / -1;
