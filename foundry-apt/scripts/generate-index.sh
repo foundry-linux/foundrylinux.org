@@ -249,7 +249,7 @@ cat > "$OUT" <<HTML
     letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--ink-faint); border: 1px solid var(--hairline-strong);
     padding: 1px 5px; border-radius: 2px; vertical-align: middle;
-    margin-left: 6px; font-weight: 400;
+    margin-right: 5px; font-weight: 400;
   }
   .pkg-home {
     display: inline-flex; align-items: center; justify-content: center;
@@ -260,7 +260,7 @@ cat > "$OUT" <<HTML
     transition: color 0.15s, border-color 0.15s;
   }
   .pkg-home:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
-  .col-ver { display: block; color: var(--ink-faint); font-size: 11px; margin-top: 4px; word-break: break-all; }
+  .col-ver { display: block; color: var(--ink-faint); font-size: 11px; margin-top: 4px; overflow-wrap: anywhere; }
   td.col-desc { word-break: break-word; }
   /* ── Package details (long desc + dep chips) ── */
   .pkg-details { margin-top: .3rem; }
