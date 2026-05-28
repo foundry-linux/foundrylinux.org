@@ -767,7 +767,7 @@ body[data-bg="textured"] {
 .install-left {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .download-vms {
@@ -1021,19 +1021,12 @@ a.channel-card:hover {
   border-bottom: 2px solid rgba(var(--accent-rgb, 230, 100, 30), 0.25);
 }
 
-/* ── Path anchors ── */
-.path-anchor {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  padding: 6px 0 6px 12px;
-  border-left: 2px solid var(--hairline-strong);
-  margin-top: 32px;
-  margin-bottom: 8px;
+/* ── Path tag (inside codeblock-head) ── */
+.path-tag {
+  color: var(--accent);
+  opacity: 0.6;
+  margin-right: 0.8em;
 }
-.path-anchor:first-child { margin-top: 0; }
 
 /* ── Dual boot callout ── */
 .dualboot-callout {

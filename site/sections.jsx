@@ -267,10 +267,9 @@ function Install() {
         <div className="install-wrap">
           <div className="install-left">
 
-            <div className="path-anchor" id="path-apt">path 01 · existing ubuntu</div>
-            <div className="codeblock">
+            <div className="codeblock" id="path-apt">
               <div className="codeblock-head">
-                <span>shell · root</span>
+                <span><span className="path-tag">path 01 · existing ubuntu</span> shell · root</span>
                 <div className="dots"><i /><i /><i /></div>
               </div>
               <pre>
@@ -286,10 +285,9 @@ function Install() {
               </pre>
             </div>
 
-            <div className="path-anchor" id="path-vm">path 03 · virtual machine</div>
-            <div className="download-vms">
+            <div className="download-vms" id="path-vm">
               <div className="codeblock-head">
-                <span>download · vms</span>
+                <span><span className="path-tag">path 03 · virtual machine</span> download · vms</span>
                 <DownloadIcon />
               </div>
               <ul className="vm-list">
@@ -314,10 +312,9 @@ function Install() {
               </ul>
             </div>
 
-            <div className="path-anchor" id="path-iso">path 04–05 · iso (dual boot or fresh install)</div>
-            <div className="download-vms">
+            <div className="download-vms" id="path-iso">
               <div className="codeblock-head">
-                <span>download · iso</span>
+                <span><span className="path-tag">path 04–05 · dual boot / fresh install</span> download · iso</span>
                 <DownloadIcon />
               </div>
               <ul className="vm-list">
