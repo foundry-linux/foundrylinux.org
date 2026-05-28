@@ -1886,3 +1886,88 @@ a.channel-card:hover {
   color: var(--ink);
   overflow-x: auto;
 }
+
+/* ── Edition dep expansion ── */
+.edition-deps {
+  margin-top: 12px;
+  border-top: 1px solid var(--hairline);
+  padding-top: 10px;
+}
+.edition-deps summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  list-style: none;
+  user-select: none;
+}
+.edition-deps summary:hover { color: var(--accent); }
+.edition-deps-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.edition-deps-list code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  color: var(--ink-soft);
+}
+
+/* ── Package version cell + changelog hover tooltip ── */
+.pkg-ver {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  max-width: 160px;
+  word-break: break-all;
+}
+.ver-wrap {
+  position: relative;
+  display: inline;
+  cursor: help;
+  color: var(--accent);
+  font-size: 11px;
+}
+.ver-tip {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 3px);
+  z-index: 100;
+  min-width: 260px;
+  max-width: 420px;
+  background: #1c1c1c;
+  border: 1px solid var(--hairline-strong, #444);
+  padding: .5rem .75rem;
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+  pointer-events: none;
+}
+.ver-wrap:hover .ver-tip { display: block; }
+
+/* ── Repology badge ── */
+.repology-badge { display: block; margin-top: 4px; text-decoration: none; }
+.repology-badge img { vertical-align: middle; opacity: 0.8; }
+.repology-badge:hover img { opacity: 1; }
+
+/* ── CVE tracker link ── */
+.cve-link {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  color: var(--ink-faint);
+  text-decoration: none;
+  vertical-align: middle;
+  opacity: 0.6;
+  transition: color 0.15s, opacity 0.15s;
+}
+.cve-link:hover { color: var(--accent); opacity: 1; }

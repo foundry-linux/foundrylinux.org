@@ -135,9 +135,18 @@ for i, fname in enumerate(sorted(os.listdir(meta_dir))):
     else:
         desc_cell = f"{home_btn}{esc(desc_short)}"
 
+    cve_link = (
+        f'<a class="cve-link" href="https://ubuntu.com/security/cves?package={esc(name)}"'
+        f' target="_blank" rel="noopener" aria-label="CVE tracker" title="Ubuntu CVE tracker">'
+        f'<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor"'
+        f' stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">'
+        f'<path d="M8 2 L13 4 L13 8.5 C13 11.5 8 14 8 14 C8 14 3 11.5 3 8.5 L3 4 Z"/>'
+        f'</svg></a>'
+        if repology else ''
+    )
     print(
         f'<tr data-name="{esc(name)}" data-ver="{esc(ver)}" data-desc="{esc(desc_short)}">'
-        f'<td class="col-pkg">{name_cell}<span class="col-ver">{meta_badge}{ver_cell}</span></td>'
+        f'<td class="col-pkg">{name_cell}{cve_link}<span class="col-ver">{meta_badge}{ver_cell}</span></td>'
         f'<td class="col-desc">{desc_cell}</td>'
         f'</tr>'
     )
@@ -308,6 +317,8 @@ cat > "$OUT" <<HTML
   .repology-badge { display: block; margin-top: 5px; }
   .repology-badge img { vertical-align: middle; opacity: 0.8; }
   .repology-badge:hover img { opacity: 1; }
+  .cve-link { display: inline-flex; align-items: center; margin-left: 5px; color: var(--ink-faint); text-decoration: none; opacity: 0.5; vertical-align: middle; }
+  .cve-link:hover { color: var(--accent); opacity: 1; }
   td.col-desc { word-break: break-word; }
   /* ── Package details (long desc + dep chips) ── */
   .pkg-details { margin-top: .3rem; }

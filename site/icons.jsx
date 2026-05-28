@@ -416,6 +416,12 @@ const MagnetIcon = () => (
   </svg>
 );
 
+const ShieldIcon = () => (
+  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M8 2 L13 4 L13 8.5 C13 11.5 8 14 8 14 C8 14 3 11.5 3 8.5 L3 4 Z" />
+  </svg>
+);
+
 // System requirement icons — same stroke style, 32×32 viewBox for smaller use
 const ReqCpuIcon = ({ size = 32 }) => (
   <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true">
@@ -495,6 +501,6 @@ export {
   GamepadIcon, AnvilEditionIcon, SpriteIcon,
   BigAnvilLogo, FoundryMark, DownloadIcon, CopyIcon, ArrowRightIcon,
   ForgeSceneIcon, GearStackIcon,
-  TorrentIcon, MagnetIcon,
+  TorrentIcon, MagnetIcon, ShieldIcon,
   ReqCpuIcon, ReqMemoryIcon, ReqStorageIcon, ReqGpuIcon, ReqBaseIcon,
 };

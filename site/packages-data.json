@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-28T16:47:56Z",
-  "foundry_release_sha": "744c221e2ec8906edbac3cba7b155156ce17a747e68add1bff55cf84da0630b6",
+  "generated_at": "2026-05-28T19:08:32Z",
+  "foundry_release_sha": "7075ce7308c85cf9fb8b12b93695e244a49a9e0a09b6a0dce12b895c0d2d4e55",
   "worldfoundry_release_sha": "cfa2c71c432fd89bdc5f538c1da760f0c5cd456be82004f9623cd0d8eab8bef1",
   "inputs_sha": "96192c48713850984a0dfe635dbb3a074b64c73c7fadc55f2640c89fbbbc3b4c",
   "editions": [
@@ -10,8 +10,8 @@
       "blurb": "Base edition — full WorldFoundry stack, retro toolkit, light emulators, game frameworks, image tools. The Distrobox devbox image installs this and nothing else.",
       "install_command": "sudo apt install foundry-anvil",
       "metapackage": "foundry-anvil",
-      "installed_size_kb": 4711295,
-      "package_count": 1160,
+      "installed_size_kb": 4696725,
+      "package_count": 1148,
       "direct_depends": [
         "foundry-core",
         "foundry-desktop"
@@ -23,8 +23,8 @@
       "blurb": "Anvil + heavy graphics and audio production: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint, the DAW stack, and trackers.",
       "install_command": "sudo apt install foundry-sprite",
       "metapackage": "foundry-sprite",
-      "installed_size_kb": 5921880,
-      "package_count": 1406,
+      "installed_size_kb": 5907407,
+      "package_count": 1395,
       "direct_depends": [
         "foundry-anvil",
         "foundry-pixel-art",
@@ -39,8 +39,8 @@
       "blurb": "Sprite + everything else: ROM-bundled vintage emulators, heavy console emulators, FOSS engine reimplementations, free games, mobile development, cross-repo dev deps. Around 10 GB on top of bare Ubuntu.",
       "install_command": "sudo apt install foundry-atelier",
       "metapackage": "foundry-atelier",
-      "installed_size_kb": 19836405,
-      "package_count": 1610,
+      "installed_size_kb": 19821932,
+      "package_count": 1599,
       "direct_depends": [
         "foundry-sprite",
         "foundry-emulators-vintage",
@@ -89,7 +89,8 @@
           "summary": "search/download 3D assets from online repos, in Blender",
           "upstream": {
             "status": "n/a-firstparty"
-          }
+          },
+          "changelog_latest": "* Moved to apt.foundrylinux.org (was apt.worldfoundry.org).\n* CLI companion renamed wf-asset → blender-asset-finder-cli."
         },
         {
           "name": "blender-asset-finder-cli",
@@ -100,7 +101,8 @@
           "summary": "CLI companion to the blender-asset-finder Blender add-on",
           "upstream": {
             "status": "n/a-firstparty"
-          }
+          },
+          "changelog_latest": "* Renamed from wf-asset → blender-asset-finder-cli; moved to\n  apt.foundrylinux.org alongside the blender-asset-finder Blender\n  add-on it pairs with.\n* Binary renamed: /usr/bin/wf-asset → /usr/bin/blender-asset-finder-cli.\n* Install tree: /usr/share/wf-asset/ → /usr/share/blender-asset-finder-cli/."
         },
         {
           "name": "build-essential",
@@ -335,7 +337,8 @@
           "summary": "search/download 3D assets from online repos, in Blender",
           "upstream": {
             "status": "n/a-firstparty"
-          }
+          },
+          "changelog_latest": "* Moved to apt.foundrylinux.org (was apt.worldfoundry.org).\n* CLI companion renamed wf-asset → blender-asset-finder-cli."
         },
         {
           "name": "worldfoundry-blender-editor-exporter",
@@ -417,7 +420,9 @@
           "upstream": {
             "status": "vendored",
             "note": "Small, self-contained, debhelper build, no patches — natural first ITP target."
-          }
+          },
+          "changelog_latest": "* Drop `.PP` directly after `.SH EXAMPLES` in hex2bin(1), mot2bin(1),\n  and cmd2mot(1) man pages — mandoc(1) flags \"skipping paragraph macro:\n  PP after SH\" because section headers already open a new paragraph.\n  Replace the `.RS`/`.RE` block with `.IP` for indented sample commands.\n* Caught by the new live-test mandoc-Tlint gate\n  (test/run-test.sh, plan 2026-05-18-live-test-manpage-assert.md).",
+          "repology_project": "f9dasm"
         },
         {
           "name": "ghidra",
@@ -429,7 +434,9 @@
           "upstream": {
             "status": "vendored",
             "note": "Debian licensing review ongoing — NSA-origin code, no ITP yet."
-          }
+          },
+          "changelog_latest": "* Initial Foundry Linux packaging of Ghidra 12.1 (2026-05-13 release).\n* Source: https://github.com/NationalSecurityAgency/ghidra/releases/tag/\n  Ghidra_12.1_build\n* Pre-built upstream zip; native decompiler is upstream's Linux x86_64\n  binary. Requires openjdk-21-jdk at runtime.",
+          "repology_project": "ghidra"
         },
         {
           "name": "libvgm",
@@ -441,7 +448,9 @@
           "upstream": {
             "status": "vendored",
             "note": "Upstream has no tagged releases; pinned to a commit by sha256. ITP impractical until upstream stabilises."
-          }
+          },
+          "changelog_latest": "* Initial Foundry Linux packaging of libvgm at upstream commit\n  d1151884997ba4769b070b7c7aaedeffc60a25fb (2026-04-06).\n* Upstream has no tagged releases; pinned to the commit by sha256.\n  Source: https://github.com/ValleyBell/libvgm/archive/\n  d1151884997ba4769b070b7c7aaedeffc60a25fb.tar.gz\n* Built via the /package skill (debhelper + cmake buildsystem).\n* Configured with LIBRARY_TYPE=STATIC because upstream is still at\n  VERSION 0.1 and CMakeLists.txt does not set SOVERSION on the vgm-*\n  targets; shipping unversioned .so files would trip lintian\n  shared-library-lacks-version and is hostile to downstream linkers.\n  Revisit a shared-library split when upstream cuts a 1.0 with a\n  stable ABI.\n* USE_SANITIZERS=OFF so the binaries don't carry libasan/libubsan\n  runtime dependencies into a release build.\n* Renames upstream's generic /usr/bin/player binary to /usr/bin/vgm-player\n  to namespace it under the libvgm convention (matches the vgm-player\n  library name) and to avoid colliding with future packages that may want\n  a /usr/bin/player name.\n* Phase 0 expansion (foundry-linux-retro-tools metapackage source-build\n  sidecar at ~/opt/libvgm/) is superseded by this .deb.",
+          "repology_project": "libvgm"
         },
         {
           "name": "mame",
@@ -497,7 +506,9 @@
           "upstream": {
             "status": "vendored",
             "note": "Tracks vgmstream rXXXX revisions; ITP after upstream stabilises a release cadence."
-          }
+          },
+          "changelog_latest": "* Rebuild against ubuntu:26.04's ffmpeg 8 / libavcodec62. Previous\n  1foundry3 and 1foundry4 entries claimed to target libavcodec62 but the\n  resulting debs still carried libavcodec61 — both were host builds, not\n  docker builds, so dpkg-shlibdeps resolved against the host's ffmpeg 7.\n  This build is confirmed in docker run ubuntu:26.04 where libavcodec-dev\n  resolves to 7:8.0.1-3ubuntu2. No source changes.",
+          "repology_project": "vgmstream"
         },
         {
           "name": "xa65",
@@ -747,7 +758,8 @@
           "summary": "fast and portable PSP emulator",
           "upstream": {
             "status": "vendored"
-          }
+          },
+          "changelog_latest": "* Rebuild against ubuntu:26.04's ffmpeg 8 / libavcodec62. The 26.04\n  repos moved from ffmpeg 7.x (libavcodec61) to ffmpeg 8.x (libavcodec62)\n  on 2026-05-26, making the 1foundry1 binary uninstallable. No source\n  changes — dpkg-shlibdeps auto-resolves to libavcodec62 in the new\n  ubuntu:26.04 build environment."
         },
         {
           "name": "retroarch",
@@ -791,7 +803,8 @@
           "summary": "portable Super Nintendo Entertainment System emulator",
           "upstream": {
             "status": "vendored"
-          }
+          },
+          "changelog_latest": "* Initial packaging for Foundry Linux apt repo.\n* GTK3 frontend; Vulkan/slang shader support disabled (USE_SLANG=OFF)\n  to avoid submodule dependencies; ALSA, PulseAudio, PortAudio enabled.\n* Source: https://github.com/snes9xgit/snes9x/releases/tag/1.63\n* Commit: 921f9f7b83660eb44ad263022a57a4a029057c37"
         },
         {
           "name": "stella",
@@ -1699,20 +1712,9 @@
         "foundry-core"
       ],
       "in_edition_tier": "anvil",
-      "installed_size_kb": 1737339,
-      "package_count": 47,
+      "installed_size_kb": 1727894,
+      "package_count": 43,
       "packages": [
-        {
-          "name": "bash-completion",
-          "origin": "ubuntu-main",
-          "section": "shells",
-          "version": "1:2.16.0-8build1",
-          "installed_size_kb": 1952,
-          "summary": "programmable completion for the bash shell",
-          "upstream": {
-            "status": "in-ubuntu-main"
-          }
-        },
         {
           "name": "binutils-m68k-linux-gnu",
           "origin": "ubuntu-universe",
@@ -1800,7 +1802,9 @@
           "upstream": {
             "status": "vendored",
             "note": "Small, self-contained, debhelper build, no patches — natural first ITP target."
-          }
+          },
+          "changelog_latest": "* Drop `.PP` directly after `.SH EXAMPLES` in hex2bin(1), mot2bin(1),\n  and cmd2mot(1) man pages — mandoc(1) flags \"skipping paragraph macro:\n  PP after SH\" because section headers already open a new paragraph.\n  Replace the `.RS`/`.RE` block with `.IP` for indented sample commands.\n* Caught by the new live-test mandoc-Tlint gate\n  (test/run-test.sh, plan 2026-05-18-live-test-manpage-assert.md).",
+          "repology_project": "f9dasm"
         },
         {
           "name": "fceux",
@@ -1856,7 +1860,9 @@
           "upstream": {
             "status": "vendored",
             "note": "Debian licensing review ongoing — NSA-origin code, no ITP yet."
-          }
+          },
+          "changelog_latest": "* Initial Foundry Linux packaging of Ghidra 12.1 (2026-05-13 release).\n* Source: https://github.com/NationalSecurityAgency/ghidra/releases/tag/\n  Ghidra_12.1_build\n* Pre-built upstream zip; native decompiler is upstream's Linux x86_64\n  binary. Requires openjdk-21-jdk at runtime.",
+          "repology_project": "ghidra"
         },
         {
           "name": "glslang-tools",
@@ -1967,18 +1973,9 @@
           "upstream": {
             "status": "vendored",
             "note": "Upstream has no tagged releases; pinned to a commit by sha256. ITP impractical until upstream stabilises."
-          }
-        },
-        {
-          "name": "libvte-2.91-0",
-          "origin": "ubuntu-main",
-          "section": "libs",
-          "version": "0.84.0-2",
-          "installed_size_kb": 976,
-          "summary": "Terminal emulator widget for GTK 3 - runtime files",
-          "upstream": {
-            "status": "in-ubuntu-main"
-          }
+          },
+          "changelog_latest": "* Initial Foundry Linux packaging of libvgm at upstream commit\n  d1151884997ba4769b070b7c7aaedeffc60a25fb (2026-04-06).\n* Upstream has no tagged releases; pinned to the commit by sha256.\n  Source: https://github.com/ValleyBell/libvgm/archive/\n  d1151884997ba4769b070b7c7aaedeffc60a25fb.tar.gz\n* Built via the /package skill (debhelper + cmake buildsystem).\n* Configured with LIBRARY_TYPE=STATIC because upstream is still at\n  VERSION 0.1 and CMakeLists.txt does not set SOVERSION on the vgm-*\n  targets; shipping unversioned .so files would trip lintian\n  shared-library-lacks-version and is hostile to downstream linkers.\n  Revisit a shared-library split when upstream cuts a 1.0 with a\n  stable ABI.\n* USE_SANITIZERS=OFF so the binaries don't carry libasan/libubsan\n  runtime dependencies into a release build.\n* Renames upstream's generic /usr/bin/player binary to /usr/bin/vgm-player\n  to namespace it under the libvgm convention (matches the vgm-player\n  library name) and to avoid colliding with future packages that may want\n  a /usr/bin/player name.\n* Phase 0 expansion (foundry-linux-retro-tools metapackage source-build\n  sidecar at ~/opt/libvgm/) is superseded by this .deb.",
+          "repology_project": "libvgm"
         },
         {
           "name": "mame",
@@ -2000,17 +1997,6 @@
           "summary": "Tools for MAME",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
-        },
-        {
-          "name": "man-db",
-          "origin": "ubuntu-main",
-          "section": "doc",
-          "version": "2.13.1-1build1",
-          "installed_size_kb": 3045,
-          "summary": "tools for reading manual pages",
-          "upstream": {
-            "status": "in-ubuntu-main"
           }
         },
         {
@@ -2055,7 +2041,8 @@
           "summary": "fast and portable PSP emulator",
           "upstream": {
             "status": "vendored"
-          }
+          },
+          "changelog_latest": "* Rebuild against ubuntu:26.04's ffmpeg 8 / libavcodec62. The 26.04\n  repos moved from ffmpeg 7.x (libavcodec61) to ffmpeg 8.x (libavcodec62)\n  on 2026-05-26, making the 1foundry1 binary uninstallable. No source\n  changes — dpkg-shlibdeps auto-resolves to libavcodec62 in the new\n  ubuntu:26.04 build environment."
         },
         {
           "name": "radare2",
@@ -2088,7 +2075,8 @@
           "summary": "portable Super Nintendo Entertainment System emulator",
           "upstream": {
             "status": "vendored"
-          }
+          },
+          "changelog_latest": "* Initial packaging for Foundry Linux apt repo.\n* GTK3 frontend; Vulkan/slang shader support disabled (USE_SLANG=OFF)\n  to avoid submodule dependencies; ALSA, PulseAudio, PortAudio enabled.\n* Source: https://github.com/snes9xgit/snes9x/releases/tag/1.63\n* Commit: 921f9f7b83660eb44ad263022a57a4a029057c37"
         },
         {
           "name": "sox",
@@ -2135,17 +2123,6 @@
           }
         },
         {
-          "name": "sudo",
-          "origin": "ubuntu-main",
-          "section": "admin",
-          "version": "1.9.17p2-1ubuntu3",
-          "installed_size_kb": 3472,
-          "summary": "Provide limited super user privileges to specific users",
-          "upstream": {
-            "status": "in-ubuntu-main"
-          }
-        },
-        {
           "name": "tiled",
           "origin": "ubuntu-universe",
           "section": "universe/utils",
@@ -2166,7 +2143,9 @@
           "upstream": {
             "status": "vendored",
             "note": "Tracks vgmstream rXXXX revisions; ITP after upstream stabilises a release cadence."
-          }
+          },
+          "changelog_latest": "* Rebuild against ubuntu:26.04's ffmpeg 8 / libavcodec62. Previous\n  1foundry3 and 1foundry4 entries claimed to target libavcodec62 but the\n  resulting debs still carried libavcodec61 — both were host builds, not\n  docker builds, so dpkg-shlibdeps resolved against the host's ffmpeg 7.\n  This build is confirmed in docker run ubuntu:26.04 where libavcodec-dev\n  resolves to 7:8.0.1-3ubuntu2. No source changes.",
+          "repology_project": "vgmstream"
         },
         {
           "name": "worldfoundry-blender-addons",
@@ -2247,7 +2226,8 @@
           "summary": "KDE Plasma desktop theme for Foundry Linux",
           "upstream": {
             "status": "n/a-firstparty"
-          }
+          },
+          "changelog_latest": "* Ship FoundryLinux-ForgeHorizon wallpaper to /usr/share/wallpapers/.\n* Add /etc/xdg/plasma-org.kde.plasma.desktop-appletsrc to set wallpaper\n  as system default for new KDE user sessions."
         },
         {
           "name": "foundry-welcome",
@@ -2258,7 +2238,8 @@
           "summary": "Welcome Center for Foundry Linux",
           "upstream": {
             "status": "n/a-firstparty"
-          }
+          },
+          "changelog_latest": "* Revert to the sentinel-file approach for run-once-on-first-login. The 1.0.4\n  X-KDE-autostart-condition (foundry-welcome:General:FirstRunDone:false) never\n  launched the app on first login: KDE / kde-systemd-start-condition starts an\n  autostart entry only when the key evaluates to *true* — the 4th field is\n  merely the default for an absent key, not the trigger value. Seeding\n  FirstRunDone=false therefore guaranteed the app never started.\n  - main.cpp: restore the ~/.config/foundry-welcome-shown sentinel early-exit\n    and write it on close; drop the QSettings FirstRunDone write.\n  - autostart.desktop: remove X-KDE-autostart-condition. The .desktop fires\n    every login; the in-app sentinel makes it a no-op after first run.\n  - 1100-live-autologin.hook.chroot: drop the /etc/skel FirstRunDone seed."
         }
       ]
     }
@@ -2292,7 +2273,8 @@
       "upstream": {
         "status": "vendored",
         "note": "Small, self-contained, debhelper build, no patches — natural first ITP target."
-      }
+      },
+      "repology_project": "f9dasm"
     },
     {
       "name": "foundry-kde-theme",
@@ -2321,7 +2303,8 @@
       "upstream": {
         "status": "vendored",
         "note": "Debian licensing review ongoing — NSA-origin code, no ITP yet."
-      }
+      },
+      "repology_project": "ghidra"
     },
     {
       "name": "libvgm",
@@ -2332,7 +2315,8 @@
       "upstream": {
         "status": "vendored",
         "note": "Upstream has no tagged releases; pinned to a commit by sha256. ITP impractical until upstream stabilises."
-      }
+      },
+      "repology_project": "libvgm"
     },
     {
       "name": "ppsspp",
@@ -2363,17 +2347,18 @@
       "upstream": {
         "status": "vendored",
         "note": "Tracks vgmstream rXXXX revisions; ITP after upstream stabilises a release cadence."
-      }
+      },
+      "repology_project": "vgmstream"
     }
   ],
-  "grand_total_installed_size_kb": 19836405,
+  "grand_total_installed_size_kb": 19821932,
   "upstream_summary": {
     "vendored": 6,
     "debian-itp": 0,
     "in-debian-unstable": 0,
     "in-ubuntu-universe": 95,
     "in-ubuntu-multiverse": 12,
-    "in-ubuntu-main": 11,
+    "in-ubuntu-main": 7,
     "n/a-firstparty": 16,
     "n/a-proprietary": 0,
     "unknown": 0

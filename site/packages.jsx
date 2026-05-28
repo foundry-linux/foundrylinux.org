@@ -4,7 +4,7 @@ import React from 'react';
 import {
   Topbar, Foot, formatSize, findCategory, ICONS,
 } from './sections.jsx';
-import { ArrowRightIcon, SparksIcon, CopyIcon } from './icons.jsx';
+import { ArrowRightIcon, SparksIcon, CopyIcon, ShieldIcon } from './icons.jsx';
 import packagesData from './packages-data.json';
 
 function originBadge(origin) {
@@ -67,6 +67,14 @@ function EditionsLadder() {
                   {ed.package_count}&nbsp;pkgs · {formatSize(ed.installed_size_kb)}
                 </span>
               </div>
+              {ed.direct_depends?.length > 0 && (
+                <details className="edition-deps">
+                  <summary>direct deps ({ed.direct_depends.length})</summary>
+                  <div className="edition-deps-list">
+                    {ed.direct_depends.map(d => <code key={d}>{d}</code>)}
+                  </div>
+                </details>
+              )}
             </div>
           ))}
         </div>
@@ -99,21 +107,51 @@ function CategorySection({ cat, index }) {
             <tr>
               <th>Package</th>
               <th>Origin</th>
+              <th className="num">Version</th>
               <th className="num">Installed size</th>
               <th>Upstream</th>
               <th>Summary</th>
             </tr>
           </thead>
           <tbody>
-            {cat.packages.map((p) => (
-              <tr key={p.name}>
-                <td className="pkg-name"><code>{p.name}</code></td>
-                <td>{originBadge(p.origin)}</td>
-                <td className="num">{formatSize(p.installed_size_kb)}</td>
-                <td>{upstreamBadge(p.upstream)}</td>
-                <td className="pkg-summary">{p.summary}</td>
-              </tr>
-            ))}
+            {cat.packages.map((p) => {
+              const isUbuntu = p.origin === 'ubuntu-main' || p.origin === 'ubuntu-universe' || p.origin === 'ubuntu-multiverse';
+              return (
+                <tr key={p.name}>
+                  <td className="pkg-name">
+                    <code>{p.name}</code>
+                    {isUbuntu && (
+                      <a className="cve-link"
+                         href={`https://ubuntu.com/security/cves?package=${p.name}`}
+                         target="_blank" rel="noopener" aria-label="CVE tracker">
+                        <ShieldIcon />
+                      </a>
+                    )}
+                  </td>
+                  <td>{originBadge(p.origin)}</td>
+                  <td className="num pkg-ver">
+                    {p.version}
+                    {p.changelog_latest && (
+                      <span className="ver-wrap">
+                        {' '}&#9432;
+                        <span className="ver-tip">{p.changelog_latest}</span>
+                      </span>
+                    )}
+                    {p.repology_project && (
+                      <a className="repology-badge"
+                         href={`https://repology.org/project/${p.repology_project}/versions`}
+                         target="_blank" rel="noopener" aria-label="Repology versions">
+                        <img src={`https://repology.org/badge/latest-versions/${p.repology_project}.svg`}
+                             alt="latest versions" height="14" />
+                      </a>
+                    )}
+                  </td>
+                  <td className="num">{formatSize(p.installed_size_kb)}</td>
+                  <td>{upstreamBadge(p.upstream)}</td>
+                  <td className="pkg-summary">{p.summary}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -145,6 +183,14 @@ function VendoredStandalones() {
                 pulled by {v.pulled_by.map(p => <code key={p}>{p}</code>).reduce((acc, x, i) => i === 0 ? [x] : [...acc, ', ', x], [])}
               </span>
               {upstreamBadge(v.upstream)}
+              {v.repology_project && (
+                <a className="repology-badge"
+                   href={`https://repology.org/project/${v.repology_project}/versions`}
+                   target="_blank" rel="noopener" aria-label="Repology versions">
+                  <img src={`https://repology.org/badge/latest-versions/${v.repology_project}.svg`}
+                       alt="latest versions" height="14" />
+                </a>
+              )}
             </li>
           ))}
         </ul>

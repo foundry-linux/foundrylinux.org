@@ -17,15 +17,11 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 
 ### Site
 
-- [ ] **Repology badges on /packages + apt.foundrylinux.org** — `<img>` badge per vendored package (ghidra, f9dasm, libvgm, vgmstream) showing latest upstream version vs ours. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans) and [apt listing landscape](docs/investigations/2026-05-28-apt-listing-landscape.md).
-- [ ] **Copy-to-clipboard buttons on install snippets** — clipboard icon beside every `apt install` block on `/packages` (edition cards, category headers) and `apt.foundrylinux.org` quick-install block. Pure JS. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
-- [ ] **Changelog popover on hover** — latest `debian/changelog` first stanza as `<details>` tooltip on version cells in `/packages` + `apt.foundrylinux.org`. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
-- [ ] **Metapackage dependency expansion** — collapsed inline dep list for umbrella packages on `/packages`; data already in `packages-data.json`, client-side toggle only. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
 - [ ] **Update `new-web-apt-repo` skill** — fold remaining enhanced listing patterns (Repology badges, changelog popover, metapackage expansion) into the skill's index template. Filter/search/copy-to-clipboard already landed 2026-05-28. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
 - [ ] **`packages.json` index on apt.foundrylinux.org** — generate alongside `index.html` from `generate-index.sh`; same data, JSON serialised. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
 - [ ] **OpenGraph meta tags on apt.foundrylinux.org** — `og:title`, `og:description`, `og:image` in `index.html` so Discord/Mastodon link previews show package info. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
 - [ ] **RSS/Atom feed on apt.foundrylinux.org** — `public/feed.xml` generated at publish time; one item per package keyed by `name@version`; pubDate from `debian/changelog`. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
-- [ ] **CVE tracker links on /packages** — shield icon per package row linking to `ubuntu.com/security/cves?package={name}` (Ubuntu-origin) or upstream GitHub Security Advisories (vendored). Passive link, no build-time fetch. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
+- [x] **CVE tracker links on /packages** — shield icon on Ubuntu-origin package rows → ubuntu.com/security/cves; same icon in apt index for non-first-party packages.
 - [ ] **CVE live-count badge (deferred until passive links ship)** — build-time fetch of Ubuntu Security API per package; cache count in `packages-data.json`; render `0 CVEs ✓` / `N active ⚠`. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
 - [x] **packages-page CI triggers** ([plan §6](docs/plans/2026-05-21-packages-page.md)) — `workflow_run` on foundry-apt publish, `repository_dispatch` from worldfoundry.org with new `FOUNDRYLINUX_DISPATCH_PAT` secret, nightly cron fallback. **Pending**: create fine-grained PAT and `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org`.
 
@@ -95,6 +91,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ## Done
 
+- 2026-05-29 — [packages-page-polish] Repology badges + changelog tooltip on /packages (foundry-origin pkg rows + VendoredStandalones); edition dep expansion `<details>`; CVE shield links (Ubuntu-origin rows + apt index). Data pipeline: build-packages-data.js reads meta/*.json.
 - 2026-05-28 — [apt-package-meta] per-package `public/meta/{name}.json` + `<details>` long-desc/dep-chips/size in apt index; `generate-meta.sh`; Taskfile + CI wired. See [plan](docs/plans/2026-05-28-apt-package-meta.md).
 - 2026-05-28 — [apt-index-sort-filter] client-side filter + sortable cols + copy-to-clipboard ported from worldfoundry.org to `foundry-apt/scripts/generate-index.sh` + `gen/static/index.js`; skill updated. See [apt listing landscape](docs/investigations/2026-05-28-apt-listing-landscape.md).
 - 2026-05-26 — [foundry-welcome] QML/Kirigami welcome screen; show-once sentinel; XDG autostart; masks plasma-welcome; packaged as `foundry-welcome` 1.0.5 on apt.foundrylinux.org; integrated into ISO via local-debs. See [plan](docs/plans/2026-05-24-foundry-welcome.md).

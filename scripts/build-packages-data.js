@@ -18,6 +18,12 @@ const ROOT = process.env.WORK_ROOT || path.resolve(__dirname, '..');
 const CATEGORIES_PATH = path.join(ROOT, 'data/categories.json');
 const UPSTREAM_PATH   = path.join(ROOT, 'data/upstream.yml');
 const OUT_PATH        = path.join(ROOT, 'site/packages-data.json');
+const META_DIR        = path.join(ROOT, 'foundry-apt/public/meta');
+
+function loadMeta(name) {
+  try { return JSON.parse(fs.readFileSync(path.join(META_DIR, `${name}.json`), 'utf8')); }
+  catch { return null; }
+}
 
 // ─── archive list ────────────────────────────────────────────────────────────
 const UBUNTU_SUITE = 'resolute'; // Ubuntu 26.04 LTS
@@ -218,6 +224,7 @@ function buildPackageRecord(name, all, upstreamYaml) {
       console.error(`! ${name}: no upstream.yml entry; defaulting to vendored`);
     }
   }
+  const meta = (f._origin === 'foundry' || f._origin === 'worldfoundry') ? loadMeta(name) : null;
   return {
     name,
     origin: f._origin,
@@ -226,6 +233,8 @@ function buildPackageRecord(name, all, upstreamYaml) {
     installed_size_kb: Number(f['Installed-Size'] || 0),
     summary: summary(f.Description || ''),
     upstream,
+    ...(meta?.changelog_latest ? { changelog_latest: meta.changelog_latest } : {}),
+    ...(meta?.repology_project  ? { repology_project:  meta.repology_project  } : {}),
   };
 }
 
@@ -338,6 +347,7 @@ async function main() {
       name,
       pulled_by: [...new Set(pulledBy)],
       upstream: rec.upstream,
+      ...(rec.repology_project ? { repology_project: rec.repology_project } : {}),
     });
   }
 
