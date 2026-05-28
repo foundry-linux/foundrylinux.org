@@ -19,6 +19,7 @@ const PAGES = [
     out: 'site/index.html',
     title: 'foundrylinux.org · FOUNDRY LINUX',
     description: 'Foundry Linux — a Linux distribution for game development, reverse engineering, and retro tooling. Curated packages and a devbox built on Ubuntu 26.04.',
+    url: 'https://foundrylinux.org/',
     extraBodyScripts: true, // copy-button + embers + scroll-shrink (home only)
   },
   {
@@ -27,6 +28,7 @@ const PAGES = [
     out: 'site/packages.html',
     title: 'Packages · FOUNDRY LINUX',
     description: 'Every package Foundry Linux installs on top of Kubuntu 26.04 — three nested editions, nine domain categories, six vendored standalones.',
+    url: 'https://foundrylinux.org/packages',
     extraBodyScripts: false,
   },
 ];
@@ -69,7 +71,7 @@ function homePageScripts() {
   </script>`;
 }
 
-function wrap(body, { title, description, extraBodyScripts }) {
+function wrap(body, { title, description, url, extraBodyScripts }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -77,6 +79,11 @@ function wrap(body, { title, description, extraBodyScripts }) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title}</title>
   <meta name="description" content="${description}" />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="${url}" />
+  <meta property="og:title"       content="${title}" />
+  <meta property="og:description" content="${description}" />
+  <meta name="twitter:card"       content="summary" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preload" href="fonts/big-shoulders-display-900-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css" />
