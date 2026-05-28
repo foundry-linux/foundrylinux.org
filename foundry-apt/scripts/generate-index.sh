@@ -59,8 +59,10 @@ for fname in sorted(os.listdir(meta_dir)):
     depends    = p.get("depends") or []
     inst_kb    = p.get("installed_size_kb")
 
-    # Name cell — bold plain text only
-    name_cell = f'<b class="pkg-name">{esc(name)}</b>'
+    # Name cell — bold plain text + optional meta badge
+    section    = p.get("section", "")
+    meta_badge = ' <span class="pkg-meta">meta</span>' if section == "metapackages" else ''
+    name_cell = f'<b class="pkg-name">{esc(name)}</b>{meta_badge}'
     # Home button goes at the start of description cell
     home_svg = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8 L8 2 L14 8"/><path d="M4 8 L4 14 L12 14 L12 8"/><path d="M6 14 L6 10 L10 10 L10 14"/></svg>'
     home_btn = f'<a class="pkg-home" href="{esc(hp)}" title="{esc(hp)}" aria-label="Homepage">{home_svg}</a> ' if hp else ''
@@ -225,7 +227,7 @@ cat > "$OUT" <<HTML
     margin-bottom: .25rem;
   }
   .table-wrap { border: 1px solid var(--hairline); }
-  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  table { width: 100%; border-collapse: collapse; }
   th {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -242,6 +244,13 @@ cat > "$OUT" <<HTML
   td { padding: .6rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; vertical-align: top; }
   td.col-pkg { font-family: var(--font-mono); font-size: 13px; }
   .pkg-name { color: var(--accent); font-weight: 700; white-space: nowrap; }
+  .pkg-meta {
+    display: inline-block; font-family: var(--font-mono); font-size: 9px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-faint); border: 1px solid var(--hairline-strong);
+    padding: 1px 5px; border-radius: 2px; vertical-align: middle;
+    margin-left: 6px; font-weight: 400;
+  }
   .pkg-home {
     display: inline-flex; align-items: center; justify-content: center;
     color: var(--ink-faint); text-decoration: none;
@@ -357,7 +366,6 @@ sudo apt-get install foundry-retro-tools</pre>
   </div>
   <div class="table-wrap">
   <table class="listing-table">
-    <colgroup><col style="width:30%"><col style="width:70%"></colgroup>
     <thead><tr>
       <th data-sort="name">Package <span class="sort-ind"></span></th>
       <th data-sort="desc">Description <span class="sort-ind"></span></th>
