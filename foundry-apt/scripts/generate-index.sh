@@ -11,119 +11,106 @@ SITE_URL="https://apt.foundrylinux.org"
 GITHUB_URL="https://github.com/foundry-linux/foundry-apt"
 PUBLISHED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-# Parse each packages/<name>/debian/ into parallel arrays (bash 3 compat).
-#
-# Canonical layout only: packages/<name>/debian/{control,changelog}
-# (Debian source-package format). Homepage is in the Source: stanza;
-# version comes from the first changelog entry; one row per Package:
-# stanza. Packages without a debian/ tree (e.g. legacy xa65 with
-# DEBIAN/control only) still build via packages/<name>/build.sh but
-# do not appear on this landing page.
-PKG_NAMES=()
-PKG_VERSIONS=()
-PKG_DESCS=()
-PKG_HOMEPAGES=()
-PKG_ARCHS=()
-
-# Source-format parser: emits one TSV line per binary stanza:
-#   pkg<TAB>arch<TAB>desc_short
-# Skips the Source: stanza (the first one). Field continuations (lines
-# starting with space) on Description are ignored — we only emit the
-# short summary line.
-parse_source_control_binaries() {
-  awk -v RS='' -v ORS='\n' '
-    NR == 1 { next }     # First stanza is "Source:" — skip
-    {
-      pkg=""; arch=""; desc=""
-      n = split($0, lines, "\n")
-      for (i = 1; i <= n; i++) {
-        if      (lines[i] ~ /^Package:/)      { sub(/^Package: */,      "", lines[i]); pkg  = lines[i] }
-        else if (lines[i] ~ /^Architecture:/) { sub(/^Architecture: */, "", lines[i]); arch = lines[i] }
-        else if (lines[i] ~ /^Description:/)  { sub(/^Description: */,  "", lines[i]); desc = lines[i] }
-      }
-      if (pkg != "") print pkg "\t" arch "\t" desc
-    }
-  ' "$1"
-}
-
+# Ensure meta files exist for all packages (fallback for local preview
+# without a prior 'task generate-meta' run).
+mkdir -p "$OUT_DIR/meta"
 for pkgdir in "$REPO_ROOT"/packages/*/; do
-  [[ -d "$pkgdir" ]] || continue
-  src_control="${pkgdir}debian/control"
-  src_changelog="${pkgdir}debian/changelog"
-
-  [[ -f "$src_control" && -f "$src_changelog" ]] || continue
-
-  homepage=$(awk '/^Homepage:/ {sub(/^Homepage: */,""); print; exit}' "$src_control" || true)
-  # dpkg-parsechangelog is the canonical way to read debian/changelog
-  # (works with mawk; gawk's match(..., a) does not).
-  if command -v dpkg-parsechangelog >/dev/null; then
-    ver=$(dpkg-parsechangelog -l "$src_changelog" -SVersion)
-  else
-    # Fallback for environments without dpkg-dev installed (e.g. local preview)
-    ver=$(sed -n '1s/^[^(]*(\([^)]*\)).*/\1/p' "$src_changelog")
+  name="$(basename "$pkgdir")"
+  [[ -f "$pkgdir/debian/control" && -f "$pkgdir/debian/changelog" ]] || continue
+  if [[ ! -f "$OUT_DIR/meta/${name}.json" ]]; then
+    bash "$SCRIPT_DIR/generate-meta.sh" "$name"
   fi
-  if [[ -z "$ver" ]]; then
-    echo "WARNING: $src_changelog missing version on line 1 — skipping $pkgdir" >&2
-    continue
-  fi
-  while IFS=$'\t' read -r pkg arch desc; do
-    [[ -n "$pkg" ]] || continue
-    PKG_NAMES+=("$pkg")
-    PKG_VERSIONS+=("$ver")
-    PKG_DESCS+=("$desc")
-    PKG_HOMEPAGES+=("${homepage:-}")
-    PKG_ARCHS+=("${arch:-all}")
-  done < <(parse_source_control_binaries "$src_control")
 done
 
-# Build the package table rows
-PKG_ROWS=""
-for i in "${!PKG_NAMES[@]}"; do
-  name="${PKG_NAMES[$i]}"
-  ver="${PKG_VERSIONS[$i]}"
-  desc="${PKG_DESCS[$i]}"
-  hp="${PKG_HOMEPAGES[$i]}"
-  arch="${PKG_ARCHS[$i]}"
-  if [[ -n "$hp" ]]; then
-    name_cell="<a href=\"${hp}\">${name}</a>"
-  else
-    name_cell="$name"
-  fi
-  L="${name:0:1}"
-  if [[ "$arch" == "all" ]]; then
-    deb_url="/pool/main/${L}/${name}/${name}_${ver}_all.deb"
-    ver_cell="<a href=\"${deb_url}\">${ver}</a>"
-  else
-    # Architecture: "any" means "build per host arch" — Debian's wildcard.
-    # The actual .debs in dist/ have concrete arch suffixes (amd64, arm64, …),
-    # so resolve "any" by looking at what's actually been built. Multi-token
-    # lists like "amd64 arm64" pass through verbatim.
-    if [[ "$arch" == "any" ]]; then
-      built=""
-      for f in "${REPO_ROOT}/dist/${name}_${ver}_"*.deb; do
-        [[ -f "$f" ]] || continue
-        a=$(basename "$f" .deb | sed "s/^${name}_${ver}_//")
-        built="${built}${built:+ }${a}"
-      done
-      arch="${built:-amd64}"  # fallback if dist/ is empty (e.g. local preview)
-    fi
-    arch_links=""
-    for a in $arch; do
-      [[ -n "$arch_links" ]] && arch_links="${arch_links} "
-      arch_links="${arch_links}<a href=\"/pool/main/${L}/${name}/${name}_${ver}_${a}.deb\">${a}</a>"
-    done
-    ver_cell="${ver} (${arch_links})"
-  fi
-  # Escape double-quotes in desc for the data attribute
-  desc_attr="${desc//\"/&quot;}"
-  PKG_ROWS="${PKG_ROWS}
-      <tr data-name=\"${name}\" data-ver=\"${ver}\" data-desc=\"${desc_attr}\"><td class="col-name">${name_cell}</td><td class="col-ver">${ver_cell}</td><td class="col-desc">${desc}</td></tr>"
-done
+# Read all public/meta/*.json → emit one <tr> per package (alphabetical).
+# Python handles HTML escaping, arch resolution, and the <details> block.
+PKG_ROWS=$(python3 - "$REPO_ROOT" "$OUT_DIR" <<'PYEOF'
+import glob, html, json, os, sys
 
-PKG_COUNT="${#PKG_NAMES[@]}"
+repo_root, out_dir = sys.argv[1], sys.argv[2]
+meta_dir = os.path.join(out_dir, "meta")
+dist_dir = os.path.join(repo_root, "dist")
 
-# Copy tracked static assets (favicon, etc.) into the publish dir so rclone
-# picks them up. Anything under gen/static/ ships to the repo root.
+def esc(s):
+    return html.escape(str(s or ""), quote=True)
+
+def size_human(kb):
+    if kb is None:
+        return None
+    return f"~{round(kb / 1024)} MB" if kb >= 1024 else f"~{kb} KB"
+
+for fname in sorted(os.listdir(meta_dir)):
+    if not fname.endswith(".json"):
+        continue
+    with open(os.path.join(meta_dir, fname)) as f:
+        p = json.load(f)
+
+    name       = p["name"]
+    ver        = p["version"]
+    arch       = p["architecture"]
+    hp         = p.get("homepage", "")
+    desc_short = p.get("description_short", "")
+    desc_long  = (p.get("description_long") or "").strip()
+    depends    = p.get("depends") or []
+    inst_kb    = p.get("installed_size_kb")
+
+    # Name cell
+    name_cell = f'<a href="{esc(hp)}">{esc(name)}</a>' if hp else esc(name)
+
+    # Version cell with .deb download link(s)
+    letter = name[0]
+    if arch == "all":
+        deb_url  = f"/pool/main/{letter}/{name}/{name}_{ver}_all.deb"
+        ver_cell = f'<a href="{deb_url}">{esc(ver)}</a>'
+    else:
+        if arch == "any":
+            built = [
+                os.path.basename(f)[len(f"{name}_{ver}_"):-4]
+                for f in sorted(glob.glob(
+                    os.path.join(dist_dir, f"{name}_{ver}_*.deb")
+                ))
+            ]
+            arches = built if built else ["amd64"]
+        else:
+            arches = arch.split()
+        links = " ".join(
+            f'<a href="/pool/main/{letter}/{name}/{name}_{ver}_{a}.deb">{a}</a>'
+            for a in arches
+        )
+        ver_cell = f"{esc(ver)} ({links})"
+
+    # Description cell with optional <details> for long desc + dep chips
+    if desc_long or depends or inst_kb is not None:
+        parts = []
+        if desc_long:
+            parts.append(f'<pre class="pkg-long">{esc(desc_long)}</pre>')
+        if depends:
+            chips = "".join(f'<span class="dep">{esc(d)}</span>' for d in depends)
+            parts.append(f'<div class="pkg-deps">{chips}</div>')
+        if inst_kb is not None:
+            parts.append(f'<p class="pkg-size">{esc(size_human(inst_kb))} installed</p>')
+        details = (
+            '<details class="pkg-details"><summary>details</summary>'
+            + "".join(parts)
+            + "</details>"
+        )
+        desc_cell = f"{esc(desc_short)} {details}"
+    else:
+        desc_cell = esc(desc_short)
+
+    print(
+        f'<tr data-name="{esc(name)}" data-ver="{esc(ver)}" data-desc="{esc(desc_short)}">'
+        f'<td class="col-name">{name_cell}</td>'
+        f'<td class="col-ver">{ver_cell}</td>'
+        f'<td class="col-desc">{desc_cell}</td>'
+        f'</tr>'
+    )
+PYEOF
+)
+
+PKG_COUNT=$(grep -c '^<tr' <<< "$PKG_ROWS" || true)
+
+# Copy tracked static assets (favicon, index.js) into the publish dir.
 if [[ -d "$REPO_ROOT/gen/static" ]]; then
   cp -a "$REPO_ROOT/gen/static/." "$OUT_DIR/"
 fi
@@ -238,6 +225,36 @@ cat > "$OUT" <<HTML
   td { padding: .5rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; }
   td.col-name { white-space: nowrap; font-family: var(--font-mono); font-size: 13px; }
   td.col-ver { color: var(--ink-soft); white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
+  /* ── Package details (long desc + dep chips) ── */
+  .pkg-details { margin-top: .3rem; }
+  .pkg-details summary {
+    cursor: pointer; font-size: 11px; color: var(--ink-faint);
+    font-family: var(--font-mono); letter-spacing: .05em;
+    list-style: none; display: inline;
+  }
+  .pkg-details summary::marker,
+  .pkg-details summary::-webkit-details-marker { display: none; }
+  .pkg-details summary::before { content: "▸ "; }
+  .pkg-details[open] summary::before { content: "▾ "; }
+  .pkg-details[open] summary { color: var(--ink-soft); }
+  .pkg-long {
+    margin-top: .5rem; font-size: 11px; line-height: 1.55;
+    border: none; background: none; padding: 0;
+    color: var(--ink-soft); white-space: pre-wrap; word-break: break-word;
+  }
+  .pkg-deps {
+    display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem;
+  }
+  .dep {
+    font-family: var(--font-mono); font-size: 10.5px;
+    border: 1px solid var(--hairline-strong);
+    padding: .1rem .4rem; color: var(--accent);
+    white-space: nowrap;
+  }
+  .pkg-size {
+    margin-top: .4rem; font-size: 11px; color: var(--ink-faint);
+    font-family: var(--font-mono);
+  }
   footer {
     margin-top: 3rem;
     color: var(--ink-faint);
@@ -249,12 +266,7 @@ cat > "$OUT" <<HTML
     padding-top: 1rem;
   }
 
-  /* ── Narrow screens: card layout ────────────────────────────────────
-     Five columns don't fit in 375 px without breaking. Convert each row
-     into a stacked card: package name (line 1), version (line 2, muted),
-     description (line 3, full width). Last-modified and hash aren't in
-     this table so nothing needs hiding — just the header row.
-  ──────────────────────────────────────────────────────────────────── */
+  /* ── Narrow screens: card layout ──────────────────────────────────── */
   @media (max-width: 639px) {
     .wrap { padding: 1.5rem 0.75rem; }
     .site-title { font-size: 1.75rem; }
@@ -314,7 +326,8 @@ sudo apt-get install foundry-retro-tools</pre>
       <th data-sort="ver">Version <span class="sort-ind"></span></th>
       <th data-sort="desc">Description <span class="sort-ind"></span></th>
     </tr></thead>
-    <tbody>${PKG_ROWS}
+    <tbody>
+${PKG_ROWS}
     </tbody>
   </table>
   </div>

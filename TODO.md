@@ -95,6 +95,7 @@ Motion graphics candidates for `site/embers.js`. Current: heat shimmer (travelin
 
 ## Done
 
+- 2026-05-28 — [apt-package-meta] per-package `public/meta/{name}.json` + `<details>` long-desc/dep-chips/size in apt index; `generate-meta.sh`; Taskfile + CI wired. See [plan](docs/plans/2026-05-28-apt-package-meta.md).
 - 2026-05-28 — [apt-index-sort-filter] client-side filter + sortable cols + copy-to-clipboard ported from worldfoundry.org to `foundry-apt/scripts/generate-index.sh` + `gen/static/index.js`; skill updated. See [apt listing landscape](docs/investigations/2026-05-28-apt-listing-landscape.md).
 - 2026-05-26 — [foundry-welcome] QML/Kirigami welcome screen; show-once sentinel; XDG autostart; masks plasma-welcome; packaged as `foundry-welcome` 1.0.5 on apt.foundrylinux.org; integrated into ISO via local-debs. See [plan](docs/plans/2026-05-24-foundry-welcome.md).
 - 2026-05-23 — [ppsspp+snes9x-gtk] Both packaged and wired into `foundry-emulators-consoles-heavy`; ppsspp v1.20.4 (git-clone build, 8 submodules), snes9x-gtk 1.63 (tarball, USE_SLANG=OFF). Lintian clean, smoke-tested.

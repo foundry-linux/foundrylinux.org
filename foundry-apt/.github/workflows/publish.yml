@@ -74,6 +74,10 @@ jobs:
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
           gpg --export --armor > ./public/key.gpg
 
+      - name: Generate per-package metadata
+        if: ${{ !inputs.dry_run }}
+        run: bash scripts/generate-meta.sh
+
       - name: Generate index.html
         if: ${{ !inputs.dry_run }}
         run: bash scripts/generate-index.sh

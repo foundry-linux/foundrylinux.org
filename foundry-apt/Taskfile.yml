@@ -65,9 +65,14 @@ tasks:
           dpkg-deb --info "$f" | head -20
         done
 
+  generate-meta:
+    desc: "Generate public/meta/{name}.json for all packages (PKG=name for one; skips up-to-date)"
+    cmds:
+      - bash scripts/generate-meta.sh {{.PKG}}
+
   generate-index:
-    desc: "Generate public/index.html from packages/*/DEBIAN/control"
-    deps: [publish-local]
+    desc: "Generate public/index.html from public/meta/*.json"
+    deps: [publish-local, generate-meta]
     cmds:
       - bash scripts/generate-index.sh
 
