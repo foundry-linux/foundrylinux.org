@@ -233,8 +233,7 @@ function Install() {
             <h2 className="section-title">Pick your<br />path.</h2>
           </div>
           <p className="section-blurb">
-            Five ways in — ordered from least to most disruptive to your
-            current setup. Coming from Windows? Start at{" "}
+            Five ways in — lightest touch to full commitment. Coming from Windows? Start at{" "}
             <a href="#path-vm">Virtual machine</a> or{" "}
             <a href="#path-iso">Dual boot</a>.
           </p>
