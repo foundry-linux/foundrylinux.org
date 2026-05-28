@@ -19,11 +19,11 @@
         if (!target) return;
         var text = (target.textContent || "").trim();
         var done = function () {
-          var prev = btn.textContent;
-          btn.textContent = "Copied";
+          var prevTitle = btn.getAttribute("title") || "Copy";
+          btn.setAttribute("title", "Copied!");
           btn.setAttribute("data-copied", "1");
           setTimeout(function () {
-            btn.textContent = prev;
+            btn.setAttribute("title", prevTitle);
             btn.removeAttribute("data-copied");
           }, 1400);
         };
