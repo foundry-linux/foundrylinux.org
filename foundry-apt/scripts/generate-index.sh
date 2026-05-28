@@ -227,7 +227,7 @@ cat > "$OUT" <<HTML
     margin-bottom: .25rem;
   }
   .table-wrap { border: 1px solid var(--hairline); }
-  table { width: 100%; border-collapse: collapse; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
   th {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -368,7 +368,7 @@ sudo apt-get install foundry-retro-tools</pre>
   <table class="listing-table">
     <thead><tr>
       <th data-sort="name">Package <span class="sort-ind"></span></th>
-      <th data-sort="desc">Description <span class="sort-ind"></span></th>
+      <th data-sort="desc" style="width:100%">Description <span class="sort-ind"></span></th>
     </tr></thead>
     <tbody>
 ${PKG_ROWS}
