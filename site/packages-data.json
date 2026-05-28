@@ -7,7 +7,7 @@
     {
       "slug": "anvil",
       "title": "Anvil",
-      "blurb": "Base edition — full WorldFoundry stack, retro toolkit, light emulators, game frameworks, image tools. The Distrobox devbox image installs this and nothing else.",
+      "blurb": "Base edition \u2014 full WorldFoundry stack, retro toolkit, light emulators, game frameworks, image tools. The Distrobox devbox image installs this and nothing else.",
       "install_command": "sudo apt install foundry-anvil",
       "metapackage": "foundry-anvil",
       "installed_size_kb": 4187525,
@@ -69,7 +69,7 @@
       "slug": "worldfoundry-gdk",
       "title": "World Foundry GDK",
       "role": "Game Development Kit",
-      "blurb": "Cross-platform engine and 10 CLI authoring tools — cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, blender-asset-finder-cli. Plus the engine build-deps (build-essential, cmake, libx11-dev, libgl) via worldfoundry-development.",
+      "blurb": "Cross-platform engine and 10 CLI authoring tools \u2014 cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, blender-asset-finder-cli. Plus the engine build-deps (build-essential, cmake, libx11-dev, libgl) via worldfoundry-development.",
       "icon": "WorldFoundryIcon",
       "metapackages": [
         "worldfoundry",
@@ -316,7 +316,7 @@
     {
       "slug": "blender",
       "title": "Blender",
-      "role": "3D · Animation · WF",
+      "role": "3D \u00b7 Animation \u00b7 WF",
       "blurb": "Blender preconfigured with the WorldFoundry add-ons (editor exporter + level importer/exporter) and the blender-asset-finder.",
       "icon": "BlenderIcon",
       "metapackages": [
@@ -364,8 +364,8 @@
     {
       "slug": "retro-tools",
       "title": "Retro toolkit",
-      "role": "Disassembly · RE · audio",
-      "blurb": "Retro-porting and reverse-engineering toolchain. MAME, Ghidra, radare2, binwalk, and the 6502 / Z80 / m68k / 6800-family assemblers and disassemblers — the bench for getting old code running again.",
+      "role": "Disassembly \u00b7 RE \u00b7 audio",
+      "blurb": "Retro-porting and reverse-engineering toolchain. MAME, Ghidra, radare2, binwalk, and the 6502 / Z80 / m68k / 6800-family assemblers and disassemblers \u2014 the bench for getting old code running again.",
       "icon": "AssemblerIcon",
       "metapackages": [
         "foundry-retro-tools"
@@ -427,7 +427,7 @@
           "summary": "Motorola 6800/6809/6309 family disassembler",
           "upstream": {
             "status": "vendored",
-            "note": "Small, self-contained, debhelper build, no patches — natural first ITP target."
+            "note": "Small, self-contained, debhelper build, no patches \u2014 natural first ITP target."
           }
         },
         {
@@ -439,7 +439,7 @@
           "summary": "NSA software reverse engineering framework",
           "upstream": {
             "status": "vendored",
-            "note": "Debian licensing review ongoing — NSA-origin code, no ITP yet."
+            "note": "Debian licensing review ongoing \u2014 NSA-origin code, no ITP yet."
           }
         },
         {
@@ -548,8 +548,8 @@
     {
       "slug": "emulators",
       "title": "Emulators",
-      "role": "Arcade · console · vintage",
-      "blurb": "MAME plus a four-way split — light console (mednafen, fceux, stella), heavy console (dolphin-emu, pcsx2, yuzu, retroarch), vintage home computers (dosbox-x, hatari, fs-uae, openmsx), and multiverse vintage (vice, atari800).",
+      "role": "Arcade \u00b7 console \u00b7 vintage",
+      "blurb": "MAME plus a four-way split \u2014 light console (mednafen, fceux, stella), heavy console (dolphin-emu, pcsx2, yuzu, retroarch), vintage home computers (dosbox-x, hatari, fs-uae, openmsx), and multiverse vintage (vice, atari800).",
       "icon": "MameIcon",
       "metapackages": [
         "foundry-emulators",
@@ -842,8 +842,8 @@
     {
       "slug": "game-frameworks",
       "title": "Game frameworks",
-      "role": "Engines · SDKs · shaders",
-      "blurb": "2D/3D game-dev frameworks, headers, and shader tools — Tiled, SDL2/3, SFML, Allegro5, libtcod, glslang, spirv-cross, spirv-tools.",
+      "role": "Engines \u00b7 SDKs \u00b7 shaders",
+      "blurb": "2D/3D game-dev frameworks, headers, and shader tools \u2014 Tiled, SDL2/3, SFML, Allegro5, libtcod, glslang, spirv-cross, spirv-tools.",
       "icon": "GamepadIcon",
       "metapackages": [
         "foundry-game-frameworks"
@@ -956,7 +956,7 @@
     {
       "slug": "image-tools",
       "title": "Image tools",
-      "role": "Paint · pixel · CLI",
+      "role": "Paint \u00b7 pixel \u00b7 CLI",
       "blurb": "Raster and vector paint plus pixel-art suites: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint. Plus the ImageMagick / GraphicsMagick CLIs in Anvil.",
       "icon": "SparksIcon",
       "metapackages": [
@@ -1072,8 +1072,8 @@
     {
       "slug": "audio-production",
       "title": "Audio & trackers",
-      "role": "DAW · trackers · chiptune",
-      "blurb": "Audio production stack — Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx — and the tracker suite (MilkyTracker, Schism, Furnace, openmpt123).",
+      "role": "DAW \u00b7 trackers \u00b7 chiptune",
+      "blurb": "Audio production stack \u2014 Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx \u2014 and the tracker suite (MilkyTracker, Schism, Furnace, openmpt123).",
       "icon": "LibvgmIcon",
       "metapackages": [
         "foundry-daw",
@@ -1209,8 +1209,8 @@
     {
       "slug": "games",
       "title": "Games & reimplementations",
-      "role": "FOSS engines · free games",
-      "blurb": "Free games (0 A.D., SuperTuxKart, Widelands, Warzone 2100, OpenTTD, Freeciv, Freedoom, Hedgewars) and FOSS engine reimplementations (VCMI, OpenRCT2, Fheroes2, Exult, Sauerbraten — bring your own data).",
+      "role": "FOSS engines \u00b7 free games",
+      "blurb": "Free games (0 A.D., SuperTuxKart, Widelands, Warzone 2100, OpenTTD, Freeciv, Freedoom, Hedgewars) and FOSS engine reimplementations (VCMI, OpenRCT2, Fheroes2, Exult, Sauerbraten \u2014 bring your own data).",
       "icon": "SpriteIcon",
       "metapackages": [
         "foundry-free-games",
@@ -1610,7 +1610,7 @@
     {
       "slug": "mobile-dev",
       "title": "Mobile development",
-      "role": "Android · iOS",
+      "role": "Android \u00b7 iOS",
       "blurb": "Android (OpenJDK 17, adb, NDK r26c) and Linux-side iOS tooling (libimobiledevice, ideviceinstaller, usbmuxd, ifuse).",
       "icon": "VgmstreamIcon",
       "metapackages": [
@@ -1699,6 +1699,55 @@
           }
         }
       ]
+    },
+    {
+      "slug": "foundry-core",
+      "title": "Foundry Core",
+      "role": "Base \u00b7 existing Ubuntu",
+      "blurb": "The complete Foundry Linux developer toolkit with zero KDE dependencies. Safe to install on any Ubuntu flavour \u2014 GNOME, XFCE, Budgie, or KDE.",
+      "icon": "SparksIcon",
+      "metapackages": [
+        "foundry-core"
+      ],
+      "package_count": 0,
+      "installed_size_kb": 0,
+      "packages": []
+    },
+    {
+      "slug": "foundry-desktop",
+      "title": "Foundry Desktop",
+      "role": "KDE \u00b7 ISO only",
+      "blurb": "KDE desktop integration shipped on the Foundry Linux ISO \u2014 first-login welcome app and Plasma colour scheme. Not needed on existing Ubuntu installs.",
+      "icon": "SparksIcon",
+      "metapackages": [
+        "foundry-desktop"
+      ],
+      "package_count": 2,
+      "installed_size_kb": 512,
+      "packages": [
+        {
+          "name": "foundry-welcome",
+          "origin": "foundry",
+          "upstream": {
+            "status": "n/a-firstparty"
+          },
+          "version": "1.0.0",
+          "architecture": "amd64",
+          "installed_size_kb": 420,
+          "summary": "First-login welcome application for Foundry Linux (QML/Kirigami)"
+        },
+        {
+          "name": "foundry-kde-theme",
+          "origin": "foundry",
+          "upstream": {
+            "status": "n/a-firstparty"
+          },
+          "version": "1.0.1",
+          "architecture": "all",
+          "installed_size_kb": 92,
+          "summary": "KDE Plasma colour scheme and shell theme for Foundry Linux"
+        }
+      ]
     }
   ],
   "vendored_standalones": [
@@ -1728,7 +1777,7 @@
       ],
       "upstream": {
         "status": "vendored",
-        "note": "Small, self-contained, debhelper build, no patches — natural first ITP target."
+        "note": "Small, self-contained, debhelper build, no patches \u2014 natural first ITP target."
       }
     },
     {
@@ -1738,7 +1787,7 @@
       ],
       "upstream": {
         "status": "vendored",
-        "note": "Debian licensing review ongoing — NSA-origin code, no ITP yet."
+        "note": "Debian licensing review ongoing \u2014 NSA-origin code, no ITP yet."
       }
     },
     {
@@ -1793,9 +1842,7 @@
     "unknown": 0
   },
   "audit": {
-    "unowned_packages": [
-      "foundry-welcome"
-    ],
+    "unowned_packages": [],
     "missing_metapackages": [],
     "out_of_catalogue": []
   }

@@ -10,32 +10,15 @@ Rules-Requires-Root: no
 Package: foundry-anvil
 Architecture: all
 Depends: ${misc:Depends},
- bash-completion,
- btop,
- firefox,
- foundry-emulators-computers,
- foundry-emulators-consoles,
- foundry-game-frameworks,
- foundry-image-cli,
- foundry-retro-tools,
- foundry-welcome,
- libvte-2.91-0,
- man-db,
- sudo,
- task,
- worldfoundry
-Description: Foundry Linux base layer — full kit, devbox image preinstall
- The base "Foundry Linux" install for game-makers, level designers,
- and digital artists: the WorldFoundry authoring stack (Blender + 10
- WF CLIs + WF Blender add-ons), the retro-porting toolkit (MAME,
- Ghidra, dasm, z80, cc65, ...), light universe emulators, game-dev
- frameworks (SDL2/3, SFML, Allegro, libtcod, Tiled, LOVE + Vulkan
- shader tools), CLI image utilities, and go-task. Single command,
- the whole working environment.
+ foundry-core,
+ foundry-desktop
+Description: Foundry Linux ISO edition — developer toolkit + KDE desktop
+ Umbrella metapackage for the Foundry Linux ISO (Kubuntu 26.04 base).
+ Installs foundry-core (the full desktop-agnostic developer toolkit) and
+ foundry-desktop (KDE welcome app + Plasma theme).
+ .
+ Existing Ubuntu users on non-KDE desktops should install foundry-core
+ instead to avoid pulling in KDE/Plasma dependencies.
  .
  The Foundry Linux devbox container image (ghcr.io/foundry-linux/devbox:26.04)
- installs this and nothing else; sprite and atelier are layered on top
- inside a running container if wanted.
- .
- Cross-Depends on apt.worldfoundry.org (worldfoundry); the bootstrap
- setup.sh wires up both apt sources and the Cloudsmith task repo.
+ installs foundry-core instead; sprite and atelier are layered on top.

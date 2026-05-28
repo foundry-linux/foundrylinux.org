@@ -1,0 +1,8 @@
+foundry-core (1.0.0) resolute; urgency=medium
+
+  * Initial release. Splits desktop-agnostic developer tools out of
+    foundry-anvil so existing Ubuntu (non-KDE) users can install the
+    full toolkit without pulling in KDE/Plasma/Kirigami dependencies.
+    See docs/plans/2026-05-28-foundry-core-desktop-split.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 28 May 2026 00:00:00 +0700

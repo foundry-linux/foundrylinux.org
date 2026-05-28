@@ -1,0 +1,28 @@
+Source: foundry-desktop
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-desktop
+Architecture: all
+Depends: ${misc:Depends},
+ foundry-kde-theme,
+ foundry-welcome
+Description: Foundry Linux KDE desktop integration (ISO / KDE hosts only)
+ KDE-specific Foundry Linux packages. Only meaningful on the Foundry Linux
+ ISO (Kubuntu 26.04 base) or on an existing KDE Plasma desktop.
+ .
+ Do NOT install on GNOME, XFCE, or other non-KDE desktops — this will
+ pull in KDE/Plasma and Kirigami dependencies that conflict with or
+ duplicate your existing desktop session.
+ .
+ Includes:
+   foundry-welcome   — first-login welcome application (QML/Kirigami)
+   foundry-kde-theme — Plasma colour scheme and shell theme
+ .
+ On the Foundry Linux ISO, foundry-anvil (= foundry-core + foundry-desktop)
+ is pre-installed and this package is included automatically.

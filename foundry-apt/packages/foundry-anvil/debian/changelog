@@ -1,3 +1,12 @@
+foundry-anvil (1.0.4) resolute; urgency=medium
+
+  * Slim to thin umbrella: Depends now foundry-core + foundry-desktop.
+    All tool deps moved to foundry-core; KDE deps moved to foundry-desktop.
+    Existing Ubuntu users should install foundry-core instead.
+    See docs/plans/2026-05-28-foundry-core-desktop-split.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 28 May 2026 00:00:00 +0700
+
 foundry-anvil (1.0.3) resolute; urgency=medium
 
   * Add btop to Depends for system monitoring out of the box.

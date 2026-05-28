@@ -1,0 +1,38 @@
+Source: foundry-core
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-core
+Architecture: all
+Depends: ${misc:Depends},
+ bash-completion,
+ btop,
+ firefox,
+ foundry-emulators-computers,
+ foundry-emulators-consoles,
+ foundry-game-frameworks,
+ foundry-image-cli,
+ foundry-retro-tools,
+ libvte-2.91-0,
+ man-db,
+ sudo,
+ task,
+ worldfoundry
+Description: Foundry Linux developer toolkit — desktop-agnostic
+ The complete Foundry Linux developer toolkit for existing Ubuntu installs.
+ Safe on any Ubuntu flavour (GNOME, XFCE, Budgie, KDE, …) — pulls in zero
+ KDE or Plasma dependencies.
+ .
+ Includes the WorldFoundry authoring stack (Blender + 10 WF CLIs + WF
+ Blender add-ons), the retro-porting toolkit (MAME, Ghidra, dasm, z80,
+ cc65, …), light universe emulators, game-dev frameworks (SDL2/3, SFML,
+ Allegro, libtcod, Tiled, LOVE + Vulkan shader tools), CLI image utilities,
+ and go-task.
+ .
+ On the Foundry Linux ISO, foundry-anvil (= foundry-core + foundry-desktop)
+ is pre-installed instead. Existing Ubuntu users should install this package.

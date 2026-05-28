@@ -256,8 +256,8 @@ function Install() {
                 <div className="code-section">
                   <span className="step">② Install</span>
                   <div className="code-cmd-row">
-                    <code><span className="ember">sudo apt install</span> foundry-anvil</code>
-                    <button className="inline-copy-btn" data-copy-text="sudo apt install foundry-anvil" aria-label="Copy"><CopyIcon /></button>
+                    <code><span className="ember">sudo apt install</span> foundry-core</code>
+                    <button className="inline-copy-btn" data-copy-text="sudo apt install foundry-core" aria-label="Copy"><CopyIcon /></button>
                   </div>
                   <div className="code-alts">
                     <code><span className="cmt"># or pick a different edition:</span></code>
