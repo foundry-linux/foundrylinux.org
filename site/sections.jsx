@@ -264,6 +264,9 @@ function Install() {
             <span className="channel-label">Container</span>
             <p className="channel-hook">Any host — Linux, macOS, or Windows via WSL.</p>
             <code className="channel-cmd">distrobox create -i ghcr.io/foundry-linux/devbox:26.04</code>
+            <div className="channel-cmd-row">
+              <button className="inline-copy-btn" data-copy-text="distrobox create -i ghcr.io/foundry-linux/devbox:26.04" aria-label="Copy" onClick={e => e.preventDefault()}><CopyIcon /></button>
+            </div>
             <span className="channel-inv">isolated</span>
           </a>
 
@@ -404,6 +407,7 @@ function Editions() {
               <div className="edition-pkg">
                 <span>{ed.metapackage}</span>
                 <span className="size">{ed.package_count}&nbsp;pkgs · {formatSize(ed.installed_size_kb)}</span>
+                <button className="inline-copy-btn" data-copy-text={`sudo apt install ${ed.metapackage}`} aria-label="Copy install command"><CopyIcon /></button>
               </div>
             </div>
           ))}

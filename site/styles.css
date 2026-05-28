@@ -578,6 +578,28 @@ body[data-bg="textured"] {
 .forge-copy { margin-left: auto; }
 .card-copy-btn { margin-top: 10px; align-self: flex-start; }
 
+/* Icon-only copy button — used inline next to code in cards and editions */
+.inline-copy-btn {
+  background: none;
+  border: 1px solid var(--hairline-strong);
+  color: var(--ink-faint);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  padding: 0;
+  transition: color 0.15s, border-color 0.15s;
+  vertical-align: middle;
+}
+.inline-copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.inline-copy-btn[data-copied] { color: var(--accent); }
+.inline-copy-btn svg { width: 11px; height: 11px; }
+.channel-cmd-row { margin-top: 6px; }
+.edition-install-wrap { position: relative; display: flex; align-items: flex-start; gap: 8px; }
+
 /* ============================ SECTION CHROME ============================ */
 
 .section {
