@@ -1,3 +1,11 @@
+foundry-core (1.0.1) resolute; urgency=medium
+
+  * Drop ubuntu-base deps (bash-completion, man-db, sudo, libvte-2.91-0)
+    — these are pre-installed on every Ubuntu system and have no place
+    in a developer toolkit metapackage targeting existing installs.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 29 May 2026 00:00:00 +0700
+
 foundry-core (1.0.0) resolute; urgency=medium
 
   * Initial release. Splits desktop-agnostic developer tools out of

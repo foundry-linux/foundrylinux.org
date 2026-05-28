@@ -10,7 +10,6 @@ Rules-Requires-Root: no
 Package: foundry-core
 Architecture: all
 Depends: ${misc:Depends},
- bash-completion,
  btop,
  firefox,
  foundry-emulators-computers,
@@ -18,9 +17,6 @@ Depends: ${misc:Depends},
  foundry-game-frameworks,
  foundry-image-cli,
  foundry-retro-tools,
- libvte-2.91-0,
- man-db,
- sudo,
  task,
  worldfoundry
 Description: Foundry Linux developer toolkit — desktop-agnostic
