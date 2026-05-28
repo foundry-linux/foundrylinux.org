@@ -66,7 +66,7 @@ function Hero() {
       <div className="hero-deco left"><GearStackIcon /></div>
 
       <div className="shell">
-        <div className="hero-eyebrow">a linux distribution · est. 2026</div>
+        <div className="hero-eyebrow">the game maker's forge · est. 2026</div>
 
         <div className="hero-anvil">
           <BigAnvilLogo width={420} />
@@ -83,7 +83,7 @@ function Hero() {
 
         <p className="hero-tagline">
           Forged for <em>game makers, level designers, and digital artists</em>{' '}
-          of every kind — an Ubuntu LTS desktop with the tools of the trade
+          of every kind — a Linux desktop with the tools of the trade
           struck into it from the first boot.
         </p>
 
@@ -156,7 +156,8 @@ function Forge() {
               throw new Error(`Forge card references unknown category slug: ${categorySlug}`);
             }
             const Icon = ICONS[cat.icon] || SparksIcon;
-            const installCmd = `sudo apt install ${cat.metapackages[0]}`;
+            const pkgName = cat.metapackages[0];
+            const installCmd = `sudo apt install ${pkgName}`;
             return (
               <div className="forge-cell" key={categorySlug}>
                 <a className="forge-cell-link" href={`/packages#${categorySlug}`}>
@@ -167,8 +168,11 @@ function Forge() {
                 <p className="forge-desc">{cat.blurb}</p>
                 <div className="forge-meta">
                   <div className="forge-cmd-row">
-                    <span className="forge-pkg">{installCmd}</span>
-                    <button className="forge-copy" data-copy-text={installCmd} aria-label="Copy install command"><CopyIcon /></button>
+                    <span className="forge-cmd-prefix">sudo apt install</span>
+                    <span className="forge-cmd-pkg">
+                      <span className="forge-pkg">{pkgName}</span>
+                      <button className="forge-copy" data-copy-text={installCmd} aria-label="Copy install command"><CopyIcon /></button>
+                    </span>
                   </div>
                   <span className="forge-stats">
                     {cat.package_count}&nbsp;pkgs · {formatSize(cat.installed_size_kb)}
@@ -237,28 +241,37 @@ function Install() {
 
         <div className="channels-grid">
 
-          {/* Card 01 — full-width, two-zone: left info + right apt codeblock */}
+          {/* Card 01 — full-width, two-zone: left code + right info */}
           <div className="channel-card channel-card--wide" id="path-apt" data-invasiveness="non-destructive">
-            <div className="hero-left">
+            <div className="hero-left hero-left--code">
+              <span className="hero-dl-label">shell · root</span>
+              <div className="card-code">
+                <div className="code-section">
+                  <span className="step">① Add the Foundry archive</span>
+                  <div className="code-cmd-row">
+                    <code><span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span></code>
+                    <button className="inline-copy-btn" data-copy-text="curl -fsSL https://foundrylinux.org/setup.sh | bash" aria-label="Copy"><CopyIcon /></button>
+                  </div>
+                </div>
+                <div className="code-section">
+                  <span className="step">② Install</span>
+                  <div className="code-cmd-row">
+                    <code><span className="ember">sudo apt install</span> foundry-anvil</code>
+                    <button className="inline-copy-btn" data-copy-text="sudo apt install foundry-anvil" aria-label="Copy"><CopyIcon /></button>
+                  </div>
+                  <div className="code-alts">
+                    <code><span className="cmt"># or pick a different edition:</span></code>
+                    <code><span className="ember">sudo apt install</span> foundry-sprite <span className="cmt"># + heavy graphics + audio</span></code>
+                    <code><span className="ember">sudo apt install</span> foundry-atelier <span className="cmt"># + everything (~15 GB)</span></code>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="hero-right hero-right--info">
               <span className="channel-num">01</span>
               <span className="channel-label">Existing Ubuntu</span>
-              <p className="channel-hook">Already on 26.04? Add the repo — no reinstall.</p>
+              <p className="channel-hook">Already on 26.04? Add the repo —&nbsp;no&nbsp;reinstall.</p>
               <span className="channel-inv">non-destructive</span>
-            </div>
-            <div className="hero-right hero-right--code">
-              <span className="hero-dl-label">shell · root</span>
-              <pre id="card01-code" className="card-code">
-                <span className="step">① Add the Foundry archive</span>{"\n"}
-                <span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>{"\n"}
-                {"\n"}
-                <span className="step">② Install</span>{"\n"}
-                <span className="ember">sudo apt install</span> foundry-anvil{"\n"}
-                {"\n"}
-                <span className="cmt"># or pick a different edition:</span>{"\n"}
-                <span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>{"\n"}
-                <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~15 GB)</span>
-              </pre>
-              <button className="card-copy-btn" data-copy="#card01-code" aria-label="Copy install commands"><CopyIcon /> Copy</button>
             </div>
           </div>
 
@@ -267,8 +280,8 @@ function Install() {
             <span className="channel-num">02</span>
             <span className="channel-label">Container</span>
             <p className="channel-hook">Any host — Linux, macOS, or Windows via WSL.</p>
-            <code className="channel-cmd">distrobox create -i ghcr.io/foundry-linux/devbox:26.04</code>
             <div className="channel-cmd-row">
+              <code className="channel-cmd">distrobox create -i ghcr.io/foundry-linux/devbox:26.04</code>
               <button className="inline-copy-btn" data-copy-text="distrobox create -i ghcr.io/foundry-linux/devbox:26.04" aria-label="Copy" onClick={e => e.preventDefault()}><CopyIcon /></button>
             </div>
             <span className="channel-inv">isolated</span>
@@ -278,32 +291,20 @@ function Install() {
             <span className="channel-num">03</span>
             <span className="channel-label">Virtual machine</span>
             <p className="channel-hook">Sandboxed — VirtualBox, VMware, or QEMU. Your OS unchanged.</p>
-            <ul className="card-vm-list">
-              <li>
-                <span className="card-vm-type">VirtualBox</span>
-                <div className="card-vm-row">
-                  <span className="card-vm-file">foundry-anvil-latest-amd64.ova</span>
-                  <span className="card-vm-size">11 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.ova" aria-label="Download OVA"><DownloadIcon /></a>
-                </div>
-              </li>
-              <li>
-                <span className="card-vm-type">VMware</span>
-                <div className="card-vm-row">
-                  <span className="card-vm-file">foundry-anvil-latest-amd64.vmdk</span>
-                  <span className="card-vm-size">11 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.vmdk" aria-label="Download VMDK"><DownloadIcon /></a>
-                </div>
-              </li>
-              <li>
-                <span className="card-vm-type">QEMU / KVM</span>
-                <div className="card-vm-row">
-                  <span className="card-vm-file">foundry-anvil-latest-amd64.qcow2</span>
-                  <span className="card-vm-size">5.1 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.qcow2" aria-label="Download qcow2"><DownloadIcon /></a>
-                </div>
-              </li>
-            </ul>
+            <div className="card-vm-boxes">
+              <a className="card-vm-box" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.ova">
+                <span className="card-vm-box-type">VirtualBox</span>
+                <span className="card-vm-box-size">11 GB</span>
+              </a>
+              <a className="card-vm-box" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.vmdk">
+                <span className="card-vm-box-type">VMware</span>
+                <span className="card-vm-box-size">11 GB</span>
+              </a>
+              <a className="card-vm-box" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.qcow2">
+                <span className="card-vm-box-type">QEMU / KVM</span>
+                <span className="card-vm-box-size">5.1 GB</span>
+              </a>
+            </div>
             <span className="channel-inv">isolated</span>
           </div>
 
