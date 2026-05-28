@@ -168,6 +168,7 @@ function Forge() {
                   <span className="forge-stats">
                     {cat.package_count}&nbsp;pkgs · {formatSize(cat.installed_size_kb)}
                   </span>
+                  <button className="forge-copy" data-copy-text={installCmd} aria-label="Copy install command" onClick={e => e.preventDefault()}><CopyIcon /></button>
                 </div>
               </a>
             );
@@ -181,7 +182,7 @@ function Forge() {
             <b>{inUniverse}</b> already in Ubuntu universe/multiverse
           </span>
           <a className="forge-catalogue" href="/packages">
-            Browse the full catalogue<ArrowRightIcon />
+            Browse the full catalogue<span className="forge-arrow" aria-hidden="true">→</span>
           </a>
         </div>
       </div>
@@ -242,7 +243,7 @@ function Install() {
             </div>
             <div className="hero-right hero-right--code">
               <span className="hero-dl-label">shell · root</span>
-              <pre className="card-code">
+              <pre id="card01-code" className="card-code">
                 <span className="step">① Add the Foundry archive</span>{"\n"}
                 <span className="ember">curl</span> <span className="kw">-fsSL</span> <span className="str">https://foundrylinux.org/setup.sh</span> | <span className="ember">bash</span>{"\n"}
                 {"\n"}
@@ -253,6 +254,7 @@ function Install() {
                 <span className="ember">sudo apt install</span> foundry-sprite     <span className="cmt"># + heavy graphics + audio</span>{"\n"}
                 <span className="ember">sudo apt install</span> foundry-atelier    <span className="cmt"># + everything (~15 GB)</span>
               </pre>
+              <button className="card-copy-btn" data-copy="#card01-code" aria-label="Copy install commands"><CopyIcon /> Copy</button>
             </div>
           </div>
 
@@ -323,7 +325,7 @@ function Install() {
                 Keeping Windows?{" "}
                 Boot from USB, and the installer will offer to shrink your Windows
                 partition automatically — no manual partitioning required.{" "}
-                <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">Step-by-step guide →</a>
+                <a href="https://help.ubuntu.com/community/WindowsDualBoot">Windows dual-boot guide →</a>
               </p>
             </div>
           </div>

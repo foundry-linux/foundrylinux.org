@@ -8,6 +8,10 @@ const { readFileSync, existsSync, appendFileSync, readdirSync } = require('node:
 const { join, resolve } = require('node:path');
 
 const SKIP_EXTERNAL = process.argv.includes('--skip-external');
+
+// Domains that are legitimate but rate-limit or timeout against CI user-agents.
+// Add sparingly — prefer fixing the URL or increasing timeout instead.
+const FLAKY_DOMAINS = new Set([]);
 const dirArg = (() => {
   const i = process.argv.indexOf('--dir');
   return i !== -1 ? process.argv[i + 1] : null;
@@ -109,6 +113,11 @@ async function main() {
     console.log(`Checking ${externalQueue.size} unique external URL(s)…`);
     const fetched = await Promise.all(
       [...externalQueue.entries()].map(async ([url, sources]) => {
+        try {
+          const domain = new URL(url).hostname.replace(/^www\./, '');
+          if (FLAKY_DOMAINS.has(domain))
+            return { url, sources, ok: true, detail: 'flaky-domain (skipped)' };
+        } catch (_) {}
         const r = await fetchHead(url);
         return { url, sources, ok: r.ok, detail: String(r.status) };
       })

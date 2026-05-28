@@ -214,7 +214,11 @@ body[data-bg="textured"] {
   color: var(--ink-soft);
 }
 
-.topbar-mark svg { width: 22px; height: 22px; }
+.topbar-mark svg {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 60%, transparent));
+}
 .topbar-mark b {
   font-family: var(--font-mono);
   font-weight: 500;
@@ -547,6 +551,33 @@ body[data-bg="textured"] {
 .apt-command .copy:hover { color: var(--ink); background: rgba(255, 255, 255, 0.04); }
 .apt-command .copy svg { width: 12px; height: 12px; }
 
+/* ── Inline copy buttons (forge cards + card 01 code block) ── */
+.forge-copy,
+.card-copy-btn {
+  background: none;
+  border: 1px solid var(--hairline-strong);
+  color: var(--ink-faint);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.forge-copy:hover,
+.card-copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.forge-copy[data-copied],
+.card-copy-btn[data-copied] { color: var(--accent); }
+.forge-copy svg,
+.card-copy-btn svg { width: 11px; height: 11px; }
+
+.forge-copy { margin-left: auto; }
+.card-copy-btn { margin-top: 10px; align-self: flex-start; }
+
 /* ============================ SECTION CHROME ============================ */
 
 .section {
@@ -595,6 +626,11 @@ body[data-bg="textured"] {
   color: var(--ink-soft);
   line-height: 1.55;
 }
+.section-blurb a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.section-blurb a:hover { text-decoration: underline; }
 
 @media (max-width: 800px) {
   .section-head { flex-direction: column; align-items: flex-start; gap: 18px; }
@@ -955,12 +991,14 @@ a.channel-card:hover {
 
 .channel-num {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
+  font-size: 11px;
+  letter-spacing: 0.15em;
   color: var(--ink-faint);
   text-transform: uppercase;
-  display: block;
-  margin-bottom: 10px;
+  display: inline-block;
+  border: 1px solid var(--hairline-strong);
+  padding: 2px 8px;
+  margin-bottom: 14px;
 }
 
 .channel-label {
@@ -1532,12 +1570,28 @@ a.channel-card:hover {
 .forge-catalogue {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-decoration: none;
   color: var(--accent);
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
-.forge-catalogue:hover { text-decoration: underline; }
+.forge-catalogue:hover .forge-arrow { transform: translateX(3px); }
+.forge-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--accent);
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
 
 /* ============================ /packages PAGE ============================ */
 

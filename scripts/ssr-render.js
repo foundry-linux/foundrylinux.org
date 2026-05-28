@@ -77,12 +77,14 @@ function wrap(body, { title, description, extraBodyScripts }) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title}</title>
   <meta name="description" content="${description}" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preload" href="fonts/big-shoulders-display-900-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-bg="pure">
   <div id="root">${body}</div>
 ${extraBodyScripts ? homePageScripts() : ''}
+  <script src="/copy.js" defer></script>
 </body>
 </html>`;
 }
