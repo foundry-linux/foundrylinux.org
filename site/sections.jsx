@@ -282,7 +282,7 @@ function Install() {
             <p className="channel-hook">Any host — Linux, macOS, or Windows via WSL.</p>
             <div className="channel-cmd-row">
               <code className="channel-cmd">distrobox create -i ghcr.io/foundry-linux/devbox:26.04</code>
-              <button className="inline-copy-btn" data-copy-text="distrobox create -i ghcr.io/foundry-linux/devbox:26.04" aria-label="Copy" onClick={e => e.preventDefault()}><CopyIcon /></button>
+              <button className="inline-copy-btn" data-copy-text="distrobox create -i ghcr.io/foundry-linux/devbox:26.04" aria-label="Copy" onClick={e => { e.preventDefault(); e.stopPropagation(); }}><CopyIcon /></button>
             </div>
             <span className="channel-inv">isolated</span>
           </a>
