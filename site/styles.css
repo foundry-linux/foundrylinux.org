@@ -598,7 +598,7 @@ body[data-bg="textured"] {
 .inline-copy-btn[data-copied] { color: var(--accent); }
 .inline-copy-btn svg { width: 11px; height: 11px; }
 .channel-cmd-row { margin-top: 6px; }
-.edition-install-wrap { position: relative; display: flex; align-items: flex-start; gap: 8px; }
+.edition-install-wrap { position: relative; display: flex; align-items: center; gap: 8px; }
 
 /* ============================ SECTION CHROME ============================ */
 
