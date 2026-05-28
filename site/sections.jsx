@@ -347,7 +347,7 @@ function Install() {
 
         <div className="install-info">
           <div className="install-signed">
-            <div className="install-signed-text">
+            <div className="install-signed-text install-side">
               <h3>Signed by the smith.</h3>
               <p>Every package in the Foundry archive is signed with our long-term maintainer key. Verify the fingerprint before adding the keyring to a production machine.</p>
             </div>
