@@ -241,7 +241,7 @@ cat > "$OUT" <<HTML
   .sort-ind { margin-left: .3em; font-size: 9px; }
   td { padding: .6rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; vertical-align: top; }
   td.col-pkg { font-family: var(--font-mono); font-size: 13px; }
-  .pkg-name { color: var(--accent); font-weight: 700; }
+  .pkg-name { color: var(--accent); font-weight: 700; white-space: nowrap; }
   .pkg-home {
     display: inline-flex; align-items: center; justify-content: center;
     color: var(--ink-faint); text-decoration: none;
