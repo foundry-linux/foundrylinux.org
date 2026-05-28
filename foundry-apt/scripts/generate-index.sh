@@ -62,7 +62,8 @@ for fname in sorted(os.listdir(meta_dir)):
     # Name cell — bold plain text only
     name_cell = f'<b class="pkg-name">{esc(name)}</b>'
     # Home button goes at the start of description cell
-    home_btn = f'<a class="pkg-home" href="{esc(hp)}" title="{esc(hp)}" aria-label="Homepage">⌂</a> ' if hp else ''
+    home_svg = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8 L8 2 L14 8"/><path d="M4 8 L4 14 L12 14 L12 8"/><path d="M6 14 L6 10 L10 10 L10 14"/></svg>'
+    home_btn = f'<a class="pkg-home" href="{esc(hp)}" title="{esc(hp)}" aria-label="Homepage">{home_svg}</a> ' if hp else ''
 
     # Version cell with .deb download link(s)
     letter = name[0]
@@ -243,10 +244,10 @@ cat > "$OUT" <<HTML
   .pkg-name { color: var(--accent); font-weight: 700; }
   .pkg-home {
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 11px; color: var(--ink-faint); text-decoration: none;
+    color: var(--ink-faint); text-decoration: none;
     margin-right: 6px; vertical-align: middle;
     border: 1px solid var(--hairline-strong);
-    padding: 1px 5px; border-radius: 2px;
+    padding: 3px 5px; border-radius: 2px;
     transition: color 0.15s, border-color 0.15s;
   }
   .pkg-home:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
