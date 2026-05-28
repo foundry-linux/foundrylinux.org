@@ -241,10 +241,14 @@ cat > "$OUT" <<HTML
   td.col-pkg { font-family: var(--font-mono); font-size: 13px; }
   .pkg-name { color: var(--accent); font-weight: 700; }
   .pkg-home {
-    font-size: 12px; color: var(--ink-faint); text-decoration: none;
-    margin-left: 5px; vertical-align: middle; opacity: 0.6;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--ink-faint); text-decoration: none;
+    margin-left: 6px; vertical-align: middle;
+    border: 1px solid var(--hairline-strong);
+    padding: 1px 5px; border-radius: 2px;
+    transition: color 0.15s, border-color 0.15s;
   }
-  .pkg-home:hover { color: var(--accent); opacity: 1; text-decoration: none; }
+  .pkg-home:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
   .col-ver { display: block; color: var(--ink-faint); font-size: 11px; margin-top: 4px; word-break: break-all; }
   td.col-desc { word-break: break-word; }
   /* ── Package details (long desc + dep chips) ── */
