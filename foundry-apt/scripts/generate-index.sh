@@ -44,7 +44,10 @@ def fmt_desc(text):
     escaped = esc(text)
     return re.sub(r'`([^`]+)`', lambda m: f'<code>{m.group(1)}</code>', escaped)
 
-for fname in sorted(os.listdir(meta_dir)):
+icon_3  = '<svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M8 1.5 L1 8.5 L3 8.5 L3 14.5 L7 14.5 L7 10.5 L9 10.5 L9 14.5 L13 14.5 L13 8.5 L15 8.5 Z"/></svg>'
+icon_10 = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2 L14 8 L12 8 L12 14 L4 14 L4 8 L2 8 Z"/></svg>'
+
+for i, fname in enumerate(sorted(os.listdir(meta_dir))):
     if not fname.endswith(".json"):
         continue
     with open(os.path.join(meta_dir, fname)) as f:
@@ -63,8 +66,8 @@ for fname in sorted(os.listdir(meta_dir)):
     section    = p.get("section", "")
     meta_badge = '<span class="pkg-meta">meta</span> ' if section == "metapackages" else ''
     name_cell = f'<b class="pkg-name">{esc(name)}</b>'
-    # Home button goes at the start of description cell
-    home_svg = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8 L8 2 L14 8"/><path d="M4 8 L4 14 L12 14 L12 8"/><path d="M6 14 L6 10 L10 10 L10 14"/></svg>'
+    # Home button goes at the start of description cell — alternate icons for preview
+    home_svg = icon_3 if i % 2 == 0 else icon_10
     home_btn = f'<a class="pkg-home" href="{esc(hp)}" title="{esc(hp)}" aria-label="Homepage">{home_svg}</a> ' if hp else ''
 
     # Version cell with .deb download link(s)
