@@ -35,15 +35,16 @@ RUN apt-get update \
  && curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' | bash \
  && apt-get update
 
-# Layer 2: one metapackage. foundry-anvil (the "base layer" edition)
+# Layer 2: one metapackage. foundry-core (the desktop-agnostic dev toolkit)
 # pulls the entire devbox stack — sub-metapackages we own + worldfoundry
 # cross-repo + task from Cloudsmith + distrobox conveniences. No bare
-# Ubuntu packages here. Sprite (graphics/audio) and atelier (everything)
+# Ubuntu packages here, and no KDE/Plasma deps (those live in foundry-desktop
+# which is ISO-only). Sprite (graphics/audio) and atelier (everything)
 # editions exist on apt.foundrylinux.org but are NOT preinstalled in the
 # image — users layer them on inside the running container if wanted.
 #
-# Transitive expansion of foundry-anvil (apt resolves these; comments are for readers):
-#   foundry-anvil               Depends:
+# Transitive expansion of foundry-core (apt resolves these; comments are for readers):
+#   foundry-core                Depends:
 #     ├── foundry-retro-tools         = mame mame-tools dasm cc65 z80dasm z80asm radare2 binwalk
 #     │                                 sox binutils-m68k-linux-gnu xa65 f9dasm libvgm vgmstream ghidra
 #     ├── foundry-emulators-computers = dosbox-x hatari fs-uae openmsx openmsx-data
@@ -58,7 +59,7 @@ RUN apt-get update \
 #     │     └── worldfoundry-blender-addons  = worldfoundry-blender-editor-exporter + blender-asset-finder + blender (5.0.1)
 #     └── sudo libvte-2.91-0 bash-completion man-db   (distrobox conveniences)
 RUN apt-get install -y --no-install-recommends \
-        foundry-anvil \
+        foundry-core \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 

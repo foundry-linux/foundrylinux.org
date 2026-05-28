@@ -416,6 +416,79 @@ const MagnetIcon = () => (
   </svg>
 );
 
+// System requirement icons — same stroke style, 32×32 viewBox for smaller use
+const ReqCpuIcon = ({ size = 32 }) => (
+  <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true">
+    <g {...I.stroke}>
+      <rect x="10" y="10" width="12" height="12" />
+      <rect x="13" y="13" width="6" height="6" />
+      <line x1="13" y1="10" x2="13" y2="6" /><line x1="16" y1="10" x2="16" y2="6" /><line x1="19" y1="10" x2="19" y2="6" />
+      <line x1="13" y1="22" x2="13" y2="26" /><line x1="16" y1="22" x2="16" y2="26" /><line x1="19" y1="22" x2="19" y2="26" />
+      <line x1="10" y1="13" x2="6" y2="13" /><line x1="10" y1="16" x2="6" y2="16" /><line x1="10" y1="19" x2="6" y2="19" />
+      <line x1="22" y1="13" x2="26" y2="13" /><line x1="22" y1="16" x2="26" y2="16" /><line x1="22" y1="19" x2="26" y2="19" />
+    </g>
+  </svg>
+);
+
+const ReqMemoryIcon = ({ size = 32 }) => (
+  <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true">
+    <g {...I.stroke}>
+      <rect x="4" y="10" width="24" height="12" />
+      <line x1="8" y1="10" x2="8" y2="22" />
+      <line x1="12" y1="10" x2="12" y2="22" />
+      <line x1="16" y1="10" x2="16" y2="22" />
+      <line x1="20" y1="10" x2="20" y2="22" />
+      <line x1="24" y1="10" x2="24" y2="22" />
+      <line x1="8" y1="22" x2="8" y2="25" />
+      <line x1="12" y1="22" x2="12" y2="25" />
+      <line x1="20" y1="22" x2="20" y2="25" />
+      <line x1="24" y1="22" x2="24" y2="25" />
+    </g>
+  </svg>
+);
+
+const ReqStorageIcon = ({ size = 32 }) => (
+  <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true">
+    <g {...I.stroke}>
+      <rect x="5" y="8" width="22" height="16" rx="2" />
+      <line x1="5" y1="19" x2="27" y2="19" />
+      <circle cx="22" cy="22" r="1.5" />
+      <line x1="8" y1="13" x2="16" y2="13" />
+      <line x1="8" y1="16" x2="13" y2="16" />
+    </g>
+  </svg>
+);
+
+const ReqGpuIcon = ({ size = 32 }) => (
+  <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true">
+    <g {...I.stroke}>
+      <rect x="4" y="11" width="20" height="11" rx="1" />
+      <line x1="24" y1="14" x2="28" y2="14" />
+      <line x1="24" y1="18" x2="28" y2="18" />
+      <line x1="8" y1="22" x2="8" y2="25" />
+      <line x1="12" y1="22" x2="12" y2="25" />
+      <line x1="16" y1="22" x2="16" y2="25" />
+      <line x1="20" y1="22" x2="20" y2="25" />
+      <rect x="9" y="14" width="10" height="5" />
+    </g>
+  </svg>
+);
+
+const ReqBaseIcon = ({ size = 32 }) => (
+  <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true">
+    <g {...I.stroke}>
+      <polygon points="16,5 28,12 28,20 16,27 4,20 4,12" />
+      <polygon points="16,11 22,14 22,18 16,21 10,18 10,14" />
+      <line x1="16" y1="5" x2="16" y2="11" />
+      <line x1="28" y1="12" x2="22" y2="14" />
+      <line x1="28" y1="20" x2="22" y2="18" />
+      <line x1="16" y1="27" x2="16" y2="21" />
+      <line x1="4" y1="20" x2="10" y2="18" />
+      <line x1="4" y1="12" x2="10" y2="14" />
+    </g>
+  </svg>
+);
+
 export {
   AnvilIcon, HammerIcon, SparksIcon,
   WorldFoundryIcon, BlenderIcon, MameIcon, F9dasmIcon, AssemblerIcon, LibvgmIcon, VgmstreamIcon,
@@ -423,4 +496,5 @@ export {
   BigAnvilLogo, FoundryMark, DownloadIcon, CopyIcon, ArrowRightIcon,
   ForgeSceneIcon, GearStackIcon,
   TorrentIcon, MagnetIcon,
+  ReqCpuIcon, ReqMemoryIcon, ReqStorageIcon, ReqGpuIcon, ReqBaseIcon,
 };

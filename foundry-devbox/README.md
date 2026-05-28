@@ -2,7 +2,7 @@
 
 Distrobox-compatible OCI image: **`ghcr.io/foundry-linux/devbox:26.04`**.
 
-A single `apt install foundry-anvil` brings the full Foundry Linux base layer:
+A single `apt install foundry-core` brings the full Foundry Linux base layer:
 WorldFoundry authoring stack (Blender + 10 WF CLIs + WF Blender add-ons),
 retro-porting toolkit (MAME, Ghidra, dasm, z80, cc65, …), light universe
 emulators, game-dev frameworks (SDL2/3, SFML, Allegro, libtcod, Tiled, LÖVE,
@@ -18,7 +18,7 @@ distrobox create -i ghcr.io/foundry-linux/devbox:26.04 -n foundry
 distrobox enter foundry
 ```
 
-Inside the container, everything in foundry-anvil is on `PATH`. To layer in
+Inside the container, everything in foundry-core is on `PATH`. To layer in
 heavy graphics + audio (`foundry-sprite`) or the full kit (`foundry-atelier`):
 
 ```bash
@@ -31,7 +31,7 @@ sudo apt install foundry-atelier    # + everything else (~10 GB)
 ```bash
 task build      # build the image locally  → ghcr.io/foundry-linux/devbox:local
 task run        # shell into the local image
-task smoke      # run the foundry-anvil tool-presence smoke test
+task smoke      # run the foundry-core tool-presence smoke test
 task clean      # remove the local image
 ```
 
@@ -47,7 +47,7 @@ task devbox-release TAG=v0.0.1  # tag the remote; CI builds + pushes GHCR
 The publish workflow lives at `.github/workflows/publish.yml`. It triggers on
 `v*` tag pushes, builds + pushes the image to GHCR under three tags
 (`26.04`, the tag itself, and `latest`), and smoke-tests the pushed image by
-running every `foundry-anvil` tool through `command -v`.
+running every `foundry-core` tool through `command -v`.
 
 ## What's NOT in this image
 

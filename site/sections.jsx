@@ -3,6 +3,7 @@ import React from 'react';
 import {
   FoundryMark, GearStackIcon, BigAnvilLogo, CopyIcon, DownloadIcon, ArrowRightIcon,
   WorldFoundryIcon, BlenderIcon, MameIcon, AssemblerIcon, LibvgmIcon, VgmstreamIcon,
+  ReqCpuIcon, ReqMemoryIcon, ReqStorageIcon, ReqGpuIcon, ReqBaseIcon,
   AnvilEditionIcon, SpriteIcon, GamepadIcon, SparksIcon,
   TorrentIcon, MagnetIcon,
 } from './icons.jsx';
@@ -312,7 +313,7 @@ function Install() {
             <span className="channel-num">04</span>
             <span className="channel-label">Dual boot</span>
             <p className="channel-hook">Keep Windows. Boot from USB — the installer detects Windows and offers to shrink its partition automatically.</p>
-            <code className="channel-cmd">foundry-anvil-latest-amd64.iso → alongside Windows</code>
+            <code className="channel-cmd">foundry-anvil-latest-amd64.iso →&nbsp;alongside&nbsp;Windows</code>
             <span className="channel-inv">additive</span>
           </a>
 
@@ -360,11 +361,11 @@ function Install() {
           <div className="install-reqs">
             <h3>System requirements</h3>
             <div className="req-cards">
-              <div className="req-card"><span className="req-key">CPU</span><span className="req-val">x86_64 · ARM64</span></div>
-              <div className="req-card"><span className="req-key">Memory</span><span className="req-val">4 GB min · 8 GB rec.</span></div>
-              <div className="req-card"><span className="req-key">Storage</span><span className="req-val">20 GB free</span></div>
-              <div className="req-card"><span className="req-key">GPU</span><span className="req-val">Vulkan 1.2</span></div>
-              <div className="req-card"><span className="req-key">Base</span><span className="req-val">Ubuntu 26.04 LTS</span></div>
+              <div className="req-card"><ReqCpuIcon size={28} /><span className="req-key">CPU</span><ul className="req-val"><li><FoundryMark size={10} />x86_64</li><li><FoundryMark size={10} />ARM64</li></ul></div>
+              <div className="req-card"><ReqMemoryIcon size={28} /><span className="req-key">Memory</span><ul className="req-val"><li><FoundryMark size={10} />4 GB minimum</li><li><FoundryMark size={10} />8 GB recommended</li></ul></div>
+              <div className="req-card"><ReqStorageIcon size={28} /><span className="req-key">Storage</span><ul className="req-val"><li><FoundryMark size={10} />20 GB free</li></ul></div>
+              <div className="req-card"><ReqGpuIcon size={28} /><span className="req-key">GPU</span><ul className="req-val"><li><FoundryMark size={10} />Vulkan 1.2</li></ul></div>
+              <div className="req-card"><ReqBaseIcon size={28} /><span className="req-key">Base</span><ul className="req-val"><li><FoundryMark size={10} />Kubuntu 26.04 LTS</li></ul></div>
             </div>
           </div>
         </div>

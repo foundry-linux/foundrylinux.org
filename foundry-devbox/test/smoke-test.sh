@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Smoke-test that every tool foundry-anvil promises is on PATH inside the
+# Smoke-test that every tool foundry-core promises is on PATH inside the
 # locally-built ghcr.io/foundry-linux/devbox:local image.
 #
-# Tools tested correspond to foundry-anvil's transitive Depends; sprite
+# Tools tested correspond to foundry-core's transitive Depends; sprite
 # and atelier extensions are NOT in the image so their tools (krita, ardour,
 # milkytracker, etc.) are NOT tested here.
 #

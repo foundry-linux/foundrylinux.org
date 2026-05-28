@@ -532,7 +532,6 @@ body[data-bg="textured"] {
 }
 .apt-command .copy {
   padding: 0 18px;
-  height: 100%;
   align-self: stretch;
   display: flex;
   align-items: center;
@@ -598,7 +597,7 @@ body[data-bg="textured"] {
 .inline-copy-btn:hover { color: var(--accent); border-color: var(--accent); }
 .inline-copy-btn[data-copied] { color: var(--accent); }
 .inline-copy-btn svg { width: 11px; height: 11px; }
-.channel-cmd-row { margin-top: 6px; }
+.channel-cmd-row { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--hairline); }
 .edition-install-wrap { position: relative; display: flex; align-items: center; gap: 8px; }
 
 /* ============================ SECTION CHROME ============================ */
@@ -936,6 +935,51 @@ body[data-bg="textured"] {
   letter-spacing: 0.04em;
 }
 
+.req-cards {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.req-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 14px 20px;
+  min-height: 160px;
+  border: 1px solid var(--hairline-strong);
+  color: var(--ink-faint);
+  transition: border-color 0.15s, background 0.15s;
+}
+.req-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.req-key {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.req-val {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.req-val li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink);
+}
+.req-val li svg { flex-shrink: 0; opacity: 0.5; }
+
 .requirements {
   border: 1px solid var(--hairline-strong);
   padding: 4px 0;
@@ -1047,11 +1091,8 @@ a.channel-card:hover {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--accent);
-  word-break: break-all;
-  display: block;
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid var(--hairline);
+  overflow-wrap: anywhere;
+  flex: 1;
 }
 
 .channel-soon {
@@ -1105,72 +1146,81 @@ a.channel-card:hover {
 }
 
 /* ── Inline code in card 01 right panel ── */
-.hero-right--code { width: 420px; }
+.hero-left--code { /* code block takes flex: 1 from .hero-left */ }
+.hero-right--info { text-align: right; }
 .card-code {
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.7;
   color: var(--ink);
-  white-space: pre;
-  margin: 0;
-  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
+.code-section { display: flex; flex-direction: column; gap: 4px; }
+.code-cmd-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.code-cmd-row code { flex: 1; }
+.code-alts {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--hairline);
+}
+.code-alts code { display: block; }
 .card-code .step {
   display: block;
   color: var(--ink-faint);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 10px;
-  margin: 14px 0 4px;
 }
-.card-code .step:first-child { margin-top: 0; }
 .card-code .cmt { color: var(--ink-faint); }
 .card-code .ember { color: var(--accent); }
 .card-code .str { color: #c0a878; }
 .card-code .kw { color: #d8d8d8; }
 @media (max-width: 700px) {
-  .hero-right--code { width: 100%; }
+  .hero-left--code { width: 100%; }
   .card-code { white-space: pre-wrap; }
 }
 
 /* ── VM card (03) inline download list ── */
 .channel-card--vm { cursor: default; }
-.card-vm-list {
-  list-style: none;
-  margin: 12px 0 0;
-  padding: 0;
+.card-vm-boxes {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
   border-top: 1px solid var(--hairline);
+}
+.card-vm-box {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--hairline-strong);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
 }
-.card-vm-list li {
-  display: grid;
-  grid-template-columns: 5em 1fr auto auto;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--hairline);
+.card-vm-box:hover { border-color: var(--accent); background: var(--accent-soft); }
+.card-vm-box-type {
   font-family: var(--font-mono);
-  font-size: 11px;
-}
-.card-vm-list li:last-child { border-bottom: none; }
-.card-vm-type {
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  white-space: nowrap;
-}
-.card-vm-file {
-  color: var(--ink-soft);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-size: 10.5px;
-}
-.card-vm-size {
-  color: var(--ink-faint);
-  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   white-space: nowrap;
+}
+.card-vm-box-size {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
 }
 
 /* ── install-side-only: sidebar without the left detail column ── */
@@ -1536,6 +1586,13 @@ a.channel-card:hover {
 .forge-cell:hover .forge-icon { color: var(--accent); }
 .forge-cell:hover .forge-icon svg { filter: drop-shadow(0 0 12px var(--accent-glow)); }
 
+.forge-cell-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.forge-cell-link:hover .forge-name { color: var(--accent); }
+
 .forge-icon { width: 64px; height: 64px; color: var(--ink); margin-bottom: 32px; transition: color 0.2s; }
 .forge-icon svg { width: 100%; height: 100%; transition: filter 0.2s; }
 
@@ -1571,6 +1628,19 @@ a.channel-card:hover {
   padding-top: 14px;
   border-top: 1px solid var(--hairline);
 }
+.forge-cmd-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.forge-cmd-prefix { color: var(--ink-faint); }
+.forge-cmd-pkg {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
 .forge-pkg { color: var(--ink); font-weight: 600; }
 .forge-stats { color: var(--ink-faint); }
 
@@ -1588,6 +1658,23 @@ a.channel-card:hover {
   font-size: 12px;
   color: var(--ink-soft);
   flex-wrap: wrap;
+}
+.forge-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--hairline-strong);
+  padding: 1px 7px;
+  border-radius: 2px;
+  vertical-align: baseline;
+}
+.forge-badge--accent {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 .forge-footstrip b { color: var(--accent); font-weight: 600; }
 .forge-catalogue {
