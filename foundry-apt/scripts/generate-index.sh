@@ -93,7 +93,10 @@ for fname in sorted(os.listdir(meta_dir)):
     if desc_long or depends or inst_kb is not None:
         parts = []
         if desc_long:
-            parts.append(f'<p class="pkg-long">{fmt_desc(desc_long)}</p>')
+            for para in re.split(r'\n\n+', desc_long.strip()):
+                joined = ' '.join(line.strip() for line in para.splitlines() if line.strip())
+                if joined:
+                    parts.append(f'<p class="pkg-long">{fmt_desc(joined)}</p>')
         if depends:
             chips = "".join(f'<span class="dep">{esc(d)}</span>' for d in depends)
             parts.append(f'<div class="pkg-deps">{chips}</div>')
@@ -143,7 +146,7 @@ cat > "$OUT" <<HTML
   body { background: var(--bg); color: var(--ink); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 2rem 1rem; }
   h1 {
     font-family: var(--font-mono);
     font-size: 11px;
@@ -228,8 +231,8 @@ cat > "$OUT" <<HTML
     margin-bottom: .25rem;
   }
   .table-wrap { border: 1px solid var(--hairline); }
-  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  th:first-child, td.col-pkg { width: 220px; }
+  table { width: 100%; border-collapse: collapse; }
+  td.col-pkg, th:first-child { width: 1%; }
   th {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -278,7 +281,7 @@ cat > "$OUT" <<HTML
   .pkg-details[open] summary { color: var(--ink-soft); }
   .pkg-long {
     margin-top: .5rem; font-size: 11px; line-height: 1.55;
-    color: var(--ink-soft); white-space: pre-wrap; word-break: break-word;
+    color: var(--ink-soft); word-break: break-word;
   }
   .pkg-long code {
     font-family: var(--font-mono); font-size: 10.5px;
