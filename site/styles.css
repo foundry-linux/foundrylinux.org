@@ -1688,7 +1688,7 @@ a.channel-card:hover {
   white-space: nowrap;
 }
 .pkg-origin-badge[data-origin="foundry"]            { color: var(--accent); border-color: var(--accent); }
-.pkg-origin-badge[data-origin="worldfoundry"]       { color: #8ab4f8; border-color: #8ab4f8; }
+.pkg-origin-badge[data-origin="worldfoundry"]       { color: #ff4455; border-color: rgba(255,255,255,0.55); }
 .pkg-origin-badge[data-origin="ubuntu-universe"]    { color: #e2a857; border-color: #e2a857; }
 .pkg-origin-badge[data-origin="ubuntu-multiverse"]  { color: #d97757; border-color: #d97757; }
 .pkg-origin-badge[data-origin="ubuntu-main"]        { color: #7ec8a0; border-color: #7ec8a0; }

@@ -158,31 +158,35 @@ function Forge() {
             const Icon = ICONS[cat.icon] || SparksIcon;
             const installCmd = `sudo apt install ${cat.metapackages[0]}`;
             return (
-              <a className="forge-cell" key={categorySlug} href={`/packages#${categorySlug}`}>
-                <div className="forge-icon"><Icon size={64} /></div>
-                <span className="forge-role">{cat.role}</span>
-                <h3 className="forge-name">{cat.title}</h3>
+              <div className="forge-cell" key={categorySlug}>
+                <a className="forge-cell-link" href={`/packages#${categorySlug}`}>
+                  <div className="forge-icon"><Icon size={64} /></div>
+                  <span className="forge-role">{cat.role}</span>
+                  <h3 className="forge-name">{cat.title}</h3>
+                </a>
                 <p className="forge-desc">{cat.blurb}</p>
                 <div className="forge-meta">
-                  <span className="forge-pkg">{installCmd}</span>
+                  <div className="forge-cmd-row">
+                    <span className="forge-pkg">{installCmd}</span>
+                    <button className="forge-copy" data-copy-text={installCmd} aria-label="Copy install command"><CopyIcon /></button>
+                  </div>
                   <span className="forge-stats">
                     {cat.package_count}&nbsp;pkgs · {formatSize(cat.installed_size_kb)}
                   </span>
-                  <button className="forge-copy" data-copy-text={installCmd} aria-label="Copy install command" onClick={e => e.preventDefault()}><CopyIcon /></button>
                 </div>
-              </a>
+              </div>
             );
           })}
         </div>
 
         <div className="forge-footstrip">
           <span>
-            <b>{vendored}</b> vendored &nbsp;·&nbsp;
-            <b>{openItps}</b> open Debian&nbsp;ITP{openItps === 1 ? '' : 's'} &nbsp;·&nbsp;
-            <b>{inUniverse}</b> already in Ubuntu universe/multiverse
+            <span className="forge-badge">{vendored}</span> vendored &nbsp;·&nbsp;
+            <span className="forge-badge">{openItps}</span> open Debian&nbsp;ITP{openItps === 1 ? '' : 's'} &nbsp;·&nbsp;
+            <span className="forge-badge forge-badge--accent">{inUniverse}</span> already in Ubuntu universe/multiverse
           </span>
           <a className="forge-catalogue" href="/packages">
-            Browse the full catalogue<span className="forge-arrow" aria-hidden="true">→</span>
+            Browse the full catalogue<span className="forge-arrow" aria-hidden="true">›</span>
           </a>
         </div>
       </div>
@@ -277,21 +281,27 @@ function Install() {
             <ul className="card-vm-list">
               <li>
                 <span className="card-vm-type">VirtualBox</span>
-                <span className="card-vm-file">foundry-anvil-latest-amd64.ova</span>
-                <span className="card-vm-size">11 GB</span>
-                <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.ova" aria-label="Download OVA"><DownloadIcon /></a>
+                <div className="card-vm-row">
+                  <span className="card-vm-file">foundry-anvil-latest-amd64.ova</span>
+                  <span className="card-vm-size">11 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.ova" aria-label="Download OVA"><DownloadIcon /></a>
+                </div>
               </li>
               <li>
                 <span className="card-vm-type">VMware</span>
-                <span className="card-vm-file">foundry-anvil-latest-amd64.vmdk</span>
-                <span className="card-vm-size">11 GB</span>
-                <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.vmdk" aria-label="Download VMDK"><DownloadIcon /></a>
+                <div className="card-vm-row">
+                  <span className="card-vm-file">foundry-anvil-latest-amd64.vmdk</span>
+                  <span className="card-vm-size">11 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.vmdk" aria-label="Download VMDK"><DownloadIcon /></a>
+                </div>
               </li>
               <li>
                 <span className="card-vm-type">QEMU / KVM</span>
-                <span className="card-vm-file">foundry-anvil-latest-amd64.qcow2</span>
-                <span className="card-vm-size">5.1 GB</span>
-                <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.qcow2" aria-label="Download qcow2"><DownloadIcon /></a>
+                <div className="card-vm-row">
+                  <span className="card-vm-file">foundry-anvil-latest-amd64.qcow2</span>
+                  <span className="card-vm-size">5.1 GB</span>
+                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.qcow2" aria-label="Download qcow2"><DownloadIcon /></a>
+                </div>
               </li>
             </ul>
             <span className="channel-inv">isolated</span>
@@ -328,40 +338,33 @@ function Install() {
                 Keeping Windows?{" "}
                 Boot from USB, and the installer will offer to shrink your Windows
                 partition automatically — no manual partitioning required.{" "}
-                <a href="https://help.ubuntu.com/community/WindowsDualBoot">Windows dual-boot guide →</a>
+                <a className="dualboot-guide-link" href="https://help.ubuntu.com/community/WindowsDualBoot">Windows dual-boot guide <span className="dualboot-guide-arrow" aria-hidden="true">›</span></a>
               </p>
             </div>
           </div>
         </div>
 
-        <div className="install-side-only">
-
-          <div className="install-side">
-            <h3>Signed by the smith.</h3>
-            <p>
-              Every package in the Foundry archive is signed with our long-term
-              maintainer key. Verify the fingerprint before adding the keyring
-              to a production machine.
-            </p>
-
+        <div className="install-info">
+          <div className="install-signed">
+            <div className="install-signed-text">
+              <h3>Signed by the smith.</h3>
+              <p>Every package in the Foundry archive is signed with our long-term maintainer key. Verify the fingerprint before adding the keyring to a production machine.</p>
+            </div>
             <div className="fingerprint">
               <b>archive key · ed25519</b>
               <code>F0D9 7E1A · C5B2 4A87 · 6E3F 218D · 9C04 BB31</code>
             </div>
+          </div>
 
-            <h3 style={{ marginTop: 32 }}>System requirements</h3>
-            <p>
-              The ISO installs a full Kubuntu 26.04 (Plasma 6) desktop with
-              the Foundry kit struck in. Calamares installer — guided or
-              automatic partitioning. Works bare-metal or in a VM.
-            </p>
-            <ul className="requirements">
-              <li><span className="req-key">CPU</span><span>x86_64 · ARM64</span></li>
-              <li><span className="req-key">Memory</span><span>4 GB minimum · 8 GB recommended</span></li>
-              <li><span className="req-key">Storage</span><span>20 GB free</span></li>
-              <li><span className="req-key">GPU</span><span>Vulkan 1.2 capable</span></li>
-              <li><span className="req-key">Base</span><span>Ubuntu 26.04 LTS</span></li>
-            </ul>
+          <div className="install-reqs">
+            <h3>System requirements</h3>
+            <div className="req-cards">
+              <div className="req-card"><span className="req-key">CPU</span><span className="req-val">x86_64 · ARM64</span></div>
+              <div className="req-card"><span className="req-key">Memory</span><span className="req-val">4 GB min · 8 GB rec.</span></div>
+              <div className="req-card"><span className="req-key">Storage</span><span className="req-val">20 GB free</span></div>
+              <div className="req-card"><span className="req-key">GPU</span><span className="req-val">Vulkan 1.2</span></div>
+              <div className="req-card"><span className="req-key">Base</span><span className="req-val">Ubuntu 26.04 LTS</span></div>
+            </div>
           </div>
         </div>
       </div>
