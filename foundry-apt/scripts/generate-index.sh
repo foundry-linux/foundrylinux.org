@@ -372,7 +372,7 @@ ${PKG_ROWS}
 
   <footer>Published ${PUBLISHED}</footer>
 </div>
-<script src="/index.js" defer></script>
+<script src="index.js" defer></script>
 </body>
 </html>
 HTML
