@@ -91,8 +91,8 @@ function Hero() {
         <div className="apt-command">
           <span className="prompt">$</span>
           <span className="cmd">sudo apt install foundry-anvil</span>
-          <button className="copy" onClick={copy}>
-            <CopyIcon />{copied ? "COPIED" : "COPY"}
+          <button className="copy" onClick={copy} title={copied ? "Copied!" : "Copy"}>
+            <CopyIcon />
           </button>
         </div>
 

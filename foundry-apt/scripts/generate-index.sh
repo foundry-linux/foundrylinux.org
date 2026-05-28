@@ -331,7 +331,7 @@ cat > "$OUT" <<HTML
 
   <h2>Quick install</h2>
   <div class="pre-wrap">
-  <button class="copy" type="button" data-copy="quick-install"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9"/><path d="M5 11 L2 11 L2 2 L11 2 L11 5"/></svg> Copy</button>
+  <button class="copy" type="button" data-copy="quick-install" title="Copy"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9"/><path d="M5 11 L2 11 L2 2 L11 2 L11 5"/></svg></button>
   <pre id="quick-install">curl -fsSL ${SITE_URL}/key.gpg \\
   | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] ${SITE_URL} resolute main" \\
