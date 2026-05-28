@@ -152,6 +152,16 @@ cat > "$OUT" <<HTML
     margin-bottom: .25rem;
   }
   .subtitle { color: var(--ink-soft); margin-bottom: 2rem; font-size: 14px; }
+  .back-nav {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-faint);
+    margin-bottom: 1.5rem;
+  }
+  .back-nav a { color: var(--ink-faint); }
+  .back-nav a:hover { color: var(--accent); text-decoration: none; }
+  .site-title a { color: inherit; text-decoration: none; }
+  .site-title a:hover { color: var(--accent); }
   h2 {
     font-family: var(--font-mono);
     font-size: 10.5px;
@@ -290,8 +300,13 @@ cat > "$OUT" <<HTML
 </head>
 <body>
 <div class="wrap">
+  <nav class="back-nav">
+    <a href="https://foundrylinux.org">← foundrylinux.org</a>
+    <span>/</span>
+    <span>apt</span>
+  </nav>
   <h1>APT Repository</h1>
-  <p class="site-title">Foundry Linux</p>
+  <p class="site-title"><a href="https://foundrylinux.org">Foundry Linux</a></p>
   <p class="subtitle">${SITE_URL} &mdash; signed packages for Ubuntu 26.04 (resolute)</p>
 
   <h2>Quick install</h2>
