@@ -4,7 +4,7 @@ import React from 'react';
 import {
   Topbar, Foot, formatSize, findCategory, ICONS,
 } from './sections.jsx';
-import { ArrowRightIcon, SparksIcon } from './icons.jsx';
+import { ArrowRightIcon, SparksIcon, CopyIcon } from './icons.jsx';
 import packagesData from './packages-data.json';
 
 function originBadge(origin) {
@@ -57,7 +57,10 @@ function EditionsLadder() {
               <span className="edition-tag">Edition · 26.04</span>
               <h3 className="edition-name">{ed.title}</h3>
               <p className="edition-desc">{ed.blurb}</p>
-              <pre className="edition-install"><code>{ed.install_command}</code></pre>
+              <div className="edition-install-wrap">
+                <pre className="edition-install"><code>{ed.install_command}</code></pre>
+                <button className="inline-copy-btn" data-copy-text={ed.install_command} aria-label="Copy install command"><CopyIcon /></button>
+              </div>
               <div className="edition-pkg">
                 <span>{ed.metapackage}</span>
                 <span className="size">
@@ -85,6 +88,7 @@ function CategorySection({ cat, index }) {
             <p className="pkg-cat-blurb">{cat.blurb}</p>
             <div className="pkg-cat-meta">
               <code>sudo apt install {cat.metapackages.join(' ')}</code>
+              <button className="inline-copy-btn" data-copy-text={`sudo apt install ${cat.metapackages.join(' ')}`} aria-label="Copy install command"><CopyIcon /></button>
               <span>{cat.package_count}&nbsp;pkgs · {formatSize(cat.installed_size_kb)} · {cat.in_edition_tier}</span>
             </div>
           </div>
