@@ -59,9 +59,10 @@ for fname in sorted(os.listdir(meta_dir)):
     depends    = p.get("depends") or []
     inst_kb    = p.get("installed_size_kb")
 
-    # Name cell — bold plain text + optional homepage icon link
-    home_btn = f' <a class="pkg-home" href="{esc(hp)}" title="Homepage" aria-label="Homepage">⌂</a>' if hp else ''
-    name_cell = f'<b class="pkg-name">{esc(name)}</b>{home_btn}'
+    # Name cell — bold plain text only
+    name_cell = f'<b class="pkg-name">{esc(name)}</b>'
+    # Home button goes at the start of description cell
+    home_btn = f'<a class="pkg-home" href="{esc(hp)}" title="{esc(hp)}" aria-label="Homepage">⌂</a> ' if hp else ''
 
     # Version cell with .deb download link(s)
     letter = name[0]
@@ -100,9 +101,9 @@ for fname in sorted(os.listdir(meta_dir)):
             + "".join(parts)
             + "</details>"
         )
-        desc_cell = f"{esc(desc_short)} {details}"
+        desc_cell = f"{home_btn}{esc(desc_short)} {details}"
     else:
-        desc_cell = esc(desc_short)
+        desc_cell = f"{home_btn}{esc(desc_short)}"
 
     print(
         f'<tr data-name="{esc(name)}" data-ver="{esc(ver)}" data-desc="{esc(desc_short)}">'
@@ -243,7 +244,7 @@ cat > "$OUT" <<HTML
   .pkg-home {
     display: inline-flex; align-items: center; justify-content: center;
     font-size: 11px; color: var(--ink-faint); text-decoration: none;
-    margin-left: 6px; vertical-align: middle;
+    margin-right: 6px; vertical-align: middle;
     border: 1px solid var(--hairline-strong);
     padding: 1px 5px; border-radius: 2px;
     transition: color 0.15s, border-color 0.15s;
