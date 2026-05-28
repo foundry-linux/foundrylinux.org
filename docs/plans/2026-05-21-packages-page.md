@@ -126,7 +126,7 @@ EOF
         ...
       ]
     },
-    { "slug": "blender", "title": "Blender", "metapackage": "worldfoundry-blender", "in_edition": "anvil", "...": "..." },
+    { "slug": "blender", "title": "Blender", "metapackage": "worldfoundry-blender-addons", "in_edition": "anvil", "...": "..." },
     { "slug": "retro-tools", "title": "Retro toolkit", "metapackage": "foundry-retro-tools", "in_edition": "anvil", "...": "..." },
     { "slug": "emulators", "title": "Emulators", "metapackage": "foundry-emulators", "in_edition": "anvil+sprite+atelier (split)", "...": "..." },
     { "slug": "game-frameworks", "title": "Game frameworks", "metapackage": "foundry-game-frameworks", "in_edition": "anvil", "...": "..." },
@@ -140,7 +140,7 @@ EOF
     { "name": "ghidra",                   "pulled_by": ["foundry-retro-tools"] },
     { "name": "libvgm",                   "pulled_by": ["foundry-retro-tools"] },
     { "name": "vgmstream",                "pulled_by": ["foundry-retro-tools"] },
-    { "name": "blender-asset-finder",     "pulled_by": ["worldfoundry-blender"] },
+    { "name": "blender-asset-finder",     "pulled_by": ["worldfoundry-blender-addons"] },
     { "name": "blender-asset-finder-cli", "pulled_by": ["worldfoundry-cli"] }
   ],
   "grand_total_installed_size_kb": 9876543,
@@ -179,7 +179,7 @@ The categories below mirror the actual current metapackage hierarchy. There is n
 | # | Slug | Title | Metapackage | Edition tier | Contents |
 |---|---|---|---|---|---|
 | 1 | `worldfoundry-gdk` | World Foundry GDK | `worldfoundry` | Anvil | 10 CLIs (cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile, blender-asset-finder-cli) |
-| 2 | `blender` | Blender | `worldfoundry-blender` | Anvil | Blender 4.x + wf-blender add-ons + blender-asset-finder |
+| 2 | `blender` | Blender | `worldfoundry-blender-addons` | Anvil | Blender + worldfoundry-blender-editor-exporter add-on + blender-asset-finder |
 | 3 | `retro-tools` | Retro toolkit | `foundry-retro-tools` | Anvil | mame, mame-tools, dasm, cc65, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream, ghidra |
 | 4 | `emulators` | Emulators | `foundry-emulators` (umbrella) | spans 3 tiers | computers (Anvil), consoles (Anvil), consoles-heavy (Atelier), vintage (Atelier, multiverse) |
 | 5 | `game-frameworks` | Game frameworks | `foundry-game-frameworks` | Anvil | tiled, SDL2/3, SFML, Allegro5, libtcod, glslang, spirv-cross, spirv-tools |
@@ -255,7 +255,7 @@ New component module that imports `packages-data.json` and renders the full cata
 │  ║ · ghidra                  — pulled by foundry-retro-tools  ║  │
 │  ║ · libvgm                  — pulled by foundry-retro-tools  ║  │
 │  ║ · vgmstream               — pulled by foundry-retro-tools  ║  │
-│  ║ · blender-asset-finder    — pulled by worldfoundry-blender ║  │
+│  ║ · blender-asset-finder    — pulled by worldfoundry-blender-addons ║  │
 │  ║ · blender-asset-finder-cli — pulled by worldfoundry-cli    ║  │
 │  ╚════════════════════════════════════════════════════════════╝  │
 │                                                                  │
@@ -489,6 +489,17 @@ For now, regeneration happens manually (`task site-build`) or on tag push (exist
 
 - **packages-page CI triggers** — `workflow_run` on foundry-apt publish, `repository_dispatch` from worldfoundry.org with new `FOUNDRYLINUX_DISPATCH_PAT` secret, nightly cron fallback. See §6.
 - **File first Debian ITP** — `f9dasm` is the natural candidate (small, self-contained, debhelper build, no patches). Once landed, `data/upstream.yml` flips `f9dasm.status: vendored` → `debian-itp` with the bug number.
+- **Repology badges** — add a `<img src="https://repology.org/badge/latest-versions/{name}.svg">` badge per vendored package row on `/packages` (and optionally on `apt.foundrylinux.org`). Shows at a glance whether our vendored package (ghidra, f9dasm, libvgm, vgmstream) is current against upstream. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **Copy-to-clipboard for install commands** — add a small clipboard button beside each `apt install` snippet on `/packages` (edition cards + category headers) and on `apt.foundrylinux.org`'s quick-install block. Pure JS, no server dependency. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **Changelog popover on hover** — show the latest `debian/changelog` entry (first stanza) as a `<details>` or CSS tooltip on the version cell of each package row on `/packages` and `apt.foundrylinux.org`. No page navigation required; first stanza is always short. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **Metapackage dependency expansion** — for umbrella packages (`foundry-retro-tools`, `foundry-emulators`, edition metapackages), show the resolved direct-depends list inline (collapsed by default) so users know what they're getting before running `apt install`. Data already in `packages-data.json`; rendering is a client-side toggle. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **Update `new-web-apt-repo` skill** — fold the enhanced listing patterns (Repology badges, copy-to-clipboard, changelog popover, metapackage expansion) into the skill's generated `generate-index.sh` template so new repos start with the full set. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **Port sortable columns + client-side filter from `worldfoundry.org` `generate-index.sh`** — the sister repo's apt index already has both; bring them into `foundry-apt/scripts/generate-index.sh` and fold into the `new-web-apt-repo` skill template so all future repos start with them. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **`packages.json` index** — generate `public/packages.json` alongside `index.html` from `generate-index.sh`; same data (name, version, arch, description, homepage), different serialiser. Zero extra cost; future Repology ingestor or downstream tool can consume without scraping HTML. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **OpenGraph meta tags** — add `<meta property="og:title">`, `<meta property="og:description">`, `<meta property="og:image">` to `apt.foundrylinux.org/index.html` (and per-package detail pages if/when Option B ships). Link preview cards on Discord/Mastodon show package name + description instead of bare domain. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **RSS/Atom feed** — generate `public/feed.xml` at publish time: one `<item>` per package, title = "name version — description", pubDate from `debian/changelog`. Users subscribe once and get notified on version bumps without email or account. Emit the current top-of-changelog entry per package on every publish; RSS readers deduplicate by `<guid>` (use `name@version`). See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **CVE tracker links (passive)** — add a shield icon column to each package row on `/packages` linking to `ubuntu.com/security/cves?package={name}` for Ubuntu-origin packages, and to the upstream GitHub Security Advisories page for vendored packages (ghidra → NationalSecurityAgency/ghidra; f9dasm/libvgm/vgmstream → ubuntu tracker as fallback). No build-time fetch; always live data when clicked. See [apt listing landscape investigation](../investigations/2026-05-28-apt-listing-landscape.md).
+- **CVE badge with live count (option #2, deferred)** — at `task packages-page` build time, fetch `ubuntu.com/security/cves.json?package={name}&limit=1` per package (~100 requests, ~10–20 s extra) and cache active CVE count in `packages-data.json`; render `0 CVEs ✓` / `N active CVEs ⚠` badge. Only worth doing if passive links prove insufficient. Implement after option #1 ships.
 
 ---
 

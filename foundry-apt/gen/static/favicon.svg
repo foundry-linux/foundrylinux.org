@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" fill="#1a1714"/>
+  <g filter="url(#glow)" fill="none" stroke="#f80000" stroke-linecap="round" stroke-linejoin="round">
+    <!-- sparks: three small upward flame strokes above the anvil -->
+    <g stroke-width="2.4" stroke="#ff8800">
+      <path d="M32 6 Q33 11 32 16" />
+      <path d="M24 11 Q24.5 14 24 17" />
+      <path d="M40 11 Q39.5 14 40 17" />
+    </g>
+    <!-- anvil (Material Design Icons mdi-anvil path), translated + scaled
+         to ~50×35 px at the bottom of a 64×64 canvas -->
+    <g transform="translate(2 12.5) scale(2.5)" stroke-width="1.4">
+      <path d="M9 5 V10 C13.03 12.47 8.44 14.97 6 16 V19 H21 V16 C14.59 13.27 17.47 9 22 8 V5 H9 M2 6 C2.81 8.13 4.42 9.5 7 10 V6 H2 Z" />
+    </g>
+  </g>
+</svg>

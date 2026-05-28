@@ -5,6 +5,6 @@ dist/
 *.buildinfo
 *.changes
 .foundry/
-foundry-apt/gen/
+foundry-apt/gen/src.css
 .task/
 .claude/scheduled_tasks.lock

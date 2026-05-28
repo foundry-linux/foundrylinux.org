@@ -16,6 +16,8 @@
 - [Foundry Linux audience: game devs new to Linux](project_foundry_audience.md) — NOT traditional Linux users; they don't care about Linux, it's just the platform. Frame UX/hosting as "downloading a game tool", not "downloading a distro".
 - [VM downloads are a planned distribution channel](project_vm_distribution.md) — VirtualBox/VMware/QEMU rows are intentional strategy, not placeholders. Add alongside, never replace.
 - [Check for running VMs before launching a new one](feedback_vm_before_launch.md) — launching a second VM OOM-crashed the machine; check first, prompt to close if fresh boot needed, otherwise give in-VM instructions.
+- [No large /tmp extractions](feedback_no_large_tmp_extractions.md) — use unsquashfs -l/-cat in-place; never extract squashfs to tmpfs
+- [Screenshots in docs](feedback_screenshots_in_docs.md) — always include screenshot + URL when referencing a website's visuals; URL link if screenshot blocked
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 

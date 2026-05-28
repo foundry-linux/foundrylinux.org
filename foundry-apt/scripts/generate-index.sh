@@ -114,9 +114,13 @@ for i in "${!PKG_NAMES[@]}"; do
     done
     ver_cell="${ver} (${arch_links})"
   fi
+  # Escape double-quotes in desc for the data attribute
+  desc_attr="${desc//\"/&quot;}"
   PKG_ROWS="${PKG_ROWS}
-      <tr><td class="col-name">${name_cell}</td><td class="col-ver">${ver_cell}</td><td class="col-desc">${desc}</td></tr>"
+      <tr data-name=\"${name}\" data-ver=\"${ver}\" data-desc=\"${desc_attr}\"><td class="col-name">${name_cell}</td><td class="col-ver">${ver_cell}</td><td class="col-desc">${desc}</td></tr>"
 done
+
+PKG_COUNT="${#PKG_NAMES[@]}"
 
 # Copy tracked static assets (favicon, etc.) into the publish dir so rclone
 # picks them up. Anything under gen/static/ ships to the repo root.
@@ -169,6 +173,16 @@ cat > "$OUT" <<HTML
     letter-spacing: 0.2em;
     margin: 2.5rem 0 .75rem;
   }
+  .pre-wrap { position: relative; }
+  .pre-wrap .copy {
+    position: absolute; top: .5rem; right: .5rem;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; padding: .2rem .5rem;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--hairline-strong);
+    color: var(--ink-faint); cursor: pointer; border-radius: 2px;
+  }
+  .pre-wrap .copy:hover { color: var(--ink); border-color: var(--accent); }
+  .pre-wrap .copy[data-copied] { color: var(--accent); }
   pre {
     background: rgba(255,255,255,0.015);
     border: 1px solid var(--hairline-strong);
@@ -178,6 +192,33 @@ cat > "$OUT" <<HTML
     font-size: 13px;
     line-height: 1.7;
     color: var(--ink);
+  }
+  .filter-bar {
+    display: flex; align-items: center; gap: .5rem;
+    margin-bottom: .5rem;
+  }
+  .filter-bar label {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--ink-faint);
+    white-space: nowrap;
+  }
+  #filter-q {
+    flex: 1; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--hairline-strong); color: var(--ink);
+    font-family: var(--font-mono); font-size: 12px;
+    padding: .3rem .6rem; outline: none;
+  }
+  #filter-q:focus { border-color: var(--accent); }
+  .filter-clear {
+    background: none; border: none; color: var(--ink-faint);
+    font-size: 14px; cursor: pointer; padding: 0 .25rem; line-height: 1;
+  }
+  .filter-clear:hover { color: var(--ink); }
+  .listing-bar {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--ink-faint);
+    margin-bottom: .25rem;
   }
   .table-wrap { border: 1px solid var(--hairline); }
   table { width: 100%; border-collapse: collapse; }
@@ -190,7 +231,10 @@ cat > "$OUT" <<HTML
     padding: .5rem .75rem;
     text-align: left;
     border-bottom: 1px solid var(--hairline-strong);
+    user-select: none;
   }
+  th[data-sort]:hover { color: var(--ink); }
+  .sort-ind { margin-left: .3em; font-size: 9px; }
   td { padding: .5rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; }
   td.col-name { white-space: nowrap; font-family: var(--font-mono); font-size: 13px; }
   td.col-ver { color: var(--ink-soft); white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
@@ -239,21 +283,37 @@ cat > "$OUT" <<HTML
   <p class="subtitle">${SITE_URL} &mdash; signed packages for Ubuntu 26.04 (resolute)</p>
 
   <h2>Quick install</h2>
-  <pre>curl -fsSL ${SITE_URL}/key.gpg \\
+  <div class="pre-wrap">
+  <button class="copy" type="button" data-copy="quick-install">Copy</button>
+  <pre id="quick-install">curl -fsSL ${SITE_URL}/key.gpg \\
   | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] ${SITE_URL} resolute main" \\
   | sudo tee /etc/apt/sources.list.d/foundry.list
 sudo apt-get update
 sudo apt-get install foundry-retro-tools</pre>
+  </div>
 
   <h2>GPG key</h2>
   <p><a href="/key.gpg">↓ key.gpg</a> &mdash; verify before trusting:
      <code>gpg --show-keys /etc/apt/keyrings/foundry.gpg</code></p>
 
   <h2>Packages</h2>
+  <div class="filter-bar">
+    <label for="filter-q">Filter</label>
+    <input id="filter-q" type="text" placeholder="name or description" autocomplete="off" spellcheck="false">
+    <button class="filter-clear" type="button" aria-label="Clear filter" hidden>×</button>
+  </div>
+  <div class="listing-bar">
+    <span>Packages</span>
+    <span data-count><b>${PKG_COUNT}</b> packages</span>
+  </div>
   <div class="table-wrap">
-  <table>
-    <thead><tr><th>Package</th><th>Version</th><th>Description</th></tr></thead>
+  <table class="listing-table">
+    <thead><tr>
+      <th data-sort="name">Package <span class="sort-ind"></span></th>
+      <th data-sort="ver">Version <span class="sort-ind"></span></th>
+      <th data-sort="desc">Description <span class="sort-ind"></span></th>
+    </tr></thead>
     <tbody>${PKG_ROWS}
     </tbody>
   </table>
@@ -264,6 +324,7 @@ sudo apt-get install foundry-retro-tools</pre>
 
   <footer>Published ${PUBLISHED}</footer>
 </div>
+<script src="/index.js" defer></script>
 </body>
 </html>
 HTML
