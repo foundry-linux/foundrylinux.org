@@ -25,7 +25,7 @@ done
 # Read all public/meta/*.json → emit one <tr> per package (alphabetical).
 # Python handles HTML escaping, arch resolution, and the <details> block.
 PKG_ROWS=$(python3 - "$REPO_ROOT" "$OUT_DIR" <<'PYEOF'
-import glob, html, json, os, sys
+import glob, html, json, os, re, sys
 
 repo_root, out_dir = sys.argv[1], sys.argv[2]
 meta_dir = os.path.join(out_dir, "meta")
@@ -38,6 +38,11 @@ def size_human(kb):
     if kb is None:
         return None
     return f"~{round(kb / 1024)} MB" if kb >= 1024 else f"~{kb} KB"
+
+def fmt_desc(text):
+    """Escape HTML then convert `backtick` spans to <code> elements."""
+    escaped = esc(text)
+    return re.sub(r'`([^`]+)`', lambda m: f'<code>{m.group(1)}</code>', escaped)
 
 for fname in sorted(os.listdir(meta_dir)):
     if not fname.endswith(".json"):
@@ -84,7 +89,7 @@ for fname in sorted(os.listdir(meta_dir)):
     if desc_long or depends or inst_kb is not None:
         parts = []
         if desc_long:
-            parts.append(f'<pre class="pkg-long">{esc(desc_long)}</pre>')
+            parts.append(f'<p class="pkg-long">{fmt_desc(desc_long)}</p>')
         if depends:
             chips = "".join(f'<span class="dep">{esc(d)}</span>' for d in depends)
             parts.append(f'<div class="pkg-deps">{chips}</div>')
@@ -256,8 +261,12 @@ cat > "$OUT" <<HTML
   .pkg-details[open] summary { color: var(--ink-soft); }
   .pkg-long {
     margin-top: .5rem; font-size: 11px; line-height: 1.55;
-    border: none; background: none; padding: 0;
     color: var(--ink-soft); white-space: pre-wrap; word-break: break-word;
+  }
+  .pkg-long code {
+    font-family: var(--font-mono); font-size: 10.5px;
+    background: rgba(255,255,255,0.07); padding: .1em .3em;
+    border-radius: 2px; color: var(--ink);
   }
   .pkg-deps {
     display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem;
