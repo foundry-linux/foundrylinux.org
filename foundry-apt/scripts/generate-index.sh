@@ -100,8 +100,7 @@ for fname in sorted(os.listdir(meta_dir)):
 
     print(
         f'<tr data-name="{esc(name)}" data-ver="{esc(ver)}" data-desc="{esc(desc_short)}">'
-        f'<td class="col-name">{name_cell}</td>'
-        f'<td class="col-ver">{ver_cell}</td>'
+        f'<td class="col-pkg">{name_cell}<span class="col-ver">{ver_cell}</span></td>'
         f'<td class="col-desc">{desc_cell}</td>'
         f'</tr>'
     )
@@ -218,7 +217,7 @@ cat > "$OUT" <<HTML
     margin-bottom: .25rem;
   }
   .table-wrap { border: 1px solid var(--hairline); }
-  table { width: 100%; border-collapse: collapse; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
   th {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -232,9 +231,10 @@ cat > "$OUT" <<HTML
   }
   th[data-sort]:hover { color: var(--ink); }
   .sort-ind { margin-left: .3em; font-size: 9px; }
-  td { padding: .5rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; }
-  td.col-name { white-space: nowrap; font-family: var(--font-mono); font-size: 13px; }
-  td.col-ver { color: var(--ink-soft); white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
+  td { padding: .6rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; vertical-align: top; }
+  td.col-pkg { font-family: var(--font-mono); font-size: 13px; }
+  .col-ver { display: block; color: var(--ink-faint); font-size: 11px; margin-top: 4px; word-break: break-all; }
+  td.col-desc { word-break: break-word; }
   /* ── Package details (long desc + dep chips) ── */
   .pkg-details { margin-top: .3rem; }
   .pkg-details summary {
@@ -286,14 +286,13 @@ cat > "$OUT" <<HTML
     tbody tr {
       display: grid;
       grid-template-columns: 1fr;
-      grid-template-areas: "name" "ver" "desc";
+      grid-template-areas: "pkg" "desc";
       gap: 0.2rem;
       padding: 0.75rem 0.6rem;
       border-top: 1px solid var(--hairline);
     }
     tbody tr td { display: block; padding: 0; border: 0; white-space: normal; }
-    td.col-name { grid-area: name; }
-    td.col-ver  { grid-area: ver; }
+    td.col-pkg  { grid-area: pkg; }
     td.col-desc { grid-area: desc; }
   }
 </style>
@@ -336,9 +335,9 @@ sudo apt-get install foundry-retro-tools</pre>
   </div>
   <div class="table-wrap">
   <table class="listing-table">
+    <colgroup><col style="width:30%"><col style="width:70%"></colgroup>
     <thead><tr>
       <th data-sort="name">Package <span class="sort-ind"></span></th>
-      <th data-sort="ver">Version <span class="sort-ind"></span></th>
       <th data-sort="desc">Description <span class="sort-ind"></span></th>
     </tr></thead>
     <tbody>

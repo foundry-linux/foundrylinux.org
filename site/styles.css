@@ -212,6 +212,7 @@ body[data-bg="textured"] {
   align-items: center;
   gap: 10px;
   color: var(--ink-soft);
+  text-decoration: none;
 }
 
 .topbar-mark svg {
@@ -946,7 +947,7 @@ body[data-bg="textured"] {
   flex-direction: column;
   gap: 6px;
   padding: 22px 14px 20px;
-  min-height: 160px;
+  min-height: 205px;
   border: 1px solid var(--hairline-strong);
   color: var(--ink-faint);
   transition: border-color 0.15s, background 0.15s;

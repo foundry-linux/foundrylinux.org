@@ -34,10 +34,10 @@ function Topbar() {
     <header className="topbar-wrap">
       <div className="shell">
         <div className="topbar">
-          <div className="topbar-mark">
+          <a className="topbar-mark" href="/">
             <FoundryMark />
             <b>foundrylinux.org</b>
-          </div>
+          </a>
           <nav className="topbar-nav">
             <a href="/#forge">The Forge</a>
             <a href="/#install">Install</a>
