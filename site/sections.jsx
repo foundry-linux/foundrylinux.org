@@ -192,6 +192,7 @@ function Forge() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Install / apt instructions
 
+// Cards 01–04; card 05 is rendered separately as the hero card.
 const CHANNELS = [
   {
     num: '01',
@@ -225,14 +226,6 @@ const CHANNELS = [
     href: '#path-iso',
     inv: 'additive',
   },
-  {
-    num: '05',
-    label: 'Fresh install',
-    hook: 'Replace everything. Full branded desktop from first boot.',
-    cmd: 'foundry-anvil-latest-amd64.iso → erase disk',
-    href: '#path-iso',
-    inv: 'replaces-os',
-  },
 ];
 
 function Install() {
@@ -262,6 +255,33 @@ function Install() {
               <span className="channel-inv">{inv}</span>
             </a>
           ))}
+          {/* Card 05 — hero treatment: full-width, two-zone, embedded ISO downloads */}
+          <div className="channel-card channel-card--hero" id="path-iso" data-invasiveness="replaces-os">
+            <div className="hero-left">
+              <span className="channel-num">05</span>
+              <span className="channel-label">Fresh install</span>
+              <p className="channel-hook">Replace everything. Full branded Kubuntu 26.04 desktop from first boot — bare metal or alongside Windows.</p>
+            </div>
+            <div className="hero-right">
+              <span className="hero-dl-label">download iso · anvil edition</span>
+              <a className="hero-dl-row" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso">
+                <span>foundry-anvil-latest-amd64.iso</span>
+                <span className="hero-dl-size">~5 GB</span>
+                <DownloadIcon />
+              </a>
+              <a className="hero-dl-row" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso">
+                <span>foundry-atelier-latest-amd64.iso</span>
+                <span className="hero-dl-size">~15 GB</span>
+                <DownloadIcon />
+              </a>
+              <p className="hero-dualboot">
+                Keeping Windows?{" "}
+                Choose <em>Install alongside Windows Boot Manager</em> in Calamares —
+                it shrinks your Windows partition automatically.{" "}
+                <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">Dual-boot guide →</a>
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="install-wrap">
@@ -312,42 +332,6 @@ function Install() {
               </ul>
             </div>
 
-            <div className="download-vms" id="path-iso">
-              <div className="codeblock-head">
-                <span><span className="path-tag">path 04–05 · dual boot / fresh install</span> download · iso</span>
-                <DownloadIcon />
-              </div>
-              <ul className="vm-list">
-                <li className="vm-row">
-                  <span className="vm-type">Anvil</span>
-                  <span className="vm-file">foundry-anvil-latest-amd64.iso</span>
-                  <span className="vm-size">~5 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso" aria-label="Download Anvil ISO"><DownloadIcon /></a>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-anvil-latest-amd64.iso.torrent" aria-label="Anvil torrent"><TorrentIcon /></a>
-                  <a className="vm-dl" href="magnet:?xt=urn:btih:4475708175bc2ef9f9c764f406a43679221147ed&dn=foundry-anvil-0.9.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-anvil-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Anvil magnet"><MagnetIcon /></a>
-                </li>
-                <li className="vm-row">
-                  <span className="vm-type">Atelier</span>
-                  <span className="vm-file">foundry-atelier-latest-amd64.iso</span>
-                  <span className="vm-size">~15 GB</span>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso" aria-label="Download Atelier ISO"><DownloadIcon /></a>
-                  <a className="vm-dl" href="https://iso.foundrylinux.org/foundry-atelier-latest-amd64.iso.torrent" aria-label="Atelier torrent"><TorrentIcon /></a>
-                  <a className="vm-dl" href="magnet:?xt=urn:btih:bfb49155b514b79b36e544887f8b87af25d63bc6&dn=foundry-atelier-0.9.0-amd64&ws=https%3A%2F%2Fiso.foundrylinux.org%2Ffoundry-atelier-latest-amd64.iso&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.opentracker.info%3A80%2Fannounce" aria-label="Atelier magnet"><MagnetIcon /></a>
-                </li>
-              </ul>
-              <div className="dualboot-callout">
-                <span className="dualboot-label">dual boot with windows</span>
-                <p>
-                  Boot the ISO, choose <em>Install alongside Windows Boot Manager</em> in
-                  the Calamares installer — it detects Windows and offers to shrink its
-                  partition automatically. No manual partitioning required. Give Foundry
-                  Linux at least 60 GB.{" "}
-                  <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">
-                    Ubuntu dual-boot guide →
-                  </a>
-                </p>
-              </div>
-            </div>
 
           </div>
 
