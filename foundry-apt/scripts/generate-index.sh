@@ -54,8 +54,9 @@ for fname in sorted(os.listdir(meta_dir)):
     depends    = p.get("depends") or []
     inst_kb    = p.get("installed_size_kb")
 
-    # Name cell
-    name_cell = f'<a href="{esc(hp)}">{esc(name)}</a>' if hp else esc(name)
+    # Name cell — bold plain text + optional homepage icon link
+    home_btn = f' <a class="pkg-home" href="{esc(hp)}" title="Homepage" aria-label="Homepage">⌂</a>' if hp else ''
+    name_cell = f'<b class="pkg-name">{esc(name)}</b>{home_btn}'
 
     # Version cell with .deb download link(s)
     letter = name[0]
@@ -233,6 +234,12 @@ cat > "$OUT" <<HTML
   .sort-ind { margin-left: .3em; font-size: 9px; }
   td { padding: .6rem .75rem; border-top: 1px solid var(--hairline); font-size: 14px; vertical-align: top; }
   td.col-pkg { font-family: var(--font-mono); font-size: 13px; }
+  .pkg-name { color: var(--accent); font-weight: 700; }
+  .pkg-home {
+    font-size: 12px; color: var(--ink-faint); text-decoration: none;
+    margin-left: 5px; vertical-align: middle; opacity: 0.6;
+  }
+  .pkg-home:hover { color: var(--accent); opacity: 1; text-decoration: none; }
   .col-ver { display: block; color: var(--ink-faint); font-size: 11px; margin-top: 4px; word-break: break-all; }
   td.col-desc { word-break: break-word; }
   /* ── Package details (long desc + dep chips) ── */
@@ -310,7 +317,7 @@ cat > "$OUT" <<HTML
 
   <h2>Quick install</h2>
   <div class="pre-wrap">
-  <button class="copy" type="button" data-copy="quick-install">Copy</button>
+  <button class="copy" type="button" data-copy="quick-install"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9"/><path d="M5 11 L2 11 L2 2 L11 2 L11 5"/></svg> Copy</button>
   <pre id="quick-install">curl -fsSL ${SITE_URL}/key.gpg \\
   | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] ${SITE_URL} resolute main" \\
