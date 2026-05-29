@@ -6,14 +6,9 @@
   'use strict';
 
   function copyText(text, btn) {
-    var prev = btn.textContent;
     var done = function () {
       btn.setAttribute('data-copied', '1');
-      btn.textContent = 'Copied';
-      setTimeout(function () {
-        btn.removeAttribute('data-copied');
-        btn.textContent = prev;
-      }, 1500);
+      setTimeout(function () { btn.removeAttribute('data-copied'); }, 1500);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done).catch(function () {
