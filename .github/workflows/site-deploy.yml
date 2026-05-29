@@ -8,7 +8,11 @@ on:
   workflow_run:
     workflows: ["Build, sign, and publish APT repo"]
     types: [completed]
-  # Nightly fallback — catches worldfoundry.org apt publishes + any other drift
+  # Event-driven: an apt.worldfoundry.org publish pings us via repository_dispatch
+  # (wbniv/worldfoundry.org → .github/workflows/apt-publish.yml → notify-foundrylinux).
+  repository_dispatch:
+    types: [apt-published]
+  # Nightly fallback — catches any drift the event hooks miss
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
