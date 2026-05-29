@@ -155,6 +155,84 @@ PYEOF
 
 PKG_COUNT=$(grep -c '^<tr' <<< "$PKG_ROWS" || true)
 
+# Generate packages.json index
+python3 - "$OUT_DIR" "$PUBLISHED" <<'PYEOF'
+import json, os, sys
+out_dir, generated = sys.argv[1], sys.argv[2]
+meta_dir = os.path.join(out_dir, "meta")
+packages = []
+for fname in sorted(os.listdir(meta_dir)):
+    if not fname.endswith(".json"):
+        continue
+    with open(os.path.join(meta_dir, fname)) as f:
+        packages.append(json.load(f))
+index = {"generated": generated, "suite": "resolute", "count": len(packages), "packages": packages}
+with open(os.path.join(out_dir, "packages.json"), "w") as f:
+    json.dump(index, f, indent=2)
+print(f"  packages.json   {len(packages)} packages")
+PYEOF
+
+# Generate feed.xml (RSS 2.0)
+python3 - "$OUT_DIR" "$PUBLISHED" "$SITE_URL" <<'PYEOF'
+import html, json, os, sys
+from email.utils import formatdate
+from datetime import datetime
+
+out_dir, generated, site_url = sys.argv[1], sys.argv[2], sys.argv[3]
+meta_dir = os.path.join(out_dir, "meta")
+
+packages = []
+for fname in sorted(os.listdir(meta_dir)):
+    if not fname.endswith(".json"):
+        continue
+    with open(os.path.join(meta_dir, fname)) as f:
+        packages.append(json.load(f))
+packages.sort(key=lambda p: p.get("generated", ""), reverse=True)
+
+def iso_to_rfc2822(s):
+    try:
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        return formatdate(dt.timestamp(), usegmt=True)
+    except Exception:
+        return formatdate(usegmt=True)
+
+def esc(s):
+    return html.escape(str(s or ""))
+
+items = []
+for p in packages:
+    name, version = p.get("name", ""), p.get("version", "")
+    deb_url = p.get("deb_url", "")
+    link = f"{site_url}{deb_url}" if deb_url else f"{site_url}/"
+    desc_parts = [esc(p.get("description_short", ""))]
+    if p.get("changelog_latest"):
+        desc_parts.append(esc(p["changelog_latest"]))
+    items.append(f"""    <item>
+      <title>{esc(f"{name} {version}")}</title>
+      <link>{esc(link)}</link>
+      <guid isPermaLink="false">{esc(f"{name}@{version}")}</guid>
+      <pubDate>{iso_to_rfc2822(p.get("generated", generated))}</pubDate>
+      <description>{" — ".join(desc_parts)}</description>
+    </item>""")
+
+feed = f"""<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{esc("Foundry Linux APT Repository")}</title>
+    <link>{esc(site_url)}</link>
+    <description>{esc("Package updates for Foundry Linux — retro tools, game dev, and authoring tools for Ubuntu 26.04.")}</description>
+    <language>en-us</language>
+    <lastBuildDate>{iso_to_rfc2822(generated)}</lastBuildDate>
+    <atom:link href="{esc(site_url + "/feed.xml")}" rel="self" type="application/rss+xml"/>
+{chr(10).join(items)}
+  </channel>
+</rss>"""
+
+with open(os.path.join(out_dir, "feed.xml"), "w") as f:
+    f.write(feed)
+print(f"  feed.xml        {len(packages)} items")
+PYEOF
+
 # Copy tracked static assets (favicon, index.js) into the publish dir.
 if [[ -d "$REPO_ROOT/gen/static" ]]; then
   cp -a "$REPO_ROOT/gen/static/." "$OUT_DIR/"
@@ -173,6 +251,7 @@ cat > "$OUT" <<HTML
 <meta property="og:description" content="${PKG_COUNT} signed packages for Ubuntu 26.04 (resolute)" />
 <meta name="twitter:card"       content="summary" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="alternate" type="application/rss+xml" title="${SITE_TITLE}" href="${SITE_URL}/feed.xml" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
