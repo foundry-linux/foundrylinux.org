@@ -36,9 +36,10 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    document.querySelectorAll('[data-copy], [data-copy-text]').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.preventDefault();
+        e.stopPropagation();
         var literal = btn.getAttribute('data-copy-text');
         if (literal) { copyText(literal, btn); return; }
         var target = document.querySelector(btn.getAttribute('data-copy'));
