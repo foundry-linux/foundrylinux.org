@@ -34,7 +34,7 @@ mkdir -p "$REPO_ROOT/dist"
 
 echo "=== Installing Build-Depends ==="
 if command -v apt-get >/dev/null; then
-    _apt() { [[ $EUID -eq 0 ]] && apt-get "$@" || sudo apt-get "$@"; }
+    _apt() { if [[ $EUID -eq 0 ]]; then apt-get "$@"; else sudo apt-get "$@"; fi; }
     _apt install -y --no-install-recommends \
         build-essential debhelper cmake \
         qt6-base-dev qt6-declarative-dev \
@@ -42,6 +42,7 @@ if command -v apt-get >/dev/null; then
 fi
 
 WORKDIR=$(mktemp -d -t "${NAME}-build-XXXXXX")
+# shellcheck disable=SC2064  # expand $WORKDIR now so the trap captures the value
 trap "rm -rf '$WORKDIR'" EXIT
 
 DEB_VERSION=$(awk 'NR==1 {match($0, /\(([^)]+)\)/); print substr($0, RSTART+1, RLENGTH-2)}' "$PKG_DIR/debian/changelog")

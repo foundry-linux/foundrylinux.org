@@ -60,7 +60,7 @@ fi
 
 echo "=== Installing Build-Depends ==="
 if command -v apt-get >/dev/null; then
-    _apt() { [[ $EUID -eq 0 ]] && apt-get "$@" || sudo apt-get "$@"; }
+    _apt() { if [[ $EUID -eq 0 ]]; then apt-get "$@"; else sudo apt-get "$@"; fi; }
     _apt install -y --no-install-recommends \
         cmake pkg-config gettext \
         libgtkmm-3.0-dev libsdl2-dev libpng-dev libxrandr-dev \

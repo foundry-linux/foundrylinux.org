@@ -48,6 +48,7 @@ ROLE="both"
 SKIP_BLENDER=false
 SKIP_RETRO=false
 APT_ONLY=false
+SKIP_CLONE=false
 FORCE=false
 DRY_RUN=false
 
@@ -66,6 +67,7 @@ parse_args() {
             --skip-blender) SKIP_BLENDER=true ;;
             --skip-retro)   SKIP_RETRO=true ;;
             --apt-only)     APT_ONLY=true ;;
+            --skip-clone)   SKIP_CLONE=true ;;
             --force)        FORCE=true ;;
             --dry-run|-n)   DRY_RUN=true ;;
             -h|--help)      show_help; exit 0 ;;
@@ -102,6 +104,7 @@ Options:
   --skip-blender    Skip foundry-blender install (legacy roles only)
   --skip-retro      Skip foundry-retro-tools install (legacy roles only)
   --apt-only        Forwarded to retro-tools: skip source-build sidecars
+  --skip-clone      Skip cloning Foundry distro repos (maintainer role only)
   --force           Bypass distro/version checks (use at own risk)
   -n, --dry-run     Print the plan without executing anything
   -h, --help        Show this help
@@ -262,7 +265,9 @@ install_metapackages() {
             run_subscript install-foundry-dev.sh "${dev_args[@]}"
             run_subscript install-foundry-android-development.sh "${dry[@]}"
             run_subscript install-foundry-ios-development.sh "${dry[@]}"
-            if ! $DRY_RUN; then
+            if $SKIP_CLONE; then
+                info "Skipping Foundry repo clone (--skip-clone)"
+            elif ! $DRY_RUN; then
                 clone_foundry_repos
             else
                 for repo in "${FOUNDRY_REPOS[@]}"; do
@@ -318,7 +323,7 @@ EOF
 main() {
     parse_args "$@"
     init_logging
-    log_to_file "Args: ROLE=$ROLE SKIP_BLENDER=$SKIP_BLENDER SKIP_RETRO=$SKIP_RETRO APT_ONLY=$APT_ONLY FORCE=$FORCE DRY_RUN=$DRY_RUN"
+    log_to_file "Args: ROLE=$ROLE SKIP_BLENDER=$SKIP_BLENDER SKIP_RETRO=$SKIP_RETRO APT_ONLY=$APT_ONLY SKIP_CLONE=$SKIP_CLONE FORCE=$FORCE DRY_RUN=$DRY_RUN"
 
     echo
     echo "${BOLD}${BLUE}Foundry Linux setup script${RESET} (Phase 0)"

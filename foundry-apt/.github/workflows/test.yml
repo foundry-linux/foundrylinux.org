@@ -37,6 +37,7 @@ jobs:
               apt-get update -q
               apt-get install -y --no-install-recommends \
                 build-essential debhelper dpkg-dev devscripts fakeroot lintian \
+                zip python3 \
                 curl ca-certificates pkg-config sudo
               bash scripts/build-all.sh
             '

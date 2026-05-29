@@ -7,6 +7,7 @@
 set -euo pipefail
 
 PKGSHARE="/usr/share/blender-asset-finder"
+# shellcheck disable=SC2012  # version-sorted pick of a controlled shipped filename; ls|sort -V is intentional
 ZIP=$(ls "$PKGSHARE"/blender_asset_finder-*.zip 2>/dev/null | sort -V | tail -1 || true)
 
 usage() {

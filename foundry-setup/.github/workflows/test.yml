@@ -18,7 +18,7 @@ jobs:
       - name: Run shellcheck
         run: |
           cd foundry-setup
-          shellcheck install.sh test/run-test.sh
+          shellcheck -x install.sh test/run-test.sh
 
   dry-run:
     name: Dry-run on Ubuntu 26.04
@@ -31,6 +31,16 @@ jobs:
       - name: Dry-run install
         working-directory: foundry-setup
         run: docker run --rm foundry-test:26.04 --dry-run
+
+      - name: Regression guard — --skip-clone is honored (maintainer dry-run)
+        working-directory: foundry-setup
+        # Guards the 2026-05-29 regression where the editions refactor dropped
+        # --skip-clone from parse_args while the tests still passed it, dying on
+        # "Unknown option". install.sh must accept --skip-clone and skip the
+        # maintainer-role repo clone. See docs/investigations/2026-05-29-state-of-the-distro.md
+        run: |
+          docker run --rm foundry-test:26.04 --role maintainer --skip-clone --dry-run 2>&1 \
+            | grep -q "Skipping Foundry repo clone"
 
   full-install:
     name: Full install on Ubuntu 26.04 (engine-dev, skip-clone)

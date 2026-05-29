@@ -46,6 +46,7 @@ build_canonical() {
 
     # Skip if a .deb for this exact version already exists in dist/.
     local existing
+    # shellcheck disable=SC2012  # dist/ filenames are controlled (name_version_arch.deb); ls is safe
     existing=$(ls "${REPO_ROOT}/dist/${name}_${ver}_"*.deb 2>/dev/null | head -1 || true)
     if [[ -n "$existing" ]]; then
         echo "SKIP $name (dist/$(basename "$existing") already current)"
@@ -88,6 +89,7 @@ for pkgdir in packages/*/; do
         if [[ -f "$pkgdir/debian/changelog" ]]; then
             _ver=$(dpkg-parsechangelog -l "$pkgdir/debian/changelog" -SVersion 2>/dev/null || true)
             if [[ -n "$_ver" ]]; then
+                # shellcheck disable=SC2012  # controlled dist/ filenames; ls is safe
                 _existing=$(ls "${REPO_ROOT}/dist/${name}_${_ver}_"*.deb 2>/dev/null | head -1 || true)
                 if [[ -n "$_existing" ]]; then
                     echo "SKIP $name (dist/$(basename "$_existing") already current)"
