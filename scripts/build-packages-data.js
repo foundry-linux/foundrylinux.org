@@ -326,6 +326,36 @@ async function main() {
     console.error(`  · ${cat.slug.padEnd(20)}  ${packages.length.toString().padStart(4)} pkgs  ${formatSize(total)}`);
   }
 
+  // CVE live counts — Ubuntu Security API, ubuntu-origin packages only.
+  // Set SKIP_CVE=1 to bypass for fast local rebuilds.
+  if (process.env.SKIP_CVE !== '1') {
+    const ubuntuPkgs = new Set();
+    for (const cat of categories) {
+      for (const p of cat.packages) {
+        if (p.origin?.startsWith('ubuntu-')) ubuntuPkgs.add(p.name);
+      }
+    }
+    console.error(`· fetching CVE counts for ${ubuntuPkgs.size} ubuntu-origin packages`);
+    const cveCounts = new Map();
+    for (const pkgName of ubuntuPkgs) {
+      try {
+        const url = `https://ubuntu.com/security/cves.json?package=${encodeURIComponent(pkgName)}&limit=1`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          cveCounts.set(pkgName, data.total_results ?? 0);
+        }
+      } catch { /* degrade silently — no badge if API unreachable */ }
+      await new Promise(r => setTimeout(r, 80)); // ~12 req/s
+    }
+    for (const cat of categories) {
+      for (const p of cat.packages) {
+        if (cveCounts.has(p.name)) p.cve_count = cveCounts.get(p.name);
+      }
+    }
+    console.error(`  · done (${cveCounts.size}/${ubuntuPkgs.size} packages answered)`);
+  }
+
   // Vendored standalones — every leaf package in apt.foundrylinux.org
   // (origin === 'foundry'). These are the packages we maintain ourselves,
   // either because Ubuntu doesn't ship them (vendored) or because they're

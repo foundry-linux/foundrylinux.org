@@ -1971,3 +1971,15 @@ a.channel-card:hover {
   transition: color 0.15s, opacity 0.15s;
 }
 .cve-link:hover { color: var(--accent); opacity: 1; }
+.cve-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  padding: 1px 3px;
+  border-radius: 3px;
+  margin-left: 3px;
+  vertical-align: middle;
+}
+.cve-badge--clear  { color: #4caf50; background: rgba(76, 175, 80, 0.12); }
+.cve-badge--active { color: var(--accent); background: var(--accent-soft); }

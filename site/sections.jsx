@@ -322,6 +322,7 @@ function Install() {
               <span className="channel-num">05</span>
               <span className="channel-label">Fresh install</span>
               <p className="channel-hook">Replace everything. Full branded Kubuntu 26.04 desktop from first boot — bare metal or alongside Windows.</p>
+              <span className="channel-inv">replaces-os</span>
             </div>
             <div className="hero-right">
               <span className="hero-dl-label">download iso · anvil edition</span>

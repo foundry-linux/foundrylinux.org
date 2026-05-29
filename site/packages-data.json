@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-28T19:08:32Z",
-  "foundry_release_sha": "7075ce7308c85cf9fb8b12b93695e244a49a9e0a09b6a0dce12b895c0d2d4e55",
+  "generated_at": "2026-05-29T01:01:33Z",
+  "foundry_release_sha": "4ffb90294e10d80ddb74fb3d674268e018df2b8057acf69cc8313906edb547f2",
   "worldfoundry_release_sha": "cfa2c71c432fd89bdc5f538c1da760f0c5cd456be82004f9623cd0d8eab8bef1",
   "inputs_sha": "96192c48713850984a0dfe635dbb3a074b64c73c7fadc55f2640c89fbbbc3b4c",
   "editions": [
@@ -78,7 +78,8 @@
           "summary": "Very fast and versatile 3D modeller/renderer",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 63
         },
         {
           "name": "blender-asset-finder",
@@ -113,7 +114,8 @@
           "summary": "Informational list of build-essential packages",
           "upstream": {
             "status": "in-ubuntu-main"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "cdpack",
@@ -135,7 +137,8 @@
           "summary": "cross-platform, open-source make system",
           "upstream": {
             "status": "in-ubuntu-main"
-          }
+          },
+          "cve_count": 49
         },
         {
           "name": "iffcomp",
@@ -179,7 +182,8 @@
           "summary": "Vendor neutral GL dispatch library -- GL development files",
           "upstream": {
             "status": "in-ubuntu-main"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libglu1-mesa-dev",
@@ -190,7 +194,8 @@
           "summary": "Mesa OpenGL utility library -- development files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libx11-dev",
@@ -201,7 +206,8 @@
           "summary": "X11 client-side library (development headers)",
           "upstream": {
             "status": "in-ubuntu-main"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "lvldump",
@@ -256,7 +262,8 @@
           "summary": "interactive high-level object-oriented language (default python3 version)",
           "upstream": {
             "status": "in-ubuntu-main"
-          }
+          },
+          "cve_count": 146
         },
         {
           "name": "textile",
@@ -326,7 +333,8 @@
           "summary": "Very fast and versatile 3D modeller/renderer",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 63
         },
         {
           "name": "blender-asset-finder",
@@ -375,7 +383,8 @@
           "summary": "GNU binary utilities, for m68k-linux-gnu target",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "binwalk",
@@ -386,7 +395,8 @@
           "summary": "tool library for analyzing binary blobs and executable code",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 3
         },
         {
           "name": "cc65",
@@ -397,7 +407,8 @@
           "summary": "complete cross development package for 65(C)02 systems",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "dasm",
@@ -408,7 +419,8 @@
           "summary": "Macro assembler with support for several 8-bit microprocessors",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "f9dasm",
@@ -461,7 +473,8 @@
           "summary": "Multiple Arcade Machine Emulator (MAME)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 7
         },
         {
           "name": "mame-tools",
@@ -472,7 +485,8 @@
           "summary": "Tools for MAME",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "radare2",
@@ -483,7 +497,8 @@
           "summary": "free and advanced command line hexadecimal editor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 164
         },
         {
           "name": "sox",
@@ -494,7 +509,8 @@
           "summary": "Swiss army knife of sound processing",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 29
         },
         {
           "name": "vgmstream",
@@ -519,7 +535,8 @@
           "summary": "cross-assembler and utility suite for 65xx/65816 processors",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "z80asm",
@@ -530,7 +547,8 @@
           "summary": "assembler for the Zilog Z80 microprocessor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "z80dasm",
@@ -541,7 +559,8 @@
           "summary": "disassembler for the Zilog Z80 microprocessor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         }
       ]
     },
@@ -571,7 +590,8 @@
           "summary": "Atari 8-bit emulator for SDL",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "desmume",
@@ -604,7 +624,8 @@
           "summary": "DOS emulator with complete, accurate hardware emulation",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "fbzx",
@@ -615,7 +636,8 @@
           "summary": "ZX Spectrum emulator",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "fceux",
@@ -626,7 +648,8 @@
           "summary": "all-in-one NES/Famicom Emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "frotz",
@@ -637,7 +660,8 @@
           "summary": "interpreter of Z-code story-files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "fs-uae",
@@ -648,7 +672,8 @@
           "summary": "Cross-platform Amiga emulator based on UAE/WinUAE",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 3
         },
         {
           "name": "hatari",
@@ -659,7 +684,8 @@
           "summary": "Emulator for the Atari ST, STE, TT, and Falcon computers",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "mame-extra",
@@ -670,7 +696,8 @@
           "summary": "Additional files for the Multiple Arcade Machine Emulator (MAME)",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "mednafen",
@@ -681,7 +708,8 @@
           "summary": "multi-platform emulator, including NES, GB/A, Lynx, PC Engine",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "mupen64plus-ui-console",
@@ -692,7 +720,8 @@
           "summary": "console frontend for mupen64plus",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "nestopia",
@@ -703,7 +732,8 @@
           "summary": "Nintendo Entertainment System/Famicom emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openmsx",
@@ -714,7 +744,8 @@
           "summary": "MSX emulator that aims for perfection",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openmsx-data",
@@ -725,7 +756,8 @@
           "summary": "datafiles for openMSX, an MSX emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "pcsx2",
@@ -736,7 +768,8 @@
           "summary": "Playstation 2 emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 2
         },
         {
           "name": "pcsxr",
@@ -747,7 +780,8 @@
           "summary": "Sony PlayStation emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "ppsspp",
@@ -770,7 +804,8 @@
           "summary": "Simple frontend for the libretro library",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 5
         },
         {
           "name": "retroarch-assets",
@@ -781,7 +816,8 @@
           "summary": "RetroArch assets for Ozone, GLUI, RGUI and XMB",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "scummvm",
@@ -792,7 +828,8 @@
           "summary": "engine for several graphical adventure games",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 2
         },
         {
           "name": "snes9x-gtk",
@@ -815,7 +852,8 @@
           "summary": "Atari 2600 Emulator for SDL & the X Window System",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "vice",
@@ -826,7 +864,8 @@
           "summary": "Versatile Commodore Emulator",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 46
         },
         {
           "name": "yuzu",
@@ -951,7 +990,8 @@
           "summary": "general purpose tile map editor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         }
       ]
     },
@@ -979,7 +1019,8 @@
           "summary": "GNU Image Manipulation Program",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 81
         },
         {
           "name": "grafx2",
@@ -990,7 +1031,8 @@
           "summary": "ultimate 256-color bitmap paint program",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "graphicsmagick",
@@ -1001,7 +1043,8 @@
           "summary": "collection of image processing tools",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 143
         },
         {
           "name": "imagemagick",
@@ -1012,7 +1055,8 @@
           "summary": "image manipulation programs -- binaries",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 754
         },
         {
           "name": "inkscape",
@@ -1023,7 +1067,8 @@
           "summary": "vector-based drawing program",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 26
         },
         {
           "name": "krita",
@@ -1034,7 +1079,8 @@
           "summary": "pixel-based image manipulation program",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "mtpaint",
@@ -1045,7 +1091,8 @@
           "summary": "painting program to create pixel art and manipulate digital photos",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "mypaint",
@@ -1056,7 +1103,8 @@
           "summary": "paint program for use with graphics tablets",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "tuxpaint",
@@ -1067,7 +1115,8 @@
           "summary": "Paint program for young children",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         }
       ]
     },
@@ -1094,7 +1143,8 @@
           "summary": "the digital audio workstation",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 3
         },
         {
           "name": "audacity",
@@ -1105,7 +1155,8 @@
           "summary": "fast, cross-platform audio editor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 22
         },
         {
           "name": "furnace",
@@ -1116,7 +1167,8 @@
           "summary": "multi-system chiptune tracker compatible with DefleMask modules",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "hydrogen",
@@ -1127,7 +1179,8 @@
           "summary": "advanced drum machine/step sequencer",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "lmms",
@@ -1138,7 +1191,8 @@
           "summary": "Linux Multimedia Studio",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "milkytracker",
@@ -1149,7 +1203,8 @@
           "summary": "music creation tool inspired by Fast Tracker 2",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 5
         },
         {
           "name": "mixxx",
@@ -1160,7 +1215,8 @@
           "summary": "Digital Disc Jockey Interface",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openmpt123",
@@ -1171,7 +1227,8 @@
           "summary": "module music library based on OpenMPT -- music player",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "qtractor",
@@ -1182,7 +1239,8 @@
           "summary": "MIDI/Audio multi-track sequencer application",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "rosegarden",
@@ -1286,7 +1344,8 @@
           "summary": "space exploration and combat game",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "exult",
@@ -1297,7 +1356,8 @@
           "summary": "engine for Ultima VII (BG, FOV, SI, SS)",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "fheroes2",
@@ -1308,7 +1368,8 @@
           "summary": "recreation of the Heroes of Might and Magic II game engine",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "flightgear",
@@ -1319,7 +1380,8 @@
           "summary": "Flight Gear Flight Simulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 6
         },
         {
           "name": "flightgear-data-ai",
@@ -1330,7 +1392,8 @@
           "summary": "FlightGear Flight Simulator -- standard AI data",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "flightgear-data-base",
@@ -1341,7 +1404,8 @@
           "summary": "FlightGear Flight Simulator -- base files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "flightgear-data-models",
@@ -1352,7 +1416,8 @@
           "summary": "FlightGear Flight Simulator -- standard models",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "freeciv",
@@ -1363,7 +1428,8 @@
           "summary": "Civilization turn based strategy game",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 9
         },
         {
           "name": "freedm",
@@ -1374,7 +1440,8 @@
           "summary": "multiplayer deathmatch game for Doom-compatible engines",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "freedoom",
@@ -1385,7 +1452,8 @@
           "summary": "two single player campaigns for Doom-compatible engines",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "hedgewars",
@@ -1396,7 +1464,8 @@
           "summary": "Funny turn-based artillery game, featuring fighting hedgehogs!",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "hedgewars-data",
@@ -1407,7 +1476,8 @@
           "summary": "Data files for hedgewars",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "nethack-console",
@@ -1418,7 +1488,8 @@
           "summary": "dungeon crawl game - text-based interface",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openrct2",
@@ -1429,7 +1500,8 @@
           "summary": "Open-source re-implementation of RollerCoaster Tycoon 2",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openrct2-objects",
@@ -1440,7 +1512,8 @@
           "summary": "Object definitions for OpenRCT2",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openrct2-title-sequences",
@@ -1451,7 +1524,8 @@
           "summary": "Title sequences for OpenRCT2",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openttd",
@@ -1462,7 +1536,8 @@
           "summary": "reimplementation of Transport Tycoon Deluxe with enhancements",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 16
         },
         {
           "name": "sauerbraten",
@@ -1473,7 +1548,8 @@
           "summary": "3D first-person shooter game",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "supertux",
@@ -1484,7 +1560,8 @@
           "summary": "Classic 2D jump 'n run sidescroller with Tux",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "supertux-data",
@@ -1528,7 +1605,8 @@
           "summary": "Rewrite of the Heroes of Might and Magic 3 game engine",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "warzone2100",
@@ -1539,7 +1617,8 @@
           "summary": "3D real time strategy game",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "warzone2100-data",
@@ -1550,7 +1629,8 @@
           "summary": "data files for warzone2100",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "wesnoth",
@@ -1561,7 +1641,8 @@
           "summary": "fantasy turn-based strategy game (metapackage)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 11
         },
         {
           "name": "wesnoth-1.18-data",
@@ -1572,7 +1653,8 @@
           "summary": "data files for Wesnoth (branch 1.18)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "wesnoth-1.18-music",
@@ -1583,7 +1665,8 @@
           "summary": "music files for Wesnoth (branch 1.18)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "widelands",
@@ -1594,7 +1677,8 @@
           "summary": "fantasy real-time strategy game",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 3
         },
         {
           "name": "widelands-data",
@@ -1605,7 +1689,8 @@
           "summary": "fantasy real-time strategy game (data files)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         }
       ]
     },
@@ -1632,7 +1717,8 @@
           "summary": "Android Debug Bridge",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1318
         },
         {
           "name": "google-android-ndk-r26c-installer",
@@ -1643,7 +1729,8 @@
           "summary": "Google's NDK (Side by side) 26.2.11394342 Installer",
           "upstream": {
             "status": "in-ubuntu-multiverse"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "ideviceinstaller",
@@ -1654,7 +1741,8 @@
           "summary": "Utility to manage installed applications on an iDevice",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "ifuse",
@@ -1665,7 +1753,8 @@
           "summary": "FUSE module for iPhone and iPod Touch devices",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libimobiledevice-utils",
@@ -1676,7 +1765,8 @@
           "summary": "Utitilies for communicating with iPhone and other Apple devices",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openjdk-17-jdk",
@@ -1687,7 +1777,8 @@
           "summary": "OpenJDK Development Kit (JDK)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "usbmuxd",
@@ -1698,7 +1789,8 @@
           "summary": "USB multiplexor daemon for iPhone and iPod Touch devices",
           "upstream": {
             "status": "in-ubuntu-main"
-          }
+          },
+          "cve_count": 3
         }
       ]
     },
@@ -1724,7 +1816,8 @@
           "summary": "GNU binary utilities, for m68k-linux-gnu target",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "binwalk",
@@ -1735,7 +1828,8 @@
           "summary": "tool library for analyzing binary blobs and executable code",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 3
         },
         {
           "name": "btop",
@@ -1746,7 +1840,8 @@
           "summary": "Modern and colorful command line resource monitor that shows usage and stats",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "cc65",
@@ -1757,7 +1852,8 @@
           "summary": "complete cross development package for 65(C)02 systems",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "dasm",
@@ -1768,7 +1864,8 @@
           "summary": "Macro assembler with support for several 8-bit microprocessors",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "desmume",
@@ -1790,7 +1887,8 @@
           "summary": "DOS emulator with complete, accurate hardware emulation",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "f9dasm",
@@ -1815,7 +1913,8 @@
           "summary": "all-in-one NES/Famicom Emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "firefox",
@@ -1826,7 +1925,8 @@
           "summary": "Installs Firefox snap and provides some system integration",
           "upstream": {
             "status": "in-ubuntu-main"
-          }
+          },
+          "cve_count": 3127
         },
         {
           "name": "frotz",
@@ -1837,7 +1937,8 @@
           "summary": "interpreter of Z-code story-files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "fs-uae",
@@ -1848,7 +1949,8 @@
           "summary": "Cross-platform Amiga emulator based on UAE/WinUAE",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 3
         },
         {
           "name": "ghidra",
@@ -1884,7 +1986,8 @@
           "summary": "collection of image processing tools",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 143
         },
         {
           "name": "hatari",
@@ -1895,7 +1998,8 @@
           "summary": "Emulator for the Atari ST, STE, TT, and Falcon computers",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "imagemagick",
@@ -1906,7 +2010,8 @@
           "summary": "image manipulation programs -- binaries",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 754
         },
         {
           "name": "liballegro5-dev",
@@ -1986,7 +2091,8 @@
           "summary": "Multiple Arcade Machine Emulator (MAME)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 7
         },
         {
           "name": "mame-tools",
@@ -1997,7 +2103,8 @@
           "summary": "Tools for MAME",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "mednafen",
@@ -2008,7 +2115,8 @@
           "summary": "multi-platform emulator, including NES, GB/A, Lynx, PC Engine",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "openmsx",
@@ -2019,7 +2127,8 @@
           "summary": "MSX emulator that aims for perfection",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "openmsx-data",
@@ -2030,7 +2139,8 @@
           "summary": "datafiles for openMSX, an MSX emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "ppsspp",
@@ -2053,7 +2163,8 @@
           "summary": "free and advanced command line hexadecimal editor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 164
         },
         {
           "name": "scummvm",
@@ -2064,7 +2175,8 @@
           "summary": "engine for several graphical adventure games",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 2
         },
         {
           "name": "snes9x-gtk",
@@ -2087,7 +2199,8 @@
           "summary": "Swiss army knife of sound processing",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 29
         },
         {
           "name": "spirv-cross",
@@ -2120,7 +2233,8 @@
           "summary": "Atari 2600 Emulator for SDL & the X Window System",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "tiled",
@@ -2131,7 +2245,8 @@
           "summary": "general purpose tile map editor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "vgmstream",
@@ -2178,7 +2293,8 @@
           "summary": "cross-assembler and utility suite for 65xx/65816 processors",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "z80asm",
@@ -2189,7 +2305,8 @@
           "summary": "assembler for the Zilog Z80 microprocessor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "z80dasm",
@@ -2200,7 +2317,8 @@
           "summary": "disassembler for the Zilog Z80 microprocessor",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         }
       ]
     },

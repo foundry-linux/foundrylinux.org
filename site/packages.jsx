@@ -123,8 +123,16 @@ function CategorySection({ cat, index }) {
                     {isUbuntu && (
                       <a className="cve-link"
                          href={`https://ubuntu.com/security/cves?package=${p.name}`}
-                         target="_blank" rel="noopener" aria-label="CVE tracker">
+                         target="_blank" rel="noopener"
+                         aria-label={p.cve_count == null ? 'CVE tracker'
+                                     : p.cve_count === 0 ? 'No active CVEs'
+                                     : `${p.cve_count} active CVEs`}>
                         <ShieldIcon />
+                        {p.cve_count != null && (
+                          <span className={`cve-badge ${p.cve_count === 0 ? 'cve-badge--clear' : 'cve-badge--active'}`}>
+                            {p.cve_count === 0 ? '0 ✓' : `${p.cve_count} ⚠`}
+                          </span>
+                        )}
                       </a>
                     )}
                   </td>

@@ -1,7 +1,7 @@
 ---
 title: Install section redesign — 5 ordered paths, least → most invasive
 date: 2026-05-28
-status: in-progress
+status: done
 ---
 
 # Install section redesign
