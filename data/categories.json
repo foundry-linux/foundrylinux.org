@@ -158,6 +158,22 @@
       "in_edition_tier": "anvil"
     },
     {
+      "slug": "retro-and-emulators",
+      "title": "Retro & emulators",
+      "role": "RE · assemblers · arcade · console",
+      "blurb": "The retro-porting bench — MAME, Ghidra, radare2, binwalk, and the 6502/Z80/m68k assembler suite — plus the full emulator stack: mednafen, dosbox-x, hatari, fceux, stella, fs-uae, openmsx, and the heavy-hitter console emulators.",
+      "icon": "MameIcon",
+      "metapackages": [
+        "foundry-retro-tools",
+        "foundry-emulators",
+        "foundry-emulators-computers",
+        "foundry-emulators-consoles",
+        "foundry-emulators-consoles-heavy",
+        "foundry-emulators-vintage"
+      ],
+      "in_edition_tier": "spans"
+    },
+    {
       "slug": "foundry-desktop",
       "title": "Foundry Desktop",
       "role": "KDE · ISO only",
@@ -182,11 +198,11 @@
         "row": 1
       },
       {
-        "category_slug": "retro-tools",
+        "category_slug": "retro-and-emulators",
         "row": 1
       },
       {
-        "category_slug": "emulators",
+        "category_slug": "python-gamedev",
         "row": 2
       },
       {
@@ -196,10 +212,6 @@
       {
         "category_slug": "games",
         "row": 2
-      },
-      {
-        "category_slug": "python-gamedev",
-        "row": 3
       }
     ]
   }
