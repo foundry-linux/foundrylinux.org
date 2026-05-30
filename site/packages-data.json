@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-29T01:01:33Z",
-  "foundry_release_sha": "4ffb90294e10d80ddb74fb3d674268e018df2b8057acf69cc8313906edb547f2",
+  "generated_at": "2026-05-30T17:21:01Z",
+  "foundry_release_sha": "4329069fc21ac4d13ecfd4104285a8e18fb3f9fcfebde91b603fd0ee79e07f3f",
   "worldfoundry_release_sha": "cfa2c71c432fd89bdc5f538c1da760f0c5cd456be82004f9623cd0d8eab8bef1",
-  "inputs_sha": "96192c48713850984a0dfe635dbb3a074b64c73c7fadc55f2640c89fbbbc3b4c",
+  "inputs_sha": "4cdc91a50ba2c5aee93c4097e7fa29298e93e8795d963e0203d1ded6004b4600",
   "editions": [
     {
       "slug": "anvil",
@@ -10,8 +10,8 @@
       "blurb": "Base edition — full WorldFoundry stack, retro toolkit, light emulators, game frameworks, image tools. The Distrobox devbox image installs this and nothing else.",
       "install_command": "sudo apt install foundry-anvil",
       "metapackage": "foundry-anvil",
-      "installed_size_kb": 4696725,
-      "package_count": 1148,
+      "installed_size_kb": 5736608,
+      "package_count": 1323,
       "direct_depends": [
         "foundry-core",
         "foundry-desktop"
@@ -23,8 +23,8 @@
       "blurb": "Anvil + heavy graphics and audio production: Krita, GIMP, Inkscape, MyPaint, mtPaint, GrafX2, Tux Paint, the DAW stack, and trackers.",
       "install_command": "sudo apt install foundry-sprite",
       "metapackage": "foundry-sprite",
-      "installed_size_kb": 5907407,
-      "package_count": 1395,
+      "installed_size_kb": 6870138,
+      "package_count": 1544,
       "direct_depends": [
         "foundry-anvil",
         "foundry-pixel-art",
@@ -39,8 +39,8 @@
       "blurb": "Sprite + everything else: ROM-bundled vintage emulators, heavy console emulators, FOSS engine reimplementations, free games, mobile development, cross-repo dev deps. Around 10 GB on top of bare Ubuntu.",
       "install_command": "sudo apt install foundry-atelier",
       "metapackage": "foundry-atelier",
-      "installed_size_kb": 19821932,
-      "package_count": 1599,
+      "installed_size_kb": 20784616,
+      "package_count": 1747,
       "direct_depends": [
         "foundry-sprite",
         "foundry-emulators-vintage",
@@ -602,7 +602,8 @@
           "summary": "Nintendo DS emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "dolphin-emu",
@@ -613,7 +614,8 @@
           "summary": "Gamecube and Wii emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "dosbox-x",
@@ -876,7 +878,8 @@
           "summary": "Nintendo Switch Emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         }
       ]
     },
@@ -902,7 +905,8 @@
           "summary": "OpenGL and OpenGL ES shader front end and validator -- tools",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "liballegro5-dev",
@@ -913,7 +917,8 @@
           "summary": "development files for the Allegro 5 library",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libsdl2-dev",
@@ -924,7 +929,8 @@
           "summary": "Simple DirectMedia Layer development files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libsdl3-dev",
@@ -935,7 +941,8 @@
           "summary": "Simple DirectMedia Layer, version 3 development files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libsfml-dev",
@@ -946,7 +953,8 @@
           "summary": "Simple and Fast Multimedia Library - Development Files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libtcod-dev",
@@ -957,7 +965,8 @@
           "summary": "development files for the libtcod roguelike library",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "spirv-cross",
@@ -968,7 +977,8 @@
           "summary": "Convert SPIR-V to other shader languages (CLI tool)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "spirv-tools",
@@ -979,7 +989,8 @@
           "summary": "API and commands for processing SPIR-V modules (tools)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "tiled",
@@ -992,6 +1003,591 @@
             "status": "in-ubuntu-universe"
           },
           "cve_count": 0
+        }
+      ]
+    },
+    {
+      "slug": "python-gamedev",
+      "title": "Python game dev",
+      "role": "pygame · numpy · audio · tools",
+      "blurb": "Full Python game-development stack — pygame, pyglet, PyOpenGL, GLFW, numpy, scipy, sounddevice, pydub, librosa, websockets, ruff, and 40+ more. One apt install away.",
+      "icon": "GearStackIcon",
+      "metapackages": [
+        "foundry-python-gamedev",
+        "foundry-python-gamedev-extras"
+      ],
+      "in_edition_tier": "anvil",
+      "installed_size_kb": 335896,
+      "package_count": 47,
+      "packages": [
+        {
+          "name": "cython3",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "3.1.6+dfsg-1ubuntu2",
+          "installed_size_kb": 10514,
+          "summary": "C-Extensions for Python 3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-aiohttp",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "3.13.3-3ubuntu1",
+          "installed_size_kb": 1795,
+          "summary": "http client/server for asyncio",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-aiosqlite",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.21.0-1",
+          "installed_size_kb": 72,
+          "summary": "sqlite library for Python 3 using asyncio",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-attr",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "25.4.0-1build1",
+          "installed_size_kb": 263,
+          "summary": "Attributes without boilerplate (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-av",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "16.1.0+ds-3build1",
+          "installed_size_kb": 4984,
+          "summary": "pythonic bindings for FFmpeg's libraries",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-cairocffi",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.7.1-5",
+          "installed_size_kb": 281,
+          "summary": "cffi-based cairo bindings for Python (Python3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-cffi",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "2.0.0-3build1",
+          "installed_size_kb": 417,
+          "summary": "Foreign Function Interface for Python 3 calling C code",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-click",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "8.2.0+0.really.8.1.8-1build1",
+          "installed_size_kb": 374,
+          "summary": "Command-Line Interface Creation Kit - Python 3.x",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-fonttools",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "4.61.1-3build1",
+          "installed_size_kb": 11231,
+          "summary": "Converts OpenType and TrueType fonts to and from XML (Python 3 Library)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-freetype",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.5.1-2",
+          "installed_size_kb": 496,
+          "summary": "Freetype Python bindings for Python 3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-glfw",
+          "origin": "foundry",
+          "section": "python",
+          "version": "2.10.0-1foundry1",
+          "installed_size_kb": 168,
+          "summary": "Python ctypes bindings for GLFW3",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. Pure-ctypes PyGLFW bindings wrap the system libglfw3.",
+            "repology_project": "python:glfw"
+          }
+        },
+        {
+          "name": "python3-imageio",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.37.2-1",
+          "installed_size_kb": 1191,
+          "summary": "library for reading and writing image data (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-imageio-ffmpeg",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.6.0-3",
+          "installed_size_kb": 65,
+          "summary": "FFMPEG wrapper for Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-librosa",
+          "origin": "foundry",
+          "section": "python",
+          "version": "0.11.0-1foundry1",
+          "installed_size_kb": 1019,
+          "summary": "audio and music analysis library for Python",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. All 13 runtime deps confirmed in ubuntu:26.04 universe.",
+            "repology_project": "python:librosa"
+          }
+        },
+        {
+          "name": "python3-loguru",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.7.3-4",
+          "installed_size_kb": 249,
+          "summary": "enjoyable loggin' for Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-lz4",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "4.4.5+dfsg-1build1",
+          "installed_size_kb": 137,
+          "summary": "Python interface to the lz4 compression library (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-moviepy",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.1.2-4",
+          "installed_size_kb": 411,
+          "summary": "Video editing with Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-msgpack",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "1.1.2-2build1",
+          "installed_size_kb": 254,
+          "summary": "Python 3 implementation of MessagePack format",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-mss",
+          "origin": "foundry",
+          "section": "python",
+          "version": "10.2.0-1foundry1",
+          "installed_size_kb": 244,
+          "summary": "ultra-fast cross-platform screenshot library for Python",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. Pure-ctypes screenshot library, zero runtime deps.",
+            "repology_project": "python:mss"
+          }
+        },
+        {
+          "name": "python3-mypy",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.19.1-5build1",
+          "installed_size_kb": 43960,
+          "summary": "public modules for mypy (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-networkx",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "3.2.1-4ubuntu2",
+          "installed_size_kb": 86730,
+          "summary": "tool to create, manipulate and study complex networks (Python3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-numba",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.64.0+dfsg-1ubuntu1",
+          "installed_size_kb": 11876,
+          "summary": "native machine code compiler for Python 3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-numpy",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "1:2.3.5+ds-3ubuntu1",
+          "installed_size_kb": 26785,
+          "summary": "Python library for numerical computations (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-opencv",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "4.10.0+dfsg-7ubuntu5",
+          "installed_size_kb": 9189,
+          "summary": "Python 3 bindings for the computer vision library",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-opengl",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "3.1.10+dfsg-1",
+          "installed_size_kb": 7317,
+          "summary": "Python bindings to OpenGL (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pil",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "12.1.1-2ubuntu1",
+          "installed_size_kb": 1968,
+          "summary": "Python Imaging Library (Python3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-psutil",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "7.1.0-1ubuntu1",
+          "installed_size_kb": 1109,
+          "summary": "module providing convenience functions for managing processes (Python3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pydub",
+          "origin": "foundry",
+          "section": "python",
+          "version": "0.25.1-1foundry1",
+          "installed_size_kb": 130,
+          "summary": "high-level audio manipulation library for Python",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. Requires python3-audioop-lts dep for Python 3.14 compat.",
+            "repology_project": "python:pydub"
+          }
+        },
+        {
+          "name": "python3-pygame",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.6.1-4build1",
+          "installed_size_kb": 4495,
+          "summary": "SDL bindings for games development (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pyglet",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.0.17+ds-3",
+          "installed_size_kb": 6005,
+          "summary": "cross-platform windowing and multimedia library (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pynput",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.8.1-1",
+          "installed_size_kb": 322,
+          "summary": "control and monitor input devices (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pytest",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "9.0.2-4",
+          "installed_size_kb": 1378,
+          "summary": "Simple, powerful testing in Python3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-rich",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "13.9.4-1.2",
+          "installed_size_kb": 1053,
+          "summary": "render rich text, tables, progress bars, syntax highlighting, markdown and more",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-scipy",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.16.3-4build1",
+          "installed_size_kb": 66895,
+          "summary": "scientific tools for Python 3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-serial",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "3.5-2build1",
+          "installed_size_kb": 458,
+          "summary": "pyserial - module encapsulating access for the serial port",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-shapely",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.1.2-1ubuntu2",
+          "installed_size_kb": 1651,
+          "summary": "geometric objects, predicates, and operations (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-sortedcontainers",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "2.4.0-2build1",
+          "installed_size_kb": 153,
+          "summary": "sorted container types: SortedList, SortedDict, and SortedSet (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-sounddevice",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.5.3-1",
+          "installed_size_kb": 145,
+          "summary": "Play and Record Sound with Python - Python 3.x",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-soundfile",
+          "origin": "ubuntu-universe",
+          "section": "universe/sound",
+          "version": "0.13.1-3",
+          "installed_size_kb": 112,
+          "summary": "Python 3 audio module based on libsndfile",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-tomli",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.4.0-1build1",
+          "installed_size_kb": 446,
+          "summary": "lil' TOML parser for Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-tomli-w",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.2.0-2",
+          "installed_size_kb": 33,
+          "summary": "lil' TOML writer for Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-tqdm",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "4.67.3-1build1",
+          "installed_size_kb": 489,
+          "summary": "fast, extensible progress bar for Python 3 and CLI tool",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-websockets",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "15.0.1-1build2",
+          "installed_size_kb": 673,
+          "summary": "implementation of the WebSocket Protocol (RFC 6455)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-yaml",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "6.0.3-1build1",
+          "installed_size_kb": 561,
+          "summary": "YAML parser and emitter for Python3",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-zmq",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "27.1.0-1build1",
+          "installed_size_kb": 732,
+          "summary": "Python3 bindings for 0MQ library",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-zstd",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.5.5.1-1build5",
+          "installed_size_kb": 44,
+          "summary": "python bindings to Yann Collet ZSTD compression library",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "ruff",
+          "origin": "foundry",
+          "section": "devel",
+          "version": "0.15.15-1foundry1",
+          "installed_size_kb": 27022,
+          "summary": "extremely fast Python linter and code formatter",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. Pre-built Rust binary repackaged from manylinux wheel.",
+            "repology_project": "python:ruff"
+          }
         }
       ]
     },
@@ -1251,7 +1847,8 @@
           "summary": "music editor and MIDI/audio sequencer",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "schism",
@@ -1262,7 +1859,8 @@
           "summary": "ImpulseTracker clone aiming at providing the same look&feel",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 4
         }
       ]
     },
@@ -1289,7 +1887,8 @@
           "summary": "Real-time strategy game of ancient warfare",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 1
         },
         {
           "name": "0ad-data",
@@ -1300,7 +1899,8 @@
           "summary": "Real-time strategy game of ancient warfare (data files)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "crawl-tiles",
@@ -1311,7 +1911,8 @@
           "summary": "Dungeon Crawl, a roguelike game, tiles version",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "endless-sky",
@@ -1322,7 +1923,8 @@
           "summary": "space exploration, trading and combat game",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "endless-sky-data",
@@ -1333,7 +1935,8 @@
           "summary": "space exploration, trading and combat game - data files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "endless-sky-high-dpi",
@@ -1572,7 +2175,8 @@
           "summary": "Classic 2D jump 'n run sidescroller with Tux (data files)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "supertuxkart",
@@ -1583,7 +2187,8 @@
           "summary": "3D arcade racer with a variety of characters, tracks, and modes to play",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "supertuxkart-data",
@@ -1594,7 +2199,8 @@
           "summary": "3D arcade racer with a variety of characters, tracks, and modes to play (data)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "vcmi",
@@ -1804,8 +2410,8 @@
         "foundry-core"
       ],
       "in_edition_tier": "anvil",
-      "installed_size_kb": 1727894,
-      "package_count": 43,
+      "installed_size_kb": 2063799,
+      "package_count": 91,
       "packages": [
         {
           "name": "binutils-m68k-linux-gnu",
@@ -1856,6 +2462,18 @@
           "cve_count": 0
         },
         {
+          "name": "cython3",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "3.1.6+dfsg-1ubuntu2",
+          "installed_size_kb": 10514,
+          "summary": "C-Extensions for Python 3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
           "name": "dasm",
           "origin": "ubuntu-universe",
           "section": "universe/otherosfs",
@@ -1876,7 +2494,8 @@
           "summary": "Nintendo DS emulator",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "dosbox-x",
@@ -1929,6 +2548,17 @@
           "cve_count": 3127
         },
         {
+          "name": "foundry-python-gamedev",
+          "origin": "foundry",
+          "section": "metapackages",
+          "version": "1.0.0",
+          "installed_size_kb": 9,
+          "summary": "Python game-development base stack for Foundry Linux",
+          "upstream": {
+            "status": "n/a-firstparty"
+          }
+        },
+        {
           "name": "frotz",
           "origin": "ubuntu-universe",
           "section": "universe/games",
@@ -1975,7 +2605,8 @@
           "summary": "OpenGL and OpenGL ES shader front end and validator -- tools",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "graphicsmagick",
@@ -2022,7 +2653,8 @@
           "summary": "development files for the Allegro 5 library",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libsdl2-dev",
@@ -2033,7 +2665,8 @@
           "summary": "Simple DirectMedia Layer development files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libsdl3-dev",
@@ -2044,7 +2677,8 @@
           "summary": "Simple DirectMedia Layer, version 3 development files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libsfml-dev",
@@ -2055,7 +2689,8 @@
           "summary": "Simple and Fast Multimedia Library - Development Files",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libtcod-dev",
@@ -2066,7 +2701,8 @@
           "summary": "development files for the libtcod roguelike library",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "libvgm",
@@ -2155,6 +2791,550 @@
           "changelog_latest": "* Rebuild against ubuntu:26.04's ffmpeg 8 / libavcodec62. The 26.04\n  repos moved from ffmpeg 7.x (libavcodec61) to ffmpeg 8.x (libavcodec62)\n  on 2026-05-26, making the 1foundry1 binary uninstallable. No source\n  changes — dpkg-shlibdeps auto-resolves to libavcodec62 in the new\n  ubuntu:26.04 build environment."
         },
         {
+          "name": "python3-aiohttp",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "3.13.3-3ubuntu1",
+          "installed_size_kb": 1795,
+          "summary": "http client/server for asyncio",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-aiosqlite",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.21.0-1",
+          "installed_size_kb": 72,
+          "summary": "sqlite library for Python 3 using asyncio",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-attr",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "25.4.0-1build1",
+          "installed_size_kb": 263,
+          "summary": "Attributes without boilerplate (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-av",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "16.1.0+ds-3build1",
+          "installed_size_kb": 4984,
+          "summary": "pythonic bindings for FFmpeg's libraries",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-cairocffi",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.7.1-5",
+          "installed_size_kb": 281,
+          "summary": "cffi-based cairo bindings for Python (Python3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-cffi",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "2.0.0-3build1",
+          "installed_size_kb": 417,
+          "summary": "Foreign Function Interface for Python 3 calling C code",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-click",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "8.2.0+0.really.8.1.8-1build1",
+          "installed_size_kb": 374,
+          "summary": "Command-Line Interface Creation Kit - Python 3.x",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-fonttools",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "4.61.1-3build1",
+          "installed_size_kb": 11231,
+          "summary": "Converts OpenType and TrueType fonts to and from XML (Python 3 Library)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-freetype",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.5.1-2",
+          "installed_size_kb": 496,
+          "summary": "Freetype Python bindings for Python 3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-glfw",
+          "origin": "foundry",
+          "section": "python",
+          "version": "2.10.0-1foundry1",
+          "installed_size_kb": 168,
+          "summary": "Python ctypes bindings for GLFW3",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. Pure-ctypes PyGLFW bindings wrap the system libglfw3.",
+            "repology_project": "python:glfw"
+          }
+        },
+        {
+          "name": "python3-imageio",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.37.2-1",
+          "installed_size_kb": 1191,
+          "summary": "library for reading and writing image data (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-imageio-ffmpeg",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.6.0-3",
+          "installed_size_kb": 65,
+          "summary": "FFMPEG wrapper for Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-librosa",
+          "origin": "foundry",
+          "section": "python",
+          "version": "0.11.0-1foundry1",
+          "installed_size_kb": 1019,
+          "summary": "audio and music analysis library for Python",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. All 13 runtime deps confirmed in ubuntu:26.04 universe.",
+            "repology_project": "python:librosa"
+          }
+        },
+        {
+          "name": "python3-loguru",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.7.3-4",
+          "installed_size_kb": 249,
+          "summary": "enjoyable loggin' for Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-lz4",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "4.4.5+dfsg-1build1",
+          "installed_size_kb": 137,
+          "summary": "Python interface to the lz4 compression library (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-moviepy",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.1.2-4",
+          "installed_size_kb": 411,
+          "summary": "Video editing with Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-msgpack",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "1.1.2-2build1",
+          "installed_size_kb": 254,
+          "summary": "Python 3 implementation of MessagePack format",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-mss",
+          "origin": "foundry",
+          "section": "python",
+          "version": "10.2.0-1foundry1",
+          "installed_size_kb": 244,
+          "summary": "ultra-fast cross-platform screenshot library for Python",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. Pure-ctypes screenshot library, zero runtime deps.",
+            "repology_project": "python:mss"
+          }
+        },
+        {
+          "name": "python3-mypy",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.19.1-5build1",
+          "installed_size_kb": 43960,
+          "summary": "public modules for mypy (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-networkx",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "3.2.1-4ubuntu2",
+          "installed_size_kb": 86730,
+          "summary": "tool to create, manipulate and study complex networks (Python3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-numba",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.64.0+dfsg-1ubuntu1",
+          "installed_size_kb": 11876,
+          "summary": "native machine code compiler for Python 3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-numpy",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "1:2.3.5+ds-3ubuntu1",
+          "installed_size_kb": 26785,
+          "summary": "Python library for numerical computations (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-opencv",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "4.10.0+dfsg-7ubuntu5",
+          "installed_size_kb": 9189,
+          "summary": "Python 3 bindings for the computer vision library",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-opengl",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "3.1.10+dfsg-1",
+          "installed_size_kb": 7317,
+          "summary": "Python bindings to OpenGL (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pil",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "12.1.1-2ubuntu1",
+          "installed_size_kb": 1968,
+          "summary": "Python Imaging Library (Python3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-psutil",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "7.1.0-1ubuntu1",
+          "installed_size_kb": 1109,
+          "summary": "module providing convenience functions for managing processes (Python3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pydub",
+          "origin": "foundry",
+          "section": "python",
+          "version": "0.25.1-1foundry1",
+          "installed_size_kb": 130,
+          "summary": "high-level audio manipulation library for Python",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. Requires python3-audioop-lts dep for Python 3.14 compat.",
+            "repology_project": "python:pydub"
+          }
+        },
+        {
+          "name": "python3-pygame",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.6.1-4build1",
+          "installed_size_kb": 4495,
+          "summary": "SDL bindings for games development (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pyglet",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.0.17+ds-3",
+          "installed_size_kb": 6005,
+          "summary": "cross-platform windowing and multimedia library (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pynput",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.8.1-1",
+          "installed_size_kb": 322,
+          "summary": "control and monitor input devices (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-pytest",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "9.0.2-4",
+          "installed_size_kb": 1378,
+          "summary": "Simple, powerful testing in Python3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-rich",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "13.9.4-1.2",
+          "installed_size_kb": 1053,
+          "summary": "render rich text, tables, progress bars, syntax highlighting, markdown and more",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-scipy",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.16.3-4build1",
+          "installed_size_kb": 66895,
+          "summary": "scientific tools for Python 3",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-serial",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "3.5-2build1",
+          "installed_size_kb": 458,
+          "summary": "pyserial - module encapsulating access for the serial port",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-shapely",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.1.2-1ubuntu2",
+          "installed_size_kb": 1651,
+          "summary": "geometric objects, predicates, and operations (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-sortedcontainers",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "2.4.0-2build1",
+          "installed_size_kb": 153,
+          "summary": "sorted container types: SortedList, SortedDict, and SortedSet (Python 3)",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-sounddevice",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "0.5.3-1",
+          "installed_size_kb": 145,
+          "summary": "Play and Record Sound with Python - Python 3.x",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-soundfile",
+          "origin": "ubuntu-universe",
+          "section": "universe/sound",
+          "version": "0.13.1-3",
+          "installed_size_kb": 112,
+          "summary": "Python 3 audio module based on libsndfile",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-tomli",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "2.4.0-1build1",
+          "installed_size_kb": 446,
+          "summary": "lil' TOML parser for Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-tomli-w",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.2.0-2",
+          "installed_size_kb": 33,
+          "summary": "lil' TOML writer for Python",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-tqdm",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "4.67.3-1build1",
+          "installed_size_kb": 489,
+          "summary": "fast, extensible progress bar for Python 3 and CLI tool",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-websockets",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "15.0.1-1build2",
+          "installed_size_kb": 673,
+          "summary": "implementation of the WebSocket Protocol (RFC 6455)",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-yaml",
+          "origin": "ubuntu-main",
+          "section": "python",
+          "version": "6.0.3-1build1",
+          "installed_size_kb": 561,
+          "summary": "YAML parser and emitter for Python3",
+          "upstream": {
+            "status": "in-ubuntu-main"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-zmq",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "27.1.0-1build1",
+          "installed_size_kb": 732,
+          "summary": "Python3 bindings for 0MQ library",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
+          "name": "python3-zstd",
+          "origin": "ubuntu-universe",
+          "section": "universe/python",
+          "version": "1.5.5.1-1build5",
+          "installed_size_kb": 44,
+          "summary": "python bindings to Yann Collet ZSTD compression library",
+          "upstream": {
+            "status": "in-ubuntu-universe"
+          },
+          "cve_count": 0
+        },
+        {
           "name": "radare2",
           "origin": "ubuntu-universe",
           "section": "universe/devel",
@@ -2165,6 +3345,19 @@
             "status": "in-ubuntu-universe"
           },
           "cve_count": 164
+        },
+        {
+          "name": "ruff",
+          "origin": "foundry",
+          "section": "devel",
+          "version": "0.15.15-1foundry1",
+          "installed_size_kb": 27022,
+          "summary": "extremely fast Python linter and code formatter",
+          "upstream": {
+            "status": "vendored",
+            "note": "Not in Ubuntu universe. Pre-built Rust binary repackaged from manylinux wheel.",
+            "repology_project": "python:ruff"
+          }
         },
         {
           "name": "scummvm",
@@ -2211,7 +3404,8 @@
           "summary": "Convert SPIR-V to other shader languages (CLI tool)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "spirv-tools",
@@ -2222,7 +3416,8 @@
           "summary": "API and commands for processing SPIR-V modules (tools)",
           "upstream": {
             "status": "in-ubuntu-universe"
-          }
+          },
+          "cve_count": 0
         },
         {
           "name": "stella",
@@ -2447,6 +3642,66 @@
       }
     },
     {
+      "name": "python3-glfw",
+      "pulled_by": [
+        "foundry-python-gamedev",
+        "foundry-core"
+      ],
+      "upstream": {
+        "status": "vendored",
+        "note": "Not in Ubuntu universe. Pure-ctypes PyGLFW bindings wrap the system libglfw3.",
+        "repology_project": "python:glfw"
+      }
+    },
+    {
+      "name": "python3-librosa",
+      "pulled_by": [
+        "foundry-python-gamedev",
+        "foundry-core"
+      ],
+      "upstream": {
+        "status": "vendored",
+        "note": "Not in Ubuntu universe. All 13 runtime deps confirmed in ubuntu:26.04 universe.",
+        "repology_project": "python:librosa"
+      }
+    },
+    {
+      "name": "python3-mss",
+      "pulled_by": [
+        "foundry-python-gamedev",
+        "foundry-core"
+      ],
+      "upstream": {
+        "status": "vendored",
+        "note": "Not in Ubuntu universe. Pure-ctypes screenshot library, zero runtime deps.",
+        "repology_project": "python:mss"
+      }
+    },
+    {
+      "name": "python3-pydub",
+      "pulled_by": [
+        "foundry-python-gamedev",
+        "foundry-core"
+      ],
+      "upstream": {
+        "status": "vendored",
+        "note": "Not in Ubuntu universe. Requires python3-audioop-lts dep for Python 3.14 compat.",
+        "repology_project": "python:pydub"
+      }
+    },
+    {
+      "name": "ruff",
+      "pulled_by": [
+        "foundry-python-gamedev",
+        "foundry-core"
+      ],
+      "upstream": {
+        "status": "vendored",
+        "note": "Not in Ubuntu universe. Pre-built Rust binary repackaged from manylinux wheel.",
+        "repology_project": "python:ruff"
+      }
+    },
+    {
       "name": "snes9x-gtk",
       "pulled_by": [
         "foundry-emulators",
@@ -2469,15 +3724,15 @@
       "repology_project": "vgmstream"
     }
   ],
-  "grand_total_installed_size_kb": 19821932,
+  "grand_total_installed_size_kb": 20784616,
   "upstream_summary": {
-    "vendored": 6,
+    "vendored": 11,
     "debian-itp": 0,
     "in-debian-unstable": 0,
-    "in-ubuntu-universe": 95,
+    "in-ubuntu-universe": 125,
     "in-ubuntu-multiverse": 12,
-    "in-ubuntu-main": 7,
-    "n/a-firstparty": 16,
+    "in-ubuntu-main": 19,
+    "n/a-firstparty": 17,
     "n/a-proprietary": 0,
     "unknown": 0
   },

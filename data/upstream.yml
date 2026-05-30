@@ -111,3 +111,27 @@ foundry-kde-theme:
   status: n/a-firstparty
 foundry-welcome:
   status: n/a-firstparty
+python3-glfw:
+  status: vendored
+  note: "Not in Ubuntu universe. Pure-ctypes PyGLFW bindings wrap the system libglfw3."
+  repology_project: python:glfw
+python3-pydub:
+  status: vendored
+  note: "Not in Ubuntu universe. Requires python3-audioop-lts dep for Python 3.14 compat."
+  repology_project: python:pydub
+python3-librosa:
+  status: vendored
+  note: "Not in Ubuntu universe. All 13 runtime deps confirmed in ubuntu:26.04 universe."
+  repology_project: python:librosa
+python3-mss:
+  status: vendored
+  note: "Not in Ubuntu universe. Pure-ctypes screenshot library, zero runtime deps."
+  repology_project: python:mss
+ruff:
+  status: vendored
+  note: "Not in Ubuntu universe. Pre-built Rust binary repackaged from manylinux wheel."
+  repology_project: python:ruff
+foundry-python-gamedev:
+  status: n/a-firstparty
+foundry-python-gamedev-extras:
+  status: n/a-firstparty
