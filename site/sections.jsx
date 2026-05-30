@@ -118,12 +118,12 @@ function Hero() {
 // from the live apt indexes.
 
 const FORGE_CARDS = [
-  // Top row — creative loops
+  // Top row
   { categorySlug: 'worldfoundry-gdk' },
   { categorySlug: 'blender' },
-  { categorySlug: 'retro-tools' },
-  // Bottom row — rest of catalogue
-  { categorySlug: 'emulators' },
+  { categorySlug: 'retro-and-emulators' },
+  // Bottom row
+  { categorySlug: 'python-gamedev' },
   { categorySlug: 'audio-production' },
   { categorySlug: 'games' },
 ];
