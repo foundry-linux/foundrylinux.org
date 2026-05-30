@@ -1,0 +1,25 @@
+Source: python3-pydub
+Section: python
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools
+Standards-Version: 4.7.0
+Homepage: http://pydub.com
+Rules-Requires-Root: no
+
+Package: python3-pydub
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+         python3-audioop-lts
+Recommends: ffmpeg
+Description: high-level audio manipulation library for Python
+ Pydub provides a simple, high-level interface for working with audio
+ files: slicing, concatenating, mixing, fading, and exporting. Format
+ conversion (MP3, OGG, WAV, FLAC, AAC, etc.) is handled by ffmpeg.
+ .
+ Pure Python with no mandatory dependencies. Useful in game development
+ for procedural audio assembly, automated sound effect processing,
+ batch format conversion, and audio pipeline tooling.

@@ -1,0 +1,8 @@
+python3-librosa (0.11.0-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of librosa 0.11.0.
+  * Source: https://files.pythonhosted.org/packages/64/36/
+    360b5aafa0238e29758729e9486c6ed92a6f37fa403b7875e06c115cdf4a/
+    librosa-0.11.0.tar.gz
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 30 May 2026 21:00:00 +0000

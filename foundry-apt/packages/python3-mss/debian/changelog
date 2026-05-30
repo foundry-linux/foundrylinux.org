@@ -1,0 +1,8 @@
+python3-mss (10.2.0-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of python-mss 10.2.0.
+  * Source: https://files.pythonhosted.org/packages/e5/5d/
+    eee782a6d674f562c946ae6a026f4c595ea2b7b031f290bf9fbf60da09b5/
+    mss-10.2.0.tar.gz
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 30 May 2026 21:00:00 +0000

@@ -1,0 +1,9 @@
+ruff (0.15.15-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of ruff 0.15.15.
+  * Repackaged from the upstream manylinux_2_17 x86_64 wheel.
+  * Source wheel: https://files.pythonhosted.org/packages/fe/1c/
+    e6e5e568f22be4fb05d6244234aba384c06b451252453b821e1a529263cf/
+    ruff-0.15.15-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 30 May 2026 21:00:00 +0000

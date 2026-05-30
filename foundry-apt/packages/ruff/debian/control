@@ -1,0 +1,20 @@
+Source: ruff
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13), unzip
+Standards-Version: 4.7.0
+Homepage: https://docs.astral.sh/ruff
+Rules-Requires-Root: no
+
+Package: ruff
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: extremely fast Python linter and code formatter
+ Ruff is an extremely fast Python linter and code formatter, written in
+ Rust. It can replace Flake8 (plus dozens of plugins), Black, isort,
+ pyupgrade, and more, all while running 10-100x faster than each
+ individual tool.
+ .
+ Supports linting, formatting, import sorting, and type annotation
+ upgrades in a single binary with no Python runtime dependency.

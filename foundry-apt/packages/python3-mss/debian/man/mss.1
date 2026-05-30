@@ -1,0 +1,73 @@
+.TH MSS 1 "May 2026" "mss 10.2.0" "User Commands"
+.SH NAME
+mss \- ultra-fast cross-platform screenshot tool
+.SH SYNOPSIS
+.B mss
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B mss
+captures one or more screenshots using the MSS (Multiple ScreenShots)
+library. On Linux it accesses X11 and XRandR directly via ctypes, with
+no Pillow or OpenCV dependency required for capture.
+.PP
+By default, all connected monitors are captured and saved as
+\fBmonitor-{mon}.png\fR in the current directory.
+.SH OPTIONS
+.TP
+.BR \-c ", " \-\-coordinates " " \fITOP,LEFT,WIDTH,HEIGHT\fR
+Capture a specific rectangular region of the screen instead of a full
+monitor. Coordinates are in pixels: top, left, width, height.
+.TP
+.BR \-l ", " \-\-level " " \fILEVEL\fR
+PNG compression level (0\(en9, default: 6). Higher values compress more
+but are slower to write.
+.TP
+.BR \-m ", " \-\-monitor " " \fIN\fR
+Index of the monitor to capture (default: 0, which captures all monitors).
+.TP
+.BR \-o ", " \-\-output " " \fIFILE\fR
+Output filename pattern (default: \fBmonitor-{mon}.png\fR). The token
+\fB{mon}\fR is replaced with the monitor index.
+.TP
+.BR \-\-with\-cursor
+Include the mouse cursor in the screenshot (Linux only; ignored on other
+platforms with a warning).
+.TP
+.BR \-q ", " \-\-quiet
+Suppress output of saved file paths.
+.TP
+.BR \-b ", " \-\-backend " " \fIBACKEND\fR
+Platform-specific backend to use. On Linux the available backends are
+\fBx11\fR and \fBxrandr\fR (default: \fBdefault\fR).
+.TP
+.BR \-v ", " \-\-version
+Print the mss version and exit.
+.TP
+.BR \-h ", " \-\-help
+Show a short help message and exit.
+.SH EXAMPLES
+Capture all monitors:
+.PP
+.RS
+.B mss
+.RE
+.PP
+Capture monitor 1 only:
+.PP
+.RS
+.B mss \-m 1
+.RE
+.PP
+Capture a 640×480 region at position (100, 200):
+.PP
+.RS
+.B mss \-c 200,100,640,480 \-o region.png
+.RE
+.SH SEE ALSO
+.BR scrot (1),
+.BR import (1)
+.SH AUTHORS
+Mickaël Schoentgen <contact@tiger-222.fr>
+.SH COPYRIGHT
+Copyright \(co 2013\(en2026 Mickaël Schoentgen.
+License MIT: <https://opensource.org/licenses/MIT>.

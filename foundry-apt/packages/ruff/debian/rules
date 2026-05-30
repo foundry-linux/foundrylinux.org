@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+UPSTREAM = 0.15.15
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	install -D -m 0755 ruff-$(UPSTREAM).data/scripts/ruff \
+	    $(CURDIR)/debian/ruff/usr/bin/ruff
+
+override_dh_strip:
+	# Pre-built Rust release binary — already stripped by upstream CI

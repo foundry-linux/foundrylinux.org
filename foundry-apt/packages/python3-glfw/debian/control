@@ -1,0 +1,26 @@
+Source: python3-glfw
+Section: python
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools
+Standards-Version: 4.7.0
+Homepage: https://github.com/FlorianRhiem/pyGLFW
+Rules-Requires-Root: no
+
+Package: python3-glfw
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+         libglfw3 | libglfw3-wayland
+Description: Python ctypes bindings for GLFW3
+ GLFW is a portable library for OpenGL, Vulkan, and window/input
+ management. This package provides Python ctypes bindings that wrap the
+ system GLFW3 shared library, exposing the full GLFW API under Pythonic
+ naming conventions.
+ .
+ Supports X11 and Wayland on Linux (via libglfw3 or libglfw3-wayland),
+ and is a common foundation for OpenGL game windows, shader demos, and
+ real-time rendering tools that don't use a higher-level framework like
+ pygame or pyglet.

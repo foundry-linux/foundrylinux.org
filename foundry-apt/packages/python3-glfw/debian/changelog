@@ -1,0 +1,8 @@
+python3-glfw (2.10.0-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of pyGLFW 2.10.0.
+  * Source: https://files.pythonhosted.org/packages/96/72/
+    642d4f12f61816ac96777f7360d413e3977a7dd08237d196f02da681b186/
+    glfw-2.10.0.tar.gz
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 30 May 2026 21:00:00 +0000

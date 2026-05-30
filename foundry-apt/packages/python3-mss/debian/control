@@ -1,0 +1,27 @@
+Source: python3-mss
+Section: python
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               pybuild-plugin-pyproject,
+               python3-hatchling
+Standards-Version: 4.7.0
+Homepage: https://github.com/BoboTiG/python-mss
+Rules-Requires-Root: no
+
+Package: python3-mss
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: ultra-fast cross-platform screenshot library for Python
+ MSS (Multiple ScreenShots) is a pure-Python ctypes library that captures
+ screenshots at maximum speed without any external dependencies. On Linux
+ it accesses X11 and XRandR directly via ctypes; no PIL or OpenCV is
+ required for capture.
+ .
+ Optional Pillow integration converts raw pixel buffers to PNG or other
+ image formats. Useful for game recording tools, automated QA harnesses,
+ and screen-capture overlays.
+ .
+ Also ships the mss(1) command-line tool for one-shot screenshot capture.

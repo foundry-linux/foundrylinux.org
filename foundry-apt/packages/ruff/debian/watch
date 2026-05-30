@@ -1,0 +1,2 @@
+version=4
+https://github.com/astral-sh/ruff/tags .*/archive/refs/tags/v?@ANY_VERSION@\.tar\.gz

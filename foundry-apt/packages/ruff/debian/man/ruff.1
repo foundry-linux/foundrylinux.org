@@ -1,0 +1,129 @@
+.TH RUFF 1 "May 2026" "ruff 0.15.15" "User Commands"
+.SH NAME
+ruff \- extremely fast Python linter and code formatter
+.SH SYNOPSIS
+.B ruff
+\fICOMMAND\fR [\fIOPTIONS\fR] [\fIFILES\fR...]
+.SH DESCRIPTION
+.B ruff
+is an extremely fast Python linter and code formatter written in Rust.
+It can replace Flake8 (plus dozens of plugins), Black, isort, pyupgrade,
+and more, while running 10\(en100x faster than the equivalent Python tools.
+.PP
+Configuration is read from \fBpyproject.toml\fR, \fBruff.toml\fR, or
+\fB.ruff.toml\fR in the project root.
+.SH COMMANDS
+.TP
+.B check [\fIFILES\fR...]
+Lint the given files or directories. Reads from stdin if no files are given.
+.TP
+.B format [\fIFILES\fR...]
+Format the given files or directories. Equivalent to running Black.
+.TP
+.B rule \fIRULE\fR
+Explain a specific lint rule, or list all rules if given \fB--all\fR.
+.TP
+.B config [\fIKEY\fR]
+List or describe available configuration options.
+.TP
+.B linter
+List all supported upstream linters.
+.TP
+.B clean
+Remove ruff's cache from the current directory tree.
+.TP
+.B server
+Start the LSP language server (for editor integration).
+.TP
+.B analyze
+Run analysis over Python source code.
+.TP
+.B version
+Print the ruff version.
+.SH OPTIONS
+.TP
+.BR \-h ", " \-\-help
+Print help.
+.TP
+.BR \-V ", " \-\-version
+Print version.
+.TP
+.BR \-v ", " \-\-verbose
+Enable verbose logging.
+.TP
+.BR \-q ", " \-\-quiet
+Print diagnostics only, suppress other output.
+.TP
+.BR \-s ", " \-\-silent
+Suppress all output (exit code still reflects findings).
+.TP
+.BI \-\-config " KEY=VALUE\fR|\fIPATH"
+Override a configuration option or specify a config file path.
+.TP
+.B \-\-isolated
+Ignore all configuration files.
+.TP
+.BI \-\-color " WHEN"
+Control colored output: \fBauto\fR (default), \fBalways\fR, or \fBnever\fR.
+.SH "CHECK OPTIONS"
+.TP
+.B \-\-fix
+Automatically fix fixable lint violations.
+.TP
+.B \-\-unsafe\-fixes
+Apply fixes that may change program behaviour.
+.TP
+.BI \-\-select " RULES"
+Comma-separated list of rule codes to enable (e.g. \fBE,F,I\fR).
+.TP
+.BI \-\-ignore " RULES"
+Comma-separated list of rule codes to ignore.
+.TP
+.B \-\-statistics
+Show a count of each violation type.
+.TP
+.B \-\-show\-files
+List all files ruff would lint and exit.
+.SH EXAMPLES
+Lint the current directory:
+.PP
+.RS
+.B ruff check .
+.RE
+.PP
+Lint and auto-fix:
+.PP
+.RS
+.B ruff check --fix .
+.RE
+.PP
+Format a file:
+.PP
+.RS
+.B ruff format src/game.py
+.RE
+.PP
+Explain rule E501:
+.PP
+.RS
+.B ruff rule E501
+.RE
+.SH FILES
+.TP
+.B pyproject.toml
+Configuration under \fB[tool.ruff]\fR.
+.TP
+.B ruff.toml
+Standalone configuration file (same format, no \fB[tool.ruff]\fR wrapper).
+.SH SEE ALSO
+.BR flake8 (1),
+.BR black (1),
+.BR isort (1)
+.SH AUTHORS
+Charles Marsh and the Astral Software team.
+.SH COPYRIGHT
+Copyright \(co 2022 Charles Marsh. License MIT.
+.PP
+Full license and bundled-library attributions:
+.UR https://github.com/astral-sh/ruff/blob/main/LICENSE
+.UE

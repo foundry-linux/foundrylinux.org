@@ -1,0 +1,44 @@
+Source: python3-librosa
+Section: python
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools
+Standards-Version: 4.7.0
+Homepage: https://librosa.org
+Rules-Requires-Root: no
+
+Package: python3-librosa
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+         python3-audioread,
+         python3-numba,
+         python3-numpy,
+         python3-scipy,
+         python3-sklearn,
+         python3-joblib,
+         python3-decorator,
+         python3-soundfile,
+         python3-pooch,
+         python3-soxr,
+         python3-typing-extensions,
+         python3-lazy-loader,
+         python3-msgpack,
+         python3-standard-aifc,
+         python3-standard-sunau
+Description: audio and music analysis library for Python
+ Librosa is a Python library for audio and music signal processing.
+ It provides building blocks for music information retrieval (MIR)
+ and audio analysis, including:
+ .
+   * Beat tracking and tempo estimation
+   * Onset detection
+   * Mel spectrograms, STFT, and constant-Q transforms
+   * MFCC (Mel Frequency Cepstral Coefficients)
+   * Pitch tracking and chroma features
+   * Time-frequency representations
+ .
+ Useful in game development for rhythm game beat maps, procedural
+ music systems, BPM detection from soundtracks, and audio visualizers.
