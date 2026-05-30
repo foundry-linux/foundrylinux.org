@@ -152,7 +152,7 @@ These showed up in the heuristic scan but are **not** game-dev relevant for this
 | `torch`, `tensorflow`, `jax`, `onnxruntime`, `triton` | ML frameworks. Enormous (500 MB+). A separate AI-dev metapackage, not game-dev. |
 | `boto3`, `aiobotocore`, `botocore`, all `mypy-boto3-*` | AWS SDK ecosystem. Not applicable. |
 | `fastapi`, `starlette`, `uvicorn`, `werkzeug`, `flask` | Web frameworks. A game backend is possible but not what we're pre-installing for. |
-| `sqlalchemy`, `asyncpg`, `aiosqlite`, `alembic` | Database layers. Not typical game-dev needs at install time. |
+| `sqlalchemy`, `asyncpg`, `alembic` | Database ORM/migration layers. Not typical game-dev needs. |
 | `pyasn1`, `pyopenssl`, `cryptography`, `oauthlib` | TLS/auth stack. Pulled in transitively — no need to pre-install. |
 | `langchain`, `openai`, `google-genai`, `pydantic-ai` | LLM tooling. Interesting but a separate category. |
 | `opencv-python-headless` | Headless variant — wrong choice for a desktop distro. Use `opencv-python`. |
@@ -219,17 +219,17 @@ Script: `docs/investigations/check-universe.sh`
 | `zstd` | `python3-zstd` | 1.5.5.1 | ✓ (use this; `pyzstd` not in universe) |
 | `cairocffi` | `python3-cairocffi` | 1.7.1 | ✓ |
 
-### NOT in Universe — need vendoring via foundry-apt or pip
+### NOT in Universe — vendored in foundry-apt or deferred
 
-| PyPI Name | Ubuntu Package | Tier | Action |
+| PyPI Name | Ubuntu Package | Tier | Status |
 |-----------|---------------|------|--------|
-| `glfw` | `python3-glfw` | 2 — Recommended | **Vendor** — critical for OpenGL window/input outside pygame |
-| `pydub` | `python3-pydub` | 2 — Recommended | **Vendor** — high-level audio manipulation; wraps ffmpeg |
-| `ruff` | `ruff` | 2 — Recommended | **Vendor** — fast linter/formatter; replaces flake8+black |
-| `librosa` | `python3-librosa` | 3 — Optional | **Vendor** — beat detection/DSP for rhythm games; all deps in universe |
-| `mss` | `python3-mss` | 3 — Optional | **Vendor** — game recording & QA tooling; pure-ctypes, zero deps |
-| `maturin` | `maturin` | 3 — Optional | **Vendor** — needed for Rust→Python extension builds |
-| `pyzstd` | `python3-pyzstd` | 3 — Optional | Drop — `python3-zstd` covers it |
+| `glfw` | `python3-glfw` | 2 — Recommended | ✅ **Shipped** v2.10.0-1foundry1 |
+| `pydub` | `python3-pydub` | 2 — Recommended | ✅ **Shipped** v0.25.1-1foundry1 (adds `python3-audioop-lts` dep for Python 3.14) |
+| `ruff` | `ruff` | 2 — Recommended | ✅ **Shipped** v0.15.15-1foundry1 (pre-built Rust binary from manylinux wheel) |
+| `librosa` | `python3-librosa` | 3 — Optional | ✅ **Shipped** v0.11.0-1foundry1 (all 13 deps confirmed in universe) |
+| `mss` | `python3-mss` | 3 — Optional | ✅ **Shipped** v10.2.0-1foundry1 (hatchling backend; ships `mss(1)` man page) |
+| `maturin` | `maturin` | 3 — Optional | ⏳ **TODO** — Rust→Python extension builder; `Suggests:` in extras for now |
+| `pyzstd` | `python3-pyzstd` | 3 — Optional | ❌ **Dropped** — `python3-zstd` covers it |
 
 **Note on `rich`:** Universe ships 13.9.4; PyPI is 15.0.0. The 14→15 release dropped
 several deprecated APIs. If any vendored tools pin to rich ≥ 14, the universe package will
@@ -237,62 +237,54 @@ break them. Monitor; may need to vendor a newer version.
 
 ---
 
-## Summary Package List (for metapackage Depends:)
+## What Shipped
+
+All packages built, lintian-clean, and live on `apt.foundrylinux.org` as of 2026-05-30.
+
+### Metapackages
 
 ```
-# foundry-python-gamedev — Essential + Recommended (all from ubuntu universe)
-python3-numpy
-python3-scipy
-python3-cffi
-python3-pil          # Pillow
-python3-imageio
-python3-pygame
-python3-pyglet
-python3-opengl       # PyOpenGL
-python3-sounddevice
-python3-soundfile
-python3-yaml         # PyYAML
-python3-tomli
-python3-tomli-w
-python3-msgpack
-python3-lz4
-python3-websockets
-python3-aiohttp
-python3-zmq          # pyzmq
-python3-aiosqlite    # async sqlite3 for save data / leaderboards
-python3-click
-python3-rich
-python3-tqdm
-python3-pytest
-python3-mypy
-python3-loguru
-python3-psutil
-cython3
-python3-numba
-python3-shapely
-# From foundry-apt (not in ubuntu universe):
-python3-glfw
-python3-pydub
-ruff
+apt install foundry-python-gamedev          # base stack — 31 packages
+apt install foundry-python-gamedev-extras   # +16 packages (video, audio analysis, capture)
 ```
 
+Both are `Depends:` in `foundry-core` 1.0.2 — the full Python game-dev stack ships
+with every Foundry Linux edition and existing Ubuntu installs via `apt install foundry-core`.
+
+### Actual Depends: lists
+
 ```
-# foundry-python-gamedev-extras — Tier 3 Optional
-python3-opencv
-python3-av
-python3-imageio-ffmpeg
-python3-moviepy
-python3-fonttools
-python3-freetype
-python3-pynput
-python3-serial
-python3-networkx
-python3-sortedcontainers
-python3-attr
-python3-zstd
-python3-cairocffi
-# From foundry-apt (not in ubuntu universe):
-maturin
-python3-librosa
-python3-mss
+# foundry-python-gamedev 1.0.0 — all from ubuntu universe except the three below
+python3-numpy, python3-scipy, python3-cffi, python3-pil, python3-imageio,
+python3-pygame, python3-pyglet, python3-opengl,
+python3-sounddevice, python3-soundfile,
+python3-yaml, python3-tomli, python3-tomli-w, python3-msgpack, python3-lz4,
+python3-websockets, python3-aiohttp, python3-zmq, python3-aiosqlite,
+python3-click, python3-rich, python3-tqdm, python3-pytest, python3-mypy,
+python3-loguru, python3-psutil, cython3, python3-numba, python3-shapely,
+python3-glfw,   # ← foundry-apt
+python3-pydub,  # ← foundry-apt
+ruff            # ← foundry-apt
+
+# foundry-python-gamedev-extras 1.0.0 — all from ubuntu universe except the two below
+foundry-python-gamedev,
+python3-opencv, python3-av, python3-imageio-ffmpeg, python3-moviepy,
+python3-librosa,         # ← foundry-apt
+python3-mss,             # ← foundry-apt
+python3-fonttools, python3-freetype, python3-pynput, python3-serial,
+python3-networkx, python3-sortedcontainers, python3-attr,
+python3-zstd, python3-cairocffi
+# Suggests: maturin  (not yet vendored)
 ```
+
+### Packaging notes
+
+- **pydub + Python 3.14:** `audioop` removed from Python stdlib in 3.13. pydub already
+  had `try: import audioop; except: import pyaudioop`. The fix is `python3-audioop-lts`
+  (ubuntu universe 0.2.2-2) — NOT `pyaudioop` which doesn't exist on PyPI.
+- **ruff:** pre-built Rust binary from PyPI manylinux wheel. Binary at
+  `ruff-X.Y.Z.data/scripts/ruff` inside the wheel zip (not `ruff/bin/ruff`).
+- **mss:** uses hatchling build backend; needs `pybuild-plugin-pyproject` +
+  `python3-hatchling` in Build-Depends.
+- **All Python packages:** must use `--buildsystem=pybuild` (not bare `--with python3`)
+  in compat 13 — `dh_auto_clean` rejects `python setup.py clean` since compat 12.
