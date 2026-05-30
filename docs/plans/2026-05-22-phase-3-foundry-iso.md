@@ -897,3 +897,12 @@ Step 9 status: rsync error 11 (RERR_FILEIO) during squashfs extraction in QEMU �
   defer the decision — Steam adds ~500 MB and a proprietary EULA dance
   that's not ideal for the v1 ISO. Users who want it `apt install steam`
   after first boot. Re-evaluate after we have user feedback.
+- **GitHub org avatar** (brand presence — parked here as a pre-launch
+  checklist item, not an ISO feature). The `foundry-linux` org still shows
+  GitHub's default icon. Upload the anvil mark — the lit/shadow favicon
+  (`site/favicon.svg`) centered on a solid ember-orange `#ff5b1a` square,
+  committed ready-to-upload at `brand/org-avatar.png` — via the org
+  **Settings → Profile → Profile picture**. Org avatars have **no REST API**,
+  so this is the one unavoidable manual step in an otherwise scripted brand
+  pipeline; do it before the monorepo flips public. Regenerate any time:
+  `rsvg-convert -w1000 -h1000 brand/org-avatar.svg -o brand/org-avatar.png`.
