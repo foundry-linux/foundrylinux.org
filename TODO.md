@@ -27,7 +27,7 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 
 ### Phase 2 — Distrobox image — COMPLETE ✓
 
-- [x] Build `ghcr.io/foundry-linux/devbox:26.04` — single `apt install foundry-anvil` (the base edition of a 3-tier nested hierarchy: anvil ⊆ sprite ⊆ atelier). GHCR workflow for tag-driven publish. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
+- [x] Build `ghcr.io/foundry-linux/devbox:26.04` — single `apt install foundry-core` (the desktop-agnostic base of the nested hierarchy core ⊆ anvil ⊆ sprite ⊆ atelier; anvil adds `foundry-desktop`/KDE, which has no place in a container — and keeps the image + test harnesses lean and quick to build/boot). GHCR workflow for tag-driven publish. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
 
 ### Phase 3 — Foundry Linux ISO
 

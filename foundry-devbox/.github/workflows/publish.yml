@@ -44,11 +44,16 @@ jobs:
           cache-from: type=gha
           cache-to:   type=gha,mode=max
 
-      - name: Smoke-check image (pull + foundry-anvil tool list)
+      - name: Smoke-check image (pull + foundry-core tool list)
         if: ${{ !inputs.dry_run }}
         env:
           IMAGE: ghcr.io/foundry-linux/devbox:26.04
         run: |
+          # The image installs foundry-core, NOT foundry-anvil: anvil adds
+          # foundry-desktop/KDE, which has no place in a headless container and
+          # would bloat the image + slow every harness build/boot. Staying at the
+          # core rung keeps this smoke check — and all CI/test containers — small
+          # and quick to create and boot, so the tool list below is foundry-core's.
           docker pull "$IMAGE"
           # /usr/games in PATH inside the image — mame lives at /usr/games/mame
           # per Debian games convention.
@@ -67,4 +72,4 @@ jobs:
               bash -c "command -v $tool" \
               || { echo "MISSING: $tool" >&2; exit 1; }
           done
-          echo "All foundry-anvil tools present on PATH."
+          echo "All foundry-core tools present on PATH."
