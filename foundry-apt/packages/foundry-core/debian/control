@@ -17,6 +17,7 @@ Depends: ${misc:Depends},
  foundry-game-frameworks,
  foundry-image-cli,
  foundry-python-gamedev,
+ foundry-python-gamedev-extras,
  foundry-retro-tools,
  task,
  worldfoundry
