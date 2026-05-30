@@ -1,0 +1,7 @@
+foundry-python-gamedev (1.0.0) resolute; urgency=medium
+
+  * Initial release. Essential + recommended Python game-dev packages
+    for Foundry Linux, covering frameworks, math, audio, networking,
+    serialization, and dev tools.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 30 May 2026 22:00:00 +0000
