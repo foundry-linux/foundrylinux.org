@@ -1,3 +1,11 @@
+foundry-core (1.0.2) resolute; urgency=medium
+
+  * Add foundry-python-gamedev to Depends — pulls in the full Python
+    game-dev base stack (pygame, pyglet, numpy, scipy, audio, networking,
+    dev tools, ruff, etc.) on all editions and existing installs.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 30 May 2026 22:30:00 +0000
+
 foundry-core (1.0.1) resolute; urgency=medium
 
   * Drop ubuntu-base deps (bash-completion, man-db, sudo, libvte-2.91-0)

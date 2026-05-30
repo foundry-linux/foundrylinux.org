@@ -16,6 +16,7 @@ Depends: ${misc:Depends},
  foundry-emulators-consoles,
  foundry-game-frameworks,
  foundry-image-cli,
+ foundry-python-gamedev,
  foundry-retro-tools,
  task,
  worldfoundry
