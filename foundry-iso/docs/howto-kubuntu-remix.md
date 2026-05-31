@@ -173,6 +173,13 @@ stage pointed at a mirror the chroot never used. Pin them all to the same host.
 Note `calamares-settings-{distro-slug}` is **not** in this list — it's a local
 .deb installed via hook `1000` (see [Local Package Injection](#local-package-injection)).
 
+**Hooks that read `$EDITION` must `source /root/config/hook-env.sh` first.**
+live-build runs each chroot hook with a clean environment, so an unsourced
+`$EDITION` under `set -euo pipefail` aborts the whole build with `EDITION:
+unbound variable`. The build bind-mounts `config/` at `/root/config/`, so inside
+the chroot the path is `/root/config/hook-env.sh`. (Bit us once when a strip hook
+gained an edition-conditional purge but forgot the `source` line.)
+
 **Important:** `auto/config` generates `config/hook-env.sh` (for EDITION) and
 `config/package-lists/{distro}.list.chroot` at build time. Both files are
 gitignored — they're derived output, not source.
@@ -670,8 +677,16 @@ The hook `1000-install-local-debs.hook.chroot` installs them at chroot time.
 The build runs inside an `ubuntu:{ubuntu-version}` Docker container. Key steps:
 
 ```bash
-# Fetch signing keys before starting the container
-curl -fsSL {apt-key-url} | gpg --dearmor > config/archives/{distro}.key
+# Fetch signing keys before starting the container. Retry on transient DNS /
+# connection blips — a 1 s resolver hiccup at this first network call otherwise
+# aborts the whole multi-minute build. (curl needs --retry-all-errors to retry
+# name-resolution failures — plain --retry won't.)
+fetch_key() {  # <url> <dest-keyfile>
+  curl -fsSL --retry 5 --retry-delay 2 --retry-all-errors --retry-connrefused "$1" \
+    | gpg --dearmor > "$2"
+  [[ -s "$2" ]] || { echo "ERROR: empty/invalid key from $1" >&2; exit 1; }
+}
+fetch_key {apt-key-url} config/archives/{distro}.key
 
 docker run --rm --privileged \
   -e EDITION="$EDITION" \
@@ -763,6 +778,19 @@ file to survive device reordering:
 search --set=root --file /live/filesystem.squashfs
 set prefix=($root)/boot/grub
 configfile ($root)/boot/grub/grub.cfg
+```
+
+**The loose `/EFI/BOOT` warning is benign.** xorriso warns "no directory
+/EFI/BOOT will emerge in the ISO filesystem." Image-writer USB tools (`dd`,
+Ventoy, balenaEtcher, `isoimagewriter`, Rufus DD-mode) raw-copy the ISO and boot
+via the El Torito ESP above, so the warning doesn't affect them. It only matters
+for the extract-files-to-FAT32 method — which is impractical anyway for a >4 GiB
+squashfs (FAT32 caps a single file at 4 GiB). If you ship a sub-4 GiB edition and
+want the standard hybrid layout, add a loose copy in the same xorriso call (the
+`grub-mkimage` binary already exists on disk):
+
+```
+-map "$EFI_WORK/EFI/BOOT/BOOTX64.EFI" /EFI/BOOT/BOOTX64.EFI \
 ```
 
 ---
