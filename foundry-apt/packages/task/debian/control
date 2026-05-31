@@ -1,0 +1,20 @@
+Source: task
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://taskfile.dev
+Rules-Requires-Root: no
+
+Package: task
+Architecture: amd64 arm64
+Depends: ${misc:Depends}
+Description: task runner / build tool written in Go (Taskfile.dev)
+ Task is a task runner and build tool that aims to be simpler and easier to
+ use than GNU Make. Tasks are declared in a YAML "Taskfile.yml"; Task resolves
+ their dependencies, runs the commands, and skips up-to-date work via file
+ checksums or timestamps.
+ .
+ Foundry Linux vendors the upstream go-task release binary so the package
+ resolves from apt.foundrylinux.org rather than a third-party repo.

@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	install -D -m 0755 task $(CURDIR)/debian/task/usr/bin/task
+	install -D -m 0644 completion/bash/task.bash \
+	    $(CURDIR)/debian/task/usr/share/bash-completion/completions/task
+	install -D -m 0644 completion/zsh/_task \
+	    $(CURDIR)/debian/task/usr/share/zsh/vendor-completions/_task
+	install -D -m 0644 completion/fish/task.fish \
+	    $(CURDIR)/debian/task/usr/share/fish/vendor_completions.d/task.fish
+
+override_dh_strip:
+	# Pre-built Go release binary — already stripped by upstream CI

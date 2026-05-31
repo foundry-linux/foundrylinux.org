@@ -1,0 +1,10 @@
+task (3.51.1-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of go-task 3.51.1.
+  * Repackaged from the upstream task_linux_<arch>.tar.gz release binary
+    (github.com/go-task/task), sha256-verified in packages/task/build.sh.
+  * Vendored so `Depends: task` resolves from apt.foundrylinux.org rather
+    than go-task's Cloudsmith repo, whose any-distro -> per-distro layout
+    change silently 404'd installs on the old source line.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 31 May 2026 12:00:00 +0000

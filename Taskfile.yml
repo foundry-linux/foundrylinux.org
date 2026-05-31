@@ -43,6 +43,11 @@ tasks:
     cmds:
       - bash ../python-tui-lib/scripts/md-to-pdf.sh {{.CLI_ARGS}}
 
+  check-apt-repos:
+    desc: "Health-check every apt source the ISO ships (resolve each deb line's InRelease; fail on 404). Catches upstream repo-layout rot. Pass --host to also check this machine."
+    cmds:
+      - bash scripts/check-apt-repos.sh {{.CLI_ARGS}}
+
   audit-apt-repos:
     desc: "Regenerate docs/investigations/<today>-package-inventory.md from live state of both apt repos + local source trees, then open in browser"
     cmds:

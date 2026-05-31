@@ -15,6 +15,12 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 - [x] **`/package` skill** ([plan](docs/plans/2026-05-18-package-skill.md)) — reusable Claude Code skill using `dh_make` + `debhelper` + `dpkg-buildpackage`. Iteratively refined through f9dasm, libvgm, and vgmstream packaging runs.
 - [x] **ghidra** — packaged and live; `foundry-retro-tools` 1.0.5 `Depends: ghidra`. See done entry below.
 
+### apt-repo resilience — `task` vendored + source health-check
+
+- [x] **Vendor `task` (go-task) into foundry-apt** — `foundry-apt/packages/task/` builds `task 3.51.1-1foundry1` from the sha256-pinned upstream release binary, so `Depends: task` can resolve from apt.foundrylinux.org instead of go-task's Cloudsmith repo (which rotated `any-distro`→per-distro and silently 404'd old source lines). Built + verified locally. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
+- [x] **`task check-apt-repos`** (`scripts/check-apt-repos.sh`) — resolves every shipped apt source's `InRelease` and fails loudly on 404; catches upstream repo-layout rot before it breaks a build. Tested (pass + the dead-`any-distro` fail case).
+- [ ] **Phase 2 (gated on the foundry-apt publish):** flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
+
 ### Site
 
 - [x] **Update `new-web-apt-repo` skill** — Repology badges, changelog tooltip, metapackage expansion, filter/search/copy already in gen-index.py; promoted packages.json + feed.xml + RSS auto-discovery link from "add this code" snippets to built-in; bumped to v1.1.0.
