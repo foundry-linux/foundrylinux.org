@@ -23,16 +23,22 @@ DIST_DIR="$REPO_ROOT/dist"
 mkdir -p "$DIST_DIR"
 
 echo "=== Fetching apt signing keys ==="
-curl -fsSL https://apt.foundrylinux.org/key.gpg \
-  | gpg --dearmor > "$REPO_ROOT/config/archives/foundry.key"
-curl -fsSL https://apt.worldfoundry.org/key.gpg \
-  | gpg --dearmor > "$REPO_ROOT/config/archives/worldfoundry.key"
-curl -fsSL https://dl.cloudsmith.io/public/task/task/gpg.046FD1186CA342F0.key \
-  | gpg --dearmor > "$REPO_ROOT/config/archives/cloudsmith-task.key"
+# Hardened against transient name-resolution / connection failures at this first
+# network call: a momentary DNS blip (flaky upstream resolver, VPN tunnel hiccup,
+# etc.) otherwise empties the pipe and aborts the whole multi-minute build.
+# NOTE: curl does NOT retry name-resolution failures (error 6) unless
+# --retry-all-errors is given.
+fetch_key() {  # <url> <dest-keyfile>
+  curl -fsSL --retry 5 --retry-delay 2 --retry-all-errors --retry-connrefused "$1" \
+    | gpg --dearmor > "$2"
+  [[ -s "$2" ]] || { echo "ERROR: fetched empty/invalid signing key from $1" >&2; exit 1; }
+}
+fetch_key https://apt.foundrylinux.org/key.gpg                               "$REPO_ROOT/config/archives/foundry.key"
+fetch_key https://apt.worldfoundry.org/key.gpg                              "$REPO_ROOT/config/archives/worldfoundry.key"
+fetch_key https://dl.cloudsmith.io/public/task/task/gpg.046FD1186CA342F0.key "$REPO_ROOT/config/archives/cloudsmith-task.key"
 # Mozilla key must be binary (dearmored) — apt on 26.04 rejects ASCII-armored
 # keys in trusted.gpg.d/, and live-build copies config/archives/*.key verbatim.
-curl -fsSL https://packages.mozilla.org/apt/repo-signing-key.gpg \
-  | gpg --dearmor > "$REPO_ROOT/config/archives/mozilla.key"
+fetch_key https://packages.mozilla.org/apt/repo-signing-key.gpg              "$REPO_ROOT/config/archives/mozilla.key"
 
 echo "=== Building foundry-${EDITION} ISO (inside ubuntu:26.04 container) ==="
 docker run --rm \
