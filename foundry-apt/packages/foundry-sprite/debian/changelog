@@ -1,3 +1,10 @@
+foundry-sprite (1.0.1) resolute; urgency=medium
+
+  * Add digikam and showfoto — photo library and standalone photo editor,
+    moved out of anvil's purge list and into sprite where they belong.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 30 May 2026 21:30:00 +0700
+
 foundry-sprite (1.0.0) resolute; urgency=medium
 
   * Initial release. Part of the Phase 2 nested-editions hierarchy

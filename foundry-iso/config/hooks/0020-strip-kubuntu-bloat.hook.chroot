@@ -4,21 +4,25 @@ set -euo pipefail
 # Purge KDE PIM / office / camera / games / snap bloat not wanted in Foundry Linux.
 # .list.chroot.purge handles the bulk removal; this hook adds the explicit
 # autoremove pass and guards against packages that may already be absent.
-apt-get purge -y --auto-remove \
-    libreoffice-\* \
-    kontact kmail 'akonadi-*' \
-    'kdepim-*' kaddressbook kalarm kjots knotes korganizer merkuro-calendar \
-    digikam showfoto kamoso \
-    'kde-games-*' kalgebra kgeography kig kbruch \
-    kdeconnect krdc krfb ktorrent \
-    snapd snap-store \
-    usb-creator-kde system-config-printer-kde kcharselect kfind \
-    >/dev/null 2>&1 || true
+#
+# Use DEBIAN_FRONTEND=noninteractive apt purge (not apt-get) — apt's resolver
+# supports glob wildcards like 'libreoffice-*' reliably; apt-get's glob support
+# is inconsistent and silently fails when piped to /dev/null.
+# Run each glob group separately so one unmatched group doesn't abort the rest.
+_purge() { DEBIAN_FRONTEND=noninteractive apt purge -y "$@" 2>/dev/null || true; }
+
+_purge 'libreoffice-*'
+_purge kontact kmail 'akonadi-*' \
+    'kdepim-*' kaddressbook kalarm kjots knotes korganizer merkuro-calendar
+# digikam/showfoto belong in sprite and atelier; only strip them from anvil
+[[ "$EDITION" == "anvil" ]] && _purge digikam showfoto || true
+_purge 'kde-games-*' kalgebra kgeography kig kbruch
+_purge snapd snap-store
 
 # Purge plasma-welcome (Kubuntu's first-run welcome app) — foundry-welcome replaces it.
 # Both kubuntu-desktop and kubuntu-settings-desktop list plasma-welcome only as
 # Recommends (not Depends), so this purge is clean with no broken dependencies.
-apt-get purge -y plasma-welcome >/dev/null 2>&1 || true
+_purge plasma-welcome
 
 # Suppress the "Install Language Support" nag (language-selector).
 # The live session has no guaranteed network and game devs don't need this.

@@ -1,13 +1,52 @@
 #!/bin/bash
-# Install any .deb files dropped into /tmp/local-debs/ by the build script.
+# Install .deb files dropped into /tmp/local-debs/ by the build script.
 # These are packages not yet published to an apt repo (e.g. calamares-settings-foundry-linux).
 # We use this instead of config/packages.chroot/ to avoid lb's local signed-repo
 # path, which calls "gpg --batch --gen-key" inside the chroot — broken in
 # gnupg 2.4+ containers where agent_genkey fails without a controlling TTY.
+#
+# Safety: only install debs whose Package field is in the dependency closure of
+# the target edition metapackage (foundry-${EDITION}).  This prevents upper-tier
+# packages staged for atelier/sprite from contaminating an anvil build if they
+# were left in local-debs/ by mistake.
 set -euo pipefail
 
-if ls /tmp/local-debs/*.deb &>/dev/null 2>&1; then
-    echo "=== Installing local debs ==="
-    apt-get install -y --allow-downgrades /tmp/local-debs/*.deb
-    rm -rf /tmp/local-debs
+source /root/config/hook-env.sh   # sets $EDITION
+
+if ! ls /tmp/local-debs/*.deb &>/dev/null 2>&1; then
+    exit 0
 fi
+
+echo "=== Installing local debs (EDITION=${EDITION}) ==="
+
+# Build the full recursive dep closure of the edition metapackage.
+# apt-cache depends --recurse prints all transitive Depends.
+closure=$(apt-cache depends --recurse --no-recommends --no-suggests \
+              --no-conflicts --no-breaks --no-replaces --no-enhances \
+              "foundry-${EDITION}" 2>/dev/null \
+          | grep '^\w' | sort -u || true)
+
+installed=()
+skipped=()
+for deb in /tmp/local-debs/*.deb; do
+    pkg=$(dpkg-deb --field "$deb" Package)
+    # Always install: the edition metapackage itself and calamares-settings
+    # (installer config is always needed regardless of dep closure).
+    if [[ "$pkg" == "foundry-${EDITION}" ]] \
+       || [[ "$pkg" == calamares-settings-* ]] \
+       || echo "$closure" | grep -qx "$pkg"; then
+        installed+=("$deb")
+    else
+        skipped+=("$pkg")
+    fi
+done
+
+if [[ ${#skipped[@]} -gt 0 ]]; then
+    echo "  Skipping (not in foundry-${EDITION} closure): ${skipped[*]}"
+fi
+
+if [[ ${#installed[@]} -gt 0 ]]; then
+    apt-get install -y --allow-downgrades "${installed[@]}"
+fi
+
+rm -rf /tmp/local-debs

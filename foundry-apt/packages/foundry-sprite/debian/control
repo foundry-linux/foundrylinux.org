@@ -14,14 +14,17 @@ Depends: ${misc:Depends},
  foundry-pixel-art,
  foundry-art,
  foundry-trackers,
- foundry-daw
+ foundry-daw,
+ digikam,
+ showfoto
 Description: Foundry Linux retro / graphics / audio edition (anvil + heavy art + audio)
- foundry-anvil plus the heavy-graphics suites and full audio-production
- stack — for users whose work spans game-making AND multimedia content
- creation:
+ foundry-anvil plus the heavy-graphics suites, full audio-production
+ stack, and photo management — for users whose work spans game-making AND
+ multimedia content creation:
  .
    * foundry-anvil           the full Foundry Linux base layer
    * foundry-pixel-art       mtPaint, GrafX2
    * foundry-art             Krita, GIMP, Inkscape, MyPaint, Tux Paint
    * foundry-trackers        MilkyTracker, Schism, Furnace, openmpt123
    * foundry-daw             Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx
+   * digikam + showfoto      photo library management and standalone photo editor
