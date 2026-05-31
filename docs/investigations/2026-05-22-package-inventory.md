@@ -937,7 +937,7 @@ Bash installers that run on stock Ubuntu 26.04 — each is the apt-expansion of 
 | Script | Install line(s) | Phase 1 target | Status |
 |---|---|---|---|
 | `install-foundry-android-development.sh` | `apt-get install -y foundry-android-development` | foundry-android-development (apt.foundrylinux.org) | ok |
-| `install-foundry-blender.sh` | `apt-get install -y worldfoundry-blender-addons` | worldfoundry-blender-addons (apt.worldfoundry.org) | ⚠️ STALE — still references the pre-rename `worldfoundry-blender`; should target `worldfoundry-blender-addons` |
+| `install-foundry-blender.sh` | `apt-get install -y worldfoundry-blender-addons` | worldfoundry-blender-addons (apt.worldfoundry.org) | ok |
 | `install-foundry-dev.sh` | `apt-get install -y worldfoundry-cli`<br/>`apt-get install -y worldfoundry-development` | umbrella — overlaps with worldfoundry-development | ok |
 | `install-foundry-engine-build-deps.sh` | `apt-get install -y \` | overlaps with worldfoundry-development's engine deps | ok |
 | `install-foundry-ios-development.sh` | `apt-get install -y foundry-ios-development pipx` | foundry-ios-development (apt.foundrylinux.org) | ok |
@@ -946,8 +946,7 @@ Bash installers that run on stock Ubuntu 26.04 — each is the apt-expansion of 
 | `setup-foundry-apt-source.sh` | — | — (bootstrap) | ok |
 | `setup-worldfoundry-apt-source.sh` | — | — (bootstrap) | ok |
 
-**Drift:**
-- `install-foundry-blender.sh` — ⚠️ STALE — still references the pre-rename `worldfoundry-blender`; should target `worldfoundry-blender-addons`
+**Drift:** none — all scripts target current package names.
 
 ---
 

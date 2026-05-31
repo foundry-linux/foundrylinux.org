@@ -201,9 +201,8 @@ Update the script table:
    curl -s https://apt.worldfoundry.org/dists/stable/main/binary-amd64/Packages \
      | grep '^Package:' | awk '{print $2}' | sort
    ```
-   Expected (16 packages):
+   Expected (14 packages — `blender-asset-finder` and `blender-asset-finder-cli` moved to apt.foundrylinux.org; `wf-asset`→`blender-asset-finder-cli`, `wf-blender`→`worldfoundry-blender-editor-exporter`, `worldfoundry-blender`→`worldfoundry-blender-addons` all renamed 2026-05-21):
    ```
-   blender-asset-finder
    cdpack
    iffcomp
    iffdump
@@ -213,10 +212,9 @@ Update the script table:
    oas2oad
    prep
    textile
-   wf-asset
-   wf-blender
    worldfoundry
-   worldfoundry-blender
+   worldfoundry-blender-addons
+   worldfoundry-blender-editor-exporter
    worldfoundry-cli
    worldfoundry-development
    ```

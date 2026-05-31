@@ -1,7 +1,7 @@
 ---
 title: Rebuild vgmstream against libavcodec62 (ffmpeg 8)
 date: 2026-05-20
-status: in-progress
+status: done
 ---
 
 # vgmstream rebuild for libavcodec62

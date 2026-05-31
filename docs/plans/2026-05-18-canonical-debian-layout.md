@@ -1,7 +1,7 @@
 # Plan: Migrate metapackages to canonical Debian source-package layout
 
 **Date:** 2026-05-18
-**Status:** In progress
+**Status:** Done
 
 ## Context
 

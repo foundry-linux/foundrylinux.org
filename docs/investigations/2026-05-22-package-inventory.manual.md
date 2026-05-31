@@ -168,14 +168,14 @@ Bash installers that run on stock Ubuntu 26.04 — each is the apt-expansion of 
 | `setup-foundry-apt-source.sh` | Adds apt.foundrylinux.org key + sources.list.d entry | — (bootstrap) |
 | `setup-worldfoundry-apt-source.sh` | Adds apt.worldfoundry.org key + sources.list.d entry | — (bootstrap) |
 | `install-foundry-engine-build-deps.sh` | `build-essential`, `cmake`, `libx11-dev`, `libgl1-mesa-dev`, `libglu1-mesa-dev`, `gdb`, `xxd`, `python3`, `pkg-config`, `git`, `curl`, `wget`, `unzip` (all Ubuntu universe) | overlaps with `worldfoundry-development`'s engine deps |
-| `install-foundry-blender.sh` | `apt install worldfoundry-blender` — ⚠️ **STALE**: should target `worldfoundry-blender-addons` (renamed 2026-05-21) | `worldfoundry-blender-addons` (apt.worldfoundry.org) |
+| `install-foundry-blender.sh` | `apt-get install -y worldfoundry-blender-addons` | `worldfoundry-blender-addons` (apt.worldfoundry.org) |
 | `install-foundry-retro-tools.sh` | `apt install foundry-retro-tools` | `foundry-retro-tools` (apt.foundrylinux.org) |
 | `install-foundry-android-development.sh` | `apt install foundry-android-development` | `foundry-android-development` (apt.foundrylinux.org) |
 | `install-foundry-ios-development.sh` | `apt install foundry-ios-development pipx` + `pipx install codemagic-cli-tools` | `foundry-ios-development` (apt.foundrylinux.org) |
 | `install-task.sh` | `task` (apt-get install — go-task package) | N/A — Cloudsmith / Ubuntu |
 | `install-foundry-dev.sh` | umbrella — chains worldfoundry-development + task + foundry-retro-tools | overlaps with `worldfoundry-development` |
 
-**One concrete drift:** `install-foundry-blender.sh` still references the pre-rename `worldfoundry-blender`. Today's `apt.worldfoundry.org` only ships `worldfoundry-blender-addons` — the script's install would fail "Unable to locate package". Easy one-line fix; flagged here so the audit script catches the class.
+**No drift:** `install-foundry-blender.sh` targets `worldfoundry-blender-addons` (corrected after the 2026-05-21 rename; the pre-rename `worldfoundry-blender` is no longer in apt.worldfoundry.org).
 
 ---
 

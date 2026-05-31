@@ -1,7 +1,7 @@
 ---
 title: End-to-end fresh-VM test for foundry-retro-tools
 date: 2026-05-20
-status: in-progress
+status: done
 ---
 
 # Retro-tools end-to-end fresh-VM test
