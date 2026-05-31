@@ -860,6 +860,15 @@ Step 9 status: rsync error 11 (RERR_FILEIO) during squashfs extraction in QEMU �
   `archive.ubuntu.com/ubuntu/`. Resolute (26.04) becomes the de-facto
   current LTS in April 2026, so by build time the archive is fully
   populated. No issue.
+- **Build-host signing-key fetch is a network dependency.** `build-iso.sh`
+  curls the four apt signing keys (foundry, worldfoundry, Cloudsmith,
+  Mozilla) on the *host* before the container starts. A transient resolver
+  failure there aborts the build at step 1 — and `set -euo pipefail` + the
+  `curl | gpg` pipe turns a 1 s DNS blip into a confusing `gpg: no valid
+  OpenPGP data`. Hardened 2026-05-31: a `fetch_key` helper retries with
+  `curl --retry 5 --retry-all-errors --retry-connrefused` (curl will NOT
+  retry name-resolution error 6 without `--retry-all-errors`) plus a
+  non-empty-key assertion. See investigation §18.
 
 ## Out of scope (follow-up plans)
 

@@ -477,6 +477,47 @@ grep -A3 "Package: foundry-welcome" /tmp/sq/var/lib/dpkg/status
 cat /tmp/sq/etc/NetworkManager/system-connections/live-ethernet.nmconnection
 ```
 
+## 18. Build aborts at the host-side key fetch on a transient DNS failure
+
+**Symptom.** `task iso-build` dies immediately, before the container even starts:
+
+```
+=== Fetching apt signing keys ===
+curl: (6) Could not resolve host: apt.foundrylinux.org
+gpg: no valid OpenPGP data found.
+task: Failed to run task "iso-build": exit status 2
+```
+
+**Root cause — a transient name-resolution failure, not a build bug or a dead
+repo.** `build-iso.sh` fetches the four apt signing keys with `curl` on the
+*host* (before the `ubuntu:26.04` container). `getaddrinfo()` timing out surfaces
+to curl as error 6 ("couldn't resolve host"); the empty pipe then makes
+`gpg --dearmor` print "no valid OpenPGP data", and `set -euo pipefail` aborts the
+whole build. The domain resolved and served HTTP 200 on recheck, so it was a
+one-off — and `resolvectl statistics` on the build host showed **886 query
+timeouts over a week of uptime** (~5/hr), i.e. this resolver does intermittently
+time out and the build's first network call unluckily landed on one. (On the
+affected host, public DNS happened to be routed through a VPN tunnel's resolver —
+the most timeout-prone path — but the lesson is general.)
+
+**Fix.** Wrap the fetches in a retrying helper:
+
+```sh
+fetch_key() {  # <url> <dest-keyfile>
+  curl -fsSL --retry 5 --retry-delay 2 --retry-all-errors --retry-connrefused "$1" \
+    | gpg --dearmor > "$2"
+  [[ -s "$2" ]] || { echo "ERROR: fetched empty/invalid signing key from $1" >&2; exit 1; }
+}
+```
+
+**Gotcha:** plain `curl --retry N` does **not** retry name-resolution failures
+(error 6) — you must add `--retry-all-errors`. The `[[ -s ]]` assert also catches
+a 200-but-garbage response writing an empty key file.
+
+**Pattern:** every network fetch in a multi-minute build (signing keys here; also
+consider `apt-get` inside the container via `Acquire::Retries`) should be
+retry-wrapped — a one-second resolver blip must never nuke a 20-plus-minute build.
+
 ---
 
 <details>
