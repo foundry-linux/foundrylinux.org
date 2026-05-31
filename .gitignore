@@ -8,3 +8,10 @@ dist/
 foundry-apt/gen/src.css
 .task/
 .claude/scheduled_tasks.lock
+
+# Python-run artifacts (docs/investigations package-inventory / PyPI-fetch scripts)
+__pycache__/
+docs/investigations/.pypi-cache/
+docs/investigations/.fetch-progress.log
+# VS Code Local History editor cruft
+.history/
