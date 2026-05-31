@@ -18,6 +18,8 @@
 - [Check for running VMs before launching a new one](feedback_vm_before_launch.md) — launching a second VM OOM-crashed the machine; check first, prompt to close if fresh boot needed, otherwise give in-VM instructions.
 - [No large /tmp extractions](feedback_no_large_tmp_extractions.md) — use unsquashfs -l/-cat in-place; never extract squashfs to tmpfs
 - [Screenshots in docs](feedback_screenshots_in_docs.md) — always include screenshot + URL when referencing a website's visuals; URL link if screenshot blocked
+- [prep binary blob is parked](project_prep_binary_blob_parked.md) — prep ships a binary re-pack not source (grammar retired upstream); known + parked, don't re-flag in audits.
+- [devbox installs foundry-core, not anvil](project_devbox_foundry_core.md) — deliberate: desktop-agnostic + keeps test/CI harnesses small + fast to build/boot; never bump to foundry-anvil.
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 
