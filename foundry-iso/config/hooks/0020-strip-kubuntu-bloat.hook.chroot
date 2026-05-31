@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+source /root/config/hook-env.sh   # sets $EDITION — live-build doesn't pass env into the chroot (see investigation §1)
 
 # Purge KDE PIM / office / camera / games / snap bloat not wanted in Foundry Linux.
 # .list.chroot.purge handles the bulk removal; this hook adds the explicit
