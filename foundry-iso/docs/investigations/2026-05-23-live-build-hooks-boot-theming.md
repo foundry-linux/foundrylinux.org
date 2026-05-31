@@ -177,6 +177,30 @@ Always make a writable copy of `OVMF_VARS_4M.fd` per run.
 
 live-build 3.0~a57 on Ubuntu 26.04 does not emit EFI boot images from `lb_binary_grub2`. EFI boot must be injected manually via `grub-mkimage` + `mkfs.fat` + `xorriso` after `lb binary`.
 
+### The `/EFI/BOOT will emerge` warning is expected and benign (WONTFIX)
+
+The EFI injection logs:
+
+```
+xorriso : WARNING : EFI boot equipment is provided but no directory /EFI/BOOT
+xorriso : WARNING : will emerge in the ISO filesystem. A popular method to
+xorriso : WARNING : prepare a USB stick on MS-Windows relies on having in the
+xorriso : WARNING : ISO filesystem a copy of the EFI System Partition tree.
+```
+
+It fires because we attach EFI **only** as the El Torito ESP entry (`-map "$EFI_IMG" /boot/grub/efi.img`, `platform_id=0xef`) — there is no loose `/EFI/BOOT/BOOTX64.EFI` tree in the ISO9660 filesystem. It is a plain libisofs tree-node check, not a boot failure. **Intentionally not fixed:**
+
+- Every USB writer we support — `isoimagewriter` / `usb-creator-kde` (the `create-foundry-usb` path), `dd`, Ventoy, balenaEtcher, Rufus DD-mode — **raw byte-copies the whole `.iso`** and boots via El Torito. They never touch `/EFI/BOOT`, so the warning does not affect them; a multi-GB ISO is no problem.
+- The only method the warning targets — extract the ISO and copy its files onto a **FAT32** USB (some Windows tools / Rufus "ISO mode") — is impractical for our editions regardless: the squashfs is >4 GiB and FAT32 caps a single file at 4 GiB. Adding `/EFI/BOOT` would not make that method work.
+
+So the fix would be purely cosmetic (silence the warning + match Ubuntu's hybrid layout) with no working USB path unblocked. **If** a sub-4 GiB edition ever ships and Windows file-copy support is wanted, add the standard loose tree with one line in the EFI-injection xorriso call — the `grub-mkimage` binary already exists at `$EFI_WORK/EFI/BOOT/BOOTX64.EFI`, El Torito path unchanged:
+
+```
+-map "$EFI_WORK/EFI/BOOT/BOOTX64.EFI" /EFI/BOOT/BOOTX64.EFI \
+```
+
+Until then, ignore it — don't re-flag in audits.
+
 ---
 
 ## 11. Plymouth theme activation
