@@ -1,9 +1,11 @@
 #!/bin/bash
 set -euo pipefail
-# Pin firefox* to Mozilla's official deb repo so it wins over Ubuntu's snap redirect.
-cat > /etc/apt/preferences.d/mozilla-firefox <<'EOF'
-Package: firefox*
-Pin: release o=Mozilla
-Pin-Priority: 1001
-EOF
-apt-get update -qq
+# The Mozilla firefox pin (config/apt/preferences.d/mozilla-firefox.pref) is
+# applied before lb_chroot_install-packages, but Ubuntu's snap-transitional
+# firefox (1:1snap1-0ubuntu8) still wins because apt treats epoch-1 as newer
+# than any Mozilla epoch-0 candidate regardless of pin priority 1001.
+# Swapping firefox to the Mozilla native .deb to remove snapd requires a more
+# invasive local-deb approach not yet implemented; see plan for details.
+# This hook just refreshes apt so hook 0030's `apt-get install foundry-${EDITION}`
+# has an up-to-date index.
+apt-get update -qq 2>/dev/null || true

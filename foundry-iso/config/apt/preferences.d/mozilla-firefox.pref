@@ -1,0 +1,9 @@
+# Pin firefox* to Mozilla's official deb repo so it wins over Ubuntu's snap
+# redirect (firefox 1:1snap1-0ubuntu8 Depends: snapd).  Priority 1001 beats
+# any Ubuntu candidate including epoch-1 versions.
+#
+# "Pin: origin" uses the server hostname — more reliable than "Pin: release o="
+# when the Origin: field is a long GCP namespace path.
+Package: firefox*
+Pin: origin "packages.mozilla.org"
+Pin-Priority: 1001

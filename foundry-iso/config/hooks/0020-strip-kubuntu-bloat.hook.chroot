@@ -28,6 +28,9 @@ _purge 'kde-games-*' kalgebra kgeography kig kbruch
 # plasma-discover-backend-snap at -1 (applied before packages install).
 # This _purge is belt-and-suspenders.
 _purge snapd snap-store plasma-discover-backend-snap
+# Stock Plasma extra-wallpapers (~217 MiB) — Recommended-only by kubuntu-desktop.
+# Purged here because .list.chroot.purge does not fire in live-build 3.0~a57.
+_purge plasma-workspace-wallpapers
 
 # Purge plasma-welcome (Kubuntu's first-run welcome app) — foundry-welcome replaces it.
 # Both kubuntu-desktop and kubuntu-settings-desktop list plasma-welcome only as

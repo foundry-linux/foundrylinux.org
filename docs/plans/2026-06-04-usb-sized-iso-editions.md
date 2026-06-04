@@ -1,7 +1,7 @@
 # Plan: USB-stick-sized ISO editions (4 GB SLIM; 2 GB / 1 GB = installer media)
 
 **Date:** 2026-06-04
-**Status:** implemented (0.9.37) — anvil trimmed to ~3.23 GiB; fits 4 GB stick
+**Status:** partial (0.9.40) — anvil trimmed to **3.88 GiB** (ghidra+wallpapers removed); snapd blocked by firefox PreDepends; 4 GB stick target **not met** (requires 8 GB)
 
 ---
 
@@ -33,13 +33,15 @@ tool**. That single number drives everything:
 
 <img src="screenshots/2026-06-04-usb-scenarios.png" width="760">
 
-| Scenario | Projected ISO | Smallest stick |
-|---|--:|---|
-| NODESK — no GUI, net-installer | ~0.60 GiB | **1 GB** |
-| BASE — KDE desktop floor (zero Foundry tools) | ~2.44 GiB | 4 GB |
-| MINI — KDE + Blender/WF only | ~2.75 GiB | 4 GB |
-| **anvil 0.9.37** (ghidra→atelier, wallpapers+snapd stripped) | **~3.23 GiB** | **4 GB** ✅ |
-| anvil 0.9.36 (baseline) | ~4.49 GiB | 8 GB |
+| Scenario | Projected ISO | Actual ISO | Smallest stick |
+|---|--:|--:|---|
+| NODESK — no GUI, net-installer | ~0.60 GiB | — | **1 GB** |
+| BASE — KDE desktop floor (zero Foundry tools) | ~2.44 GiB | — | 4 GB |
+| MINI — KDE + Blender/WF only | ~2.75 GiB | — | 4 GB |
+| **anvil 0.9.40** (ghidra→atelier, wallpapers stripped; snapd blocked) | ~3.23 GiB | **3.88 GiB** ⚠ | **8 GB** |
+| anvil 0.9.36 (baseline) | ~4.49 GiB | ~4.53 GiB | 8 GB |
+
+**Model error:** projection was 0.65 GiB optimistic. Likely cause: Ubuntu 26.04 package growth between the 0.9.36 squashfs model and actual 0.9.40 build — not from within the Foundry packages themselves.
 
 **Consequence:** below ~2.4 GiB you stop trimming packages and start changing
 what the image *is*.
@@ -78,9 +80,9 @@ Action column reflects that final call, not the largest-possible cut:
 | 2 | `foundry-python-gamedev-extras` (VTK · numba · scipy · librosa) | 554 | ✅ **KEEP** |
 | 3 | `worldfoundry` (Blender + WF tools) | 360 | ✅ **KEEP** — the point of the distro |
 | 4 | `foundry-emulators-consoles` (ScummVM…) | 296 | ✅ **KEEP** |
-| 5 | stock Plasma **extra** wallpapers (`plasma-workspace-wallpapers`) | 217 | ✅ **stripped** (Recommends-only; `strip.list.chroot.purge`) |
+| 5 | stock Plasma **extra** wallpapers (`plasma-workspace-wallpapers`) | 217 | ✅ **stripped** — hook 0020 explicit `_purge` (`.chroot.purge` does not fire in live-build 3.0~a57) |
 | 6 | `foundry-game-frameworks` (SDL/SFML/LÖVE/Tiled…) | 217 | ✅ **KEEP** |
-| 7 | snapd | 140 | ✅ **stripped** — apt pin `no-snapd.pref` (priority −1) + hook 0020 purge |
+| 7 | snapd | 140 | ⚠ **NOT removed** — `firefox 1:1snap1-0ubuntu8` has `PreDepends: snapd`; hook 0020 `_purge snapd` fails silently (`|| true`); removing snapd first requires replacing Ubuntu's snap-transitional firefox with Mozilla's native .deb (local-deb approach — not yet implemented) |
 | 8 | `foundry-emulators-computers` | 75 | ✅ **KEEP** |
 | 9 | exotic firmware (`linux-firmware-mellanox-spectrum`) | 59 | **NOT stripped** — hard Depends of the `linux-firmware` umbrella; apt purge cascades and can autoremove ALL firmware |
 | 10 | `foundry-image-cli` (CLI image utils) | 29 | ✅ **KEEP** |
@@ -120,10 +122,10 @@ edition". Everything else anvil shipped stays.
 - ~~`foundry-core` 1.0.2 → **1.0.3**~~: Description-only (ghidra now atelier).
 
 **ISO build** (`foundry-iso/`): ✅
-- ~~`strip.list.chroot.purge`: add `plasma-workspace-wallpapers`~~ (217 MiB, safe —
-  Recommends-only; we ship our own wallpaper). **Not** `breeze-wallpaper`
-  (hard Depends of `breeze`) and **not** any `linux-firmware-*` (hard Depends of
-  the umbrella → cascade risk).
+- ~~`strip.list.chroot.purge`: add `plasma-workspace-wallpapers`~~ — **NOTE:**
+  `.chroot.purge` does NOT fire in live-build 3.0~a57. Entry is harmless but
+  inert. Actual removal is hook 0020's `_purge plasma-workspace-wallpapers`
+  (added 2026-06-04 session 2). ✅ removal confirmed in 0.9.38+ builds.
 - ~~New hook **`1010-trim-atelier-only-pkgs.hook.chroot`**~~: runs after the
   local-debs install; `apt-mark auto ghidra openjdk-21-*` then
   `apt-get autoremove --purge`. Dependency-driven, so it removes ghidra+JDK from
@@ -131,9 +133,16 @@ edition". Everything else anvil shipped stays.
   (where `foundry-atelier` Depends ghidra). Never cascades. Gated off atelier as
   a belt-and-suspenders guard. This handles the transient pull from hook 0030
   (`apt install foundry-anvil` against the still-published 1.0.6) until the
-  metapackage bump is published.
-- ~~snapd neutralised by `config/apt/preferences.d/no-snapd.pref` pin~~ (priority −1)
-  + hook-0020 purge — no extra work.
+  metapackage bump is published. ✅ confirmed in 0.9.37+ builds.
+- snapd: `config/apt/preferences.d/no-snapd.pref` pin (priority −1) prevents
+  proactive install. However, **Ubuntu's snap-transitional firefox**
+  (`1:1snap1-0ubuntu8`) has `PreDepends: snapd (>= 2.54)` — a stronger-than-Depends
+  constraint — so apt still pulls snapd in when the epoch-1 firefox wins. Hook 0020's
+  `_purge snapd` fails silently (`|| true`). **Snapd remains in the ISO (~100 MiB).** ⚠
+  Five build attempts (0.9.38–0.9.42) to replace Ubuntu's firefox with Mozilla's
+  native .deb all failed: apt's epoch-1 wins regardless of pin priority 1001; dpkg
+  force-removal approaches leave firefox broken and abort the build. Parked — requires
+  a local-deb approach to pre-stage Mozilla's firefox before package installation.
 
 **create-foundry-usb**: targets the anvil `-latest-` image directly — anvil is
 now the 4 GB-capable image, so no separate edition for the tool to choose.
@@ -165,10 +174,21 @@ network-installer product.
    `unsquashfs -cat … var/lib/dpkg/status`: **ghidra + openjdk-21-\* absent**;
    **MAME, ScummVM, Blender, SDL/SFML, VTK present**; **snapd absent**;
    `plasma-workspace-wallpapers` absent, our wallpaper present.
+
+   **RESULT (0.9.40 build, 2026-06-04):** ISO = **3.88 GiB** — FAIL vs ≤ 3.6 GiB target.
+   Breakdown: ghidra removal saved ~0.71 GiB (4.8→4.09), wallpapers saved ~0.21 GiB
+   (4.09→3.88). Snapd still present (~0.10 GiB). 4 GB stick target not met.
+   
+   Package presence confirmed (hook 1010 output in build log):
+   - ghidra: ABSENT ✅  openjdk-21-jre-headless: ABSENT ✅
+   - mame: present ✅  scummvm: present ✅  blender: present ✅  libvtk9.5t64: present ✅
+   - snapd: **PRESENT** ⚠  (PreDepends from firefox 1:1snap1-0ubuntu8 blocks removal)
+   - plasma-workspace-wallpapers: ABSENT ✅  foundry-kde-theme wallpaper: present ✅
+
 3. `EDITION=atelier task iso-build` (or metapackage resolve) → ghidra present.
 4. Boot anvil in QEMU: KDE desktop + Wi-Fi applet work (QtWebEngine retained),
    foundry-welcome appears.
 5. Regenerate `foundry-iso/docs/howto-kubuntu-remix-installed-packages.md` against
    the new anvil as the committed size source-of-truth.
-6. Write the anvil ISO to a real 4 GB stick via isoimagewriter; boot end-to-end.
-6. Write SLIM to a real 4 GB USB via `isoimagewriter` and boot it end-to-end.
+6. Write the anvil ISO to a real 8 GB stick via isoimagewriter; boot end-to-end.
+   *(4 GB stick target deferred until snapd/firefox issue is resolved.)*
