@@ -136,14 +136,24 @@ edition". Everything else anvil shipped stays.
   a belt-and-suspenders guard. This handles the transient pull from hook 0030
   (`apt install foundry-anvil` against the still-published 1.0.6) until the
   metapackage bump is published. ✅ confirmed in 0.9.37+ builds.
-- snapd: hook `0025-mozilla-pin.hook.chroot` now wires Mozilla's GPG key +
-  `packages.mozilla.org` apt repo into the chroot, then runs
-  `apt-get install -y --allow-downgrades firefox` (priority-1001 pin forces the
-  Mozilla epoch-0 candidate over Ubuntu's epoch-1 snap-transitional), then purges
-  snapd+snap-store+plasma-discover-backend-snap immediately after. The
-  `--allow-downgrades` flag is the key: prior attempts without it failed because
-  apt refuses to cross epoch boundaries even with a priority-1001 pin. Awaiting
-  build to confirm (~141 MiB savings).
+- snapd: hook `0025-mozilla-pin.hook.chroot` — **root cause of repeated failures
+  (0.9.41–0.9.49) now understood:**
+  - **gpgv not exec-able by chroot's apt during hook phase.** During
+    `lb_chroot_install-packages`, live-build runs apt from the *host* container
+    (working gpgv); during hooks, apt runs *inside* the chroot where `execvp("gpgv",...)`
+    fails with "Could not execute 'gpgv'" for ALL repos. Root cause is not binary
+    removal — `/usr/bin/gpgv --version` succeeds — but something about the chroot
+    environment breaks apt's gpgv method exec path (likely Ubuntu 26.04 apt's
+    Sequoia-backend falls back to gpgv in a broken way inside chroot).
+  - **Effect:** apt marks every repo (including Mozilla's) unverified in the hook
+    session → `apt-get install -t mozilla firefox` silently falls back to
+    "already newest version (1:1snap1-0ubuntu8)".
+  - **Fix (0.9.50):** Hook 0025 no longer calls `apt-get install`. Instead: parse
+    the cached Mozilla package index on disk (fetched by the host's apt before hooks),
+    extract the `.deb` URL, download with `curl`, install with `dpkg --force-downgrade`.
+    dpkg bypasses apt's signature check entirely. After installation, nothing
+    PreDepends on snapd and `apt-get purge snapd` succeeds. Awaiting 0.9.50 build
+    confirmation (~141 MiB savings).
 
 **Round 2 metapackages** (post-0.9.40):
 - `foundry-python-gamedev-extras` **1.0.0 → 1.0.1**: drop `python3-opencv`
@@ -197,6 +207,15 @@ network-installer product.
    - mame: present ✅  scummvm: present ✅  blender: present ✅  libvtk9.5t64: present ✅
    - snapd: **PRESENT** ⚠  (PreDepends from firefox 1:1snap1-0ubuntu8 blocks removal)
    - plasma-workspace-wallpapers: ABSENT ✅  foundry-kde-theme wallpaper: present ✅
+
+   **RESULT (0.9.44–0.9.49 builds):** ISO = **3.904 GiB** — FAIL.
+   opencv→foundry-cv split added libonnxruntime-dev (+~10 MiB on ISO). Snapd still
+   present (hook 0025 apt-get install silently failed — gpgv broken in chroot's apt).
+   Hook 1010 did purge ghidra (`PASS: ghidra absent from anvil`). libvtk9.5 still
+   present (python3-opencv still installed — needs investigation of reverse deps).
+
+   **RESULT (0.9.50, in progress):** hook 0025 now uses `dpkg --force-downgrade` + curl
+   to bypass apt's broken gpgv verification. Expected: snapd absent, ISO ≤ 3.726 GiB.
 
 3. `EDITION=atelier task iso-build` (or metapackage resolve) → ghidra present.
 4. Boot anvil in QEMU: KDE desktop + Wi-Fi applet work (QtWebEngine retained),
