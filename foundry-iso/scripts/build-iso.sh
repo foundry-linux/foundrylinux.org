@@ -103,6 +103,12 @@ docker run --rm \
     cp config/archives/worldfoundry.key  chroot/etc/apt/trusted.gpg.d/worldfoundry.key.gpg
     cp config/archives/cloudsmith-task.key chroot/etc/apt/trusted.gpg.d/cloudsmith-task.key.gpg
     cp config/archives/mozilla.key        chroot/etc/apt/trusted.gpg.d/mozilla.key.gpg
+    # Copy apt preferences into the chroot (live-build 3.0~a57 does not reliably
+    # apply config/apt/preferences.d/ before lb_chroot_package-lists runs).
+    # Without this, the mozilla-firefox.pref and no-snapd.pref pins are never
+    # seen by apt during package installation and snapd enters the chroot.
+    mkdir -p chroot/etc/apt/preferences.d/
+    cp config/apt/preferences.d/*.pref chroot/etc/apt/preferences.d/
     # Pre-install gnupg so apt-utils postinst finds gpg during lb_chroot_archives.
     # Debootstrap minbase does not include gpg; lb_chroot_archives installs apt-utils
     # whose postinst calls gpg and exits non-zero if not found, aborting the build.
