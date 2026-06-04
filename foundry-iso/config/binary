@@ -86,8 +86,8 @@ LB_ISO_PREPARER="foundry-linux"
 LB_ISO_PUBLISHER="foundry-linux@foundrylinux.org"
 
 # $LB_ISO_VOLUME: set iso volume (max 32 chars)
-# (Default: FOUNDRY-ANVIL-0.9.42)
-LB_ISO_VOLUME="FOUNDRY-ANVIL-0.9.43"
+# (Default: FOUNDRY-ANVIL-0.9.46)
+LB_ISO_VOLUME="FOUNDRY-ANVIL-0.9.46"
 
 # $LB_EXT_BLOCKSIZE: set EXT block size
 # (Default: unset)
