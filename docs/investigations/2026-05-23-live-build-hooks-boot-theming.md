@@ -84,6 +84,49 @@ gpgv-fails-in-apt issue above (that's a separate problem).
 
 ---
 
+## apt-get purge snapd fails after dpkg --force-downgrade firefox (2026-06-04)
+
+After `dpkg --force-downgrade -i firefox-mozilla.deb` replaces the snap-transitional
+firefox, `apt-get purge snapd` still returns "0 to remove" — it silently does nothing.
+
+**Cause:** apt's package cache (from `/var/lib/apt/lists/`) still contains the Ubuntu
+archive entry for `firefox 1:1snap1-0ubuntu8` with `PreDepends: snapd`. When apt
+resolves whether snapd can be removed, it checks which installed packages depend on it.
+But apt uses the CACHE (index) for this lookup in some code paths, not just dpkg status.
+The result: apt sees firefox-1:1snap1 as an installed package that needs snapd, even
+though dpkg status shows Mozilla's firefox.
+
+**Fix:** Use `dpkg --purge snapd` — dpkg reads only `/var/lib/dpkg/status`, not
+the apt cache. Purge in reverse-dependency order (packages that depend on snapd first):
+`plasma-discover-backend-snap` → `snap-store` → `snapd`.
+
+**Symptom to diagnose it:** Two `Reading package lists...` blocks in the output with
+`0 upgraded, 0 newly installed, 0 to remove`. No error — silent no-op.
+
+---
+
+## dpkg -i upgrade doesn't update apt orphan tracking (2026-06-04)
+
+`hook 1000` installs all local debs with `dpkg -i *.deb`. When
+`foundry-python-gamedev-extras` is upgraded from 1.0.0 (which Depends python3-opencv)
+to 1.0.1 (which does not), apt's orphan tracking doesn't update — it still thinks
+python3-opencv is needed.
+
+**Cause:** `dpkg -i` doesn't update apt's extended states (the `auto-installed` flag
+tracking in `/var/lib/apt/extended_states`). When apt-get autoremove runs, it looks at
+extended_states to decide what's orphaned. A package upgraded via dpkg -i leaves its
+dependents' auto-install tracking stale.
+
+Even `apt-mark auto python3-opencv` followed by `apt-get autoremove` fails — apt's
+reverse-dependency resolver still sees the old relationships.
+
+**Fix:** Use `dpkg --purge --force-depends` on the leftover packages directly. This
+bypasses apt's dependency resolution entirely. The `--force-depends` is needed because
+the opencv packages have interdependencies (e.g., `libopencv-viz` depends on
+`libvtk9.5t64`) and dpkg would otherwise refuse to purge them in the wrong order.
+
+---
+
 ## hook execution order (foundry-iso, confirmed 2026-06-04)
 
 ```
