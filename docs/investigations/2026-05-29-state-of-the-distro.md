@@ -37,7 +37,7 @@ The distribution is in good shape. The risks that matter are **not** in the ship
 >
 > **Package census has also grown:** `apt.foundrylinux.org` is now **40 source packages** (was 32) — **14 vendored upstreams** (was 6+2; +5 Python/ruff on 05‑30, `task` re‑vendored 05‑31), README + `LICENSES-VENDORED.md` rewritten to match (06‑04). Docs: 66 plans · 19 investigations · 14 transcripts.
 >
-> **What's left from the original action list:** the `serve.json`‑adjacent gitignore of 3 generated artifacts, the `.history/CLAUDE.md` straggler, the `prep`/arm64 TODO (action #10), shellcheck CI breadth (action #14), the investigation/plan consolidation (action #15), and Phase‑3‑to‑1.0 (finding 5 + SLIM go‑ahead). *(Closed in the 06‑04 pass: findings 1‑3, 6, 7, 10; README + CLAUDE.md + LICENSES + proposal docs; action #9 in full.)* **New gap found 06‑04:** `foundry-linux/foundry-setup` child repo **does not exist** and there's no `setup-sync` task — so `foundry-setup/.github/workflows/test.yml` (which the §8 census lists as live CI) actually **runs nowhere**; it only executes once that subtree is mirrored to a repo root. The inline annotations on findings 4–10 below carry the detail.
+> **What's left from the original action list:** the `serve.json`‑adjacent gitignore of 3 generated artifacts, the `.history/CLAUDE.md` straggler, the `prep`/arm64 TODO (action #10), shellcheck CI breadth (action #14), the investigation/plan consolidation (action #15), and Phase‑3‑to‑1.0 (finding 5 + SLIM go‑ahead). *(Closed in the 06‑04 pass: findings 1‑3, 6, 7, 10; README + CLAUDE.md + LICENSES + proposal docs; action #9 in full.)* **New gap found 06‑04 — ✅ now fixed:** `foundry-setup/.github/workflows/test.yml` was running **nowhere** (GitHub only executes workflows at a repo *root*, and the private monorepo runs only its own root `.github/`). The original framing — "needs a `foundry-linux/foundry-setup` child repo + `setup-sync`" — was wrong: foundry-setup has **no artifact to publish** (unlike apt/iso/devbox, whose child repos exist to run tag‑triggered publishes), and the workflow was already authored for the monorepo root (its jobs `cd foundry-setup`; its `paths:` filter already named `.github/workflows/foundry-setup-test.yml`). **Fix:** the workflow was simply moved to `.github/workflows/foundry-setup-test.yml` (no content change) — no child repo, no sync task. The inline annotations on findings 4–10 below carry the detail.
 
 ### Phase scorecard
 
@@ -73,7 +73,8 @@ The distribution is in good shape. The risks that matter are **not** in the ship
 
 ```
 foundrylinux.org  (private monorepo, authoring)
-├── foundry-setup/   ──(task sync)──▶  foundry-linux/foundry-setup
+├── foundry-setup/   ──(NO mirror — no artifact to publish; tests run in-monorepo
+│                       via .github/workflows/foundry-setup-test.yml, fixed 2026-06-04)
 ├── foundry-apt/     ──(task sync)──▶  foundry-linux/foundry-apt     ── tag v*  ─▶ R2 apt.foundrylinux.org
 ├── foundry-devbox/  ──(devbox-sync)─▶ foundry-linux/foundry-devbox  ── tag v*  ─▶ GHCR devbox:26.04
 ├── foundry-iso/     ──(iso-sync)────▶ foundry-linux/foundry-iso     ── (CI off) ─▶ R2 iso.foundrylinux.org
@@ -139,7 +140,7 @@ All nine scripts named in CLAUDE.md exist and target exactly what's documented. 
 
 **🔴 Broken: the real‑install test path.** `install.sh:72` dies on any unknown flag; `parse_args` knows `--skip-blender`/`--skip-retro`/`--apt-only` but **not `--skip-clone`** — yet `test/run-test.sh:58` and `.github/workflows/test.yml:50` both pass `--skip-clone --skip-blender`. So `run-test.sh --real` and the CI full‑install job (main/tags) abort immediately; the dry‑run job (no flag) stays green and masks it. Cloning moved into the `maintainer` role during the editions refactor and the flag was dropped, but the tests and `foundry-setup/README.md:49` were never updated. **Fix:** re‑add a no‑op `--skip-clone)` case (it's effectively a no‑op for `engine-dev` now), or drop the flag from the two test invocations.
 
-**🟡 Other gaps:** `foundry-setup/README.md` is badly stale — it documents a pre‑distro Rust/maturin/`wftools`/cargo workflow that exists in no current script, advertises three non‑existent flags, and links to old monorepo paths. CI uses `actions/checkout@v4` (×3, Node‑20) and has a dead `paths:` filter referencing a non‑existent `foundry-setup-test.yml`. The android script calls `add-apt-repository -y multiverse` directly instead of the idempotent `enable_multiverse()` helper. CI shellcheck lints only 2 of ~10 scripts.
+**🟡 Other gaps:** `foundry-setup/README.md` is badly stale — it documents a pre‑distro Rust/maturin/`wftools`/cargo workflow that exists in no current script, advertises three non‑existent flags, and links to old monorepo paths (incl. a broken `curl https://foundrylinux.org/install.sh | bash` — that URL 404s; the site only serves `setup.sh`, and `install.sh` is a local dispatcher anyway — see the distribution‑gap TODO). ~~CI uses `actions/checkout@v4` (×3, Node‑20) and has a dead `paths:` filter referencing a non‑existent `foundry-setup-test.yml`.~~ **✅ Both fixed (06‑04):** checkout bumped to `@v6` and the workflow moved to `.github/workflows/foundry-setup-test.yml` — so it now runs *and* the `paths:` self‑reference is accurate. The android script calls `add-apt-repository -y multiverse` directly instead of the idempotent `enable_multiverse()` helper. CI shellcheck lints only 2 of ~10 scripts.
 
 ---
 
@@ -228,7 +229,7 @@ The living investigation doc `foundry-iso/docs/investigations/2026-05-23-live-bu
 | `foundry-apt/test.yml` | all branches, PR | **container** ✓ | v6/v7 ✓ | **🔴 red** (shellcheck filter + missing zip/python3) |
 | `foundry-devbox/publish.yml` | tag `v*`, dispatch | buildx | v6/v4/v3/**v7** ✓ | GHCR + smoke — green |
 | `foundry-iso/publish.yml` | **dispatch only — auto DISABLED** | container | v6/**v4**⚠ | matrix anvil+atelier; off since 05‑22 |
-| `foundry-setup/test.yml` | push/PR `foundry-setup/**` | container | **v4**⚠ ×3 | dry‑run green, full‑install 🔴 (§4); dead `paths:` ref |
+| `.github/workflows/foundry-setup-test.yml` | push/PR `foundry-setup/**` | container | v6 ✓ ×3 | **moved to monorepo root 06‑04** (was `foundry-setup/.github/`, ran nowhere); dry‑run + full‑install now live |
 | (sibling) `worldfoundry.org/apt-publish.yml` | tag `apt-v*`, dispatch | **container** ✓ | v6/v7 ✓ | green |
 
 No `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` anywhere (good). Three workflows lag the Node‑24 pin mandate (forced‑off 2026‑06‑02).
