@@ -26,6 +26,13 @@ feature exists; the path to it doesn't.
 One click from the installed desktop produces a written Foundry Linux USB stick.
 No terminal, no manual ISO hunting.
 
+> **Target image note (2026-06-04):** anvil is 4.8 GB and only fits an 8 GB
+> stick. For common giveaway sticks, this tool should target the **SLIM** edition
+> (~3.1 GiB, fits a 4 GB stick) once it exists — or offer a small-stick choice.
+> See [USB-sized ISO editions](2026-06-04-usb-sized-iso-editions.md) for the
+> sizing analysis and why 2 GB/1 GB sticks require installer media, not a live
+> desktop.
+
 ---
 
 ## User journey (target state)
