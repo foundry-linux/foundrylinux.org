@@ -1,14 +1,23 @@
 #!/bin/bash
 set -euo pipefail
 # Ubuntu's snap-transitional firefox (1:1snap1-0ubuntu8) has PreDepends: snapd,
-# so snapd survives hook 0020's purge attempt.  Fix: wire Mozilla's official apt
-# repo, swap firefox in-place, then snapd has no remaining reverse-dep and can
-# be purged cleanly before hook 0030 installs the foundry edition.
+# so snapd survives the purge in hook 0020. Fix: download Mozilla's native .deb
+# directly from the cached APT package index and install with dpkg --force-downgrade,
+# bypassing apt's signature verification step (which fails in live-build's chroot
+# environment because gpgv cannot be exec'd by the chroot's apt binary).
+#
+# Why dpkg instead of apt-get install -t mozilla:
+#   apt-get update fails with "Could not execute 'gpgv'" for ALL repos during hooks.
+#   This marks every repo — including Mozilla's — as unverified in this apt session.
+#   apt then silently ignores the Mozilla candidates and reports "already newest
+#   version (1:1snap1-0ubuntu8)", even with --allow-downgrades -t mozilla.
+#   dpkg --force-downgrade bypasses apt's auth check entirely.
 
 KEYRING=/etc/apt/keyrings/packages.mozilla.org.asc
 SOURCES=/etc/apt/sources.list.d/mozilla.list
 
 # Add Mozilla's signing key and apt source if not already present.
+# (Normally installed by config/archives/mozilla.list.chroot and build-iso.sh.)
 install -d /etc/apt/keyrings
 if [[ ! -f "${KEYRING}" ]]; then
     curl -fsSL https://packages.mozilla.org/apt/repo-signing-key.gpg \
@@ -18,15 +27,51 @@ if [[ ! -f "${SOURCES}" ]]; then
     echo "deb [signed-by=${KEYRING}] https://packages.mozilla.org/apt mozilla main" \
         > "${SOURCES}"
 fi
-apt-get update -qq
 
-# Swap Ubuntu's snap-transitional firefox for Mozilla's native .deb.
-# -t mozilla targets the release with Codename=mozilla (Mozilla's PPA) explicitly,
-# so apt prefers that candidate over Ubuntu's epoch-1 snap-based version.
-# --allow-downgrades handles the epoch-1 → epoch-0 version crossing.
-# Note: config/apt/preferences.d/ is cleared by live-build during lb_chroot_package-lists
-# and only restored after hooks; the pin is not active during hook execution.
-DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades -t mozilla firefox
+# Locate the Mozilla package index.  live-build's lb_chroot_install-packages ran
+# apt-get (from the host, with working gpgv) before hooks, so the Packages file
+# for the mozilla repo is already cached on disk.
+_mozilla_pkgs=""
+for _candidate in \
+    "/var/lib/apt/lists/packages.mozilla.org_apt_dists_mozilla_main_binary-amd64_Packages" \
+    "/var/lib/apt/lists/packages.mozilla.org_apt_dists_mozilla_main_binary-amd64_Packages.gz" \
+    "/var/lib/apt/lists/packages.mozilla.org_apt_dists_mozilla_main_binary-amd64_Packages.xz"; do
+    [[ -f "$_candidate" ]] && { _mozilla_pkgs="$_candidate"; break; }
+done
+
+if [[ -z "$_mozilla_pkgs" ]]; then
+    echo "W: Mozilla package list not found — skipping firefox swap (snapd will remain)" >&2
+    exit 0
+fi
+
+# Extract the Filename: for the firefox binary package.
+# Use awk to parse package stanzas safely (avoids bleed into adjacent blocks).
+_firefox_path=""
+if [[ "$_mozilla_pkgs" == *.gz ]]; then
+    _firefox_path=$(zcat "$_mozilla_pkgs" \
+        | awk 'BEGIN{RS=""; FS="\n"} /^Package: firefox$/{for(i=1;i<=NF;i++) if($i~/^Filename:/){print $i; exit}}' \
+        | awk '{print $2}' || true)
+elif [[ "$_mozilla_pkgs" == *.xz ]]; then
+    _firefox_path=$(xz -dc "$_mozilla_pkgs" \
+        | awk 'BEGIN{RS=""; FS="\n"} /^Package: firefox$/{for(i=1;i<=NF;i++) if($i~/^Filename:/){print $i; exit}}' \
+        | awk '{print $2}' || true)
+else
+    _firefox_path=$(awk 'BEGIN{RS=""; FS="\n"} /^Package: firefox$/{for(i=1;i<=NF;i++) if($i~/^Filename:/){print $i; exit}}' \
+        "$_mozilla_pkgs" | awk '{print $2}' || true)
+fi
+
+if [[ -z "$_firefox_path" ]]; then
+    echo "W: Could not find firefox entry in Mozilla package index — skipping" >&2
+    exit 0
+fi
+
+_firefox_url="https://packages.mozilla.org/apt/${_firefox_path}"
+echo "Downloading Mozilla firefox from: ${_firefox_url}"
+curl -fsSL "${_firefox_url}" -o /tmp/firefox-mozilla.deb
+
+# Install — dpkg --force-downgrade crosses the epoch-1 → epoch-0 boundary.
+dpkg --force-downgrade -i /tmp/firefox-mozilla.deb
+rm -f /tmp/firefox-mozilla.deb
 
 # Now nothing PreDepends on snapd — purge it.
 DEBIAN_FRONTEND=noninteractive apt-get purge -y \
