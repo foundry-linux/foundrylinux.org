@@ -47,17 +47,13 @@ fi
 # Extract the Filename: for the firefox binary package.
 # Use awk to parse package stanzas safely (avoids bleed into adjacent blocks).
 _firefox_path=""
+_awk_prog='BEGIN{RS=""; FS="\n"} {for(i=1;i<=NF;i++) if($i=="Package: firefox"){for(j=1;j<=NF;j++) if($j~/^Filename:/){print $j; exit}}}'
 if [[ "$_mozilla_pkgs" == *.gz ]]; then
-    _firefox_path=$(zcat "$_mozilla_pkgs" \
-        | awk 'BEGIN{RS=""; FS="\n"} /^Package: firefox$/{for(i=1;i<=NF;i++) if($i~/^Filename:/){print $i; exit}}' \
-        | awk '{print $2}' || true)
+    _firefox_path=$(zcat "$_mozilla_pkgs" | awk "$_awk_prog" | awk '{print $2}' || true)
 elif [[ "$_mozilla_pkgs" == *.xz ]]; then
-    _firefox_path=$(xz -dc "$_mozilla_pkgs" \
-        | awk 'BEGIN{RS=""; FS="\n"} /^Package: firefox$/{for(i=1;i<=NF;i++) if($i~/^Filename:/){print $i; exit}}' \
-        | awk '{print $2}' || true)
+    _firefox_path=$(xz -dc "$_mozilla_pkgs" | awk "$_awk_prog" | awk '{print $2}' || true)
 else
-    _firefox_path=$(awk 'BEGIN{RS=""; FS="\n"} /^Package: firefox$/{for(i=1;i<=NF;i++) if($i~/^Filename:/){print $i; exit}}' \
-        "$_mozilla_pkgs" | awk '{print $2}' || true)
+    _firefox_path=$(awk "$_awk_prog" "$_mozilla_pkgs" | awk '{print $2}' || true)
 fi
 
 if [[ -z "$_firefox_path" ]]; then
