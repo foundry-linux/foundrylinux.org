@@ -32,8 +32,6 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 - [x] **CVE live-count badge** — build-time fetch of Ubuntu Security API (cves.json) per ubuntu-origin package; `cve_count` cached in `packages-data.json`; 42 active ⚠ + 90 clear ✓ badges on /packages. `SKIP_CVE=1` to bypass for fast local builds.
 - [x] **packages-page CI triggers** ([plan §6](docs/plans/2026-05-21-packages-page.md)) — `workflow_run` on foundry-apt publish + nightly cron fallback live. **`repository_dispatch` now wired both ends (2026-05-29):** `site-deploy.yml` listens for `repository_dispatch: apt-published`; `wbniv/worldfoundry.org` `apt-publish.yml` gained a `notify-foundrylinux` job that POSTs it after a tag publish (gracefully no-ops until the secret exists). **Remaining manual (Will):** (1) create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` with **Contents: Read and write** (NOT Actions — that mis-scope is the likely reason the first attempt was reverted); (2) `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; (3) push both repos — activates on the next `apt-v*` tag.
 
-- [ ] **Phase 0 installer has no working public curl-bash path** — `foundry-setup/README.md` tells users `curl -fsSL https://foundrylinux.org/install.sh | bash`, but `site/install.sh` doesn't exist (the site serves only `setup.sh`, the apt-source wiring script), and `install.sh` isn't self-contained anyway — it's a local dispatcher that sources `lib.sh` + sibling `install-foundry-*.sh`. Decide the Phase 0 distribution story (serve a self-contained installer / ship a tarball / git-clone instructions / lean on `setup.sh`+apt only), then fix the README. Surfaced 2026-06-04 by the [foundry-setup CI-gap fix](docs/plans/2026-06-04-fix-foundry-setup-ci-gap.md).
-
 ### Phase 2 — Distrobox image — COMPLETE ✓
 
 - [x] Build `ghcr.io/foundry-linux/devbox:26.04` — single `apt install foundry-core` (the desktop-agnostic base of the nested hierarchy core ⊆ anvil ⊆ sprite ⊆ atelier; anvil adds `foundry-desktop`/KDE, which has no place in a container — and keeps the image + test harnesses lean and quick to build/boot). GHCR workflow for tag-driven publish. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
@@ -76,6 +74,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 ## Done
 
+- 2026-06-04 — [install-sh-curl-gap] `foundry-setup/README.md` pointed to nonexistent `install.sh` curl URL; canonical path is `setup.sh + apt install foundry-anvil`; README rewritten, stale URLs removed from `install.sh`.
 - 2026-06-04 — [foundry-setup-ci-gap] `foundry-setup/.github/workflows/test.yml` ran nowhere (GitHub only runs root `.github/workflows/`); moved it to `.github/workflows/foundry-setup-test.yml` — no child repo / no `setup-sync` (foundry-setup has no artifact to publish). See [plan](docs/plans/2026-06-04-fix-foundry-setup-ci-gap.md).
 - 2026-06-04 — [plan-sweep] audited all 70 plans; backfilled this Done log, tracked unimplemented/deferred tasks, deleted 5 superseded draft plans. See [full-kde plan](docs/plans/2026-05-30-full-kde-experience.md).
 - 2026-05-31 — [xorriso-efi-warning] documented the `/EFI/BOOT` xorriso warning as expected/benign (WONTFIX); no functional fix needed. See [plan](docs/plans/2026-05-31-xorriso-efi-boot-warning-benign.md).
