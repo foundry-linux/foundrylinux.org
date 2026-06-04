@@ -60,6 +60,14 @@ if [[ -f "$KEYRING" && -f "$LIST" ]]; then
 fi
 
 step "Configuring $URL as an apt source"
+# gpg --dearmor needs gnupg. A real Ubuntu desktop ships it, but minimal/server/CI
+# bases (e.g. the ubuntu:26.04 Docker image the tests use) don't — install if
+# missing. apt lists may be empty on such bases, so refresh first. Idempotent.
+if ! command -v gpg >/dev/null 2>&1; then
+    info "gpg not found — installing gnupg"
+    apt_update
+    run_sudo apt-get install -y --no-install-recommends gnupg
+fi
 run_sudo install -d /etc/apt/keyrings
 run_sudo bash -c "curl -fsSL '$URL/key.gpg' | gpg --dearmor -o '$KEYRING'"
 echo "deb [signed-by=$KEYRING] $URL $SUITE main" \

@@ -1,0 +1,31 @@
+#!/bin/bash
+set -euo pipefail
+source /root/config/hook-env.sh   # sets $EDITION
+
+# Ghidra (~860 MiB of near-incompressible jars) + its OpenJDK runtime live in the
+# *atelier* edition only — they were moved out of foundry-retro-tools so anvil and
+# sprite fit a 4 GB USB stick (see docs/plans/2026-06-04-usb-sized-iso-editions.md).
+#
+# The *published* foundry-retro-tools still Depends ghidra until the 1.0.7 bump is
+# live, so hooks 0030 (apt install foundry-${EDITION}) and 1000 (local-debs, whose
+# closure is computed from the published metadata) can transiently pull ghidra into
+# a non-atelier build. Here we mark ghidra + its JDK auto-installed and autoremove:
+#
+#   * anvil/sprite — the locally-staged foundry-retro-tools 1.0.7 dropped the ghidra
+#     dependency, so ghidra is now orphaned and gets purged here.
+#   * atelier      — foundry-atelier Depends ghidra, so it is NOT orphaned and stays.
+#
+# This is dependency-driven, so it can never cascade-remove a wanted package: if
+# anything still Depends ghidra, autoremove leaves it untouched. Gated off atelier
+# as an extra guard against future drift.
+if [[ "${EDITION:-}" != "atelier" ]]; then
+    echo "=== Trimming atelier-only packages (ghidra + JDK) from ${EDITION} ==="
+    apt-mark auto ghidra 'openjdk-21-*' 2>/dev/null || true
+    DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge -y
+    apt-get clean
+    if dpkg -l ghidra 2>/dev/null | grep -q '^ii'; then
+        echo "NOTE: ghidra still installed — something other than retro-tools Depends it" >&2
+    else
+        echo "PASS: ghidra absent from ${EDITION}"
+    fi
+fi

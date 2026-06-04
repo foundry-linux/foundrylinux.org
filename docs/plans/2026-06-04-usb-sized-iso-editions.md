@@ -64,21 +64,27 @@ So 4 GB is the smallest stick that holds a real Foundry KDE desktop; 2 GB and
 Uncompressed MiB (ghidra jars / wallpapers compress ~1:1, so their **on-ISO**
 savings are even larger than shown):
 
-| # | Cluster | MiB | Action |
-|--:|---|--:|---|
-| 1 | `foundry-retro-tools` (ghidra 864 · MAME 553 · JDK 286 · radare2/binwalk…) | **1890** | **drop** → heavier edition |
-| 2 | `foundry-python-gamedev-extras` (VTK 276 · numba/llvmlite · scipy · librosa) | **554** | **drop** |
-| 3 | `worldfoundry` (Blender + WF tools) | 360 | **KEEP** — the point of the distro |
-| 4 | `foundry-emulators-consoles` (ScummVM…) | 296 | **drop** |
-| 5 | stock Plasma wallpapers (we ship our own) | 255 | **strip** (free) |
-| 6 | `foundry-game-frameworks` (SDL/SFML/LÖVE/Tiled…) | 217 | **KEEP** |
-| 7 | snapd | 140 | **strip** — already in strip-list but **still present = bug** |
-| 8 | `foundry-emulators-computers` | 75 | **drop** |
-| 9 | exotic firmware (`linux-firmware-mellanox-spectrum` = datacenter switches…) | 59+ | **strip** (free) |
-| 10 | `foundry-image-cli` (CLI image utils) | 29 | **KEEP** (per Will, 2026-06-04) |
+**DECISION (Will, 2026-06-04): keep the most — cut only ghidra.** Because ghidra
+is the one near-incompressible giant (~0.8 GiB on the ISO), cutting *just it*
+(plus its JDK and the two safe free strips) frees the needed ~0.9 GiB while
+keeping MAME, every emulator, the sci-Python stack, Blender, and frameworks. The
+Action column reflects that final call, not the largest-possible cut:
 
-Plus `foundry-emulators-vintage` (shares MAME with retro-tools — must drop both
-to actually free MAME).
+| # | Cluster | MiB | Final action |
+|--:|---|--:|---|
+| 1a | **ghidra** (within retro-tools; ~0.8 GiB ISO, jars) | 864 | **→ atelier** (out of core/anvil/sprite) |
+| 1b | OpenJDK (ghidra's only consumer) | 286 | follows ghidra → atelier |
+| 1c | MAME + rest of `foundry-retro-tools` | ~570 | **KEEP** in anvil |
+| 2 | `foundry-python-gamedev-extras` (VTK · numba · scipy · librosa) | 554 | **KEEP** |
+| 3 | `worldfoundry` (Blender + WF tools) | 360 | **KEEP** — the point of the distro |
+| 4 | `foundry-emulators-consoles` (ScummVM…) | 296 | **KEEP** |
+| 5 | stock Plasma **extra** wallpapers (`plasma-workspace-wallpapers`) | 217 | **strip** (free; Recommends-only) |
+| 6 | `foundry-game-frameworks` (SDL/SFML/LÖVE/Tiled…) | 217 | **KEEP** |
+| 7 | snapd | 140 | **strip** — now handled by an apt pin (`no-snapd.pref`) |
+| 8 | `foundry-emulators-computers` | 75 | **KEEP** |
+| 9 | exotic firmware (`linux-firmware-mellanox-spectrum`) | 59 | **NOT stripped** — hard Depends of the `linux-firmware` umbrella; apt purge cascades and can autoremove ALL firmware |
+| 10 | `foundry-image-cli` (CLI image utils) | 29 | **KEEP** |
+| — | `breeze-wallpaper` | 38 | **KEEP** — hard Depends of `breeze` (default Plasma style) |
 
 ---
 
@@ -99,65 +105,70 @@ cascade-breaks the Wi-Fi applet. **Verdict: keep; do not strip.**
 
 ---
 
-## Recommended deliverable: a SLIM edition below anvil
+## Implemented: trim anvil itself, move ghidra → atelier
 
-The weight is structural — it all rides in via `foundry-core` (shared by anvil,
-the devbox, and sprite/atelier), so we can't gut core. The clean vehicle is a new
-edition in the `core ⊆ anvil ⊆ sprite ⊆ atelier` hierarchy, sitting **below
-anvil**:
+Not a new "slim" edition — **anvil itself becomes the ~3.3 GiB 4 GB-stick image**,
+and ghidra (the only thing that has to go) moves up to the atelier "complete
+edition". Everything else anvil shipped stays.
 
-**SLIM = anvil − {retro-tools, all emulators, python-gamedev-extras}**, i.e. a
-new metapackage depending on:
-`foundry-desktop` (KDE welcome + theme), `worldfoundry` (Blender + WF tools),
-`foundry-game-frameworks`, `foundry-python-gamedev`, `foundry-image-cli`,
-`firefox`, `btop`, `task`. → **~3.11 GiB ISO, fits a 4 GB stick**, keeps the
-actual "make a game with WorldFoundry" core. This is the natural
-"hand-a-friend-a-USB" image.
+**Metapackages** (apt.foundrylinux.org):
+- `foundry-retro-tools` 1.0.6 → **1.0.7**: drop `ghidra` from `Depends` (+ its
+  `Suggests: java-common`). Since retro-tools is pulled by `foundry-core`, this
+  removes ghidra from core/anvil/sprite. MAME and the rest stay.
+- `foundry-atelier` 0.9.1 → **0.9.2**: add `ghidra` to `Depends` (its OpenJDK
+  rides along). The complete edition still ships it.
+- `foundry-core` 1.0.2 → **1.0.3**: Description-only (ghidra now atelier).
 
-Naming TBD (e.g. `foundry-spark` / `foundry-mini`). Implementation mirrors the
-existing edition metapackages + ISO targets:
+**ISO build** (`foundry-iso/`):
+- `strip.list.chroot.purge`: add `plasma-workspace-wallpapers` (217 MiB, safe —
+  Recommends-only; we ship our own wallpaper). **Not** `breeze-wallpaper`
+  (hard Depends of `breeze`) and **not** any `linux-firmware-*` (hard Depends of
+  the umbrella → cascade risk).
+- New hook **`1010-trim-atelier-only-pkgs.hook.chroot`**: runs after the
+  local-debs install; `apt-mark auto ghidra openjdk-21-*` then
+  `apt-get autoremove --purge`. Dependency-driven, so it removes ghidra+JDK from
+  anvil/sprite (now orphaned by retro-tools 1.0.7) but leaves them on atelier
+  (where `foundry-atelier` Depends ghidra). Never cascades. Gated off atelier as
+  a belt-and-suspenders guard. This handles the transient pull from hook 0030
+  (`apt install foundry-anvil` against the still-published 1.0.6) until the
+  metapackage bump is published.
+- snapd is already neutralised by the new `config/apt/preferences.d/no-snapd.pref`
+  pin (+ the hook-0020 purge) — no extra work.
 
-- New `foundry-apt/packages/<slim>/debian/` metapackage (Depends as above).
-- New ISO edition wired into `foundry-iso/scripts/build-iso.sh` + Taskfile
-  `iso-build` `EDITION=` dispatch (same pattern as anvil/atelier).
-- Apply the **free strips** to *all* editions while here: fix the snapd leak,
-  drop stock wallpapers (we ship our own), drop exotic/datacenter firmware.
-- The [create-foundry-usb](2026-05-30-create-foundry-usb.md) tool should target
-  this SLIM `-latest-` image (or offer a small-stick choice), since it's the one
-  that fits common giveaway sticks.
+**create-foundry-usb**: targets the anvil `-latest-` image directly — anvil is
+now the 4 GB-capable image, so no separate edition for the tool to choose.
 
-2 GB / 1 GB images are explicitly **out of scope** for this plan as *live*
-images — captured here as the "installer media" finding for a future plan if a
-network-installer product is ever wanted.
+2 GB / 1 GB images stay **out of scope** as *live* images (the KDE floor is
+~2.44 GiB) — captured above as the "installer media" finding for a possible future
+network-installer product.
 
 ---
 
-## Spin-off issues found (worth fixing regardless of edition work)
+## Spin-off findings
 
-1. **snapd ships despite the strip-list.** `snapd snap-store` is in
-   `strip.list.chroot.purge` + hook 0020, yet snapd (140 MiB) is present in
-   0.9.36. The purge isn't taking (likely re-pulled as a Recommends after the
-   purge pass, or the autoremove doesn't catch it). Investigate ordering;
-   ~140 MiB free across every edition once fixed.
-2. **VTK / numba stack (554 MiB) rides in via `foundry-python-gamedev-extras`.**
-   `libvtk9.5` alone is 276 MiB. Heavy for what it adds to anvil; reconsider
-   whether `-extras` (librosa/numba/scipy/VTK) belongs in the default toolkit or
-   should be opt-in even on the full anvil edition.
+1. **snapd** — was shipping in 0.9.36 despite the strip-list (re-pulled as a
+   Recommends). Now fixed by an apt pin (`no-snapd.pref`, priority −1) applied
+   before package install. ~140 MiB freed across every edition.
+2. **VTK / numba stack (554 MiB) via `foundry-python-gamedev-extras`** —
+   `libvtk9.5` alone is 276 MiB. We chose to **keep** it in anvil (keep-the-most),
+   but it remains the next-fattest lever if anvil ever needs to shrink further;
+   worth revisiting whether `-extras` (librosa/numba/scipy/VTK) should be opt-in.
+   Tracked in TODO.
 
 ---
 
 ## Verification
 
-1. Regenerate the package-manifest appendix against 0.9.36
-   (`foundry-iso/docs/howto-kubuntu-remix-installed-packages.md` currently
-   reflects 0.9.33) so the numbers here have a committed source of truth.
-2. Build the SLIM edition: `EDITION=<slim> task iso-build` → resulting ISO
-   **≤ 3.6 GiB** (fits a 4 GB stick). Confirm ghidra/MAME/ScummVM/JDK/VTK absent
-   and Blender + game frameworks + foundry-image-cli present
-   (`unsquashfs -cat … var/lib/dpkg/status`).
-3. Boot SLIM in QEMU: KDE Plasma desktop comes up, Wi-Fi applet works (proves
-   QtWebEngine retained), foundry-welcome appears.
-4. snapd fix: rebuild any edition → `snapd` absent from the squashfs dpkg DB.
-5. Free-strip check: stock `plasma-workspace-wallpapers` and
-   `linux-firmware-mellanox-spectrum` absent; our wallpaper still present.
+1. `task build` (foundry-apt) → `foundry-retro-tools` 1.0.7 `.deb` no longer
+   `Depends: ghidra`; `foundry-atelier` 0.9.2 does. ✅ (2026-06-04)
+2. `EDITION=anvil task iso-build` → ISO **≤ 3.6 GiB** (target ~3.3). Confirm via
+   `unsquashfs -cat … var/lib/dpkg/status`: **ghidra + openjdk-21-\* absent**;
+   **MAME, ScummVM, Blender, SDL/SFML, VTK present**; **snapd absent**;
+   `plasma-workspace-wallpapers` absent, our wallpaper present.
+3. `EDITION=atelier task iso-build` (or metapackage resolve) → ghidra present.
+4. Boot anvil in QEMU: KDE desktop + Wi-Fi applet work (QtWebEngine retained),
+   foundry-welcome appears.
+5. Regenerate `foundry-iso/docs/howto-kubuntu-remix-installed-packages.md` against
+   the new anvil as the committed size source-of-truth.
+6. Write the anvil ISO to a real 4 GB stick via isoimagewriter; boot end-to-end.
 6. Write SLIM to a real 4 GB USB via `isoimagewriter` and boot it end-to-end.

@@ -1,3 +1,11 @@
+foundry-atelier (0.9.2) resolute; urgency=medium
+
+  * Add ghidra to Depends — it moved out of foundry-retro-tools/core so anvil
+    fits a 4 GB stick; the complete edition still ships it (its JDK rides
+    along). See docs/plans/2026-06-04-usb-sized-iso-editions.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 04 Jun 2026 03:08:06 +0000
+
 foundry-atelier (0.9.1) resolute; urgency=low
 
   * Note ppsspp (PSP) and snes9x-gtk (SNES) in description; both now

@@ -9,3 +9,10 @@ kontact kmail akonadi-*
 kdepim-* kaddressbook kalarm kjots knotes korganizer merkuro-calendar
 kde-games-* kalgebra kgeography kig kbruch
 snapd snap-store
+# Stock Plasma extra-wallpapers collection (~217 MiB) — we ship our own via
+# foundry-kde-theme. Only Recommended by kubuntu-desktop, so the purge is clean.
+# NOTE: do NOT add breeze-wallpaper — it's a hard Depends of `breeze` (the
+# default Plasma style). And do NOT purge linux-firmware-* subpackages — they
+# are hard Depends of the linux-firmware umbrella, so apt purge cascades and can
+# autoremove ALL firmware (Wi-Fi/GPU). See plan 2026-06-04-usb-sized-iso-editions.
+plasma-workspace-wallpapers

@@ -1,3 +1,11 @@
+foundry-core (1.0.3) resolute; urgency=medium
+
+  * Description: Ghidra is now atelier-only (moved out of retro-tools so
+    core/anvil fit a 4 GB USB stick). No dependency change here — core picks
+    up the lighter foundry-retro-tools automatically.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 04 Jun 2026 03:08:06 +0000
+
 foundry-core (1.0.2) resolute; urgency=medium
 
   * Add foundry-python-gamedev and foundry-python-gamedev-extras to

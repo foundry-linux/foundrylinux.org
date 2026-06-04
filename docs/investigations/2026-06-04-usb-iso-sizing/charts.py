@@ -49,19 +49,18 @@ ax.set_xlim(0,2100); plt.tight_layout(); plt.savefig("chart1_cutlist.png",dpi=13
 
 # ---- Chart 2: scenario ISO sizes vs stick capacity ----
 scen=[("NODESK\nnet-installer",0.60),("BASE KDE\ndesktop floor",2.44),
-      ("MINI\nKDE+Blender/WF",2.75),("SLIM\ndrop heavy toolkit",3.11),
-      ("FULL anvil\n(current)",4.49)]
+      ("anvil NEW\n(ghidra→atelier)",3.30),("anvil OLD\n(0.9.36)",4.49)]
 names=[s[0] for s in scen]; isos=[s[1] for s in scen]
 fig,ax=plt.subplots(figsize=(11,6.5))
-bars=ax.bar(names,isos,color=[GRAY,GRAY,GREEN,GREEN,EMBER],width=0.62)
+bars=ax.bar(names,isos,color=[GRAY,GRAY,GREEN,EMBER],width=0.62)
 for b,v in zip(bars,isos): ax.text(b.get_x()+b.get_width()/2,v+0.05,f"{v:.2f} GiB",ha='center',fontsize=9)
 sticks=[("1 GB stick (~0.9 GiB)",0.9,RED),("2 GB stick (~1.8 GiB)",1.8,AMBER),
         ("4 GB stick (~3.6 GiB)",3.6,GREEN),("8 GB stick (~7.4 GiB)",7.4,'#2e6da4')]
 for lbl,cap,c in sticks:
     ax.axhline(cap,color=c,ls='--',lw=1.4)
-    ax.text(4.55,cap+0.03,lbl,color=c,fontsize=8.5,ha='right')
+    ax.text(3.55,cap+0.03,lbl,color=c,fontsize=8.5,ha='right')
 ax.set_ylabel("Projected ISO size (GiB)")
 ax.set_ylim(0,5.0)
-ax.set_title("What fits which USB stick — Foundry image scenarios vs stick capacity\nKDE-desktop floor (2.44 GiB) means 4 GB is the smallest stick for ANY KDE live image",fontsize=11)
+ax.set_title("Trimming anvil to a 4 GB stick — move ghidra to atelier (keep the rest)\nKDE-desktop floor (2.44 GiB) means 4 GB is the smallest stick for ANY KDE live image",fontsize=11)
 plt.tight_layout(); plt.savefig("chart2_scenarios.png",dpi=130); plt.close()
 print("charts written")

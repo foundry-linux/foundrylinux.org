@@ -27,8 +27,9 @@ Description: Foundry Linux developer toolkit — desktop-agnostic
  KDE or Plasma dependencies.
  .
  Includes the WorldFoundry authoring stack (Blender + 10 WF CLIs + WF
- Blender add-ons), the retro-porting toolkit (MAME, Ghidra, dasm, z80,
- cc65, …), light universe emulators, game-dev frameworks (SDL2/3, SFML,
+ Blender add-ons), the retro-porting toolkit (MAME, dasm, z80,
+ cc65, …; Ghidra is atelier-only), light universe emulators, game-dev
+ frameworks (SDL2/3, SFML,
  Allegro, libtcod, Tiled, LOVE + Vulkan shader tools), CLI image utilities,
  and go-task.
  .

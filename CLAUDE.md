@@ -31,7 +31,8 @@ foundry-desktop   KDE integration (foundry-kde-theme, foundry-welcome)  ← ISO/
 foundry-anvil     = foundry-core + foundry-desktop                      ← the default ISO edition
 foundry-sprite    = anvil + heavy art/audio (art, pixel-art, trackers, daw, digikam)
 foundry-atelier   = sprite + vintage/heavy emulators, game-reimplementations, free-games,
-                    android/ios-development, worldfoundry-development [WF]  ← "complete edition"
+                    android/ios-development, worldfoundry-development [WF], ghidra
+                    (ghidra is atelier-only — ~860 MiB of jars; keeps anvil ≤4 GB stick)  ← "complete edition"
 ```
 
 The devbox installs **`foundry-core`** (one rung below anvil) on purpose — KDE/Plasma has no place in a desktop‑agnostic container. The `foundry-dev` umbrella from the original 2026‑05‑16 proposal no longer exists; it became this `core`/`desktop` split (2026‑05‑28).
@@ -48,7 +49,7 @@ foundry-setup/
   setup-worldfoundry-apt-source.sh             wire apt.worldfoundry.org (key + sources.list.d)
   install-foundry-engine-build-deps.sh   build-essential, cmake, libx11-dev, libgl/glu dev, gdb, xxd, python3, pkg-config, git, curl, wget, unzip (Ubuntu universe)
   install-foundry-blender.sh             apt install worldfoundry-blender-addons (apt.worldfoundry.org → Blender + worldfoundry-blender-editor-exporter + blender-asset-finder)
-  install-foundry-retro-tools.sh         apt install foundry-retro-tools (apt.foundrylinux.org → mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream, ghidra)
+  install-foundry-retro-tools.sh         apt install foundry-retro-tools (apt.foundrylinux.org → mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream; ghidra is atelier-only since 2026-06-04 so anvil fits a 4 GB stick)
   install-foundry-android-development.sh apt install foundry-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c; enables Ubuntu multiverse)
   install-foundry-ios-development.sh     apt install foundry-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx install codemagic-cli-tools
   install-task.sh                              go-task (Cloudsmith)
