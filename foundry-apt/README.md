@@ -10,11 +10,13 @@ curl -fsSL https://apt.foundrylinux.org/key.gpg \
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
   | sudo tee /etc/apt/sources.list.d/foundry.list
 sudo apt update
-sudo apt install foundry-anvil   # full WF game-authoring toolkit + KDE
+sudo apt install foundry-core   # full WF game-authoring toolkit (desktop-agnostic)
 ```
 
-> **Tip:** Wire `apt.worldfoundry.org` too — `foundry-anvil` cross-depends on it.
-> Use [`site/setup.sh`](https://foundrylinux.org/setup.sh) to add both sources in one step.
+> **Note:** `foundry-core` cross-depends on `apt.worldfoundry.org` — wire that source too,
+> or use [`setup.sh`](https://foundrylinux.org/setup.sh) to add both in one step.
+> On a fresh Kubuntu 26.04 install (or the Foundry ISO), use `foundry-anvil` instead
+> — it adds the KDE theming layer on top of core.
 
 `resolute` is the suite name — Kubuntu 26.04 LTS "Resolute Raccoon", the only supported base.
 
