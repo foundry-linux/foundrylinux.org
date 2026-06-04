@@ -14,7 +14,7 @@ jobs:
     name: shellcheck install.sh
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Run shellcheck
         run: |
           cd foundry-setup
@@ -24,7 +24,7 @@ jobs:
     name: Dry-run on Ubuntu 26.04
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build test image
         working-directory: foundry-setup
         run: docker build -f test/Dockerfile.ubuntu26.04 -t foundry-test:26.04 .
@@ -49,7 +49,7 @@ jobs:
     # Only run on main / tagged releases; full-install is slow (~5–10 min)
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build Ubuntu 26.04 test image
         working-directory: foundry-setup
         run: docker build -f test/Dockerfile.ubuntu26.04 -t foundry-test:26.04 .

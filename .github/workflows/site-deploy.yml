@@ -89,7 +89,7 @@ jobs:
 
       - name: Upload Lighthouse bundle
         if: steps.lh.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-${{ github.ref_name }}
           path: lighthouse-bundle/*.json

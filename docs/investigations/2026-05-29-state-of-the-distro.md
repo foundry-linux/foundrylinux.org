@@ -33,11 +33,11 @@ The distribution is in good shape. The risks that matter are **not** in the ship
 > | 7 | CLAUDE.md "neither depends" false | 🟡 **Still open** — `CLAUDE.md:16` unchanged |
 > | 8 | `.history/` clutter committed | 🟢 **Mostly fixed** (`7f5e1ba`) — `.history/` gitignored (`.gitignore:17`), 33/34 snapshots untracked; **1 straggler** `.history/CLAUDE.md` still tracked |
 > | 9 | Generated site artifacts committed | 🟡 **Partial** — `serve.json` now tracked (`e39feb0`, closes the deploy‑critical half); but `index.html`/`packages.html`/`packages-data.json` are still tracked, not gitignored |
-> | 10 | Node‑24 action‑pin stragglers | 🔴 **Open & now OVERDUE** — the 2026‑06‑02 forced‑off date has **passed**; `site-deploy.yml:92`, `foundry-iso/publish.yml:68,81`, `foundry-setup/test.yml:17,27,52` still on `@v4` |
+> | 10 | Node‑24 action‑pin stragglers | ✅ **Fixed (06‑04)** — all 6 stragglers bumped (`site-deploy.yml` upload‑artifact `@v7`; `foundry-iso/publish.yml` upload/download‑artifact `@v7`; `foundry-setup/test.yml` checkout `@v6` ×3). Whole‑tree census is now `checkout@v6` / `setup-node@v6` / `upload`+`download-artifact@v7`, no `<v6` left |
 >
 > **Package census has also grown:** `apt.foundrylinux.org` is now **40 source packages** (was 32) — **14 vendored upstreams** (was 6+2; +5 Python/ruff on 05‑30, `task` re‑vendored 05‑31), README + `LICENSES-VENDORED.md` rewritten to match (06‑04). Docs: 66 plans · 19 investigations · 14 transcripts.
 >
-> **What's left from the original action list:** finding 7 (reword), the metapackage half of finding 9-on-README + CLAUDE.md editions section (action #9), finding 10 (overdue pins), the `serve.json`‑adjacent gitignore of 3 artifacts, the `.history/CLAUDE.md` straggler, and Phase‑3‑to‑1.0 (finding 5 + SLIM go‑ahead). The inline annotations on findings 4–10 below carry the detail.
+> **What's left from the original action list:** finding 7 (reword), the metapackage half of finding 9-on-README + CLAUDE.md editions section (action #9), the `serve.json`‑adjacent gitignore of 3 artifacts, the `.history/CLAUDE.md` straggler, and Phase‑3‑to‑1.0 (finding 5 + SLIM go‑ahead). *(Finding 10's Node‑24 pins were closed in this same 06‑04 pass.)* The inline annotations on findings 4–10 below carry the detail.
 
 ### Phase scorecard
 
@@ -61,7 +61,7 @@ The distribution is in good shape. The risks that matter are **not** in the ship
 7. **🟡 CLAUDE.md's "neither repo depends on the other" is false at the package level.** *(Still open 06‑04 — `CLAUDE.md:16` unchanged.)* `foundry-core` `Depends: worldfoundry`; `worldfoundry-cli`/`-blender-addons` `Depend` on `blender-asset-finder*` (which live in foundry‑apt). The repos are *mutually* package‑coupled — true independence holds only for apt‑source configuration. Phase 0's two `setup-*-apt-source.sh` scripts are what actually guarantee both sources are wired.
 8. ~~**🟡 Editor `.history/` clutter is committed.**~~ **🟢 Mostly fixed (`7f5e1ba`).** `.history/` is now gitignored (`.gitignore:17`) and 33 of 34 snapshots were `git rm --cached`'d. **One straggler remains tracked: `.history/CLAUDE.md`** (dirty in the working tree) — `git rm --cached` it to fully close this.
 9. ~~**🟡 Generated site artifacts are committed**~~ **🟡 Half‑fixed.** The deploy‑critical gap is closed: `site/serve.json` (the `/packages` clean‑URL rewrite) is now **tracked** (`e39feb0`). But the three *generated* artifacts — `site/index.html`, `site/packages.html`, `site/packages-data.json` — are still tracked and still invite merge churn against the "index.html is generated — never edit" stance; gitignore them.
-10. **🔴 Node‑24 action‑pin stragglers — now OVERDUE.** *(Escalated from 🟢; the 2026‑06‑02 forced‑off date has passed as of this refresh.)* Stragglers persist: `site-deploy.yml:92` (`upload-artifact@v4`), `foundry-iso/publish.yml:68,81` (`upload/download-artifact@v4`), `foundry-setup/test.yml:17,27,52` (`checkout@v4` ×3). They still run only because GH *forces* Node 24 onto Node‑20 actions until removal on 2026‑09‑16 — bump them to `@v6/@v7` now.
+10. ~~**🔴 Node‑24 action‑pin stragglers — now OVERDUE.**~~ **✅ Fixed (06‑04).** All 6 stragglers bumped past the 2026‑06‑02 forced‑off date: `site-deploy.yml:92` (`upload-artifact@v7`), `foundry-iso/publish.yml:68,81` (`upload/download-artifact@v7`), `foundry-setup/test.yml:17,27,52` (`checkout@v6` ×3). Whole‑tree census is now clean (`checkout@v6`, `setup-node@v6`, `upload`/`download-artifact@v7`); all three YAMLs re‑validated.
 
 ---
 
@@ -313,7 +313,7 @@ Phase 3  iso-sync-local-debs copies foundry-apt/dist/*.deb → local-debs/ (newe
 
 **P2 — hygiene:**
 12. ~~Add `.history/` to `.gitignore` and `git rm -r --cached` the snapshots.~~ 🟢 `7f5e1ba` (33/34); ⏳ **one straggler `.history/CLAUDE.md` still tracked.** [§10]
-13. **🔴 OVERDUE** — bump the straggler action pins to Node‑24 majors; the 2026‑06‑02 deadline has passed (`site-deploy.yml:92`, `foundry-iso/publish.yml:68,81`, `foundry-setup/test.yml:17,27,52`). [§8]
+13. ~~Bump the straggler action pins to Node‑24 majors.~~ ✅ **Done 06‑04** — all 6 bumped to `@v6`/`@v7`; tree census clean. [§8]
 14. ⏳ Extend shellcheck CI to root `scripts/`, `foundry-iso/scripts/`, `foundry-setup/install-foundry-*.sh`. [§8]
 15. ⏳ Collapse the 4 package‑inventory investigations to one canonical overwrite‑in‑place doc; consolidate the draft/redo plan pairs. [§9]
 16. ~~Fix the devbox `foundry-anvil`→`foundry-core` breadcrumb~~ ✅ `49cf608`; ⏳ confirm the dangling proposal link now resolves (proposal moved to `docs/investigations/`). [§5, §9]
