@@ -87,6 +87,8 @@ apt.worldfoundry.org  ←  ../worldfoundry.org/apt/  (SEPARATE repo, org `wbniv`
 - **1 native‑from‑source**: `foundry-welcome` (QML/Kirigami first‑login app).
 - **2 git‑vendored Blender tools**: `blender-asset-finder`, `blender-asset-finder-cli`.
 
+> **Update 2026‑06‑04 — the vendored count has since grown to 14.** This 05‑29 snapshot (6 upstreams + 2 Blender tools, `task` retired) was correct *as of audit date*. Added since: `ruff` + `python3-glfw`/`-librosa`/`-mss`/`-pydub` (05‑30, +5) and `task` **re‑vendored** (`23809cc`, 05‑31, +1) so `foundry-apt` is self‑contained for `foundry-core`'s `Depends: task`. The full 14 are now enumerated in `foundry-apt/README.md` and `LICENSES-VENDORED.md` (both rewritten 06‑04). ⚠️ Note `snes9x-gtk` ships under the **Snes9x non‑commercial licence** — fine for this free repo, never for a paid bundle.
+
 **`apt.worldfoundry.org` — 14 packages**: 9 Rust/C CLIs (`cdpack`, `iffcomp`, `iffdump`, `levcomp`, `lvldump`, `oaddump`, `oas2oad`, `prep`, `textile`) + 1 Blender add‑on (`worldfoundry-blender-editor-exporter`) + 4 umbrella metas (`worldfoundry`, `worldfoundry-cli`, `worldfoundry-blender-addons`, `worldfoundry-development`).
 
 #### Metapackage dependency graph (verified from `debian/control`)
@@ -245,7 +247,7 @@ Phase 3  iso-sync-local-debs copies foundry-apt/dist/*.deb → local-debs/ (newe
 **Verification discipline** was tight during the packaging push (05‑18→05‑22) and on the ISO work — many plans carry the house format (numbered steps → raw output → PASS/FAIL), and the Phase 3 plan is an exemplary multi‑session log. It **slipped on the late‑May site/apt‑index plans**: several (`apt-package-meta`, `foundry-core-desktop-split`, `install-section-redesign`, the 215‑byte `apt-index-two-column-table` stub) are marked done with a `## Verification` header but **no pasted output** — evidence lives in transcripts/commits instead of the plan.
 
 **Doc ↔ reality drift:**
-- **`foundry-apt/README.md`** is the worst single drift — its tables list **1 metapackage and 1 vendored upstream** vs the 24 + 6 that exist. A new contributor would massively under‑estimate the project.
+- **`foundry-apt/README.md`** is the worst single drift — its tables list **1 metapackage and 1 vendored upstream** vs the 24 + 6 that exist. A new contributor would massively under‑estimate the project. **🟡 Partially fixed (06‑04):** the **vendored‑upstream table is now complete (1 → 14 rows)** and `LICENSES-VENDORED.md` rewritten to match; the **metapackage table is still a single row** — that half of action #9 remains open.
 - **CLAUDE.md** is accurate on infra (two‑repo split, canonical layout, container builds, "no AWS/SSM") but its **architecture section never mentions the editions** or the core/desktop split — it predates 2026‑05‑28.
 - **TODO.md** is current and well‑maintained, with two genuinely‑open carryovers (create `FOUNDRYLINUX_DISPATCH_PAT`; flip monorepo public) and one **dangling link** — it points at `2026-05-16-foundry-distro-proposal.md` but the file is `2026-05-16-foundry-linux-distro-proposal.md`.
 - **Renamed/retired names are clean** — `foundry-linux-*` and `xa65` references are confined to the historical rename/retire plans.
@@ -280,7 +282,7 @@ Phase 3  iso-sync-local-debs copies foundry-apt/dist/*.deb → local-debs/ (newe
 
 **P1 — docs honesty:**
 8. Reconcile the north‑star: either retire the 2026‑05‑16 proposal as historical (with a banner) or rewrite it to the editions reality; document the creative‑distro scope expansion. [§9, §10]
-9. Rewrite `foundry-apt/README.md` (1‑row tables → 32 packages) and add the editions to CLAUDE.md's architecture section; reword the "neither depends on the other" claim. [§4c, §9]
+9. Rewrite `foundry-apt/README.md` (1‑row tables → 32 packages) and add the editions to CLAUDE.md's architecture section; reword the "neither depends on the other" claim. [§4c, §9] — **🟡 partial (06‑04):** ~~vendored‑upstream table (→ 14 rows) + `LICENSES-VENDORED.md`~~ done; **metapackage table, CLAUDE.md editions, and the "neither depends" reword still open.**
 10. File a TODO for the `prep` grammar restoration (binary‑blob reproducibility violation); decide arm64 (build it or stop advertising it). [§4b]
 
 **P1 — site:**

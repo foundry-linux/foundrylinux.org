@@ -5,21 +5,29 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 | Package | Upstream | Licence | Where the text lives in the .deb |
 |---|---|---|---|
 | `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | [GPL-2.0+](https://github.com/Arakula/f9dasm) | `/usr/share/doc/f9dasm/copyright` |
+| `ghidra` | [NSA / Ghidra](https://ghidra-sre.org/) | [Apache-2.0](https://github.com/NationalSecurityAgency/ghidra/blob/master/LICENSE) | `/usr/share/doc/ghidra/copyright` |
+| `libvgm` | [ValleyBell/libvgm](https://github.com/ValleyBell/libvgm) | [GPL-2.0+](https://github.com/ValleyBell/libvgm/blob/master/LICENSE) (bundles BSD-3-Clause / LGPL-2.1+ components) | `/usr/share/doc/libvgm/copyright` |
+| `vgmstream` | [vgmstream/vgmstream](https://github.com/vgmstream/vgmstream) | [ISC](https://github.com/vgmstream/vgmstream/blob/master/COPYING) | `/usr/share/doc/vgmstream/copyright` |
+| `ppsspp` | [hrydgard/ppsspp](https://github.com/hrydgard/ppsspp) | [GPL-2.0+](https://github.com/hrydgard/ppsspp/blob/master/LICENSE.TXT) (bundles BSD-3-Clause components) | `/usr/share/doc/ppsspp/copyright` |
+| `snes9x-gtk` | [snes9xgit/snes9x](https://github.com/snes9xgit/snes9x) | [Snes9x non-commercial](https://github.com/snes9xgit/snes9x/blob/master/LICENSE) ⚠️ (bundles GPL-3+ / LGPL-2.1+ components) | `/usr/share/doc/snes9x-gtk/copyright` |
+| `task` | [go-task/task](https://github.com/go-task/task) | [MIT](https://github.com/go-task/task/blob/main/LICENSE) | `/usr/share/doc/task/copyright` |
+| `ruff` | [astral-sh/ruff](https://github.com/astral-sh/ruff) | [MIT](https://github.com/astral-sh/ruff/blob/main/LICENSE) | `/usr/share/doc/ruff/copyright` |
+| `python3-glfw` | [FlorianRhiem/pyGLFW](https://github.com/FlorianRhiem/pyGLFW) | [MIT](https://github.com/FlorianRhiem/pyGLFW/blob/master/LICENSE) | `/usr/share/doc/python3-glfw/copyright` |
+| `python3-librosa` | [librosa/librosa](https://github.com/librosa/librosa) | [ISC](https://github.com/librosa/librosa/blob/main/LICENSE.md) | `/usr/share/doc/python3-librosa/copyright` |
+| `python3-mss` | [BoboTiG/python-mss](https://github.com/BoboTiG/python-mss) | [MIT](https://github.com/BoboTiG/python-mss/blob/master/LICENSE.txt) | `/usr/share/doc/python3-mss/copyright` |
+| `python3-pydub` | [jiaaro/pydub](https://github.com/jiaaro/pydub) | [MIT](https://github.com/jiaaro/pydub/blob/master/LICENSE) | `/usr/share/doc/python3-pydub/copyright` |
+| `blender-asset-finder` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder/copyright` |
+| `blender-asset-finder-cli` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder-cli/copyright` |
 
-## Planned future entries (not yet shipped)
-
-| Package | Upstream | Licence | Notes |
-|---|---|---|---|
-| `ghidra` | [NSA / Ghidra](https://ghidra-sre.org/) | [Apache-2.0](https://github.com/NationalSecurityAgency/ghidra/blob/master/LICENSE) | Big tarball (~400 MB); host on R2. |
-| `vgmstream` | [vgmstream/vgmstream](https://github.com/vgmstream/vgmstream) | [ISC](https://github.com/vgmstream/vgmstream/blob/master/COPYING) | Audio decode for legacy formats. |
-| `libvgm` | [ValleyBell/libvgm](https://github.com/ValleyBell/libvgm) | [GPL-2.0+](https://github.com/ValleyBell/libvgm/blob/master/LICENSE) | Sound chip emulation library. |
+> ⚠️ **`snes9x-gtk` ships under the Snes9x licence, which forbids commercial redistribution.** The source may be freely distributed for non-commercial use; binaries are likewise non-commercial. It is fine for Foundry Linux's free, non-commercial apt repo, but it must never be bundled into a paid product. See the [upstream LICENSE](https://github.com/snes9xgit/snes9x/blob/master/LICENSE).
 
 ## Retired entries
 
 | Package | Reason |
 |---|---|
-| `task` | The official Cloudsmith apt repo (`deb.taskfile.dev`) is the easiest source — Phase 0's `install-task.sh` configures it directly, no in-repo vendoring needed. |
 | `xa65` | Ubuntu 26.04 universe ships it as `xa65 2.4.1-0.1build1` — same upstream code as we briefly vendored under `2.4.1-1foundry1`. Phase 0's `install-foundry-retro-tools.sh` now apt-installs `xa65` directly; `foundry-retro-tools` `Depends: xa65` resolves to the universe entry. Retirement plan: [`../docs/plans/2026-05-18-retire-xa65.md`](../../docs/plans/2026-05-18-retire-xa65.md). |
+
+> **Note on `task`:** earlier retired in favour of the official Cloudsmith apt repo, it was **re-vendored** into this repo (`debian/changelog`, commit `23809cc`) so the `apt.foundrylinux.org` repo is self-contained and `foundry-core` can `Depends: task` without wiring a third apt source.
 
 ## Foundry-authored content
 

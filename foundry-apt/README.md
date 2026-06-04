@@ -27,13 +27,25 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 
 | Package | Upstream | Notes |
 |---|---|---|
-| `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | Motorola 6800/6809/6309 family disassembler. amd64. |
+| `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | Motorola 6800/6809/6309 family disassembler. `any`. |
+| `ghidra` | [ghidra-sre.org](https://ghidra-sre.org/) (NSA) | Software reverse-engineering framework. `amd64`. |
+| `libvgm` | [ValleyBell/libvgm](https://github.com/ValleyBell/libvgm) | Chip-register VGM playback library + player utilities. `any`. |
+| `vgmstream` | [vgmstream.org](https://vgmstream.org/) | Video-game audio decoder (CLI). `any`. |
+| `ppsspp` | [ppsspp.org](https://www.ppsspp.org) | Fast, portable PSP emulator. `any`. |
+| `snes9x-gtk` | [snes9x.com](https://www.snes9x.com) | Portable Super Nintendo (SNES) emulator. `any`. |
+| `task` | [taskfile.dev](https://taskfile.dev) | Task runner / build tool written in Go. `amd64`. |
+| `ruff` | [astral.sh/ruff](https://docs.astral.sh/ruff) | Extremely fast Python linter and code formatter. `amd64`. |
+| `python3-glfw` | [FlorianRhiem/pyGLFW](https://github.com/FlorianRhiem/pyGLFW) | Python ctypes bindings for GLFW3. `all`. |
+| `python3-librosa` | [librosa.org](https://librosa.org) | Audio and music analysis library for Python. `all`. |
+| `python3-mss` | [BoboTiG/python-mss](https://github.com/BoboTiG/python-mss) | Ultra-fast cross-platform screenshot library for Python. `all`. |
+| `python3-pydub` | [pydub.com](http://pydub.com) | High-level audio manipulation library for Python. `all`. |
+| `blender-asset-finder` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | Blender add-on: search/download 3D assets from online repos. `all`. |
+| `blender-asset-finder-cli` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | CLI companion to the `blender-asset-finder` add-on. `all`. |
 
 See [`LICENSES-VENDORED.md`](LICENSES-VENDORED.md) for the running attribution list. Use the [`/package`](https://github.com/anthropics/claude-code) Claude Code skill to add new ones — it generates the Debian source tree via `dh_make` and wires it into this repo.
 
-Two upstreams we *don't* repackage:
+One upstream we *don't* repackage:
 
-- [`task`](https://taskfile.dev) — official Cloudsmith apt repo covers it; Phase 0's `foundry-setup/install-task.sh` configures the repo directly.
 - [`xa65`](https://www.floodgap.com/retrotech/xa/) — Ubuntu 26.04 universe ships it as `xa65 2.4.1-0.1build1`; foundry-retro-tools `Depends:` it from there.
 
 ## Repo layout
