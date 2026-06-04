@@ -1,11 +1,32 @@
 #!/bin/bash
 set -euo pipefail
-# The Mozilla firefox pin (config/apt/preferences.d/mozilla-firefox.pref) is
-# applied before lb_chroot_install-packages, but Ubuntu's snap-transitional
-# firefox (1:1snap1-0ubuntu8) still wins because apt treats epoch-1 as newer
-# than any Mozilla epoch-0 candidate regardless of pin priority 1001.
-# Swapping firefox to the Mozilla native .deb to remove snapd requires a more
-# invasive local-deb approach not yet implemented; see plan for details.
-# This hook just refreshes apt so hook 0030's `apt-get install foundry-${EDITION}`
-# has an up-to-date index.
-apt-get update -qq 2>/dev/null || true
+# Ubuntu's snap-transitional firefox (1:1snap1-0ubuntu8) has PreDepends: snapd,
+# so snapd survives hook 0020's purge attempt.  Fix: wire Mozilla's official apt
+# repo, swap firefox in-place, then snapd has no remaining reverse-dep and can
+# be purged cleanly before hook 0030 installs the foundry edition.
+
+KEYRING=/etc/apt/keyrings/packages.mozilla.org.asc
+SOURCES=/etc/apt/sources.list.d/mozilla.list
+
+# Add Mozilla's signing key and apt source if not already present.
+install -d /etc/apt/keyrings
+if [[ ! -f "${KEYRING}" ]]; then
+    curl -fsSL https://packages.mozilla.org/apt/repo-signing-key.gpg \
+        | gpg --dearmor -o "${KEYRING}"
+fi
+if [[ ! -f "${SOURCES}" ]]; then
+    echo "deb [signed-by=${KEYRING}] https://packages.mozilla.org/apt mozilla main" \
+        > "${SOURCES}"
+fi
+apt-get update -qq
+
+# Swap Ubuntu's snap-transitional firefox for Mozilla's native .deb.
+# The pin in config/apt/preferences.d/mozilla-firefox.pref sets priority 1001
+# for packages.mozilla.org, which should force the Mozilla candidate.
+# --allow-downgrades handles the epoch-1 → epoch-0 version crossing.
+DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades firefox
+
+# Now nothing PreDepends on snapd — purge it.
+DEBIAN_FRONTEND=noninteractive apt-get purge -y \
+    snapd snap-store plasma-discover-backend-snap 2>/dev/null || true
+apt-get autoremove --purge -y

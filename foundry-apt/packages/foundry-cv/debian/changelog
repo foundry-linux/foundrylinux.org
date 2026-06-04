@@ -1,0 +1,8 @@
+foundry-cv (1.0.0) resolute; urgency=medium
+
+  * Initial release. Computer-vision toolkit: python3-opencv,
+    libopencv-dev, gstreamer1.0-opencv, tesseract-ocr, libvips-tools.
+    Atelier-only — opencv pulls libvtk9.5 (~275 MiB) which would prevent
+    anvil from fitting on a 4 GB USB stick.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 04 Jun 2026 00:00:00 +0000

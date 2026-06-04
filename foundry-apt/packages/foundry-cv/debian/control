@@ -1,0 +1,28 @@
+Source: foundry-cv
+Section: metapackages
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Homepage: https://foundrylinux.org/
+Rules-Requires-Root: no
+
+Package: foundry-cv
+Architecture: all
+Depends: ${misc:Depends},
+ python3-opencv,
+ libopencv-dev,
+ gstreamer1.0-opencv,
+ tesseract-ocr,
+ libvips-tools
+Description: Computer-vision toolkit for Foundry Linux (atelier-only)
+ OpenCV and companion tools for computer-vision work in game development.
+ Kept in foundry-atelier rather than foundry-core because python3-opencv
+ pulls libopencv-viz → libvtk9.5 (~275 MiB), which would prevent anvil
+ from fitting on a 4 GB USB stick.
+ .
+   * python3-opencv       Python bindings for OpenCV
+   * libopencv-dev        C++ headers (runtime libs land via python3-opencv)
+   * gstreamer1.0-opencv  OpenCV GStreamer plugin for video pipeline work
+   * tesseract-ocr        OCR engine — read text from screenshots and assets
+   * libvips-tools        Fast batch image processing for asset pipelines

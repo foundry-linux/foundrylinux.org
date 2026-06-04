@@ -11,7 +11,6 @@ Package: foundry-python-gamedev-extras
 Architecture: all
 Depends: ${misc:Depends},
  foundry-python-gamedev,
- python3-opencv,
  python3-av,
  python3-imageio-ffmpeg,
  python3-moviepy,
@@ -25,20 +24,23 @@ Depends: ${misc:Depends},
  python3-sortedcontainers,
  python3-attr,
  python3-zstd,
- python3-cairocffi
+ python3-cairocffi,
+ libonnxruntime-dev
 Suggests: maturin
 Description: Python game-development extras stack for Foundry Linux
  Optional and specialised Python libraries for game development on
  Foundry Linux, extending foundry-python-gamedev with heavier or more
  niche tooling:
  .
-   * Video          opencv-python, av (FFmpeg), imageio-ffmpeg, moviepy
+   * Video          av (FFmpeg), imageio-ffmpeg, moviepy
    * Audio analysis librosa (beat detection, STFT, MFCCs)
    * Capture        mss (ultra-fast screenshots)
    * Fonts/2D       fonttools, freetype-py, cairocffi
    * Input          pynput (global keyboard/mouse monitoring)
    * Hardware       pyserial (serial/USB peripherals)
    * Data           networkx, sortedcontainers, attrs, python3-zstd
+   * Inference      libonnxruntime-dev (run ONNX ML models without a training
+                    framework; pairs with OpenCV DNN for game-dev AI)
    * Build          maturin (Rust → Python extension builder) [suggested]
  .
  Install this alongside foundry-python-gamedev for a complete

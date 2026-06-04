@@ -1,3 +1,12 @@
+foundry-python-gamedev-extras (1.0.1) resolute; urgency=medium
+
+  * Drop python3-opencv to foundry-cv (atelier-only); removes
+    libopencv-viz → libvtk9.5 (~275 MiB) from anvil and sprite.
+  * Add libonnxruntime-dev — ONNX model inference engine (~20 MiB),
+    pairs with OpenCV DNN for game-dev AI pipelines.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 04 Jun 2026 00:00:00 +0000
+
 foundry-python-gamedev-extras (1.0.0) resolute; urgency=medium
 
   * Initial release. Optional/specialised Python game-dev packages:
