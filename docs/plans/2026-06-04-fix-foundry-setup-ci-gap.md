@@ -64,17 +64,41 @@ Exploration surfaced a second, distinct gap: `foundry-setup/README.md` tells use
    ```
    Expect `MOVED`, `OLD_DIR_GONE`, `YAML_OK`.
 
-2. **GitHub recognizes it** — after pushing to a branch, confirm the workflow appears:
+   ```
+   MOVED
+   OLD_DIR_GONE
+   YAML_OK
+   ```
+   **PASS.** The git rename reported `100%` similarity → zero content change.
+
+2. **GitHub recognizes it** — after pushing, confirm the workflow appears:
    ```
    gh workflow list --repo foundry-linux/foundrylinux.org | grep -i "install.sh tests"
    ```
-   (Or trigger by pushing a trivial change under `foundry-setup/` and watch `gh run list`.)
+
+   ```
+   install.sh tests	active	288965447
+   # and a run fired immediately on the push:
+   gh run list --workflow "install.sh tests":
+   in_progress  ci: move foundry-setup tests to monorepo root…  install.sh tests  main  push  26927821814
+   ```
+   **PASS.** Workflow was previously absent from the list (ran nowhere); it's now `active` and a `push`-triggered run started.
 
 3. **Census is clean** — no workflow remains outside a root `.github/workflows/`:
    ```
    find . -path ./node_modules -prune -o -name '*.yml' -path '*/.github/workflows/*' -print \
      | grep -v '^\./\.github/workflows/' | grep -v node_modules
    ```
-   Expect: only the genuine child-repo workflows under `foundry-apt/`, `foundry-iso/`, `foundry-devbox/` (those DO mirror out to their own roots) — and **no** `foundry-setup/.github/...`.
 
-4. **Docs reconciled** — `grep -n "foundry-setup" docs/investigations/2026-05-29-state-of-the-distro.md` shows the gap marked resolved and the mirror diagram no longer lists foundry-setup.
+   ```
+   ./foundry-apt/.github/workflows/test.yml
+   ./foundry-apt/.github/workflows/publish.yml
+   ./foundry-devbox/.github/workflows/publish.yml
+   ./foundry-iso/.github/workflows/publish.yml
+   ```
+   **PASS.** Only the genuine child-repo workflows (apt/iso/devbox — they DO mirror out to their own roots) remain in subdirs; no `foundry-setup/.github/...`.
+
+4. **Docs reconciled** — `grep -n "foundry-setup" docs/investigations/2026-05-29-state-of-the-distro.md`:
+   §1 gap note now reads "✅ now fixed"; §2 mirror diagram shows foundry-setup with **no** mirror (tests run in-monorepo); §3 dead-`paths:` note struck; §8 census row repointed to `.github/workflows/foundry-setup-test.yml` (v6, monorepo root). **PASS.**
+
+   > Note: the first CI run (26927821814) is the first time these tests have *ever* executed in CI. The fast jobs (shellcheck, dry-run) gate quickly; `full-install` runs ~5–10 min on `main`. Watch: `gh run watch 26927821814 --repo foundry-linux/foundrylinux.org`.
