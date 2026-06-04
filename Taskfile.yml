@@ -458,6 +458,12 @@ tasks:
           -netdev user,id=n0,hostfwd=tcp::2222-:22 \
           -device e1000,netdev=n0
 
+  iso-write:
+    desc: "Write the latest ISO to a USB stick — task iso-write DEVICE=/dev/sdX [EDITION=anvil]"
+    dir: foundry-iso
+    cmds:
+      - DEVICE="{{.DEVICE}}" EDITION="{{.EDITION | default "anvil"}}" bash scripts/write-usb.sh
+
   iso-sign:
     desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier|all, default: anvil)"
     dir: foundry-iso
