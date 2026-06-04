@@ -19,13 +19,23 @@ source /root/config/hook-env.sh   # sets $EDITION
 # anything still Depends ghidra, autoremove leaves it untouched. Gated off atelier
 # as an extra guard against future drift.
 if [[ "${EDITION:-}" != "atelier" ]]; then
-    echo "=== Trimming atelier-only packages (ghidra + JDK) from ${EDITION} ==="
+    echo "=== Trimming atelier-only packages (ghidra + JDK + opencv) from ${EDITION} ==="
     apt-mark auto ghidra 'openjdk-21-*' 2>/dev/null || true
+    # opencv + libvtk9.5: foundry-python-gamedev-extras 1.0.0 (published) depends
+    # on python3-opencv; hook 1000 upgrades to 1.0.1 (drops opencv). apt-mark them
+    # auto so this autoremove sweep cleans them up even if apt's orphan tracking
+    # didn't catch the transition (libvtk9.5 is ~276 MiB installed).
+    apt-mark auto python3-opencv 'libopencv-*' libvtk9.5 2>/dev/null || true
     DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge -y
     apt-get clean
     if dpkg -l ghidra 2>/dev/null | grep -q '^ii'; then
         echo "NOTE: ghidra still installed — something other than retro-tools Depends it" >&2
     else
         echo "PASS: ghidra absent from ${EDITION}"
+    fi
+    if dpkg -l python3-opencv 2>/dev/null | grep -q '^ii'; then
+        echo "NOTE: python3-opencv still installed — check reverse deps" >&2
+    else
+        echo "PASS: python3-opencv absent from ${EDITION}"
     fi
 fi

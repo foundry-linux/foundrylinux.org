@@ -25,7 +25,7 @@ Description: Foundry Linux KDE desktop integration (ISO / KDE hosts only)
  Includes:
    foundry-welcome        — first-login welcome application (QML/Kirigami)
    foundry-kde-theme      — Plasma colour scheme and shell theme
-   foundry-create-usb.sh — one-click USB stick creator (download + write)
+   foundry-create-usb.sh  — one-click USB stick creator (/usr/bin/)
  .
  On the Foundry Linux ISO, foundry-anvil (= foundry-core + foundry-desktop)
  is pre-installed and this package is included automatically.

@@ -2,8 +2,11 @@
 # redirect (firefox 1:1snap1-0ubuntu8 Depends: snapd).  Priority 1001 beats
 # any Ubuntu candidate including epoch-1 versions.
 #
-# "Pin: origin" uses the server hostname — more reliable than "Pin: release o="
-# when the Origin: field is a long GCP namespace path.
+# Use "Pin: release n=mozilla" (Codename) — Mozilla's InRelease has
+# Origin: namespaces/moz-fx-productdelivery-pr-38b5/repositories/mozilla
+# (a long GCP path), so "Pin: origin" or "Pin: release o=" won't match it.
+# Codename is simply "mozilla" and is stable.
 Package: firefox*
-Pin: origin "packages.mozilla.org"
+Pin: release n=mozilla
 Pin-Priority: 1001
+

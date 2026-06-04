@@ -1,6 +1,13 @@
+foundry-desktop (1.0.2) resolute; urgency=medium
+
+  * Move foundry-create-usb.sh to /usr/bin/ (was /usr/local/bin/).
+    Packages must not ship files in /usr/local/ per Debian policy.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 04 Jun 2026 00:00:00 +0000
+
 foundry-desktop (1.0.1) resolute; urgency=medium
 
-  * Ship foundry-create-usb.sh (/usr/local/bin/) and create-foundry-usb.desktop
+  * Ship foundry-create-usb.sh (/usr/bin/) and create-foundry-usb.desktop
     (/usr/share/applications/): one-click USB stick creator. Downloads the
     latest anvil ISO, verifies sha256, launches isoimagewriter. Supports
     --iso PATH --device /dev/sdX for headless dd write (used by task iso-write).
