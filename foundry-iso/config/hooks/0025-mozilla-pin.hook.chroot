@@ -21,10 +21,12 @@ fi
 apt-get update -qq
 
 # Swap Ubuntu's snap-transitional firefox for Mozilla's native .deb.
-# The pin in config/apt/preferences.d/mozilla-firefox.pref sets priority 1001
-# for packages.mozilla.org, which should force the Mozilla candidate.
+# -t mozilla targets the release with Codename=mozilla (Mozilla's PPA) explicitly,
+# so apt prefers that candidate over Ubuntu's epoch-1 snap-based version.
 # --allow-downgrades handles the epoch-1 → epoch-0 version crossing.
-DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades firefox
+# Note: config/apt/preferences.d/ is cleared by live-build during lb_chroot_package-lists
+# and only restored after hooks; the pin is not active during hook execution.
+DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades -t mozilla firefox
 
 # Now nothing PreDepends on snapd — purge it.
 DEBIAN_FRONTEND=noninteractive apt-get purge -y \

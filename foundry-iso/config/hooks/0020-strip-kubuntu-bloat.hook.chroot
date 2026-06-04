@@ -46,5 +46,9 @@ printf '[Desktop Entry]\nHidden=true\n' \
 rm -f /etc/skel/Desktop/org.kfocus.web.howtos.desktop
 rm -f /etc/skel/Desktop/org.kubuntu.web.home.desktop
 
+# LibreOffice depends on gnupg for macro signing; purging libreoffice orphans
+# gnupg/gpgv and autoremove removes them. Hook 0025 needs gpgv to run
+# apt-get update. Mark them manual so autoremove leaves them in place.
+apt-mark manual gnupg gpgv 2>/dev/null || true
 apt-get autoremove -y
 apt-get clean
