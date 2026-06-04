@@ -1,3 +1,9 @@
+# NEVER add the KDE config QML stack to this purge list:
+#   qml6-module-org-kde-kquickcontrols  qml6-module-qtquick-dialogs
+#   (org.kde.kcmutils / org.kde.kquickcontrols / QtQuick.Dialogs modules)
+# Plasmoid/KCM config dialogs load them at runtime — stripping one ships blank
+# config UIs.  build-iso.sh asserts they survive; an over-broad glob here fails
+# the build.  See plan 2026-05-30-full-kde-experience.
 libreoffice-*
 kontact kmail akonadi-*
 kdepim-* kaddressbook kalarm kjots knotes korganizer merkuro-calendar

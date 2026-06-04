@@ -55,17 +55,35 @@ Plasma-5-idiom bug in claude-usage (fixed there). This plan's job is narrower:
 
 ## Critical files
 
-| File | Action |
-|---|---|
-| `scripts/build-iso.sh` | add KDE-config-module presence assertion after `lb chroot` |
-| `config/hooks/0020-strip-kubuntu-bloat.hook.chroot` | add a comment: never strip kquickcontrols / qtquick-dialogs / kcmutils |
-| `config/package-lists/strip.list.chroot.purge` | same guard comment |
-| `docs/investigations/2026-05-30-kde-app-kit.md` | (new) record the deliberate omit/ship list |
+| File | Action | Status |
+|---|---|---|
+| `foundry-iso/scripts/build-iso.sh` | add KDE-config-module presence assertion after `lb chroot` | ✅ done (2026-06-04) |
+| `foundry-iso/config/hooks/0020-strip-kubuntu-bloat.hook.chroot` | add a comment: never strip kquickcontrols / qtquick-dialogs / kcmutils | ✅ done (2026-06-04) |
+| `foundry-iso/config/package-lists/strip.list.chroot.purge` | same guard comment | ✅ done (2026-06-04) |
+| `docs/investigations/2026-05-30-kde-app-kit.md` | (new) record the deliberate omit/ship list | ✅ done (2026-06-04) |
+
+(Paths corrected 2026-06-04: the iso tree lives under `foundry-iso/`.)
 
 ## Verification
 
 1. `EDITION=anvil task iso-build` → the new chroot assertion passes (modules present).
+
+   _PENDING — requires a full ISO build (Docker + network, ~slow). Static checks done
+   2026-06-04: the assertion block is shellcheck-clean (the only shellcheck findings on
+   `build-iso.sh`/hook 0020 are pre-existing SC1091/SC2015 on lines 3 and 25, not the new
+   QML loop). The probed module dirs (`org/kde/kcmutils`, `org/kde/kquickcontrols`,
+   `QtQuick/Dialogs` under `qt6/qml`) match what the 2026-05-30 chroot audit found present._
+
 2. Temporarily add `qml6-module-org-kde-kquickcontrols` to the purge list →
    `task iso-build` **fails** at the assertion (guard works) → revert.
+
+   _PENDING — same full-build dependency as step 1._
+
 3. `EDITION=atelier task iso-build` → same assertion passes (both editions).
+
+   _PENDING — same full-build dependency as step 1. (Note: anvil-only strip of digikam/showfoto
+   does not touch the QML stack, so both editions exercise the same assertion.)_
+
 4. Boot via `task iso-smoke`; over live-ssh, `qmllint` a 3-import probe → clean.
+
+   _PENDING — optional; depends on a built ISO from step 1._

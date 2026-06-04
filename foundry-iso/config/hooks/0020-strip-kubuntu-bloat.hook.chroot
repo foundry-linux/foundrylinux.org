@@ -6,6 +6,12 @@ source /root/config/hook-env.sh   # sets $EDITION — live-build doesn't pass en
 # .list.chroot.purge handles the bulk removal; this hook adds the explicit
 # autoremove pass and guards against packages that may already be absent.
 #
+# NEVER strip the KDE config QML stack — qml6-module-org-kde-kquickcontrols,
+# qml6-module-qtquick-dialogs, or the org.kde.kcmutils modules.  Plasmoid/KCM
+# config dialogs load them at runtime; pulling one ships blank config UIs.
+# build-iso.sh asserts they survive the chroot, so an over-broad glob here
+# (e.g. 'kde-*') fails the build.  See plan 2026-05-30-full-kde-experience.
+#
 # Use DEBIAN_FRONTEND=noninteractive apt purge (not apt-get) — apt's resolver
 # supports glob wildcards like 'libreoffice-*' reliably; apt-get's glob support
 # is inconsistent and silently fails when piped to /dev/null.

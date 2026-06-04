@@ -128,6 +128,22 @@ docker run --rm \
       { echo "ERROR: USERNAME= missing from casper.conf"; cat "$CASPER_CONF"; exit 1; }
     echo "PASS: $(cat "$CASPER_CONF")"
 
+    # Guard the KDE config QML stack (plan 2026-05-30-full-kde-experience).
+    # Plasmoid/KCM config dialogs load these QML modules at runtime; the
+    # bloat-strip (hook 0020 + strip.list.chroot.purge) deliberately leaves them
+    # in place.  A future over-broad strip-list glob (e.g. a 'kde-*' auto-remove)
+    # could silently pull one and ship a distro whose config UIs come up blank.
+    # Fail the build here instead.  See docs/investigations/2026-05-30-kde-app-kit.md.
+    QML_DIR="chroot/usr/lib/x86_64-linux-gnu/qt6/qml"
+    for m in org/kde/kcmutils org/kde/kquickcontrols QtQuick/Dialogs; do
+      if [[ ! -d "$QML_DIR/$m" ]]; then
+        echo "ERROR: KDE config QML module missing from chroot: $m" >&2
+        echo "       (something stripped it — check hook 0020 / strip.list.chroot.purge)" >&2
+        exit 1
+      fi
+    done
+    echo "PASS: KDE config QML stack present (kcmutils, kquickcontrols, QtQuick.Dialogs)"
+
     # lb_binary_iso runs genisoimage and isohybrid inside the chroot via binary.sh.
     # Pre-populate both before lb binary so Check_package picks them up correctly:
     #   - genisoimage wrapper: routes through xorriso --allow-limited-size (squashfs > 4 GiB)
