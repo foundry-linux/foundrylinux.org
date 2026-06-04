@@ -157,7 +157,11 @@ function Forge() {
               throw new Error(`Forge card references unknown category slug: ${categorySlug}`);
             }
             const Icon = ICONS[cat.icon] || SparksIcon;
-            const pkgName = cat.metapackages[0];
+            // For categories that span multiple editions (no single category package
+            // gives a complete authoring toolkit), recommend the base edition instead.
+            const pkgName = cat.in_edition_tier === 'spans'
+              ? 'foundry-core'
+              : cat.metapackages[0];
             const installCmd = `sudo apt install ${pkgName}`;
             return (
               <div className="forge-cell" key={categorySlug}>
@@ -256,11 +260,12 @@ function Install() {
                 <div className="code-section">
                   <span className="step">② Install</span>
                   <div className="code-cmd-row">
-                    <code><span className="ember">sudo apt install</span> foundry-core</code>
-                    <button className="inline-copy-btn" data-copy-text="sudo apt install foundry-core" aria-label="Copy"><CopyIcon /></button>
+                    <code><span className="ember">sudo apt install</span> foundry-anvil</code>
+                    <button className="inline-copy-btn" data-copy-text="sudo apt install foundry-anvil" aria-label="Copy"><CopyIcon /></button>
                   </div>
                   <div className="code-alts">
                     <code><span className="cmt"># or pick a different edition:</span></code>
+                    <code><span className="ember">sudo apt install</span> foundry-core <span className="cmt"># no KDE layer (containers, custom DE)</span></code>
                     <code><span className="ember">sudo apt install</span> foundry-sprite <span className="cmt"># + heavy graphics + audio</span></code>
                     <code><span className="ember">sudo apt install</span> foundry-atelier <span className="cmt"># + everything (~15 GB)</span></code>
                   </div>

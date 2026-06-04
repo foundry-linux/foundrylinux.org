@@ -10,8 +10,11 @@ curl -fsSL https://apt.foundrylinux.org/key.gpg \
 echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
   | sudo tee /etc/apt/sources.list.d/foundry.list
 sudo apt update
-sudo apt install foundry-retro-tools
+sudo apt install foundry-anvil   # full WF game-authoring toolkit + KDE
 ```
+
+> **Tip:** Wire `apt.worldfoundry.org` too — `foundry-anvil` cross-depends on it.
+> Use [`site/setup.sh`](https://foundrylinux.org/setup.sh) to add both sources in one step.
 
 `resolute` is the suite name — Kubuntu 26.04 LTS "Resolute Raccoon", the only supported base.
 
@@ -29,13 +32,13 @@ The nesting is `foundry-core ⊆ foundry-anvil ⊆ foundry-sprite ⊆ foundry-at
 | `foundry-desktop` | — | KDE desktop integration: `foundry-kde-theme` + `foundry-welcome`. ISO / KDE hosts only — kept **out** of the container. |
 | `foundry-anvil` | `core` + `desktop` | The developer toolkit on a themed KDE desktop. **Default ISO edition.** |
 | `foundry-sprite` | `anvil` | + heavy graphics/audio: `foundry-art`, `foundry-pixel-art`, `foundry-trackers`, `foundry-daw`, `digikam`, `showfoto`. |
-| `foundry-atelier` | `sprite` | **Complete edition — everything:** + `foundry-emulators-vintage`, `foundry-emulators-consoles-heavy`, `foundry-game-reimplementations`, `foundry-free-games`, `foundry-android-development`, `foundry-ios-development`, `worldfoundry-development`&nbsp;`[WF]`. |
+| `foundry-atelier` | `sprite` | **Complete edition — everything:** + `foundry-emulators-vintage`, `foundry-emulators-consoles-heavy`, `foundry-game-reimplementations`, `foundry-free-games`, `foundry-android-development`, `foundry-ios-development`, `worldfoundry-development`&nbsp;`[WF]`, [`ghidra`](https://ghidra-sre.org/) (atelier-only — see below). |
 
 ### Category metapackages (install à la carte)
 
 | Package | Pulls in |
 |---|---|
-| `foundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) |
+| `foundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) — **ghidra moved to `foundry-atelier`** (1.0.7, 2026-06-04: its ~860 MiB of jars kept anvil off a 4 GB USB stick) |
 | `foundry-game-frameworks` | 2D/3D game‑dev frameworks, headers, and shader tools |
 | `foundry-image-cli` | command‑line image manipulation utilities |
 | `foundry-python-gamedev` / `-extras` | Python game‑dev base + extras stack |
