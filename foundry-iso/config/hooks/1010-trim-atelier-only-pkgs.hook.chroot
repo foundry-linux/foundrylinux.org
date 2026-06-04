@@ -27,6 +27,17 @@ if [[ "${EDITION:-}" != "atelier" ]]; then
     # didn't catch the transition (libvtk9.5 is ~276 MiB installed).
     apt-mark auto python3-opencv 'libopencv-*' libvtk9.5 2>/dev/null || true
     DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge -y
+    # apt-mark auto + autoremove doesn't catch opencv packages when the
+    # foundry-python-gamedev-extras 1.0.0→1.0.1 upgrade was done via dpkg -i
+    # (dpkg direct-installs don't update apt's orphan tracking).  Force-purge
+    # any remaining opencv/vtk packages with dpkg directly.
+    _leftover=$(dpkg -l 'python3-opencv' 'libopencv-*' 'gstreamer1.0-opencv' 'libvtk*' \
+        2>/dev/null | awk '/^ii/{print $2}' | tr '\n' ' ' || true)
+    if [[ -n "$_leftover" ]]; then
+        echo "I: Force-purging remaining opencv/vtk via dpkg: $_leftover"
+        # shellcheck disable=SC2086  # word-split intentional for package list
+        dpkg --purge --force-depends $_leftover 2>&1 || true
+    fi
     apt-get clean
     if dpkg -l ghidra 2>/dev/null | grep -q '^ii'; then
         echo "NOTE: ghidra still installed — something other than retro-tools Depends it" >&2
@@ -37,5 +48,10 @@ if [[ "${EDITION:-}" != "atelier" ]]; then
         echo "NOTE: python3-opencv still installed — check reverse deps" >&2
     else
         echo "PASS: python3-opencv absent from ${EDITION}"
+    fi
+    if dpkg -l libvtk9.5t64 2>/dev/null | grep -q '^ii'; then
+        echo "NOTE: libvtk9.5t64 still installed" >&2
+    else
+        echo "PASS: libvtk9.5t64 absent from ${EDITION}"
     fi
 fi

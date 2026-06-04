@@ -69,7 +69,13 @@ curl -fsSL "${_firefox_url}" -o /tmp/firefox-mozilla.deb
 dpkg --force-downgrade -i /tmp/firefox-mozilla.deb
 rm -f /tmp/firefox-mozilla.deb
 
-# Now nothing PreDepends on snapd — purge it.
-DEBIAN_FRONTEND=noninteractive apt-get purge -y \
-    snapd snap-store plasma-discover-backend-snap 2>/dev/null || true
-apt-get autoremove --purge -y
+# Use dpkg --purge directly — apt-get purge silently fails because apt's package
+# INDEX (from /var/lib/apt/lists/) still shows Ubuntu's snap-transitional firefox
+# (1:1snap1) as PreDepending snapd, even though dpkg status now shows Mozilla's
+# firefox.  dpkg uses only dpkg status, not the apt index.
+for _snap_pkg in plasma-discover-backend-snap snap-store snapd; do
+    if dpkg -l "$_snap_pkg" 2>/dev/null | grep -q '^ii'; then
+        echo "Purging $_snap_pkg via dpkg"
+        dpkg --purge "$_snap_pkg" 2>&1 || true
+    fi
+done
