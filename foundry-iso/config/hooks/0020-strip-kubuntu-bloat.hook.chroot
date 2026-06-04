@@ -24,7 +24,10 @@ _purge kontact kmail 'akonadi-*' \
 # digikam/showfoto belong in sprite and atelier; only strip them from anvil
 [[ "$EDITION" == "anvil" ]] && _purge digikam showfoto || true
 _purge 'kde-games-*' kalgebra kgeography kig kbruch
-_purge snapd snap-store
+# Primary guard: config/apt/preferences.d/no-snapd.pref pins snapd/snap-store/
+# plasma-discover-backend-snap at -1 (applied before packages install).
+# This _purge is belt-and-suspenders.
+_purge snapd snap-store plasma-discover-backend-snap
 
 # Purge plasma-welcome (Kubuntu's first-run welcome app) — foundry-welcome replaces it.
 # Both kubuntu-desktop and kubuntu-settings-desktop list plasma-welcome only as

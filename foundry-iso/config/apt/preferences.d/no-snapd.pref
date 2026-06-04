@@ -1,0 +1,12 @@
+# Snap infrastructure is not wanted in Foundry Linux.
+# Pin at -1 so apt never installs these via Recommends, even when
+# --apt-recommends true is active. kubuntu-desktop Recommends
+# plasma-discover-backend-snap, which Depends on snapd; without this pin
+# snapd enters the chroot during lb_chroot_package_lists and then gets
+# re-pulled by hook 0030's `apt-get install foundry-anvil`.
+# live-build applies config/apt/preferences.d/ at lb_chroot_apt — before any
+# package installation — so the pin is in place for the full build.
+# Hook 0020's explicit _purge is belt-and-suspenders.
+Package: snapd snap-store plasma-discover-backend-snap
+Pin: release *
+Pin-Priority: -1
