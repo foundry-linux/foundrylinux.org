@@ -17,9 +17,45 @@ sudo apt install foundry-retro-tools
 
 ## Metapackages
 
-| Package | Pulls in | When you want it |
+Foundry Linux ships as a tier of **edition** metapackages — each builds on the one below — plus **category** metapackages you can install à la carte. (`[WF]` marks a dep that lives in [`apt.worldfoundry.org`](https://apt.worldfoundry.org), so both apt sources must be wired — Phase 0's two `setup-*-apt-source.sh` scripts do this.)
+
+### Editions (the ISO tiers)
+
+The nesting is `foundry-core ⊆ foundry-anvil ⊆ foundry-sprite ⊆ foundry-atelier`, with `foundry-desktop` adding the KDE layer:
+
+| Edition | Builds on | What it adds |
 |---|---|---|
-| `foundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) | Retro/arcade ROM tools |
+| `foundry-core` | — (base toolkit) | Desktop‑agnostic dev toolkit — `foundry-retro-tools`, `foundry-game-frameworks`, `foundry-image-cli`, `foundry-emulators-computers`, `foundry-emulators-consoles`, `foundry-python-gamedev`(+`-extras`), `worldfoundry`&nbsp;`[WF]`, plus `task`, `btop`, `firefox`. **This is what the devbox container installs.** |
+| `foundry-desktop` | — | KDE desktop integration: `foundry-kde-theme` + `foundry-welcome`. ISO / KDE hosts only — kept **out** of the container. |
+| `foundry-anvil` | `core` + `desktop` | The developer toolkit on a themed KDE desktop. **Default ISO edition.** |
+| `foundry-sprite` | `anvil` | + heavy graphics/audio: `foundry-art`, `foundry-pixel-art`, `foundry-trackers`, `foundry-daw`, `digikam`, `showfoto`. |
+| `foundry-atelier` | `sprite` | **Complete edition — everything:** + `foundry-emulators-vintage`, `foundry-emulators-consoles-heavy`, `foundry-game-reimplementations`, `foundry-free-games`, `foundry-android-development`, `foundry-ios-development`, `worldfoundry-development`&nbsp;`[WF]`. |
+
+### Category metapackages (install à la carte)
+
+| Package | Pulls in |
+|---|---|
+| `foundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [ghidra](https://ghidra-sre.org/), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) |
+| `foundry-game-frameworks` | 2D/3D game‑dev frameworks, headers, and shader tools |
+| `foundry-image-cli` | command‑line image manipulation utilities |
+| `foundry-python-gamedev` / `-extras` | Python game‑dev base + extras stack |
+| `foundry-art` | raster, vector, and pixel‑art suites |
+| `foundry-pixel-art` | pixel‑art paint programs |
+| `foundry-daw` | Digital Audio Workstation stack and trackers |
+| `foundry-trackers` | chiptune and module trackers |
+| `foundry-emulators` | umbrella over the four emulator metas below |
+| `foundry-emulators-computers` | vintage home‑computer emulators (no bundled ROMs) |
+| `foundry-emulators-consoles` | light console and adventure‑engine emulators |
+| `foundry-emulators-consoles-heavy` | heavy console and handheld emulators |
+| `foundry-emulators-vintage` | vintage home‑computer emulators **with** bundled ROMs (multiverse) |
+| `foundry-game-reimplementations` | FOSS engines for commercial games (bring your own data) |
+| `foundry-free-games` | bundled FOSS games with multi‑GB data packs |
+| `foundry-android-development` | Android dev tools (JDK 17, adb, NDK r26c) |
+| `foundry-ios-development` | iOS device tools (libimobiledevice, ideviceinstaller, ifuse) |
+| `foundry-kde-theme` | KDE Plasma desktop theme |
+| `calamares-settings-foundry-linux` | Calamares installer branding + settings (shipped on the ISO) |
+
+> `foundry-welcome` (the QML/Kirigami first‑login app) is **not** a metapackage — it's built native‑from‑source and pulled in by `foundry-desktop`.
 
 ## Vendored upstream packages
 

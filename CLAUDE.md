@@ -10,12 +10,31 @@ Phase 0 (bash installer) lives in this repo; Phase 1 (signed apt repos) ships ac
 
 | Repo | Scope | Source tree |
 |---|---|---|
-| `apt.foundrylinux.org` | Foundry Linux distro toolchain — `foundry-*` edition/category metapackages + vendored upstreams (`f9dasm`, `ghidra`, `libvgm`, `vgmstream`) + general Blender tools (`blender-asset-finder`, `blender-asset-finder-cli`) | this repo, `foundry-apt/` |
+| `apt.foundrylinux.org` | Foundry Linux distro toolchain — `foundry-*` edition/category metapackages + **14 vendored upstreams** (`f9dasm`, `ghidra`, `libvgm`, `vgmstream`, `ppsspp`, `snes9x-gtk`, `task`, `ruff`, `python3-{glfw,librosa,mss,pydub}`, `blender-asset-finder{,-cli}` — full list in [`foundry-apt/LICENSES-VENDORED.md`](foundry-apt/LICENSES-VENDORED.md)) | this repo, `foundry-apt/` |
 | `apt.worldfoundry.org` | WorldFoundry-specific authoring tools — 9 CLIs (cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile) + 1 Blender add-on (`worldfoundry-blender-editor-exporter`) + 4 umbrella metapackages (`worldfoundry`, `worldfoundry-cli`, `worldfoundry-blender-addons`, `worldfoundry-development`) | sibling repo `../worldfoundry.org/apt/` |
 
-The two repos are **deliberately separate**: foundry-linux is the distribution; WorldFoundry is one tenant's authoring stack. They're co-installed on a workstation but neither depends on the other being configured.
+The two repos are **deliberately separate**: foundry-linux is the distribution; WorldFoundry is one tenant's authoring stack. The separation is at the **pipeline** level — neither repo's build/publish depends on the other; they tag and ship from independent namespaces (`v*` vs `apt-v*`). At the **package** level they are intentionally cross‑coupled, though: `foundry-core` `Depends: worldfoundry` and `foundry-atelier` `Depends: worldfoundry-development` (both in apt.worldfoundry.org), while `worldfoundry-cli`/`-blender-addons` `Depend` on `blender-asset-finder*` (in apt.foundrylinux.org). So **both apt sources must be wired for either to resolve** — Phase 0's two `setup-*-apt-source.sh` scripts guarantee that. "Co‑installed, independently published" — not "independently installable."
 
 Distro roadmap: Phase 0 (this repo) → Phase 1 (both apt repos, live) → Phase 2 (`ghcr.io/foundry-linux/devbox:26.04` Distrobox) → Phase 3 (Foundry Linux ISO).
+
+### Editions (the metapackage tiers)
+
+`apt.foundrylinux.org` ships a tiered hierarchy of **edition** metapackages plus à‑la‑carte **category** metapackages (full table in [`foundry-apt/README.md`](foundry-apt/README.md)). The edition nesting:
+
+```
+foundry-core ⊆ foundry-anvil ⊆ foundry-sprite ⊆ foundry-atelier        (foundry-desktop adds the KDE layer)
+
+foundry-core      desktop-agnostic dev toolkit (retro-tools, game-frameworks, image-cli,
+                  emulators-computers/-consoles, python-gamedev[-extras], worldfoundry [WF],
+                  task, btop, firefox)            ← this is what the Phase 2 devbox installs
+foundry-desktop   KDE integration (foundry-kde-theme, foundry-welcome)  ← ISO/KDE only, never in the container
+foundry-anvil     = foundry-core + foundry-desktop                      ← the default ISO edition
+foundry-sprite    = anvil + heavy art/audio (art, pixel-art, trackers, daw, digikam)
+foundry-atelier   = sprite + vintage/heavy emulators, game-reimplementations, free-games,
+                    android/ios-development, worldfoundry-development [WF]  ← "complete edition"
+```
+
+The devbox installs **`foundry-core`** (one rung below anvil) on purpose — KDE/Plasma has no place in a desktop‑agnostic container. The `foundry-dev` umbrella from the original 2026‑05‑16 proposal no longer exists; it became this `core`/`desktop` split (2026‑05‑28).
 
 ### Phase 0: per-metapackage script pattern
 

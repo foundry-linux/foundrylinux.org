@@ -29,15 +29,15 @@ The distribution is in good shape. The risks that matter are **not** in the ship
 > | 3 | Cross‑repo dispatch missing | ✅ **Wired** (`9d5dd78`) — `site-deploy.yml` listens for `apt-published`; ⚠️ the `FOUNDRYLINUX_DISPATCH_PAT` secret is still a pending manual step for Will (TODO L33) |
 > | 4 | ISO is **15 GB** | 🟢 **Stale by a mile** — anvil rebuilt post‑split to **4.8 GB** (0.9.36); the package‑list reckoning that was "the real Phase 3 blocker" is **done** — full exclusive‑closure sizing analysis + scenario charts landed 2026‑06‑04 (`docs/investigations/2026-06-04-usb-iso-sizing/` + `docs/plans/2026-06-04-usb-sized-iso-editions.md`), with a **SLIM** ~3.1 GiB edition proposed for the 4 GB‑stick target |
 > | 5 | No ISO published; atelier never built | 🟡 **Still open** — ISO builds clean locally at 0.9.36 but CI is still `workflow_dispatch`‑only; no atelier build, publish loop still unproven |
-> | 6 | North‑star proposal stale | 🟡 **Reclassified** — moved `docs/plans/` → `docs/investigations/2026-05-16-foundry-linux-distro-proposal.md` (signals "historical"), but its `status:` frontmatter still reads "Phase 1 next" — no superseded banner yet |
-> | 7 | CLAUDE.md "neither depends" false | 🟡 **Still open** — `CLAUDE.md:16` unchanged |
+> | 6 | North‑star proposal stale | ✅ **Bannered (06‑04)** — moved to `docs/investigations/`, `status:` now reads SUPERSEDED, and a top banner enumerates the divergences (foundry-dev→editions, dropped Steam/kiosk/AWS-SSM, creative-distro scope expansion) |
+> | 7 | CLAUDE.md "neither depends" false | ✅ **Reworded (06‑04)** — `CLAUDE.md` now states pipeline‑independent / package‑coupled, "co‑installed, independently published"; also gained an Editions section |
 > | 8 | `.history/` clutter committed | 🟢 **Mostly fixed** (`7f5e1ba`) — `.history/` gitignored (`.gitignore:17`), 33/34 snapshots untracked; **1 straggler** `.history/CLAUDE.md` still tracked |
 > | 9 | Generated site artifacts committed | 🟡 **Partial** — `serve.json` now tracked (`e39feb0`, closes the deploy‑critical half); but `index.html`/`packages.html`/`packages-data.json` are still tracked, not gitignored |
 > | 10 | Node‑24 action‑pin stragglers | ✅ **Fixed (06‑04)** — all 6 stragglers bumped (`site-deploy.yml` upload‑artifact `@v7`; `foundry-iso/publish.yml` upload/download‑artifact `@v7`; `foundry-setup/test.yml` checkout `@v6` ×3). Whole‑tree census is now `checkout@v6` / `setup-node@v6` / `upload`+`download-artifact@v7`, no `<v6` left |
 >
 > **Package census has also grown:** `apt.foundrylinux.org` is now **40 source packages** (was 32) — **14 vendored upstreams** (was 6+2; +5 Python/ruff on 05‑30, `task` re‑vendored 05‑31), README + `LICENSES-VENDORED.md` rewritten to match (06‑04). Docs: 66 plans · 19 investigations · 14 transcripts.
 >
-> **What's left from the original action list:** finding 7 (reword), the metapackage half of finding 9-on-README + CLAUDE.md editions section (action #9), the `serve.json`‑adjacent gitignore of 3 artifacts, the `.history/CLAUDE.md` straggler, and Phase‑3‑to‑1.0 (finding 5 + SLIM go‑ahead). *(Finding 10's Node‑24 pins were closed in this same 06‑04 pass.)* The inline annotations on findings 4–10 below carry the detail.
+> **What's left from the original action list:** the `serve.json`‑adjacent gitignore of 3 generated artifacts, the `.history/CLAUDE.md` straggler, the `prep`/arm64 TODO (action #10), shellcheck CI breadth (action #14), the investigation/plan consolidation (action #15), and Phase‑3‑to‑1.0 (finding 5 + SLIM go‑ahead). *(Closed in the 06‑04 pass: findings 1‑3, 6, 7, 10; README + CLAUDE.md + LICENSES + proposal docs; action #9 in full.)* **New gap found 06‑04:** `foundry-linux/foundry-setup` child repo **does not exist** and there's no `setup-sync` task — so `foundry-setup/.github/workflows/test.yml` (which the §8 census lists as live CI) actually **runs nowhere**; it only executes once that subtree is mirrored to a repo root. The inline annotations on findings 4–10 below carry the detail.
 
 ### Phase scorecard
 
@@ -304,8 +304,8 @@ Phase 3  iso-sync-local-debs copies foundry-apt/dist/*.deb → local-debs/ (newe
 7. ⏳ Before re‑enabling ISO CI, script the `foundry-iso` secrets (`R2_ACCOUNT_ID`, `GPG_PASSPHRASE`) and decide the atelier runner. [§8]
 
 **P1 — docs honesty:**
-8. ~~Retire the 2026‑05‑16 proposal as historical~~ 🟡 **partial** — moved to `docs/investigations/`, but ⏳ its `status:` line still says "Phase 1 next" (banner it) and ⏳ the creative‑distro scope expansion is still undocumented. [§9, §10]
-9. Rewrite `foundry-apt/README.md` (1‑row tables → 40 packages) and add the editions to CLAUDE.md's architecture section; reword the "neither depends on the other" claim. [§4c, §9] — **🟡 partial (06‑04):** ~~vendored‑upstream table (→ 14 rows) + `LICENSES-VENDORED.md`~~ done; ⏳ **metapackage table, CLAUDE.md editions, and the "neither depends" reword still open.**
+8. ~~Retire the 2026‑05‑16 proposal as historical (banner it); document the creative‑distro scope expansion.~~ ✅ **Done 06‑04** — `status: SUPERSEDED` + top banner enumerating the divergences (incl. the creative‑distro scope expansion). [§9, §10]
+9. ~~Rewrite `foundry-apt/README.md` (1‑row tables → 40 packages); add the editions to CLAUDE.md; reword the "neither depends" claim.~~ ✅ **Done 06‑04** — README vendored table (→14) **and** metapackage table (→ edition tiers + 19 category rows); `LICENSES-VENDORED.md` (→14); CLAUDE.md gained an Editions section, a corrected vendored list, and the pipeline‑vs‑package‑coupling reword. [§4c, §9]
 10. ⏳ File a TODO for the `prep` grammar restoration (binary‑blob reproducibility violation); decide arm64 (build it or stop advertising it). [§4b]
 
 **P1 — site:**
