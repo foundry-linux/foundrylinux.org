@@ -57,7 +57,7 @@ Plasma-5-idiom bug in claude-usage (fixed there). This plan's job is narrower:
 
 | File | Action | Status |
 |---|---|---|
-| `foundry-iso/scripts/build-iso.sh` | add KDE-config-module presence assertion after `lb chroot` | ✅ done (2026-06-04) |
+| `foundry-iso/scripts/build-iso.sh` | add KDE-config-module presence assertion after `lb chroot` | ✅ done (2026-06-04); verify step 1 PASS |
 | `foundry-iso/config/hooks/0020-strip-kubuntu-bloat.hook.chroot` | add a comment: never strip kquickcontrols / qtquick-dialogs / kcmutils | ✅ done (2026-06-04) |
 | `foundry-iso/config/package-lists/strip.list.chroot.purge` | same guard comment | ✅ done (2026-06-04) |
 | `docs/investigations/2026-05-30-kde-app-kit.md` | (new) record the deliberate omit/ship list | ✅ done (2026-06-04) |
@@ -68,11 +68,18 @@ Plasma-5-idiom bug in claude-usage (fixed there). This plan's job is narrower:
 
 1. `EDITION=anvil task iso-build` → the new chroot assertion passes (modules present).
 
-   _PENDING — requires a full ISO build (Docker + network, ~slow). Static checks done
-   2026-06-04: the assertion block is shellcheck-clean (the only shellcheck findings on
-   `build-iso.sh`/hook 0020 are pre-existing SC1091/SC2015 on lines 3 and 25, not the new
-   QML loop). The probed module dirs (`org/kde/kcmutils`, `org/kde/kquickcontrols`,
-   `QtQuick/Dialogs` under `qt6/qml`) match what the 2026-05-30 chroot audit found present._
+   ```
+   === Verifying chroot hook output ===
+   PASS: [General]
+   PASS: export USERNAME="user"
+   PASS: KDE config QML stack present (kcmutils, kquickcontrols, QtQuick.Dialogs)
+   ...
+   === ISO ready: foundry-iso/dist/foundry-anvil-0.9.36-amd64.iso (4.8G) ===
+   EXIT: 0
+   ```
+   **PASS** (2026-06-04) — full anvil build completed exit 0; the assertion fired and
+   passed. (At 4.8 G the ISO is also well clear of the stale-games bloat — the old
+   0.9.30 was 15 G.)
 
 2. Temporarily add `qml6-module-org-kde-kquickcontrols` to the purge list →
    `task iso-build` **fails** at the assertion (guard works) → revert.
