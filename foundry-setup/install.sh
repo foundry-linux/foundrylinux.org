@@ -7,11 +7,14 @@
 # WF engine workspace setup (repo clones, Rust, wftools build, Blender addon)
 # is handled by setup-wf-workspace.sh — see docs/plans/2026-05-17-wf-workspace-setup.md
 #
-# Usage:
-#   curl -fsSL https://install.foundry-linux.org/install.sh | bash
-#   bash install.sh                             # local
-#   bash install.sh --role game-dev             # specify role
+# Usage (local clone only — sources lib.sh + sibling install-*.sh; not a curl URL):
+#   bash install.sh                             # default role: both
+#   bash install.sh --role anvil                # Phase 1 edition (preferred)
+#   bash install.sh --role game-dev             # legacy role
 #   bash install.sh --dry-run                   # print plan, don't execute
+#
+# Public curl-bash path: curl -fsSL https://foundrylinux.org/setup.sh | bash
+# (site/setup.sh — wires apt sources; then: sudo apt install foundry-anvil)
 #
 # Base: Ubuntu 26.04 LTS ("Resolute Raccoon") only — no other release is
 # supported. --force exists as a panic-button override, not a path.
@@ -110,10 +113,9 @@ Options:
   -h, --help        Show this help
 
 Examples:
-  curl -fsSL https://install.foundry-linux.org/install.sh | bash
-  bash install.sh --role anvil                 # Phase 2 base edition
-  bash install.sh --role atelier               # Phase 2 full kit (~10 GB)
-  bash install.sh --role engine-dev            # legacy
+  bash install.sh --role anvil                 # Phase 1 base edition (preferred)
+  bash install.sh --role atelier               # Phase 1 full kit (~10 GB)
+  bash install.sh --role engine-dev            # legacy role
   bash install.sh --dry-run --role anvil
 
 The script logs to: $LOG_FILE
@@ -163,7 +165,12 @@ check_sudo() {
         warn "Running as root — proceed with caution"
         return
     fi
-    if ! $DRY_RUN && ! sudo -v; then
+    # Prefer a non-interactive check. Passwordless sudo (NOPASSWD / already-cached
+    # creds — CI containers and many dev boxes) needs no prompt, and `sudo -v`
+    # insists on a TTY/password even under NOPASSWD:ALL (confirmed on Ubuntu 26.04),
+    # so only fall back to the interactive `sudo -v` prompt when passwordless access
+    # isn't already available (a real user who must type their password).
+    if ! $DRY_RUN && ! sudo -n true 2>/dev/null && ! sudo -v; then
         die "sudo access required for apt operations"
     fi
     if ! $DRY_RUN; then
@@ -312,8 +319,7 @@ ${BOLD}Next steps:${RESET}
   • Set up the WF engine workspace:       bash setup-wf-workspace.sh
   • Visit https://docs.foundry-linux.org for the full quickstart
 
-${BLUE}Phase 0 (curl-bash installer). Phase 1+ will ship a signed APT repo
-so future updates are one 'apt upgrade' away.${RESET}
+${BLUE}Run 'apt upgrade' at any time to update Foundry packages.${RESET}
 EOF
 }
 
