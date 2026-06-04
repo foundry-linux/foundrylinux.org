@@ -8,7 +8,8 @@ status: SUPERSEDED — historical north-star proposal; kept for provenance, not 
 
 > **⚠️ Historical artifact (superseded).** This is the original 2026‑05‑16 north‑star proposal, moved here from `docs/plans/` because it no longer describes the shipped product. **It is not a current spec — do not action it.** What actually shipped diverged in several ways:
 > - The **`foundry-dev` umbrella** (this doc's centerpiece) was replaced by the edition tiers `foundry-core ⊆ foundry-anvil ⊆ foundry-sprite ⊆ foundry-atelier` + `foundry-desktop` (the core/desktop split landed 2026‑05‑28). See [`CLAUDE.md` § Editions](../../CLAUDE.md).
-> - **Dropped without follow‑through:** Steam/Sniper release containers, per‑game Distrobox, gamescope kiosk, and the AWS‑SSM/OIDC/YubiKey two‑tier signing scheme (replaced by single‑key GPG signing via GitHub Actions secret + DR backup to a private R2 bucket).
+> - **Genuinely superseded:** the AWS‑SSM/OIDC/YubiKey two‑tier signing scheme — replaced by single‑key GPG signing via GitHub Actions secret + DR backup to a private R2 bucket.
+> - **Still wanted, deferred (NOT dropped):** Steam/Sniper release containers, per‑game Distrobox scaffolding, and the gamescope kiosk session are future work, not abandoned. Kiosk mode (`gamescope` + `wf-launcher`) and per‑game Distrobox are tracked as deferred items in [`TODO.md`](../../TODO.md); Steam/Sniper release containers are likewise on the roadmap. They're out of scope for v1, not out of scope for the project.
 > - **Scope expanded** beyond the WF toolchain into a general creative/retro‑gaming catalogue (~20 art/audio/emulator/game metapackages — Krita, Ardour, Dolphin, PCSX2, 0 A.D., …) that this proposal never anticipated.
 >
 > For current architecture and roadmap, read `CLAUDE.md` and the live entries in `TODO.md`. The text below is preserved verbatim as the project's founding rationale.

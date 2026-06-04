@@ -15,3 +15,10 @@ docs/investigations/.pypi-cache/
 docs/investigations/.fetch-progress.log
 # VS Code Local History editor cruft
 .history/
+
+# Generated site artifacts (rebuilt by scripts/ssr-render.js + build-packages-page.sh
+# in the deploy workflow before `wrangler pages deploy site/`). site/serve.json is
+# NOT generated — it stays tracked.
+site/index.html
+site/packages.html
+site/packages-data.json
