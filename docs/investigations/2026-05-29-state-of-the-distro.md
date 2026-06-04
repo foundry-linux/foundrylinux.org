@@ -18,6 +18,27 @@ Foundry Linux is **materially complete through Phase 2 and within striking dista
 
 The distribution is in good shape. The risks that matter are **not** in the shipped artifacts — they are in the **scaffolding around them**: a handful of CI gates that are red and being masked by greener sibling jobs, a documented cross‑repo automation that exists nowhere, editor‑history clutter committed to git, and a north‑star proposal that no longer describes the product that shipped.
 
+> ## 🔄 Status refresh — 2026‑06‑04 (6 days on)
+>
+> Most of the scaffolding risk is now closed; the picture has moved materially. Finding‑by‑finding:
+>
+> | # | 05‑29 finding | 06‑04 status |
+> |---|---|---|
+> | 1 | Phase 0 real‑install test broken | ✅ **Fixed** (`5f3cda5`) — `--skip-clone` restored (`install.sh:70`) |
+> | 2 | `foundry-apt` PR test red | ✅ **Fixed** (`5f3cda5`) — findings cleared at source; test.yml green |
+> | 3 | Cross‑repo dispatch missing | ✅ **Wired** (`9d5dd78`) — `site-deploy.yml` listens for `apt-published`; ⚠️ the `FOUNDRYLINUX_DISPATCH_PAT` secret is still a pending manual step for Will (TODO L33) |
+> | 4 | ISO is **15 GB** | 🟢 **Stale by a mile** — anvil rebuilt post‑split to **4.8 GB** (0.9.36); the package‑list reckoning that was "the real Phase 3 blocker" is **done** — full exclusive‑closure sizing analysis + scenario charts landed 2026‑06‑04 (`docs/investigations/2026-06-04-usb-iso-sizing/` + `docs/plans/2026-06-04-usb-sized-iso-editions.md`), with a **SLIM** ~3.1 GiB edition proposed for the 4 GB‑stick target |
+> | 5 | No ISO published; atelier never built | 🟡 **Still open** — ISO builds clean locally at 0.9.36 but CI is still `workflow_dispatch`‑only; no atelier build, publish loop still unproven |
+> | 6 | North‑star proposal stale | 🟡 **Reclassified** — moved `docs/plans/` → `docs/investigations/2026-05-16-foundry-linux-distro-proposal.md` (signals "historical"), but its `status:` frontmatter still reads "Phase 1 next" — no superseded banner yet |
+> | 7 | CLAUDE.md "neither depends" false | 🟡 **Still open** — `CLAUDE.md:16` unchanged |
+> | 8 | `.history/` clutter committed | 🟢 **Mostly fixed** (`7f5e1ba`) — `.history/` gitignored (`.gitignore:17`), 33/34 snapshots untracked; **1 straggler** `.history/CLAUDE.md` still tracked |
+> | 9 | Generated site artifacts committed | 🟡 **Partial** — `serve.json` now tracked (`e39feb0`, closes the deploy‑critical half); but `index.html`/`packages.html`/`packages-data.json` are still tracked, not gitignored |
+> | 10 | Node‑24 action‑pin stragglers | 🔴 **Open & now OVERDUE** — the 2026‑06‑02 forced‑off date has **passed**; `site-deploy.yml:92`, `foundry-iso/publish.yml:68,81`, `foundry-setup/test.yml:17,27,52` still on `@v4` |
+>
+> **Package census has also grown:** `apt.foundrylinux.org` is now **40 source packages** (was 32) — **14 vendored upstreams** (was 6+2; +5 Python/ruff on 05‑30, `task` re‑vendored 05‑31), README + `LICENSES-VENDORED.md` rewritten to match (06‑04). Docs: 66 plans · 19 investigations · 14 transcripts.
+>
+> **What's left from the original action list:** finding 7 (reword), the metapackage half of finding 9-on-README + CLAUDE.md editions section (action #9), finding 10 (overdue pins), the `serve.json`‑adjacent gitignore of 3 artifacts, the `.history/CLAUDE.md` straggler, and Phase‑3‑to‑1.0 (finding 5 + SLIM go‑ahead). The inline annotations on findings 4–10 below carry the detail.
+
 ### Phase scorecard
 
 | Phase | Component | Status | Evidence |
@@ -26,7 +47,7 @@ The distribution is in good shape. The risks that matter are **not** in the ship
 | **1a** | `apt.foundrylinux.org` (`foundry-apt/`) | ✅ **Live & current** | 32 packages on R2 match source changelogs exactly; metadata regenerated 2026‑05‑29 |
 | **1b** | `apt.worldfoundry.org` (sibling repo) | ✅ **Live & signed** | 14 packages = 9 CLIs + 1 add‑on + 4 metas; last tag `apt‑v0.1.37` |
 | **2** | `ghcr.io/foundry-linux/devbox:26.04` | ✅ **Complete** (v0.0.5) | Single‑layer `foundry-core` install + GHCR publish + smoke test |
-| **3** | `foundry-iso/` (anvil + atelier ISOs) | 🟡 **In progress** | Tech blockers closed & boot‑verified; size/atelier/publish open (§7) |
+| **3** | `foundry-iso/` (anvil + atelier ISOs) | 🟡 **In progress** | Tech blockers closed & boot‑verified; **anvil now 4.8 GB @ 0.9.36** (06‑04) + sizing analysis done; atelier/publish/CI still open (§7). *Scorecard ref to "§7" is the original; ISO detail is §6.* |
 | — | `foundrylinux.org` website | ✅ **Live** | Cloudflare Pages, SSR static, live packages page; minor defects (§8) |
 
 ### The ten findings that matter most
@@ -34,13 +55,13 @@ The distribution is in good shape. The risks that matter are **not** in the ship
 1. ~~**🔴 The Phase 0 real‑install test is broken and silently masked.**~~ **✅ Fixed (`5f3cda5`)** — `--skip-clone` restored as a real flag gating the maintainer-role clone; plus `shellcheck -x` (the SC1091 red it surfaced) and an always-on dry-run regression guard; verified in `ubuntu:26.04`. `install.sh` rejects `--skip-clone` (`install.sh:72`), but both the local `run-test.sh --real` (`:58`) and the CI full‑install job (`test.yml:50`) still pass it — they die on "Unknown option" before doing any work. The dry‑run job has no such flag and stays green, hiding the breakage. Fallout from the editions refactor (the flag was dropped from `parse_args`, the tests never updated).
 2. ~~**🔴 `foundry-apt`'s PR test workflow is red.**~~ **✅ Fixed (`5f3cda5`)** — findings cleared at source (`_apt`→`if/then/else`, justified SC2012/SC2064 disables) and `zip python3` added; synced to the child repo where CI run `26675001586` is now **green** (shellcheck ✓, full build ✓). `test.yml:22‑23` runs `shellcheck` with no `-S error` filter, so existing info/warning findings (SC2012/SC2064/SC2015) fail the step; and its build container omits `zip`+`python3`, so the two `blender-asset-finder*` packages can't build there (the tag‑triggered `publish.yml` *does* install them and ships fine — so **shipping works, the branch gate doesn't**).
 3. ~~**🔴 A documented cross‑repo automation does not exist.**~~ **✅ Fixed** — receiver `9d5dd78` (`site-deploy.yml` now listens for `apt-published`) + sender WF `540d5c3` (`notify-foundrylinux`, graceful-skip until the secret) + `FOUNDRYLINUX_DISPATCH_PAT` set; fires on the next `apt-v*` tag. `FOUNDRYLINUX_DISPATCH_PAT` / the `repository_dispatch` that should rebuild `/packages` when `apt.worldfoundry.org` publishes was **added then reverted** in the WF repo and is wired on **neither** end. Today the only path is the nightly cron — up to ~24 h stale. TODO already flags it "pending"; the report confirms it is genuinely unimplemented.
-4. **🟡 The ISO is 15 GB, not the ~3.5 GB target**, and **anvil ⊇ atelier in spirit now** — `foundry-anvil` pulls `foundry-core` (Ghidra, MAME, full Blender + WorldFoundry stack, emulators, frameworks) + `foundry-desktop` + `kubuntu-desktop`. The anvil/atelier size distinction the README and plan promise is currently fictional. A package‑list reckoning is the real Phase 3 blocker.
-5. **🟡 No ISO has been published anywhere, and atelier has never been built.** Only `foundry-anvil-0.9.30-amd64.iso` exists locally; the build→sign→R2→download→install loop is unproven end‑to‑end. The Internet Archive migration (`upload-iso-ia.sh`) is correctly *deferred* (gated on v1.0.0), not dropped.
-6. **🟡 The north‑star proposal is now a historical artifact.** `foundry-dev` — its centerpiece — no longer exists; it became the `anvil ⊆ sprite ⊆ atelier` editions (later `foundry-core` + `foundry-desktop`). Steam/Sniper release containers, per‑game Distrobox, gamescope kiosk, and AWS‑SSM two‑tier signing were all dropped with no follow‑through. ~20 art/audio/emulator/games metapackages appeared with no proposal basis. Nobody reconciled the doc; it still says "Phase 1 next."
-7. **🟡 CLAUDE.md's "neither repo depends on the other" is false at the package level.** `foundry-core` `Depends: worldfoundry`; `worldfoundry-cli`/`-blender-addons` `Depend` on `blender-asset-finder*` (which live in foundry‑apt). The repos are *mutually* package‑coupled — true independence holds only for apt‑source configuration. Phase 0's two `setup-*-apt-source.sh` scripts are what actually guarantee both sources are wired.
-8. **🟡 Editor `.history/` clutter is committed.** 34 VS Code Local‑History snapshots are tracked (30 in `docs/plans/.history/`, 4 in `docs/investigations/.history/`); `.history/` is in no `.gitignore`. Seven such dirs exist across the tree and recur as untracked noise.
-9. **🟡 Generated site artifacts are committed** (`site/index.html`, `site/packages.html`, `site/packages-data.json` all tracked & currently dirty), contradicting the "index.html is generated — never edit" stance and inviting merge churn. Meanwhile `site/serve.json` — which makes the `/packages` clean URL resolve in production — is **untracked**.
-10. **🟢 Node‑24 action‑pin stragglers.** Most workflows are correctly on `@v6/@v6/@v7`, but `site-deploy.yml:88` (`upload-artifact@v4`), `foundry-setup/test.yml` (`checkout@v4` ×3), and `foundry-iso/publish.yml` (`upload/download-artifact@v4`) lag the Node‑24 mandate. The Node‑20 forced‑off date is 2026‑06‑02.
+4. ~~**🟡 The ISO is 15 GB, not the ~3.5 GB target**~~ **✅ Largely resolved (06‑04).** The 15 GB figure was the pre‑split `0.9.30` artifact; anvil was rebuilt after the 1.0.4 edition split and is now **4.8 GB (~4.47 GiB) at `0.9.36`**. The "package‑list reckoning is the real Phase 3 blocker" call was right — and that reckoning is now **done**: a full exclusive‑dependency‑closure sizing analysis (`docs/investigations/2026-06-04-usb-iso-sizing/`) + plan (`docs/plans/2026-06-04-usb-sized-iso-editions.md`) quantify every metapackage's weight, establish the ~2.44 GiB bare‑KDE floor, and propose a **SLIM ~3.1 GiB** edition for the 4 GB‑stick target. Two new size TODOs fell out of it (snapd‑survives‑strip ~140 MiB; `foundry-python-gamedev-extras` 554 MiB). *Original finding text preserved below for provenance.* — `foundry-anvil` pulls `foundry-core` + `foundry-desktop` + `kubuntu-desktop`; the anvil/atelier size distinction the README and plan promise is currently fictional.
+5. **🟡 No ISO has been published anywhere, and atelier has never been built.** *(Still open 06‑04.)* anvil builds clean locally at `0.9.36`, but CI is still `workflow_dispatch`‑only and no atelier ISO has been produced; the build→sign→R2→download→install loop is unproven end‑to‑end. The Internet Archive migration (`upload-iso-ia.sh`) is correctly *deferred* (gated on v1.0.0), not dropped.
+6. ~~**🟡 The north‑star proposal is now a historical artifact.**~~ **🟡 Reclassified (06‑04), not yet bannered.** The proposal was moved `docs/plans/` → `docs/investigations/2026-05-16-foundry-linux-distro-proposal.md` — the right filing (it *is* history), but its `status:` frontmatter still reads "Phase 1 (APT repo) next," so a reader still meets a stale status line. The substantive reconciliation (document the creative‑distro scope expansion; retire `foundry-dev`/Steam/kiosk/AWS‑SSM language) is still owed. `foundry-dev` — its centerpiece — no longer exists; it became `foundry-core` + `foundry-desktop`. ~20 art/audio/emulator/games metapackages appeared with no proposal basis.
+7. **🟡 CLAUDE.md's "neither repo depends on the other" is false at the package level.** *(Still open 06‑04 — `CLAUDE.md:16` unchanged.)* `foundry-core` `Depends: worldfoundry`; `worldfoundry-cli`/`-blender-addons` `Depend` on `blender-asset-finder*` (which live in foundry‑apt). The repos are *mutually* package‑coupled — true independence holds only for apt‑source configuration. Phase 0's two `setup-*-apt-source.sh` scripts are what actually guarantee both sources are wired.
+8. ~~**🟡 Editor `.history/` clutter is committed.**~~ **🟢 Mostly fixed (`7f5e1ba`).** `.history/` is now gitignored (`.gitignore:17`) and 33 of 34 snapshots were `git rm --cached`'d. **One straggler remains tracked: `.history/CLAUDE.md`** (dirty in the working tree) — `git rm --cached` it to fully close this.
+9. ~~**🟡 Generated site artifacts are committed**~~ **🟡 Half‑fixed.** The deploy‑critical gap is closed: `site/serve.json` (the `/packages` clean‑URL rewrite) is now **tracked** (`e39feb0`). But the three *generated* artifacts — `site/index.html`, `site/packages.html`, `site/packages-data.json` — are still tracked and still invite merge churn against the "index.html is generated — never edit" stance; gitignore them.
+10. **🔴 Node‑24 action‑pin stragglers — now OVERDUE.** *(Escalated from 🟢; the 2026‑06‑02 forced‑off date has passed as of this refresh.)* Stragglers persist: `site-deploy.yml:92` (`upload-artifact@v4`), `foundry-iso/publish.yml:68,81` (`upload/download-artifact@v4`), `foundry-setup/test.yml:17,27,52` (`checkout@v4` ×3). They still run only because GH *forces* Node 24 onto Node‑20 actions until removal on 2026‑09‑16 — bump them to `@v6/@v7` now.
 
 ---
 
@@ -269,37 +290,41 @@ Phase 3  iso-sync-local-debs copies foundry-apt/dist/*.deb → local-debs/ (newe
 
 ## 11. Prioritized action list
 
+> **06‑04 refresh:** strikethrough = done since the audit; ⏳ = still open. See the status table in §1 for the rollup.
+
 **P0 — red CI / correctness (fix before next release):**
-1. Re‑add a no‑op `--skip-clone)` case to `foundry-setup/install.sh` parse loop (or drop the flag from `run-test.sh:58` + `test.yml:50`). [§4]
-2. `foundry-apt/test.yml`: add `-S error` to both shellcheck invocations (or fix the 9 findings) **and** add `zip python3` to the build container. [§4a]
-3. Decide the cross‑repo `/packages` refresh: either wire `FOUNDRYLINUX_DISPATCH_PAT` end‑to‑end, or formally accept nightly‑cron‑only and correct TODO. [§8]
+1. ~~Re‑add a no‑op `--skip-clone)` case to `foundry-setup/install.sh` parse loop.~~ ✅ `5f3cda5` (`install.sh:70`). [§4]
+2. ~~`foundry-apt/test.yml`: fix the shellcheck findings + add `zip python3` to the build container.~~ ✅ `5f3cda5` — test.yml green. [§4a]
+3. ~~Decide the cross‑repo `/packages` refresh: wire `FOUNDRYLINUX_DISPATCH_PAT` end‑to‑end.~~ ✅ Wired both ends (`9d5dd78`). ⏳ **One manual step left for Will:** create the PAT + `gh secret set FOUNDRYLINUX_DISPATCH_PAT` (TODO L33). [§8]
 
 **P1 — Phase 3 to 1.0:**
-4. Make the anvil package‑list/size decision (15 GB → target); only then build atelier. [§6]
-5. Exercise the publish loop once by hand (build→sign→R2→download→install) and record evidence in the Phase 3 plan's open steps. [§6]
-6. Sign off the Calamares full install walk‑through (plan step 4). [§6]
-7. Before re‑enabling ISO CI, script the `foundry-iso` secrets (`R2_ACCOUNT_ID`, `GPG_PASSPHRASE`) and decide the atelier runner. [§8]
+4. ~~Make the anvil package‑list/size decision (15 GB → target)~~ ✅ **Analysis done 06‑04** — anvil rebuilt to 4.8 GB; SLIM ~3.1 GiB edition proposed (`docs/plans/2026-06-04-usb-sized-iso-editions.md`). ⏳ **Decision now = greenlight SLIM + then build atelier.** [§6]
+5. ⏳ Exercise the publish loop once by hand (build→sign→R2→download→install) and record evidence in the Phase 3 plan's open steps. [§6]
+6. ⏳ Sign off the Calamares full install walk‑through (plan step 4). [§6]
+7. ⏳ Before re‑enabling ISO CI, script the `foundry-iso` secrets (`R2_ACCOUNT_ID`, `GPG_PASSPHRASE`) and decide the atelier runner. [§8]
 
 **P1 — docs honesty:**
-8. Reconcile the north‑star: either retire the 2026‑05‑16 proposal as historical (with a banner) or rewrite it to the editions reality; document the creative‑distro scope expansion. [§9, §10]
-9. Rewrite `foundry-apt/README.md` (1‑row tables → 32 packages) and add the editions to CLAUDE.md's architecture section; reword the "neither depends on the other" claim. [§4c, §9] — **🟡 partial (06‑04):** ~~vendored‑upstream table (→ 14 rows) + `LICENSES-VENDORED.md`~~ done; **metapackage table, CLAUDE.md editions, and the "neither depends" reword still open.**
-10. File a TODO for the `prep` grammar restoration (binary‑blob reproducibility violation); decide arm64 (build it or stop advertising it). [§4b]
+8. ~~Retire the 2026‑05‑16 proposal as historical~~ 🟡 **partial** — moved to `docs/investigations/`, but ⏳ its `status:` line still says "Phase 1 next" (banner it) and ⏳ the creative‑distro scope expansion is still undocumented. [§9, §10]
+9. Rewrite `foundry-apt/README.md` (1‑row tables → 40 packages) and add the editions to CLAUDE.md's architecture section; reword the "neither depends on the other" claim. [§4c, §9] — **🟡 partial (06‑04):** ~~vendored‑upstream table (→ 14 rows) + `LICENSES-VENDORED.md`~~ done; ⏳ **metapackage table, CLAUDE.md editions, and the "neither depends" reword still open.**
+10. ⏳ File a TODO for the `prep` grammar restoration (binary‑blob reproducibility violation); decide arm64 (build it or stop advertising it). [§4b]
 
 **P1 — site:**
-11. Fix the hero copy‑button feedback; add the topbar `aria-label`; commit `serve.json`; gitignore the 3 generated artifacts; profile the v1.5.0 TBT regression. [§7]
+11. ⏳ Fix the hero copy‑button feedback (`ssr-render.js:45` still uses the buggy `lastChild.textContent`); ⏳ add the topbar `aria-label` (still missing, `sections.jsx:37`); ~~commit `serve.json`~~ ✅ `e39feb0`; ⏳ gitignore the 3 generated artifacts; ⏳ profile the v1.5.0 TBT regression. [§7]
 
 **P2 — hygiene:**
-12. Add `.history/` to `.gitignore` and `git rm -r --cached` the 34 tracked snapshots. [§10]
-13. Bump the three straggler action pins to Node‑24 majors before 2026‑06‑02. [§8]
-14. Extend shellcheck CI to root `scripts/`, `foundry-iso/scripts/`, `foundry-setup/install-foundry-*.sh`. [§8]
-15. Collapse the 4 package‑inventory investigations to one canonical overwrite‑in‑place doc; consolidate the draft/redo plan pairs. [§9]
-16. Fix TODO.md:30 (`foundry-anvil`→`foundry-core`) and the dangling proposal link. [§5, §9]
+12. ~~Add `.history/` to `.gitignore` and `git rm -r --cached` the snapshots.~~ 🟢 `7f5e1ba` (33/34); ⏳ **one straggler `.history/CLAUDE.md` still tracked.** [§10]
+13. **🔴 OVERDUE** — bump the straggler action pins to Node‑24 majors; the 2026‑06‑02 deadline has passed (`site-deploy.yml:92`, `foundry-iso/publish.yml:68,81`, `foundry-setup/test.yml:17,27,52`). [§8]
+14. ⏳ Extend shellcheck CI to root `scripts/`, `foundry-iso/scripts/`, `foundry-setup/install-foundry-*.sh`. [§8]
+15. ⏳ Collapse the 4 package‑inventory investigations to one canonical overwrite‑in‑place doc; consolidate the draft/redo plan pairs. [§9]
+16. ~~Fix the devbox `foundry-anvil`→`foundry-core` breadcrumb~~ ✅ `49cf608`; ⏳ confirm the dangling proposal link now resolves (proposal moved to `docs/investigations/`). [§5, §9]
 
 ---
 
 ## 12. Bottom line
 
 The **distribution itself is healthy** — two live signed apt repos, a published container image, a polished website, and an ISO whose hard problems are already solved. The work that remains is concentrated and well‑understood: a **size/package‑list decision for the ISO**, **one clean publish run**, and a **cleanup pass on the scaffolding** — red CI gates, a phantom cross‑repo dispatch, committed build/editor artifacts, and a proposal that no longer matches the product. None of it is architectural; all of it is finishable. The single highest‑leverage non‑code decision is **flipping the monorepo public**, which turns the GitHub‑Actions‑minutes constraint (the hidden reason ISO CI is off) from a budget problem into a non‑issue.
+
+> **06‑04 update to the bottom line.** Three of the four scaffolding worries above are now closed (the red CI gates and the cross‑repo dispatch are fixed; the editor artifacts are gitignored bar one straggler). The **ISO size question moved from "decision" to "decided‑on‑paper"** — anvil is already down to 4.8 GB and the full sizing analysis + a SLIM edition proposal exist; what's left there is a **greenlight + the first real publish run**, not analysis. The remaining genuinely‑open items are small and enumerated in the §1 refresh table: the overdue Node‑24 pins (now past their forced‑off date), the docs‑honesty trio (CLAUDE.md reword + editions section + proposal banner), and Phase‑3‑to‑1.0 execution. **Flipping the monorepo public** remains the single highest‑leverage move.
 
 ---
 
