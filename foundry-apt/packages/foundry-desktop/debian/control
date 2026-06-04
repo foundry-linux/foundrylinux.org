@@ -11,7 +11,9 @@ Package: foundry-desktop
 Architecture: all
 Depends: ${misc:Depends},
  foundry-kde-theme,
- foundry-welcome
+ foundry-welcome,
+ isoimagewriter | usb-creator-kde,
+ kdialog
 Description: Foundry Linux KDE desktop integration (ISO / KDE hosts only)
  KDE-specific Foundry Linux packages. Only meaningful on the Foundry Linux
  ISO (Kubuntu 26.04 base) or on an existing KDE Plasma desktop.
@@ -21,8 +23,9 @@ Description: Foundry Linux KDE desktop integration (ISO / KDE hosts only)
  duplicate your existing desktop session.
  .
  Includes:
-   foundry-welcome   — first-login welcome application (QML/Kirigami)
-   foundry-kde-theme — Plasma colour scheme and shell theme
+   foundry-welcome        — first-login welcome application (QML/Kirigami)
+   foundry-kde-theme      — Plasma colour scheme and shell theme
+   foundry-create-usb.sh — one-click USB stick creator (download + write)
  .
  On the Foundry Linux ISO, foundry-anvil (= foundry-core + foundry-desktop)
  is pre-installed and this package is included automatically.

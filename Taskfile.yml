@@ -462,7 +462,13 @@ tasks:
     desc: "Write the latest ISO to a USB stick — task iso-write DEVICE=/dev/sdX [EDITION=anvil]"
     dir: foundry-iso
     cmds:
-      - DEVICE="{{.DEVICE}}" EDITION="{{.EDITION | default "anvil"}}" bash scripts/write-usb.sh
+      - |
+        set -euo pipefail
+        EDITION="{{.EDITION | default "anvil"}}"
+        ISO=$(ls -t dist/foundry-${EDITION}-*-amd64.iso 2>/dev/null | head -1 || true)
+        [[ -n "$ISO" ]] || { echo "ERROR: no ISO found — run 'task iso-build EDITION=${EDITION}' first" >&2; exit 1; }
+        bash ../foundry-apt/packages/foundry-desktop/usr/local/bin/foundry-create-usb.sh \
+          --iso "$ISO" --device "{{.DEVICE}}"
 
   iso-sign:
     desc: "GPG-sign + SHA-256 the locally-built ISO (EDITION=anvil|atelier|all, default: anvil)"
