@@ -1,0 +1,163 @@
+name: Build, sign, and publish APT repo
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build + sign only; do not upload to R2'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: foundry-apt
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install runner-side deps (aptly, signing, R2 sync)
+        # These run on the GitHub-hosted host — they only touch metadata that
+        # already exists (aptly, gnupg) or move bytes around (rclone). They do
+        # NOT build any .deb, so they can stay on the host runner's noble.
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y aptly gnupg rclone
+
+      - name: Build all .debs in ubuntu:26.04 (our distribution base)
+        # All .debs MUST be built inside ubuntu:26.04 so that ${shlibs:Depends}
+        # resolves to 26.04's library sonames (libavcodec62, etc.). Building on
+        # the host (noble/24.04) silently pins to ffmpeg-6 sonames and ships an
+        # uninstallable artifact — caught by the retro-tools E2E test on
+        # 2026-05-20 (see docs/plans/2026-05-20-vgmstream-libavcodec62-rebuild.md).
+        run: |
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ubuntu:26.04 \
+            bash -c '
+              set -euo pipefail
+              apt-get update -q
+              apt-get install -y --no-install-recommends \
+                build-essential debhelper dpkg-dev devscripts fakeroot lintian \
+                curl ca-certificates pkg-config sudo \
+                zip python3 \
+                cmake qt6-base-dev qt6-declarative-dev
+              bash scripts/build-all.sh
+            '
+
+      - name: Initialise aptly repo
+        run: bash scripts/init-repo.sh
+
+      - name: Publish to ./public/ (unsigned smoke step)
+        env:
+          GPG_KEY: ''   # signing happens in the next step
+        run: bash scripts/publish-local.sh
+
+      - name: Sign Release
+        if: ${{ !inputs.dry_run }}
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          PUBLISH_DIR: ./public/dists/resolute
+        run: bash scripts/sign.sh
+
+      - name: Export public key into repo root
+        if: ${{ !inputs.dry_run }}
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          gpg --export --armor > ./public/key.gpg
+
+      - name: Generate per-package metadata
+        if: ${{ !inputs.dry_run }}
+        run: bash scripts/generate-meta.sh
+
+      - name: Generate index.html
+        if: ${{ !inputs.dry_run }}
+        run: bash scripts/generate-index.sh
+
+      - name: Sync to Cloudflare R2
+        if: ${{ !inputs.dry_run }}
+        env:
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT:          ${{ secrets.R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_REGION: auto
+        run: |
+          # Pass 1: sync everything except Release files.
+          # Packages.gz must be live before Release is updated, otherwise apt
+          # sees a Release with hashes that don't match the cached old Packages.
+          rclone sync ./public/ R2:foundry-apt/ \
+            --progress --transfers=8 --checksum \
+            --exclude 'Release' --exclude 'Release.gpg' --exclude 'InRelease' \
+            --header-upload "Cache-Control:no-store"
+
+          # Pass 2: upload Release files last (single-threaded, no race).
+          # no-store prevents Cloudflare's edge from serving a stale Release
+          # while Packages.gz is still propagating.
+          rclone copy ./public/dists/ R2:foundry-apt/dists/ \
+            --progress --transfers=1 --checksum \
+            --include '**/Release' --include '**/Release.gpg' --include '**/InRelease' \
+            --header-upload "Cache-Control:no-store"
+
+      - name: Verify repo consistency
+        if: ${{ !inputs.dry_run }}
+        run: |
+          for i in $(seq 1 10); do
+            EXPECTED=$(curl -fsSL https://apt.foundrylinux.org/dists/resolute/Release \
+              | awk '/^SHA256:/{found=1} found && /main\/binary-amd64\/Packages\.gz/{print $1; exit}')
+            ACTUAL=$(curl -fsSL https://apt.foundrylinux.org/dists/resolute/main/binary-amd64/Packages.gz \
+              | sha256sum | awk '{print $1}')
+            if [[ "$EXPECTED" == "$ACTUAL" ]]; then
+              echo "Repo consistent (attempt ${i})"
+              exit 0
+            fi
+            echo "Attempt ${i}/10: expected ${EXPECTED}, got ${ACTUAL} — retrying in 2s"
+            sleep 2
+          done
+          echo "Repo never became consistent after 10 attempts" >&2
+          exit 1
+
+      - name: Upload artifacts (always, for audit)
+        uses: actions/upload-artifact@v7
+        with:
+          name: apt-repo-${{ github.ref_name }}
+          path: foundry-apt/public/
+          retention-days: 30
+
+  smoke-install:
+    name: Smoke-check Foundry APT repo in Ubuntu 26.04
+    needs: build-and-publish
+    if: github.event_name == 'push'   # tag pushes only
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:26.04
+    steps:
+      - name: Verify packages are indexed in the freshly-published repo
+        run: |
+          apt-get update -q
+          apt-get install -y curl gnupg ca-certificates
+          curl -fsSL https://apt.foundrylinux.org/key.gpg \
+            | gpg --dearmor -o /etc/apt/keyrings/foundry.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/foundry.gpg] https://apt.foundrylinux.org resolute main" \
+            > /etc/apt/sources.list.d/foundry.list
+          apt-get update -q
+          apt-cache show foundry-retro-tools
+          apt-cache show f9dasm
+          apt-cache show vgmstream
+          apt-cache show ghidra
+          apt-cache show libvgm
+          apt-cache show blender-asset-finder
+          apt-cache show blender-asset-finder-cli
