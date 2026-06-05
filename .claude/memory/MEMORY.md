@@ -20,6 +20,7 @@
 - [Screenshots in docs](feedback_screenshots_in_docs.md) — always include screenshot + URL when referencing a website's visuals; URL link if screenshot blocked
 - [prep binary blob is parked](project_prep_binary_blob_parked.md) — prep ships a binary re-pack not source (grammar retired upstream); known + parked, don't re-flag in audits.
 - [devbox installs foundry-core, not anvil](project_devbox_foundry_core.md) — deliberate: desktop-agnostic + keeps test/CI harnesses small + fast to build/boot; never bump to foundry-anvil.
+- [Calamares rsync error 11 = target disk exhausted](feedback_calamares_rsync_error11.md) — never add large packages to foundry.list.chroot; use a hook; ~270 MiB JRE addition broke 0.9.54 installs.
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 

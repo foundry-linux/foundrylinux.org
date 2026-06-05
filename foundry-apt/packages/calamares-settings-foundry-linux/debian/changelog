@@ -1,3 +1,19 @@
+calamares-settings-foundry-linux (1.0.9) resolute; urgency=medium
+
+  * Switch Calamares unpack module from unpackfs (Python, rsync) to unpackfsc
+    (C++, unsquashfs) — eliminates rsync RERR_FILEIO (error 11) during
+    installation. unpackfsc uses UnsquashRunner directly instead of
+    mount + rsync, so xattr-related rsync failures cannot occur.
+  * Add unpackfsc.conf (mirrors unpackfs.conf config format).
+
+ -- Will Norris <wbnorris@gmail.com>  Thu, 05 Jun 2026 00:00:00 +0700
+
+calamares-settings-foundry-linux (1.0.8) resolute; urgency=medium
+
+  * (Unreleased local build — changelog not recorded.)
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 26 May 2026 00:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.7) resolute; urgency=medium
 
   * Add missing Calamares module configs: unpackfs (squashfs source path),
