@@ -1,7 +1,7 @@
 # Plan: USB-stick-sized ISO editions (4 GB SLIM; 2 GB / 1 GB = installer media)
 
-**Date:** 2026-06-04
-**Status:** in progress — 0.9.40 at 3.88 GiB; snapd fix + opencv→atelier implemented (not yet built); projected **~3.68 GiB** (gap 0.08 GiB to 4 GB stick target)
+**Date:** 2026-06-04  
+**Status:** CLOSED — 0.9.53 at **3.837 GiB**; all planned cuts made; 4 GB stick target not reached; **minimum stick is 8 GB**
 
 ---
 
@@ -39,10 +39,12 @@ tool**. That single number drives everything:
 | BASE — KDE desktop floor (zero Foundry tools) | ~2.44 GiB | — | 4 GB |
 | MINI — KDE + Blender/WF only | ~2.75 GiB | — | 4 GB |
 | **anvil 0.9.40** (ghidra→atelier, wallpapers stripped; snapd blocked) | ~3.23 GiB | **3.88 GiB** ⚠ | **8 GB** |
-| **anvil projected** (+ opencv→atelier, snapd fixed, onnxruntime added) | **~3.68 GiB** | — | **8 GB?** |
+| **anvil 0.9.53** ✅ (+ opencv→atelier, snapd fixed, onnxruntime added) | **~3.68 GiB** | **3.837 GiB** | **8 GB** |
 | anvil 0.9.36 (baseline) | ~4.49 GiB | ~4.53 GiB | 8 GB |
 
-**Model error:** projection was 0.65 GiB optimistic for 0.9.40. Likely cause: Ubuntu 26.04 package growth between the 0.9.36 squashfs model and actual build — not from Foundry packages themselves. Model compression ratio (4.49/9.40 ≈ 48%) used for subsequent projections; C++ binaries may compress better, making savings larger than estimated.
+**Model error:** projection was 0.65 GiB optimistic for 0.9.40 and 0.15 GiB optimistic for 0.9.53. Cause: Ubuntu 26.04 package growth between the 0.9.36 squashfs model and actual builds — not from Foundry packages themselves. Model compression ratio (4.49/9.40 ≈ 48%) used for subsequent projections.
+
+**4 GB stick verdict (2026-06-05):** The 3.726 GiB 4 GB stick limit is 111 MiB below the settled 0.9.53 size. All planned cuts were made and exhaustively investigated. Remaining large packages are all intentional: ibus-data (148 MiB, Asian IME), fonts-noto-cjk (91 MiB, CJK display), python3-llvmlite (107 MiB, Numba JIT in `foundry-python-gamedev`), libicu-dev (50 MiB, legitimate Allegro→GTK3-dev chain). Closing the gap requires removing intentional content (MAME, scummvm, or the Python game-dev stack). Decision: **keep all content, accept 8 GB as the minimum stick for anvil.**
 
 **Consequence:** below ~2.4 GiB you stop trimming packages and start changing
 what the image *is*.
@@ -78,13 +80,13 @@ Action column reflects that final call, not the largest-possible cut:
 | 1a | **ghidra** (within retro-tools; ~0.8 GiB ISO, jars) | 864 | ✅ **→ atelier** (`foundry-retro-tools` 1.0.7; hook 1010 autoremoves) |
 | 1b | OpenJDK (ghidra's only consumer) | 286 | ✅ follows ghidra → atelier (autoremoved by hook 1010) |
 | 1c | MAME + rest of `foundry-retro-tools` | ~553 | ✅ **KEEP** in anvil |
-| 2a | **opencv + libvtk9.5** (split from -extras; libvtk9.5 alone ~276 MiB) | 318 | → **`foundry-cv`** (new, atelier-only) |
+| 2a | **opencv + libvtk9.5** (split from -extras; libvtk9.5 alone ~276 MiB) | 318 | ✅ → **`foundry-cv`** (new, atelier-only); hook 1010 purges python3-opencv + autoremoves viz410+vtk chain. NOTE: libopencv-core/imgproc/videoio/imgcodecs stay — libopenimageio2.5 (Blender) + kde-spectacle need them. |
 | 2b | `foundry-python-gamedev-extras` remainder (av · librosa · networkx · mss · fonttools…) | ~236 | ✅ **KEEP** in anvil; +`libonnxruntime-dev` (~20 MiB) added |
 | 3 | `worldfoundry` (Blender + WF tools) | 360 | ✅ **KEEP** — the point of the distro |
 | 4 | `foundry-emulators-consoles` (ScummVM…) | 296 | ✅ **KEEP** |
 | 5 | stock Plasma **extra** wallpapers (`plasma-workspace-wallpapers`) | 217 | ✅ **stripped** — hook 0020 explicit `_purge` (`.chroot.purge` does not fire in live-build 3.0~a57) |
 | 6 | `foundry-game-frameworks` (SDL/SFML/LÖVE/Tiled…) | 217 | ✅ **KEEP** |
-| 7 | snapd | 141 | → **hook 0025 now wires Mozilla's apt repo + swaps firefox in-place** (`--allow-downgrades` crosses epoch-1→epoch-0); snapd purge follows immediately. Implemented; awaiting build confirmation. |
+| 7 | snapd | 141 | ✅ **hook 0025** downloads Mozilla firefox via `dpkg --force-downgrade` (bypasses gpgv, which cannot exec in the chroot environment); then `dpkg --purge snapd` (not apt-get purge — apt index still shows snap-transitional PreDepending snapd). Confirmed absent in 0.9.53. |
 | 8 | `foundry-emulators-computers` | 75 | ✅ **KEEP** |
 | 9 | exotic firmware (`linux-firmware-mellanox-spectrum`) | 59 | **NOT stripped** — hard Depends of the `linux-firmware` umbrella; apt purge cascades and can autoremove ALL firmware |
 | 10 | `foundry-image-cli` (CLI image utils) | 29 | ✅ **KEEP** |
@@ -111,9 +113,10 @@ cascade-breaks the Wi-Fi applet. **Verdict: keep; do not strip.**
 
 ## Implemented: trim anvil itself, move ghidra → atelier
 
-Not a new "slim" edition — **anvil itself becomes the ~3.23 GiB 4 GB-stick image**,
-and ghidra (the only thing that has to go) moves up to the atelier "complete
-edition". Everything else anvil shipped stays.
+Not a new "slim" edition — **anvil itself is the trimmed image** (3.837 GiB settled,
+8 GB stick), and ghidra moves up to the atelier "complete edition". Everything else
+anvil shipped stays. The 4 GB stick target was not reached — see verdict in the
+scenario table above.
 
 **Metapackages** (apt.foundrylinux.org): ✅
 - ~~`foundry-retro-tools` 1.0.6 → **1.0.7**~~: drop `ghidra` from `Depends` (+ its
@@ -148,12 +151,11 @@ edition". Everything else anvil shipped stays.
   - **Effect:** apt marks every repo (including Mozilla's) unverified in the hook
     session → `apt-get install -t mozilla firefox` silently falls back to
     "already newest version (1:1snap1-0ubuntu8)".
-  - **Fix (0.9.50):** Hook 0025 no longer calls `apt-get install`. Instead: parse
-    the cached Mozilla package index on disk (fetched by the host's apt before hooks),
-    extract the `.deb` URL, download with `curl`, install with `dpkg --force-downgrade`.
-    dpkg bypasses apt's signature check entirely. After installation, nothing
-    PreDepends on snapd and `apt-get purge snapd` succeeds. Awaiting 0.9.50 build
-    confirmation (~141 MiB savings).
+  - **Fix (0.9.53):** Hook 0025 parses the cached Mozilla package index on disk,
+    downloads the `.deb` with `curl`, installs with `dpkg --force-downgrade`. Then
+    `dpkg --purge snapd` (not `apt-get purge` — apt's index still shows snap-transitional
+    firefox PreDepending snapd even after dpkg has replaced it). ✅ Confirmed absent
+    in 0.9.53.
 
 **Round 2 metapackages** (post-0.9.40):
 - `foundry-python-gamedev-extras` **1.0.0 → 1.0.1**: drop `python3-opencv`
@@ -163,8 +165,8 @@ edition". Everything else anvil shipped stays.
   `python3-opencv` → `libopencv-viz` → `libvtk9.5` (~276 MiB, the actual giant).
 - `foundry-atelier` **0.9.2 → 0.9.3**: add `foundry-cv` to Depends.
 
-**create-foundry-usb**: targets the anvil `-latest-` image directly — anvil is
-now the 4 GB-capable image, so no separate edition for the tool to choose.
+**create-foundry-usb**: targets the anvil `-latest-` image directly. Minimum stick
+is 8 GB.
 
 2 GB / 1 GB images stay **out of scope** as *live* images (the KDE floor is
 ~2.44 GiB) — captured above as the "installer media" finding for a possible future
@@ -177,12 +179,17 @@ network-installer product.
 1. **snapd** — was shipping in 0.9.36 despite the strip-list (re-pulled as a
    Recommends). Now fixed by an apt pin (`no-snapd.pref`, priority −1) applied
    before package install. ~140 MiB freed across every edition.
-2. **opencv → `foundry-cv` (atelier-only, ~318 MiB freed from anvil)** —
-   `libvtk9.5` (~276 MiB) is the real giant, pulled transitively by
-   `libopencv-viz`. Splitting opencv into a new `foundry-cv` metapackage also
-   bundles `tesseract-ocr`, `libvips-tools`, `gstreamer1.0-opencv`, and
-   `libopencv-dev` as a coherent CV toolkit for atelier. The remaining
-   `-extras` (av, librosa, networkx, mss, fonttools, onnxruntime…) stays in anvil.
+2. **opencv → `foundry-cv` (atelier-only)** — `libvtk9.5` (~276 MiB) is the real
+   giant, pulled transitively by `libopencv-viz`. Hook 1010 purges `python3-opencv`
+   via `apt-get purge` (safe: apt uses dpkg status for reverse-dep checking), then
+   autoremove sweeps out `libopencv-viz410` → `libvtk9.5` and the full HPC tail
+   (OpenMPI, HDF5-OpenMPI, ADIOS2, AMD HIP/ROCm). **Important constraint:** the
+   underlying `libopencv-core410 / imgproc410 / videoio410 / imgcodecs410` C++ libs
+   stay on anvil — `libopenimageio2.5` (Blender), `kde-spectacle`, and
+   `libkquickimageeditor1` all depend on them. The `foundry-cv` metapackage bundles
+   the Python binding + `tesseract-ocr`, `libvips-tools`, `libopencv-dev` as a
+   coherent CV toolkit for atelier. The remaining `-extras` (av, librosa, networkx,
+   mss, fonttools, onnxruntime…) stays in anvil.
 3. **onnxruntime added to anvil** — `libonnxruntime-dev` (~20 MiB) added to
    `foundry-python-gamedev-extras` for ONNX model inference in game-dev pipelines.
    Pairs with OpenCV's DNN module and the numba stack already in anvil.
@@ -214,8 +221,18 @@ network-installer product.
    Hook 1010 did purge ghidra (`PASS: ghidra absent from anvil`). libvtk9.5 still
    present (python3-opencv still installed — needs investigation of reverse deps).
 
-   **RESULT (0.9.50, in progress):** hook 0025 now uses `dpkg --force-downgrade` + curl
-   to bypass apt's broken gpgv verification. Expected: snapd absent, ISO ≤ 3.726 GiB.
+   **RESULT (0.9.53, 2026-06-05):** ISO = **3.837 GiB** — all cuts confirmed.
+   Hook 1010 PASS output:
+   - ghidra: ABSENT ✅  openjdk-21-*: ABSENT ✅
+   - python3-opencv: ABSENT ✅  libvtk9.5t64: ABSENT ✅
+   - libopencv-viz410: ABSENT ✅ (autoremoved after python3-opencv purge)
+   - snapd: ABSENT ✅  (dpkg --purge in hook 0025)
+   - plasma-workspace-wallpapers: ABSENT ✅
+   - mame: present ✅  scummvm: present ✅  blender: present ✅
+   - libopencv-core410/imgproc410/videoio410/imgcodecs410: present ✅ (needed by Blender/KDE)
+
+   4 GB stick target (≤ 3.726 GiB): **FAIL by 111 MiB**. No non-intentional packages
+   remain to cut — see verdict in scenario table. Settled size is 3.837 GiB on 8 GB stick.
 
 3. `EDITION=atelier task iso-build` (or metapackage resolve) → ghidra present.
 4. Boot anvil in QEMU: KDE desktop + Wi-Fi applet work (QtWebEngine retained),
@@ -223,4 +240,3 @@ network-installer product.
 5. Regenerate `foundry-iso/docs/howto-kubuntu-remix-installed-packages.md` against
    the new anvil as the committed size source-of-truth.
 6. Write the anvil ISO to a real 8 GB stick via isoimagewriter; boot end-to-end.
-   *(4 GB stick target deferred until snapd/firefox issue is resolved.)*
