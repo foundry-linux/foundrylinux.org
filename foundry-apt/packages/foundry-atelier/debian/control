@@ -19,7 +19,8 @@ Depends: ${misc:Depends},
  foundry-ios-development,
  worldfoundry-development,
  ghidra,
- foundry-cv
+ foundry-cv,
+ openjdk-21-jre-headless
 Description: Foundry Linux complete edition — everything
  foundry-sprite plus every optional Foundry metapackage and cross-repo
  development tooling — the "give me the lot" install, around 10 GB on
@@ -38,6 +39,8 @@ Description: Foundry Linux complete edition — everything
                                           4 GB USB stick)
    * foundry-cv                           OpenCV + libvtk9.5 + tesseract-ocr +
                                           libvips-tools + gstreamer1.0-opencv
+   * openjdk-21-jre-headless              Java 21 LTS runtime (current LTS;
+                                          JRE 17 already in foundry-core)
  .
  Requires multiverse for the vintage emulators and game
  reimplementations. The bootstrap setup.sh handles this.

@@ -1,3 +1,10 @@
+foundry-core (1.0.4) resolute; urgency=medium
+
+  * Add openjdk-17-jre-headless to Depends — Java 17 LTS baseline for
+    LibGDX, Gradle, and game-dev toolchains.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 05 Jun 2026 00:00:00 +0000
+
 foundry-core (1.0.3) resolute; urgency=medium
 
   * Description: Ghidra is now atelier-only (moved out of retro-tools so

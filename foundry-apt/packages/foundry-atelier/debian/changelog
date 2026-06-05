@@ -1,3 +1,10 @@
+foundry-atelier (0.9.4) resolute; urgency=medium
+
+  * Add openjdk-21-jre-headless to Depends — Java 21 LTS runtime for
+    atelier tooling (JRE 17 already in foundry-core).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 05 Jun 2026 00:00:00 +0000
+
 foundry-atelier (0.9.3) resolute; urgency=medium
 
   * Add foundry-python-gamedev-cv to Depends — opencv moved out of
