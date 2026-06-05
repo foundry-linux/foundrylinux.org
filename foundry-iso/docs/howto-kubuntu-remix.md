@@ -591,13 +591,16 @@ Calamares ships two squashfs unpack modules:
 `etc/calamares/modules/unpackfsc.conf`:
 ```yaml
 ---
-unpack:
-    - source: /cdrom/live/filesystem.squashfs
-      sourcefs: squashfs
-      destination: "/"
+source: /cdrom/live/filesystem.squashfs
+sourcefs: squashfs
+destination: "/"
 ```
 
-**Critical:** use `destination: "/"`, NOT `destination: ""`. In `UnpackFSCJob::setConfigurationMap` (C++), an empty destination string triggers `cWarning() << "Skipping item with empty destination"; return;` — the job silently returns `ok()` without extracting anything. `"/"` is passed to `Calamares::System::targetPath("/")` which resolves to the rootMountPoint. The Python `unpackfs` module treats empty destination as rootMountPoint; `unpackfsc` does not — they are not config-compatible despite having the same key names.
+**Critical — flat format only, no `unpack:` list wrapper.** `unpackfsc` is a C++ `CppJobModule`, not a Python module. `CppJobModule::loadSelf()` creates ONE `CppJob` instance and calls `setConfigurationMap(m_configurationMap)` once with the full YAML document as a `QVariantMap`. `UnpackFSCJob::setConfigurationMap` then reads `source`/`sourcefs`/`destination` directly with `Calamares::getString(map, "source")`. If you wrap them under `unpack: [...]` (as `unpackfs` uses), `getString` finds nothing at the top level, logs `"Skipping item with bad source data"` and returns `ok()` — squashfs is never extracted.
+
+**Critical — use `destination: "/"`, not `destination: ""`.**  An empty destination triggers `cWarning() << "Skipping item with empty destination"; return;` — same silent skip. `"/"` is passed to `Calamares::System::targetPath("/")` which resolves to rootMountPoint.
+
+The Python `unpackfs` module iterates an `unpack:` list and treats empty destination as rootMountPoint. `unpackfsc` does neither — the two modules are **not config-compatible** despite sharing key names.
 
 ### Plasma Splash Screen (KSplashQML)
 
@@ -1114,7 +1117,8 @@ debian/
 | Calamares crashes at launch: `invalid node; first invalid key: "style"` | `branding.desc` is missing the required `style:` map (Calamares 3.3+); the YAML parser raises a fatal error when it tries to iterate over an absent node | Add a `style:` block with `SidebarBackground`, `SidebarText`, `SidebarTextCurrent`, `SidebarBackgroundCurrent`. Also add `windowExpanding`, `windowSize`, `windowPlacement`, `sidebar`, `navigation` (warnings if absent, not fatal) |
 | `Required settings.conf key hide-back-and-next-during-exec is missing` | Calamares 3.3 added two required keys | Add `hide-back-and-next-during-exec: false` and `quit-at-end: false` to `settings.conf` |
 | Installation fails: `rsync failed with error code 11` | `unpackfs` module uses `rsync -aHAXSr`; `RERR_FILEIO` (error 11) from xattr operations — **not** a disk-space issue | Switch to `unpackfsc` in `settings.conf` exec sequence and add `modules/unpackfsc.conf` with `destination: "/"` (NOT `""`). Both modules ship with Calamares 3.3.14 on 26.04; `unpackfsc` uses unsquashfs directly, no rsync. |
-| Installation fails: `Cannot access selected timezone path` after switching to `unpackfsc` | `destination: ""` in `unpackfsc.conf` causes `UnpackFSCJob::setConfigurationMap` to skip the extraction silently (logs warning, returns ok). Target is empty. `locale` module is the first to notice when it checks for `zoneinfo/` in the empty target. | Change `destination: ""` to `destination: "/"` in `modules/unpackfsc.conf`. |
+| Installation fails: `Cannot access selected timezone path` after switching to `unpackfsc` (sub-bug 1) | `destination: ""` in `unpackfsc.conf` causes `UnpackFSCJob::setConfigurationMap` to log `"Skipping item with empty destination"` and return `ok()`. Squashfs never extracted; target is empty. `locale` is first module to notice (checks `zoneinfo/`). Note: error says `"Asia"` not `"Asia/Bangkok"` because `zoneFile.absolutePath()` returns the parent dir. | Change `destination: ""` to `destination: "/"` in `modules/unpackfsc.conf`. |
+| Installation fails: `Cannot access selected timezone path` after switching to `unpackfsc` (sub-bug 2) | `unpackfsc.conf` wraps config in `unpack: [...]` list (like `unpackfs`). `CppJobModule` calls `setConfigurationMap()` once with the full map; `getString(map, "source")` finds nothing at the top level → logs `"Skipping item with bad source data"` → silent skip → squashfs never extracted. | Remove the `unpack:` wrapper. Use flat format: `source`/`sourcefs`/`destination` at top level. |
 
 ---
 

@@ -1,3 +1,13 @@
+calamares-settings-foundry-linux (1.0.11) resolute; urgency=medium
+
+  * Fix unpackfsc.conf: remove unpack: list wrapper — CppJobModule calls
+    setConfigurationMap() once with the full config map; getString(map, "source")
+    returns empty when source is nested under unpack:, logging "Skipping item with
+    bad source data" and returning ok() without extracting. Flat format only:
+    source/sourcefs/destination at top level.
+
+ -- Will Norris <wbnorris@gmail.com>  Thu, 05 Jun 2026 00:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.10) resolute; urgency=medium
 
   * Fix unpackfsc.conf: change destination from "" to "/" — empty destination
