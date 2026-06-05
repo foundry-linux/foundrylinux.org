@@ -566,6 +566,39 @@ they're non-fatal — still worth adding to stay clean.
 keys (`widget`, `none`, or `qml`), not theming keys. Sidebar colors go in the
 `style:` map, not as a top-level `sidebar:` key.
 
+### Calamares Squashfs Unpack Module
+
+Calamares ships two squashfs unpack modules:
+
+| Module | Backend | xattr handling |
+|---|---|---|
+| `unpackfs` | Python wrapper → **rsync** `-aHAXSr` | Can fail with `RERR_FILEIO` (error code 11) on xattr operations |
+| `unpackfsc` | C++ Qt plugin → **unsquashfs** directly | No rsync path; error 11 is impossible |
+
+**Use `unpackfsc`, not `unpackfs`.** The rsync-based `unpackfs` uses `-X` (preserve extended attributes), which can trigger `RERR_FILEIO` (error 11) in certain environments regardless of available disk space. `unpackfsc` bypasses rsync entirely via `UnsquashRunner` → `unsquashfs`. Both modules ship with Calamares 3.3.14 on Ubuntu 26.04.
+
+`settings.conf` exec sequence:
+```yaml
+- exec:
+    - partition
+    - mount
+    - unpackfsc        # NOT unpackfs
+    - machineid
+    - fstab
+    ...
+```
+
+`etc/calamares/modules/unpackfsc.conf`:
+```yaml
+---
+unpack:
+    - source: /cdrom/live/filesystem.squashfs
+      sourcefs: squashfs
+      destination: "/"
+```
+
+**Critical:** use `destination: "/"`, NOT `destination: ""`. In `UnpackFSCJob::setConfigurationMap` (C++), an empty destination string triggers `cWarning() << "Skipping item with empty destination"; return;` — the job silently returns `ok()` without extracting anything. `"/"` is passed to `Calamares::System::targetPath("/")` which resolves to the rootMountPoint. The Python `unpackfs` module treats empty destination as rootMountPoint; `unpackfsc` does not — they are not config-compatible despite having the same key names.
+
 ### Plasma Splash Screen (KSplashQML)
 
 The animated loading screen shown between SDDM autologin and the Plasma desktop
@@ -1080,6 +1113,8 @@ debian/
 | Firefox installs the snap instead of the .deb | Ubuntu's `firefox` apt package is a transitional snap shim | Hook `0025`: pin `Package: firefox*` to `o=Mozilla` at priority 1001, with the Mozilla apt source wired via `config/archives/` |
 | Calamares crashes at launch: `invalid node; first invalid key: "style"` | `branding.desc` is missing the required `style:` map (Calamares 3.3+); the YAML parser raises a fatal error when it tries to iterate over an absent node | Add a `style:` block with `SidebarBackground`, `SidebarText`, `SidebarTextCurrent`, `SidebarBackgroundCurrent`. Also add `windowExpanding`, `windowSize`, `windowPlacement`, `sidebar`, `navigation` (warnings if absent, not fatal) |
 | `Required settings.conf key hide-back-and-next-during-exec is missing` | Calamares 3.3 added two required keys | Add `hide-back-and-next-during-exec: false` and `quit-at-end: false` to `settings.conf` |
+| Installation fails: `rsync failed with error code 11` | `unpackfs` module uses `rsync -aHAXSr`; `RERR_FILEIO` (error 11) from xattr operations — **not** a disk-space issue | Switch to `unpackfsc` in `settings.conf` exec sequence and add `modules/unpackfsc.conf` with `destination: "/"` (NOT `""`). Both modules ship with Calamares 3.3.14 on 26.04; `unpackfsc` uses unsquashfs directly, no rsync. |
+| Installation fails: `Cannot access selected timezone path` after switching to `unpackfsc` | `destination: ""` in `unpackfsc.conf` causes `UnpackFSCJob::setConfigurationMap` to skip the extraction silently (logs warning, returns ok). Target is empty. `locale` module is the first to notice when it checks for `zoneinfo/` in the empty target. | Change `destination: ""` to `destination: "/"` in `modules/unpackfsc.conf`. |
 
 ---
 

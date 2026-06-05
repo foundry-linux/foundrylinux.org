@@ -1,3 +1,12 @@
+calamares-settings-foundry-linux (1.0.10) resolute; urgency=medium
+
+  * Fix unpackfsc.conf: change destination from "" to "/" — empty destination
+    triggers "Skipping item with empty destination" in UnpackFSCJob::setConfigurationMap
+    (the job silently returns ok() without extracting). Calamares::System::targetPath("/")
+    resolves to rootMountPoint, so "/" is the correct value for "install root".
+
+ -- Will Norris <wbnorris@gmail.com>  Thu, 05 Jun 2026 00:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.9) resolute; urgency=medium
 
   * Switch Calamares unpack module from unpackfs (Python, rsync) to unpackfsc
