@@ -193,6 +193,12 @@ network-installer product.
 3. **onnxruntime added to anvil** — `libonnxruntime-dev` (~20 MiB) added to
    `foundry-python-gamedev-extras` for ONNX model inference in game-dev pipelines.
    Pairs with OpenCV's DNN module and the numba stack already in anvil.
+4. **`breeze-wallpaper` (38 MiB) is stuck** — it is a hard `Depends` of `breeze`
+   (the default Plasma style), so purging it cascades to removing `breeze` itself.
+   To reclaim the 38 MiB: package a stub `foundry-breeze` that `Provides: breeze-wallpaper`
+   and `Conflicts: breeze-wallpaper`, ships no images, and satisfies `breeze`'s dep.
+   Not worth it at 38 MiB alone (would still leave anvil 73 MiB over the 4 GB limit),
+   but it is the correct path if the stick target is ever reopened.
 
 ---
 
