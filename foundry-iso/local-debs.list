@@ -7,3 +7,5 @@
 # version installed into the ISO by accident.
 #
 # Kept for historical reference. Safe to delete.
+foundry-core
+foundry-atelier

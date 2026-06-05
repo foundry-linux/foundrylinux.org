@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+# Pre-install JRE 17 from Ubuntu universe before hook 0030 installs the
+# foundry edition.  foundry-core Depends: openjdk-17-jre-headless (LibGDX,
+# Gradle, mod toolchains), so apt would pull it in transitively anyway — this
+# hook makes that intent explicit and surfaces failures before the
+# edition-install step can obscure them.
+#
+# Do NOT add openjdk-17-jre-headless to foundry.list.chroot: it inflates the
+# squashfs by ~270 MiB without benefit (the dep is already satisfied here),
+# and the larger installed footprint caused rsync error 11 during Calamares
+# installation on tighter target disks.
+echo "=== Pre-installing JRE 17 (foundry-core dep: LibGDX, Gradle) ==="
+apt-get install -y openjdk-17-jre-headless
+java -version
+echo "=== JRE 17 ready ==="
