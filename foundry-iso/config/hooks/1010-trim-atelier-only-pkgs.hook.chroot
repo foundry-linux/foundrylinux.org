@@ -25,19 +25,21 @@ if [[ "${EDITION:-}" != "atelier" ]]; then
     # on python3-opencv; hook 1000 upgrades to 1.0.1 (drops opencv). apt-mark them
     # auto so this autoremove sweep cleans them up even if apt's orphan tracking
     # didn't catch the transition (libvtk9.5 is ~276 MiB installed).
-    apt-mark auto python3-opencv 'libopencv-*' libvtk9.5 2>/dev/null || true
+    # apt-mark auto + autoremove alone doesn't remove python3-opencv: apt's orphan
+    # tracking uses the apt CACHE (published 1.0.0 metadata) which still lists
+    # python3-opencv as a dependency of foundry-python-gamedev-extras, even though
+    # dpkg status shows 1.0.1 (without opencv) installed via hook 1000.
+    # apt-get purge uses dpkg status for reverse-dep checking → sees 1.0.1 → works.
+    #
+    # IMPORTANT: only remove the Python binding and the viz/vtk chain.
+    # The underlying libopencv-core/imgproc/videoio/etc. C++ libs MUST stay:
+    # libopenimageio2.5 (Blender), kde-spectacle, libkquickimageeditor1 all depend
+    # on them. Blanket-purging libopencv-* breaks those packages.
+    DEBIAN_FRONTEND=noninteractive apt-get purge -y \
+        python3-opencv gstreamer1.0-opencv 2>/dev/null || true
+    # libopencv-viz410 was only needed by python3-opencv (now gone); libvtk9.5 is
+    # only needed by libopencv-viz410. autoremove should now catch them correctly.
     DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge -y
-    # apt-mark auto + autoremove doesn't catch opencv packages when the
-    # foundry-python-gamedev-extras 1.0.0→1.0.1 upgrade was done via dpkg -i
-    # (dpkg direct-installs don't update apt's orphan tracking).  Force-purge
-    # any remaining opencv/vtk packages with dpkg directly.
-    _leftover=$(dpkg -l 'python3-opencv' 'libopencv-*' 'gstreamer1.0-opencv' 'libvtk*' \
-        2>/dev/null | awk '/^ii/{print $2}' | tr '\n' ' ' || true)
-    if [[ -n "$_leftover" ]]; then
-        echo "I: Force-purging remaining opencv/vtk via dpkg: $_leftover"
-        # shellcheck disable=SC2086  # word-split intentional for package list
-        dpkg --purge --force-depends $_leftover 2>&1 || true
-    fi
     apt-get clean
     if dpkg -l ghidra 2>/dev/null | grep -q '^ii'; then
         echo "NOTE: ghidra still installed — something other than retro-tools Depends it" >&2
