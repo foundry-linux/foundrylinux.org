@@ -34,6 +34,9 @@ jobs:
 
       - uses: actions/checkout@v6
 
+      - name: Install host dependencies
+        run: sudo apt-get install -y xorriso
+
       - name: Build ISO in ubuntu:26.04
         env:
           EDITION: ${{ matrix.edition }}
