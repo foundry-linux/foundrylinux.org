@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        edition: [anvil, atelier]
+        edition: [anvil]
     runs-on: ubuntu-latest
     timeout-minutes: 180
 
@@ -37,14 +37,14 @@ jobs:
       - name: Build ISO in ubuntu:26.04
         env:
           EDITION: ${{ matrix.edition }}
-        run: bash scripts/build-iso.sh
+        run: bash foundry-iso/scripts/build-iso.sh
 
       - name: Sign + checksum
         env:
           EDITION: ${{ matrix.edition }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE:  ${{ secrets.GPG_PASSPHRASE  }}
-        run: bash scripts/sign-iso.sh
+        run: bash foundry-iso/scripts/sign-iso.sh
 
       - name: Upload ISO to R2
         if: ${{ !inputs.dry_run }}
@@ -53,7 +53,7 @@ jobs:
           R2_ACCOUNT_ID:        ${{ secrets.R2_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: bash scripts/upload-iso.sh
+        run: bash foundry-iso/scripts/upload-iso.sh
 
       - name: Attach signature + checksum to GH Release
         if: ${{ !inputs.dry_run && startsWith(github.ref, 'refs/tags/v') }}
@@ -85,7 +85,7 @@ jobs:
           merge-multiple: true
 
       - name: Generate index.html
-        run: bash scripts/generate-iso-index.sh
+        run: bash foundry-iso/scripts/generate-iso-index.sh
 
       - name: Upload index to R2
         if: ${{ !inputs.dry_run }}
@@ -93,4 +93,4 @@ jobs:
           R2_ACCOUNT_ID:        ${{ secrets.R2_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: bash scripts/upload-iso-index.sh
+        run: bash foundry-iso/scripts/upload-iso-index.sh
