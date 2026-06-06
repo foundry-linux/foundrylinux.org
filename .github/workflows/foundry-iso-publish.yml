@@ -68,11 +68,20 @@ jobs:
             dist/foundry-${{ matrix.edition }}-*.iso.asc
             dist/manifest-${{ matrix.edition }}.json
 
+      - name: Save ISO artifact
+        if: ${{ inputs.dry_run }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: foundry-${{ matrix.edition }}-iso
+          path: foundry-iso/dist/foundry-${{ matrix.edition }}-*.iso
+          retention-days: 3
+
       - name: Save manifest for index job
+        if: ${{ !inputs.dry_run }}
         uses: actions/upload-artifact@v7
         with:
           name: manifest-${{ matrix.edition }}
-          path: dist/manifest-${{ matrix.edition }}.json
+          path: foundry-iso/dist/manifest-${{ matrix.edition }}.json
           retention-days: 1
 
   index:
