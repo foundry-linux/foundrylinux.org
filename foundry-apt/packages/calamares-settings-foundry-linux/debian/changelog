@@ -1,3 +1,12 @@
+calamares-settings-foundry-linux (1.0.12) resolute; urgency=medium
+
+  * Add partition.conf: set defaultFileSystemType=ext4 and initialSwapChoice=none.
+    Without defaultFileSystemType, Calamares leaves root fs type as "unknown" and
+    auto-partitioner creates only EFI + swap with no root partition, causing
+    unsquashfs to fail (exit 1, no output) at the "Unpack filesystems" step.
+
+ -- Will Norris <wbnorris@gmail.com>  Fri, 06 Jun 2026 00:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.11) resolute; urgency=medium
 
   * Fix unpackfsc.conf: remove unpack: list wrapper — CppJobModule calls
