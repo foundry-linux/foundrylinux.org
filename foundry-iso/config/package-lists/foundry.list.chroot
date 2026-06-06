@@ -5,3 +5,5 @@ casper
 user-setup
 language-pack-en
 language-pack-kde-en
+grub-efi-amd64
+shim-signed

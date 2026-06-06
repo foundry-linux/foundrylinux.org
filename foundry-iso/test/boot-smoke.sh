@@ -50,7 +50,7 @@ qemu-system-x86_64 \
   -drive if=pflash,format=raw,file="$OVMF_VARS" \
   -drive file="$ISO",media=cdrom,format=raw,readonly=on \
   -boot order=d \
-  -device virtio-vga-gl \
+  -device virtio-vga-gl,xres=1280,yres=800 \
   -display gtk,gl=on \
   -serial file:"$LOGFILE" \
   -no-reboot \

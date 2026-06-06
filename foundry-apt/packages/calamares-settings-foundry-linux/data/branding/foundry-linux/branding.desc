@@ -5,7 +5,7 @@ welcomeStyleCalamares: false
 welcomeExpandingLogo:  true
 
 windowExpanding:    normal
-windowSize:         800px,520px
+windowSize:         1100px,680px
 windowPlacement:    center
 
 sidebar:    widget

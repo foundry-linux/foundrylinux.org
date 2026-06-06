@@ -1,3 +1,20 @@
+calamares-settings-foundry-linux (1.0.13) resolute; urgency=medium
+
+  * Fix partition.conf: Calamares 3.3 PartitionLayout::init() requires both
+    "name" and "size" as mandatory keys per entry — without "name" it silently
+    switches to a default layout that creates no root partition, so unsquashfs
+    extracts to the live tmpfs and fails with exit 1. Add efi: block so
+    Calamares sizes the EFI partition correctly (300 MiB).
+  * Add bootloader.conf: set efiBootLoader=grub so Calamares runs grub-install
+    after filesystem copy. Without this the bootloader module skips entirely
+    and the installed system has no bootloader.
+  * Fix settings.conf: move packages before bootloader so grub-efi-amd64 is
+    present in the target before grub-install runs.
+  * Fix slideshow clipping: increase windowSize 800px→1100px; replace fixed
+    800×440 root Item dimensions with anchors.fill: parent.
+
+ -- Will Norris <wbnorris@gmail.com>  Fri, 06 Jun 2026 13:30:00 +0700
+
 calamares-settings-foundry-linux (1.0.12) resolute; urgency=medium
 
   * Add partition.conf: set defaultFileSystemType=ext4 and initialSwapChoice=none.
