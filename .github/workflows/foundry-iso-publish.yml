@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Build only; do not upload to R2'
+        description: 'Build only; do not sign or upload to R2'
         type: boolean
-        default: false
+        default: true
 
 permissions:
   contents: write              # attach sig + checksum to GH Release
@@ -43,6 +43,7 @@ jobs:
         run: bash foundry-iso/scripts/build-iso.sh
 
       - name: Sign + checksum
+        if: ${{ !inputs.dry_run }}
         env:
           EDITION: ${{ matrix.edition }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
