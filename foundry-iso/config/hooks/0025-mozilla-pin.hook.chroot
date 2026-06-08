@@ -63,7 +63,10 @@ fi
 
 _firefox_url="https://packages.mozilla.org/apt/${_firefox_path}"
 echo "Downloading Mozilla firefox from: ${_firefox_url}"
-curl -fsSL --http1.1 --retry 3 --retry-delay 2 --retry-all-errors "${_firefox_url}" -o /tmp/firefox-mozilla.deb
+if ! curl -fsSL --http1.1 --retry 3 --retry-delay 5 --retry-all-errors "${_firefox_url}" -o /tmp/firefox-mozilla.deb; then
+    echo "W: Mozilla firefox download failed — leaving Ubuntu snap-transitional firefox in place" >&2
+    exit 0
+fi
 
 # Install — dpkg --force-downgrade crosses the epoch-1 → epoch-0 boundary.
 dpkg --force-downgrade -i /tmp/firefox-mozilla.deb
