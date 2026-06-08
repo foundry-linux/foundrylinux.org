@@ -48,25 +48,34 @@ Item {
                 height:  90
                 color:   "#cc0e0e0e"
 
-                Column {
-                    x: 24
-                    width: parent.width - 48
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 4
+                // Item gives the Column a margin-adjusted parent width.
+                // Qt Quick forbids mixing x/width with anchors on the same
+                // item, so we can't do x:24 + anchors.verticalCenter on the
+                // Column directly — the x is silently ignored.
+                Item {
+                    anchors.fill: parent
+                    anchors.leftMargin:  24
+                    anchors.rightMargin: 24
 
-                    Text {
-                        width: parent.width
-                        text:  model.title
-                        color: "#e87a00"
-                        font { pixelSize: 18; weight: Font.Bold; family: "sans-serif" }
-                        elide: Text.ElideRight
-                    }
-                    Text {
-                        width:    parent.width
-                        text:     model.body
-                        color:    "#e0e0e0"
-                        wrapMode: Text.WordWrap
-                        font { pixelSize: 13; family: "sans-serif" }
+                    Column {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width:   parent.width
+                        spacing: 4
+
+                        Text {
+                            width: parent.width
+                            text:  model.title
+                            color: "#e87a00"
+                            font { pixelSize: 18; weight: Font.Bold; family: "sans-serif" }
+                            elide: Text.ElideRight
+                        }
+                        Text {
+                            width:    parent.width
+                            text:     model.body
+                            color:    "#e0e0e0"
+                            wrapMode: Text.WordWrap
+                            font { pixelSize: 13; family: "sans-serif" }
+                        }
                     }
                 }
             }

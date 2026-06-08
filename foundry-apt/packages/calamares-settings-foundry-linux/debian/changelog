@@ -1,3 +1,13 @@
+calamares-settings-foundry-linux (1.0.18) resolute; urgency=medium
+
+  * Fix slideshow text clipping (take 2): wrap the Column in an Item with
+    anchors.fill + leftMargin/rightMargin instead of setting x on the Column
+    directly. Qt Quick silently ignores x/width when anchors.verticalCenter
+    is also set on the same item (cannot mix positional and anchor properties).
+    Item wrapper gives the Column an unambiguously margin-adjusted parent width.
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 09 Jun 2026 05:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.17) resolute; urgency=medium
 
   * Fix slideshow text left-clipping: replace anchors.leftMargin/rightMargin
