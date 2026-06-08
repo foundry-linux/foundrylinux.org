@@ -271,3 +271,93 @@ dd if=/dev/zero of=/dev/sda bs=1M count=10
 ```
 Otherwise Calamares's "Erase disk" option may disappear (it sees an existing layout and
 offers only manual partitioning).
+
+---
+
+## Calamares GUI automation via SSH is not feasible on KDE Wayland (2026-06-08)
+
+Attempting to drive the Calamares installer from SSH (no physical display) via
+ydotool/wtype hit a fundamental wall — document this so we don't retry the same dead ends.
+
+**Why ydotool keyboard fails:** KWin Wayland does not implement the
+`zwp_virtual_keyboard_manager_v1` protocol. Setting `workspace.activeWindow = c` via
+KWin scripting sets the KWin-level focus decoration but does NOT send `wl_keyboard.enter`
+to the Calamares Wayland surface. Keyboard events from ydotool (injected via `/dev/uinput`)
+reach KWin (KWin has the event device open via fd), but KWin does not dispatch them to
+Calamares.
+
+**Why wtype fails:** Same reason — `Compositor does not support the virtual keyboard
+protocol`.
+
+**Why ydotool mouse clicks fail:** Two compounding bugs:
+1. `ydotoold` has no `WAYLAND_DISPLAY` in its environment when launched via SSH, so
+   `ydotool mousemove --absolute` cannot query screen dimensions and the "absolute" mode
+   silently computes wrong deltas (cursor ends up at ~(0,110) instead of (640,400)).
+2. Even after fixing (1) by restarting `ydotoold` with `WAYLAND_DISPLAY=/run/user/1000/wayland-0
+   XDG_RUNTIME_DIR=/run/user/1000`, the window was initially positioned off-screen:
+   Calamares launched when the desktop was 640×480 (QEMU initial size), KWin placed the
+   800×548 window at (640,544) — partially or fully outside the visible area.
+
+**KWin scripting gotchas found:**
+- `workspace.screens[i].width` → `undefined` in KWin 6.x (different API than KWin 5)
+- `c.frameGeometry = {x:0,y:0,...}` → silently ignored on Wayland (client owns surface size)
+- `c.setMaximize(true,true)` works — window IS maximized to 1280×978 after this call
+- `c.keepAbove = true` works — raises above desktop
+- Window class is `io.calamares.calamares`, caption is `"Foundry Linux Installer"`
+- Use `journalctl --no-pager -n 20` to see `js: print()` output from KWin scripts
+
+**Workaround:** For CI/automated testing, do the installation manually from the SSH
+session rather than driving Calamares:
+```bash
+# Partition (GPT: EFI + root)
+sgdisk -Z /dev/vda || true
+sgdisk -n 1:0:+512M -t 1:ef00 /dev/vda
+sgdisk -n 2:0:0 -t 2:8300 /dev/vda
+partprobe /dev/vda
+mkfs.fat -F32 -n EFI /dev/vda1
+mkfs.ext4 -L foundry /dev/vda2
+mount /dev/vda2 /mnt
+mkdir -p /mnt/boot/efi && mount /dev/vda1 /mnt/boot/efi
+# Copy live squashfs (from /rofs — clean, no overlay changes)
+rsync -aAX --exclude=/proc --exclude=/sys --exclude=/dev \
+  --exclude=/run --exclude=/tmp --exclude=/mnt --exclude=/media \
+  --exclude=/cow --exclude=/rofs /rofs/ /mnt/
+# Create missing ephemeral dirs
+mkdir -p /mnt/{dev,proc,sys,run,tmp,mnt,media}
+# Bind mounts
+mount --bind /dev /mnt/dev && mount --bind /proc /mnt/proc
+mount --bind /sys /mnt/sys && mount --bind /run /mnt/run
+mount --bind /sys/firmware/efi/efivars /mnt/sys/firmware/efi/efivars 2>/dev/null || true
+# fstab
+ROOT_UUID=$(blkid -s UUID -o value /dev/vda2)
+EFI_UUID=$(blkid -s UUID -o value /dev/vda1)
+printf "UUID=%s  /          ext4  errors=remount-ro  0  1\n" "$ROOT_UUID" > /mnt/etc/fstab
+printf "UUID=%s  /boot/efi  vfat  umask=0077         0  1\n" "$EFI_UUID" >> /mnt/etc/fstab
+echo "foundry" > /mnt/etc/hostname
+echo "nameserver 8.8.8.8" > /mnt/etc/resolv.conf
+# Install grub
+chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi \
+  --bootloader-id=foundry-linux --recheck /dev/vda
+chroot /mnt update-grub
+# Remove live-only packages, regenerate initrd
+DEBIAN_FRONTEND=noninteractive chroot /mnt apt-get remove --purge -y \
+  casper user-setup live-boot live-boot-initramfs-tools 2>/dev/null || true
+touch /mnt/.live-build   # bypass update-initramfs live-system check
+chroot /mnt update-initramfs -u -k all
+rm -f /mnt/.live-build
+# Create user
+chroot /mnt useradd -m -s /bin/bash -G sudo,audio,video,plugdev foundry
+echo "foundry:foundry" | chroot /mnt chpasswd
+# Unmount
+umount /mnt/sys/firmware/efi/efivars 2>/dev/null || true
+for d in sys proc dev run; do umount /mnt/$d; done
+umount /mnt/boot/efi && umount /mnt
+```
+Then restart QEMU with `-boot order=c` to boot from disk.
+
+**Why `update-initramfs -u` refuses in chroot:** It checks `/proc/cmdline` (the live
+system's) for `boot=live`. Creating `/.live-build` in the chroot bypasses the check.
+
+**Live squashfs rsync vs overlay rsync:** rsync from `/rofs/` (the squashfs mount) gives
+the clean installed-packages base without live-session state. rsync from `/` would include
+the overlay changes (live user's session files, Calamares temp files, etc.).
