@@ -38,6 +38,9 @@ Item {
             Layout.topMargin: Kirigami.Units.smallSpacing
             text: "<a href=\"https://foundrylinux.org\">foundrylinux.org</a>"
             onLinkActivated: link => Qt.openUrlExternally(link)
+            HoverHandler {
+                cursorShape: Qt.PointingHandCursor
+            }
         }
     }
 }

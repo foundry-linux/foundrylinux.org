@@ -1,3 +1,11 @@
+foundry-welcome (1.0.6) resolute; urgency=medium
+
+  * Fix cursor on foundrylinux.org link: add HoverHandler with
+    cursorShape: Qt.PointingHandCursor so the pointer hand appears on hover.
+    QQC2.Label does not change the cursor automatically for <a href> rich text.
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 09 Jun 2026 00:00:00 +0700
+
 foundry-welcome (1.0.5) resolute; urgency=medium
 
   * Revert to the sentinel-file approach for run-once-on-first-login. The 1.0.4
