@@ -43,14 +43,29 @@ EOF
 # Plasma 6 assigns dynamically on first run.  plasma-apply-wallpaperimage (from
 # plasma-workspace) sets the wallpaper for all screens on session start and is
 # the supported automation interface for this.
+#
+# The wrapper script sleeps 5 s before applying: Kubuntu's look-and-feel package
+# sets the default wallpaper during Plasma's first-run setup, which happens
+# AFTER the panel is ready.  Firing plasma-apply-wallpaperimage immediately
+# (X-KDE-autostart-after=panel) gets overwritten by the look-and-feel defaults.
+# The 5 s pause is enough for first-run setup to complete on any hardware we
+# target; the autostart phase=2 (application phase) ensures we're in a running
+# session before sleeping.
 if [[ -f /usr/share/sddm/themes/foundry-linux/background.png ]]; then
+  cat > /usr/local/bin/foundry-set-wallpaper.sh <<'EOF'
+#!/bin/sh
+sleep 5
+plasma-apply-wallpaperimage /usr/share/sddm/themes/foundry-linux/background.png
+EOF
+  chmod +x /usr/local/bin/foundry-set-wallpaper.sh
+
   mkdir -p /etc/skel/.config/autostart
   cat > /etc/skel/.config/autostart/foundry-wallpaper.desktop <<'EOF'
 [Desktop Entry]
 Type=Application
 Name=Set Foundry Linux Wallpaper
-Exec=plasma-apply-wallpaperimage /usr/share/sddm/themes/foundry-linux/background.png
-X-KDE-autostart-after=panel
+Exec=/usr/local/bin/foundry-set-wallpaper.sh
+X-KDE-autostart-phase=2
 EOF
 fi
 
