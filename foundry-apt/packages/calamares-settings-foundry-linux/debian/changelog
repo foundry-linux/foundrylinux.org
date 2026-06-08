@@ -1,3 +1,13 @@
+calamares-settings-foundry-linux (1.0.17) resolute; urgency=medium
+
+  * Fix slideshow text left-clipping: replace anchors.leftMargin/rightMargin
+    on Column with explicit x: 24; width: parent.width - 48. The anchor+margin
+    approach created a circular width dependency (children set width:
+    parent.width; Column implicit width grew from children) that Qt6 resolved
+    by ignoring the margin. Explicit x/width breaks the cycle cleanly.
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 09 Jun 2026 04:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.16) resolute; urgency=medium
 
   * Add shellprocess.conf: remove installer-only desktop artifacts from

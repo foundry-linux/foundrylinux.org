@@ -21,6 +21,14 @@ exec sudo -E calamares
 EOF
 chmod +x /usr/local/bin/launch-calamares.sh
 
+# Install the Foundry Linux anvil logo as the installer icon.
+# The logo.png (256×256 RGBA) is installed by calamares-settings-foundry-linux
+# to /usr/share/calamares/branding/foundry-linux/logo.png.  We copy it into
+# /usr/share/pixmaps/ so KDE can resolve Icon=foundry-linux-installer by name.
+mkdir -p /usr/share/pixmaps
+cp /usr/share/calamares/branding/foundry-linux/logo.png \
+    /usr/share/pixmaps/foundry-linux-installer.png
+
 # Install the desktop file to a system-trusted location (/usr/share/applications/).
 # Plasma 6's folder view calls KFileItem::targetUrl() when activating files, which
 # resolves symlinks to their targets.  Files whose target path is under a
@@ -36,7 +44,7 @@ Name=Install Foundry Linux
 GenericName=System Installer
 Comment=Install Foundry Linux to your computer
 Exec=/usr/local/bin/launch-calamares.sh
-Icon=calamares
+Icon=foundry-linux-installer
 Terminal=false
 StartupNotify=true
 Categories=Qt;System;

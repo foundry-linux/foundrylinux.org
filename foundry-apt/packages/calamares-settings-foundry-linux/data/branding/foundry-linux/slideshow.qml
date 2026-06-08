@@ -49,11 +49,9 @@ Item {
                 color:   "#cc0e0e0e"
 
                 Column {
-                    anchors {
-                        left: parent.left; leftMargin: 24
-                        right: parent.right; rightMargin: 24
-                        verticalCenter: parent.verticalCenter
-                    }
+                    x: 24
+                    width: parent.width - 48
+                    anchors.verticalCenter: parent.verticalCenter
                     spacing: 4
 
                     Text {
