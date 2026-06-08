@@ -1,3 +1,15 @@
+calamares-settings-foundry-linux (1.0.16) resolute; urgency=medium
+
+  * Add shellprocess.conf: remove installer-only desktop artifacts from
+    the target before the users module creates the new user from skel.
+    Cleans /usr/share/applications/install-foundry-linux.desktop,
+    /etc/skel/Desktop/install-foundry-linux.desktop, and the launch/
+    autoinstall helper scripts so the installer icon never appears on
+    the installed system's desktop.
+  * Add shellprocess step to settings.conf exec sequence (before users).
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 09 Jun 2026 00:45:00 +0700
+
 calamares-settings-foundry-linux (1.0.15) resolute; urgency=medium
 
   * Fix mount.conf: options must be YAML arrays (["bind"] not "bind") —
