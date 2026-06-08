@@ -94,8 +94,22 @@ docker run --rm \
       done
       unset _latest_deb _deb _pkg _ver _cur
     fi
+    # Patch bootstrap cache DNS before lb bootstrap runs.  Docker containers
+    # run in a separate network namespace where the host resolver (injected by
+    # Tailscale / systemd-resolved into the legacy resolv.conf) is unreachable.
+    # Ubuntu 26.04 debootstrap creates /etc/resolv.conf as a symlink to
+    # run/systemd/resolve/stub-resolv.conf; pre-seeding 8.8.8.8 there ensures
+    # the restored chroot can reach archive.ubuntu.com immediately.
+    mkdir -p cache/bootstrap/run/systemd/resolve
+    echo "nameserver 8.8.8.8" > cache/bootstrap/run/systemd/resolve/stub-resolv.conf
     # Stage 1: debootstrap only
     lb bootstrap
+    # Fix DNS in the freshly created chroot before any apt calls.  lb bootstrap
+    # may restore from cache (preserving stale DNS) or run fresh debootstrap
+    # (where systemd writes its own stub-resolv.conf during package configure).
+    # Either way, overwrite immediately so the gnupg install below succeeds.
+    mkdir -p chroot/run/systemd/resolve
+    echo "nameserver 8.8.8.8" > chroot/run/systemd/resolve/stub-resolv.conf
     # Install custom apt keys now that chroot/ exists — live-build key
     # handling in ubuntu 3.0~a57 does not reliably copy *.key files before
     # running apt-get update, so we do it explicitly here.
