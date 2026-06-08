@@ -44,27 +44,28 @@ EOF
 # plasma-workspace) sets the wallpaper for all screens on session start and is
 # the supported automation interface for this.
 #
-# The wrapper script sleeps 5 s before applying: Kubuntu's look-and-feel package
-# sets the default wallpaper during Plasma's first-run setup, which happens
-# AFTER the panel is ready.  Firing plasma-apply-wallpaperimage immediately
-# (X-KDE-autostart-after=panel) gets overwritten by the look-and-feel defaults.
-# The 5 s pause is enough for first-run setup to complete on any hardware we
-# target; the autostart phase=2 (application phase) ensures we're in a running
-# session before sleeping.
+# The wrapper script polls for ~/.config/plasma-org.kde.plasma.desktop-appletsrc
+# to contain a [Containments] section — that's written by plasmashell only AFTER
+# the Kubuntu Look-and-Feel defaults (including the cones wallpaper) have been
+# applied.  Polling for DBus registration alone fires too early: plasmashell
+# registers on DBus before it processes the LAF, so our apply gets overwritten.
 if [[ -f /usr/share/sddm/themes/foundry-linux/background.png ]]; then
   cat > /usr/local/bin/foundry-set-wallpaper.sh <<'EOF'
 #!/bin/sh
-# Poll until plasmashell registers on the session DBus — that is the real
-# readiness signal.  plasma-apply-wallpaperimage talks to plasmashell over
-# DBus; calling it before plasmashell is up silently returns an error and
-# leaves the Kubuntu default wallpaper in place.
-# X-KDE-autostart-after=panel is not reliably honoured in Plasma 6, so the
-# autostart may fire before the shell is ready regardless of that hint.
+# Polling for plasmashell DBus registration is not sufficient: plasmashell
+# registers on DBus before it applies the Kubuntu Look-and-Feel defaults,
+# so firing plasma-apply-wallpaperimage at that point gets overwritten by
+# the LAF step (which sets the Kubuntu cones wallpaper).
+#
+# The right condition is the appearance of a [Containments] section in
+# ~/.config/plasma-org.kde.plasma.desktop-appletsrc — plasmashell writes
+# that file only after the LAF wallpaper has been applied, so we are
+# guaranteed to fire last.
 WALLPAPER=/usr/share/sddm/themes/foundry-linux/background.png
+CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/plasma-org.kde.plasma.desktop-appletsrc"
 i=0
 while [ $i -lt 60 ]; do
-    dbus-send --session --dest=org.kde.plasmashell --print-reply \
-        /PlasmaShell org.kde.PlasmaShell.version >/dev/null 2>&1 && break
+    grep -qs "\[Containments\]" "$CONFIG" 2>/dev/null && break
     sleep 1
     i=$((i+1))
 done
