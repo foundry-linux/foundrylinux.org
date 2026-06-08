@@ -43,6 +43,7 @@ fetch_key https://packages.mozilla.org/apt/repo-signing-key.gpg              "$R
 echo "=== Building foundry-${EDITION} ISO (inside ubuntu:26.04 container) ==="
 docker run --rm \
   --privileged \
+  --dns 8.8.8.8 \
   -e EDITION="$EDITION" \
   -e ISO_VERSION="$ISO_VERSION" \
   -v "$REPO_ROOT:/work" \
