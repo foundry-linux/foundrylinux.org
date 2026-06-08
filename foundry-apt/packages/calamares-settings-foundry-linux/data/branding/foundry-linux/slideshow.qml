@@ -49,21 +49,25 @@ Item {
                 color:   "#cc0e0e0e"
 
                 Column {
-                    anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter }
-                    leftPadding:  24
-                    rightPadding: 24
-                    spacing:       4
+                    anchors {
+                        left: parent.left; leftMargin: 24
+                        right: parent.right; rightMargin: 24
+                        verticalCenter: parent.verticalCenter
+                    }
+                    spacing: 4
 
                     Text {
+                        width: parent.width
                         text:  model.title
                         color: "#e87a00"
                         font { pixelSize: 18; weight: Font.Bold; family: "sans-serif" }
+                        elide: Text.ElideRight
                     }
                     Text {
-                        text:       model.body
-                        color:      "#e0e0e0"
-                        wrapMode:   Text.WordWrap
-                        width:      parent.width - 48
+                        width:    parent.width
+                        text:     model.body
+                        color:    "#e0e0e0"
+                        wrapMode: Text.WordWrap
                         font { pixelSize: 13; family: "sans-serif" }
                     }
                 }
