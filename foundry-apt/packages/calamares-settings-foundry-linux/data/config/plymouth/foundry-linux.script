@@ -24,6 +24,19 @@ spinner_radius  = 40;
 spinner_x       = screen_w / 2;
 spinner_y       = screen_h / 2 + logo_image.GetHeight() / 2 + 20;
 
+// Message text (e.g. "remove the media and press enter to continue")
+message_sprite = Sprite();
+message_sprite.SetZ(2);
+
+fun message_callback(text) {
+    msg_image = Image.Text(text, 0.9, 0.9, 0.9);
+    message_sprite.SetImage(msg_image);
+    message_sprite.SetX(screen_w / 2 - msg_image.GetWidth()  / 2);
+    message_sprite.SetY(screen_h * 0.82);
+}
+
+Plymouth.SetMessageFunction(message_callback);
+
 fun refresh_callback() {
     spinner_angle = spinner_angle + 0.12;
     if (spinner_angle > Math.Pi * 2)

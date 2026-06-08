@@ -1,3 +1,12 @@
+calamares-settings-foundry-linux (1.0.19) resolute; urgency=medium
+
+  * Fix Plymouth script: register Plymouth.SetMessageFunction so shutdown/
+    reboot messages ("remove the media and press enter to continue") are
+    rendered on screen. Without the callback Plymouth silently drops all
+    messages. Text is rendered in light grey centred at 82% screen height.
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 09 Jun 2026 05:30:00 +0700
+
 calamares-settings-foundry-linux (1.0.18) resolute; urgency=medium
 
   * Fix slideshow text clipping (take 2): wrap the Column in an Item with
