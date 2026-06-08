@@ -71,6 +71,84 @@ ColorScheme=FoundryLinux
 EOF
 fi
 
+# Pre-configure KWin display output for QEMU virtio-vga-gl, which boots at
+# 640×480 by default even when xres=1280,yres=800 is passed to QEMU.  The
+# edidHash/uuid below are stable for QEMU's synthetic virtual EDID; real
+# hardware won't match and will use its own monitor EDID as normal.
+# The autostart script is a belt-and-suspenders fallback for VMs where the
+# UUID hasn't been seen before (first boot without a matching saved config).
+mkdir -p /etc/skel/.config/autostart
+cat > /etc/skel/.config/kwinoutputconfig.json <<'EOF'
+[
+    {
+        "data": [
+            {
+                "allowDdcCi": true,
+                "allowSdrSoftwareBrightness": true,
+                "autoBrightnessCurve": [0, 0, 0, 0, 0, 0],
+                "autoRotation": "InTabletMode",
+                "automaticBrightness": false,
+                "brightness": 1,
+                "colorPowerTradeoff": "PreferEfficiency",
+                "colorProfileSource": "sRGB",
+                "connectorName": "Virtual-1",
+                "detectedDdcCi": false,
+                "edidHash": "2043e82727f6c3e9c3ef99363ac7f093",
+                "edidIdentifier": "RHT 4660 0 42 2014 0",
+                "edrPolicy": "always",
+                "highDynamicRange": false,
+                "iccProfilePath": "",
+                "maxBitsPerColor": 0,
+                "mode": {
+                    "height": 1024,
+                    "refreshRate": 60020,
+                    "width": 1280
+                },
+                "overscan": 0,
+                "rgbRange": "Automatic",
+                "scale": 1,
+                "sdrBrightness": 200,
+                "sdrGamutWideness": 0,
+                "sharpness": 0,
+                "transform": "Normal",
+                "uuid": "ae58be56-c827-4517-85fd-9225e823f6ee",
+                "vrrPolicy": "Never",
+                "wideColorGamut": false
+            }
+        ],
+        "name": "outputs"
+    },
+    {
+        "data": [
+            {
+                "lidClosed": false,
+                "outputs": [
+                    {
+                        "enabled": true,
+                        "outputIndex": 0,
+                        "position": {"x": 0, "y": 0},
+                        "priority": 1,
+                        "replicationSource": ""
+                    }
+                ]
+            }
+        ],
+        "name": "setups"
+    }
+]
+EOF
+
+# Autostart fallback: if the display is still at 640×480 after KWin starts,
+# bump it to 1280×1024 (smallest usable mode in the virtio-vga mode list).
+# No-op on real hardware (never at 640×480 after monitor EDID negotiation).
+cat > /etc/skel/.config/autostart/foundry-display-resolution.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Foundry Display Resolution
+Exec=bash -c 'curr=$(kscreen-doctor -o 2>/dev/null | grep -oP "\\d+x\\d+@[0-9.]+\\*" | head -1 || echo ""); [ "$curr" = "640x480@59.99" ] && kscreen-doctor output.Virtual-1.mode.1280x1024 || true'
+X-KDE-autostart-after=panel
+EOF
+
 # Activate the Foundry Linux Plymouth theme if the package installed it.
 # Skipped in minimal builds (e.g. login-test) where calamares-settings is absent.
 if [[ -f /usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth ]]; then
