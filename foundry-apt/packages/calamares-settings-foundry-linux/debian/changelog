@@ -1,3 +1,16 @@
+calamares-settings-foundry-linux (1.0.14) resolute; urgency=medium
+
+  * Add mount.conf: bind-mount /dev, /dev/pts, /proc, /sys, /run, and
+    /sys/firmware/efi/efivars (EFI only) into the target chroot via
+    extraMounts/extraMountsEfi. Without this Calamares runs grub-install in a
+    chroot with no block devices in /dev, causing "cannot find a device for
+    /boot/efi" and aborting the bootloader step.
+  * Fix packages.conf: set skip_if_no_internet=false so the live-package
+    removal (calamares, live-boot, etc.) always runs even when Calamares
+    hasInternet detection is inconclusive.
+
+ -- Will Norris <wbnorris@gmail.com>  Sun, 08 Jun 2026 10:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.13) resolute; urgency=medium
 
   * Fix partition.conf: Calamares 3.3 PartitionLayout::init() requires both
