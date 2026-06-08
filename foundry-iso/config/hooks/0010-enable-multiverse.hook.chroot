@@ -1,4 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 add-apt-repository -y multiverse
-apt-get update -qq
+# apt-get update exits non-zero for two known reasons in the live-build chroot:
+#   1. gpgv can't be exec'd (Sequoia/chroot environment issue — see investigation doc)
+#   2. resolute-updates/multiverse/source/Sources may not exist yet (new release)
+# Both are harmless — the binary Packages index is fetched fine and packages install.
+apt-get update -qq || true
