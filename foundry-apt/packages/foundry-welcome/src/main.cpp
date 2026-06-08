@@ -8,13 +8,21 @@
 
 int main(int argc, char *argv[])
 {
+    // When launched from XDG autostart, the entry passes --autostart so we
+    // know to check the sentinel file and skip if already shown.  A direct
+    // launch (app menu, terminal) omits the flag and always shows the window.
+    bool isAutostart = false;
+    for (int i = 1; i < argc; ++i) {
+        if (qstrcmp(argv[i], "--autostart") == 0) { isAutostart = true; break; }
+    }
+
     QGuiApplication app(argc, argv);
     app.setApplicationName("foundry-welcome");
     app.setOrganizationName("foundrylinux");
 
     const QString sentinel = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
                              + "/foundry-welcome-shown";
-    if (QFile::exists(sentinel)) {
+    if (isAutostart && QFile::exists(sentinel)) {
         return 0;
     }
 

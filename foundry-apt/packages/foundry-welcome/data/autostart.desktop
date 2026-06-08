@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
 Name=Foundry Welcome
-Exec=foundry-welcome
+Exec=foundry-welcome --autostart
 X-KDE-autostart-after=panel
 NoDisplay=true

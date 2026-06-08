@@ -33,13 +33,16 @@ Item {
                   "Everything you need to build games — retro to modern — ready to go."
         }
 
-        QQC2.Label {
+        Text {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Kirigami.Units.smallSpacing
-            text: "<a href=\"https://foundrylinux.org\">foundrylinux.org</a>"
-            onLinkActivated: link => Qt.openUrlExternally(link)
-            HoverHandler {
+            text: "foundrylinux.org"
+            color: Kirigami.Theme.linkColor
+            font.underline: true
+            MouseArea {
+                anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                onClicked: Qt.openUrlExternally("https://foundrylinux.org")
             }
         }
     }

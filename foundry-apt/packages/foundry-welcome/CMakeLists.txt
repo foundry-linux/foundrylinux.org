@@ -16,3 +16,5 @@ install(DIRECTORY src/qml/ DESTINATION ${CMAKE_INSTALL_DATADIR}/foundry-welcome/
 install(FILES data/foundry-welcome.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
 install(FILES data/autostart.desktop DESTINATION /etc/xdg/autostart
         RENAME foundry-welcome.desktop)
+install(FILES data/foundry-linux.png
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps)

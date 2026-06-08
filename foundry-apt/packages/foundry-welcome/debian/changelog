@@ -1,3 +1,17 @@
+foundry-welcome (1.0.7) resolute; urgency=medium
+
+  * Allow re-launching from app menu: pass --autostart from XDG autostart
+    entry; sentinel check only exits when that flag is present. Direct
+    launches (app menu, terminal) always show the window.
+  * Browser-like foundrylinux.org link: replace QQC2.Label rich-text +
+    HoverHandler with a Text item using Kirigami.Theme.linkColor,
+    font.underline: true, and MouseArea for pointer cursor + click.
+  * App menu icon: ship foundry-linux.png (256×256 anvil logo) in the
+    package and install to /usr/share/icons/hicolor/256x256/apps/ via
+    CMakeLists. Resolves Icon=foundry-linux in the .desktop file.
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 09 Jun 2026 04:30:00 +0700
+
 foundry-welcome (1.0.6) resolute; urgency=medium
 
   * Fix cursor on foundrylinux.org link: add HoverHandler with
