@@ -1,0 +1,11 @@
+#!/bin/bash
+# shim-signed's postinst calls update-alternatives for shimx64.efi.signed and
+# needs /boot/efi/EFI/ubuntu/ to exist.  That directory isn't present until the
+# real EFI partition is mounted (i.e. post-install), so we can't bake shim-signed
+# into foundry.list.chroot — its postinst fails in the live-build chroot.
+# Instead, install it here after pre-creating the expected path.
+set -euo pipefail
+echo "=== Installing shim-signed (Secure Boot support) ==="
+mkdir -p /boot/efi/EFI/ubuntu
+apt-get install -y --no-install-recommends shim-signed
+echo "=== shim-signed installed ==="

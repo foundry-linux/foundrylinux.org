@@ -134,8 +134,10 @@ the opencv packages have interdependencies (e.g., `libopencv-viz` depends on
 0010  enable-multiverse          → add-apt-repository multiverse; apt-get update (W: gpgv errors)
 0020  strip-kubuntu-bloat        → purge libreoffice, plasma-welcome, snapd (if no preDepend)
 0025  mozilla-pin                → dpkg --force-downgrade Mozilla firefox; purge snapd
+0028  jre-preinstall             → apt install openjdk-17-jre-headless
 0030  install-foundry-edition    → apt install foundry-${EDITION} from local-debs
-0040  (other hooks)
+0040  firstboot-cleanup          → remove calamares live artifacts
+0050  shim-signed                → mkdir /boot/efi/EFI/ubuntu; apt install shim-signed
 1000  install-local-debs         → dpkg -i all .debs in /tmp/local-debs/
 1010  trim-atelier-only-pkgs     → apt-mark auto ghidra openjdk-21 opencv vtk; autoremove
 1050  plymouth-set-theme         → plymouth-set-default-theme foundry
@@ -162,3 +164,110 @@ list mechanism is not implemented. Use a hook script instead.
 `foundry-iso/config/archives/cloudsmith-task.list.chroot` pins go-task. The
 apt source URL changed layout (`any-distro` → per-distro) — watch for 404s.
 `task check-apt-repos` will catch this.
+
+---
+
+## shim-signed postinst crashes in live-build chroot (2026-06-06)
+
+`shim-signed` is required for Secure Boot on real hardware (UEFI with Secure Boot
+enabled, which is the default on modern PCs). It must be in `foundry.list.chroot`
+so `grub-install --uefi-secure-boot` can chain to it on the installed system.
+
+**Symptom:** The `shim-signed` postinst calls:
+```
+update-alternatives --install /boot/efi/EFI/ubuntu/shimx64.efi.signed shimx64.efi.signed ...
+```
+In the live-build chroot `/boot/efi/EFI/ubuntu/` does not exist (EFI partition isn't
+mounted), so `update-alternatives` exits non-zero:
+```
+update-alternatives: error: no alternatives for shimx64.efi.signed
+```
+This causes the package install to fail and `lb_chroot_install-packages` aborts.
+
+**Fix:** Do NOT put `shim-signed` in `foundry.list.chroot`. Instead, install it from a
+hook script that creates the directory first. Hooks run AFTER `lb_chroot_install-packages`,
+so by hook time apt-get is available and `/boot/efi/EFI/ubuntu` can be created before the
+install.
+
+`config/hooks/0050-shim-signed.hook.chroot`:
+```bash
+#!/bin/bash
+set -euo pipefail
+mkdir -p /boot/efi/EFI/ubuntu
+apt-get install -y --no-install-recommends shim-signed
+```
+
+Hook 0028 (JRE preinstall) confirms this pattern works: `apt-get install -y` inside a
+`.hook.chroot` succeeds for Ubuntu main/universe packages because the Ubuntu archive GPG
+key is present and working inside the chroot. The gpgv failure issue (see above) only
+affects third-party repos.
+
+**Hook location:** Hooks must be in `config/hooks/` (NOT `config/hooks/live/`). All
+existing hooks live in the parent directory; `config/hooks/live/` is not processed by
+live-build 3.0~a57.
+
+---
+
+## Calamares 3.3.14 partitionLayout mandatory keys (2026-06-04 → 06)
+
+`PartitionLayout::init()` in Calamares 3.3.14 checks:
+```cpp
+if (!pentry.contains("name") || !pentry.contains("size"))
+    return false; // silently falls back to default layout
+```
+Both `name` AND `size` are mandatory in every `partitionLayout` entry. Without `name:`,
+Calamares silently switches to a default layout that creates no root partition — then
+`unsquashfs` extracts the live filesystem to the live tmpfs (which can't hold 4+ GB)
+and the installer exits 1.
+
+**Correct partition.conf excerpt:**
+```yaml
+partitionLayout:
+  - name:        "root"
+    filesystem:  "ext4"
+    mountPoint:  "/"
+    size:        100%
+```
+
+Also required: `userSwapChoices: []` to suppress the swap dropdown (otherwise Calamares
+inserts a swap partition and the 100% size becomes ambiguous), and an `efi:` block
+specifying `mountPoint: "/boot/efi"`.
+
+**Bootloader:** `bootloader.conf` is mandatory. Without it the bootloader module skips
+entirely. Minimum viable config:
+```yaml
+efiBootLoader:    "grub"
+grubInstall:      "grub-install"
+grubMkconfig:     "grub-mkconfig"
+grubCfg:          "/boot/grub/grub.cfg"
+grubProbe:        "grub-probe"
+efiBootloaderId:  "foundry-linux"
+installEFIFallback: false
+```
+
+**grub-efi-amd64 must be in squashfs**, not installed via the packages module —
+Calamares's `skip_if_no_internet: true` means the packages module skips in the QEMU
+test harness (no DNS), and even with `skip_if_no_internet: false` the chroot can't
+resolve `archive.ubuntu.com`. Add `grub-efi-amd64` to `foundry.list.chroot`.
+
+**Module order** in `settings.conf` matters: `packages` must come before `bootloader`
+so grub-efi-amd64 is installed in the target before `grub-install` runs.
+
+**Calamares debug log:** `/root/.cache/calamares/session.log` — not stdout.
+Calamares caches config at startup; after patching `/etc/calamares/`, kill the process
+and relaunch with display env set:
+```bash
+DISPLAY=:0 WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000 \
+  DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus \
+  calamares -d
+```
+
+**Test disk must be at `/var/tmp/`** (real disk), NOT `/tmp/` (7.3 GB tmpfs). Add
+`-drive file=/var/tmp/foundry-test.img,...` to the QEMU launch command.
+
+**Wipe test disk between runs** if a previous partial install left partition signatures:
+```bash
+dd if=/dev/zero of=/dev/sda bs=1M count=10
+```
+Otherwise Calamares's "Erase disk" option may disappear (it sees an existing layout and
+offers only manual partitioning).
