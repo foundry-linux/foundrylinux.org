@@ -57,3 +57,6 @@ echo "casper"                            >> config/package-lists/foundry.list.ch
 echo "user-setup"                        >> config/package-lists/foundry.list.chroot
 echo "language-pack-en"                  >> config/package-lists/foundry.list.chroot
 echo "language-pack-kde-en"              >> config/package-lists/foundry.list.chroot
+# grub-efi-amd64 must be in the squashfs so grub-install works offline
+# in the Calamares target chroot (no apt available during installation).
+echo "grub-efi-amd64"                    >> config/package-lists/foundry.list.chroot
