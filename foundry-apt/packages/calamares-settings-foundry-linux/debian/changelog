@@ -1,3 +1,25 @@
+calamares-settings-foundry-linux (1.0.22) resolute; urgency=medium
+
+  * Fix slideshow text clipping (take 6 — ACTUAL root cause). The clipped text
+    was never in the QML caption that takes 1–5 kept editing: it is baked into
+    the 800x440 slide PNGs. fillMode was Image.PreserveAspectCrop, which scaled
+    each slide to FILL the taller installer pane and cropped ~77 px off each
+    side — clipping the first glyph of every heading ("Where"->"Vhere"). Switch
+    to Image.PreserveAspectFit (whole slide shown, dark backdrop hides the
+    letterbox) and remove the now-redundant QML caption (the PNG already carries
+    the heading + body). Takes 1–5 were fixing the wrong element entirely.
+
+ -- Will Norris <wbnorris@gmail.com>  Tue, 09 Jun 2026 23:30:00 +0700
+
+calamares-settings-foundry-linux (1.0.20) resolute; urgency=medium
+
+  * Fix slideshow text clipping (take 4): drop Item wrapper, use pure-anchor
+    properties on Column directly — anchors.left + leftMargin + anchors.right
+    + rightMargin + anchors.verticalCenter. All-anchor approach; no positional
+    properties mixed in; Column width is set implicitly by left+right anchors.
+
+ -- Will Norris <wbnorris@gmail.com>  Mon, 09 Jun 2026 08:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.19) resolute; urgency=medium
 
   * Fix Plymouth script: register Plymouth.SetMessageFunction so shutdown/

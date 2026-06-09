@@ -40,7 +40,7 @@ EOF
 
 # Set the Foundry Linux wallpaper.
 #
-# ROOT CAUSE (diagnosed in 0.9.90):
+# ROOT CAUSE #1 (diagnosed in 0.9.90):
 #   foundry-welcome (system-wide /etc/xdg/autostart/) works on installed first
 #   boot; wallpaper (skel ~/.config/autostart/) does NOT — Calamares users module
 #   does not reliably copy .config/autostart/ from skel to the installed user.
@@ -48,32 +48,48 @@ EOF
 #   foundry-welcome) fixes the installed-system case.  A sentinel file prevents
 #   the script from overriding user wallpaper changes on subsequent logins.
 #
+# ROOT CAUSE #2 (diagnosed in 0.9.95 from build.log — the "cones" wallpaper bug):
+#   The wallpaper used to point at /usr/share/sddm/themes/foundry-linux/
+#   background.png, shipped by calamares-settings-foundry-linux.  That package
+#   `Depends: calamares`, and Calamares's packages.conf removes `calamares` from
+#   the installed target — apt drops the reverse-dependency too, deleting the
+#   SDDM theme and its background.png.  On the installed system the appletsrc /
+#   autostart then pointed at a DEAD path, so Plasma fell back to the Kubuntu
+#   "cones" default.  Live was fine (calamares-settings still present); only the
+#   installed first boot regressed.  Fix: use the wallpaper shipped by
+#   foundry-kde-theme (/usr/share/wallpapers/FoundryLinux-ForgeHorizon/), which
+#   is NOT removed on install.  See
+#   docs/investigations/2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md
+#
 # TWO-LAYER APPROACH:
 #
 # Layer 1 — patch Kubuntu LAF defaults + system appletsrc (build time, below).
 # Layer 2 — system-wide autostart with per-user sentinel (run time, below).
 
-if [[ -f /usr/share/sddm/themes/foundry-linux/background.png ]]; then
-  FOUNDRY_WP=/usr/share/sddm/themes/foundry-linux/background.png
+# The install-surviving Foundry wallpaper (foundry-kde-theme, stays on target).
+FOUNDRY_WP_DIR=/usr/share/wallpapers/FoundryLinux-ForgeHorizon
+if [[ -d "$FOUNDRY_WP_DIR" ]]; then
+  FOUNDRY_WP_URL="file://${FOUNDRY_WP_DIR}/"
 
   # Layer 1a: patch Kubuntu Look-and-Feel defaults files.
   laf_count=0
   while IFS= read -r -d '' laf_defaults; do
       if grep -qE "^Image=" "$laf_defaults" 2>/dev/null; then
-          sed -i "s|^Image=.*|Image=file://${FOUNDRY_WP}|" "$laf_defaults"
+          sed -i "s|^Image=.*|Image=${FOUNDRY_WP_URL}|" "$laf_defaults"
           echo "Patched LAF wallpaper: $laf_defaults"
           laf_count=$((laf_count + 1))
       fi
   done < <(find /usr/share/plasma/look-and-feel -name "defaults" -print0 2>/dev/null)
   echo "Patched ${laf_count} look-and-feel defaults file(s)"
 
-  # Layer 1b: patch system-wide plasma desktop appletsrc if it exists.
-  # kubuntu-settings-desktop ships /etc/xdg/plasma-org.kde.plasma.desktop-appletsrc
-  # with Image=<kubuntu wallpaper>.  Plasma uses this as the default for any user
+  # Layer 1b: re-assert the system-wide plasma desktop appletsrc.
+  # foundry-kde-theme already ships /etc/xdg/plasma-org.kde.plasma.desktop-appletsrc
+  # pointing at ForgeHorizon; re-write Image= idempotently so any merged-in
+  # Kubuntu default is overridden.  Plasma uses this as the default for any user
   # whose ~/.config/ copy doesn't exist yet (i.e. every first login).
   APPLETSRC=/etc/xdg/plasma-org.kde.plasma.desktop-appletsrc
   if [[ -f "$APPLETSRC" ]]; then
-      sed -i "s|^Image=.*|Image=file://${FOUNDRY_WP}|g" "$APPLETSRC"
+      sed -i "s|^Image=.*|Image=${FOUNDRY_WP_URL}|g" "$APPLETSRC"
       echo "Patched system appletsrc: $APPLETSRC"
   fi
 
@@ -85,7 +101,9 @@ if [[ -f /usr/share/sddm/themes/foundry-linux/background.png ]]; then
   # (skel recreated by casper) so live always shows the Foundry wallpaper.
   cat > /usr/local/bin/foundry-set-wallpaper.sh <<'EOF'
 #!/bin/sh
-WALLPAPER=/usr/share/sddm/themes/foundry-linux/background.png
+# ForgeHorizon wallpaper package (foundry-kde-theme) — survives the Calamares
+# install that purges calamares-settings + its SDDM theme background.png.
+WALLPAPER=/usr/share/wallpapers/FoundryLinux-ForgeHorizon/
 SENTINEL="${XDG_CONFIG_HOME:-$HOME/.config}/foundry-wallpaper-set"
 # Already ran for this user — don't override their wallpaper changes.
 [ -f "$SENTINEL" ] && exit 0

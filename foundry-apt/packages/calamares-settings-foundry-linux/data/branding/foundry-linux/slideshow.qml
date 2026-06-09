@@ -1,20 +1,24 @@
 /* Foundry Linux installer slideshow — shown while packages install.
-   4 slides, 20 s each. Slide images live alongside this file. */
+   4 slides, 20 s each.  Each slide is a self-contained 800×440 PNG with its
+   heading + body already typeset into the artwork; QML only cross-fades
+   between them. */
 import QtQuick 2.15
 
 Item {
     id: root
     anchors.fill: parent
 
+    // Dark backdrop so the PreserveAspectFit letterbox blends with the slides'
+    // near-black background.  The slides are 1.818:1; the installer pane is
+    // usually taller than that, so Fit leaves a thin bar top and bottom.
+    Rectangle { anchors.fill: parent; color: "#0e0e0e" }
+
     Timer {
         id: timer
         interval: 20000
         running:  true
         repeat:   true
-        onTriggered: {
-            var next = (view.currentIndex + 1) % view.count
-            view.currentIndex = next
-        }
+        onTriggered: view.currentIndex = (view.currentIndex + 1) % view.count
     }
 
     ListView {
@@ -26,10 +30,10 @@ Item {
         clip:         true
 
         model: ListModel {
-            ListElement { src: "slide-01-forge.png"; title: "The Forge";             body: "WorldFoundry GDK, retro toolkit, Blender add-ons, emulators — struck in from first boot." }
-            ListElement { src: "slide-02-apt.png";   title: "Stay current.";         body: "apt.foundrylinux.org keeps every Foundry tool signed, rebuilt, and re-tested on every push." }
-            ListElement { src: "slide-03-devbox.png";title: "Distrobox-ready.";      body: "ghcr.io/foundry-linux/devbox:26.04 — the same environment, containerised." }
-            ListElement { src: "slide-04-docs.png";  title: "Where to go next.";     body: "foundrylinux.org/docs — package catalogue, install guide, and contribution notes." }
+            ListElement { src: "slide-01-forge.png" }
+            ListElement { src: "slide-02-apt.png" }
+            ListElement { src: "slide-03-devbox.png" }
+            ListElement { src: "slide-04-docs.png" }
         }
 
         delegate: Item {
@@ -39,45 +43,19 @@ Item {
             Image {
                 anchors.fill: parent
                 source:       model.src
-                fillMode:     Image.PreserveAspectCrop
+
+                // PreserveAspectFit, NOT Crop.  The slide art bakes its heading
+                // in ~32 px from the left edge of the 800-px canvas.  With
+                // PreserveAspectCrop the art was scaled to FILL the taller
+                // installer pane, which overflowed the width and cropped ~77 px
+                // off each side — clipping the first glyph of every heading
+                // ("Where"→"Vhere", "foundry"→"oundry").  This was the real
+                // cause behind five failed "text margin" patches to a QML
+                // caption that has now been removed: the clipped text was never
+                // in the QML, it was in the PNG.  Fit shows the whole slide; the
+                // dark backdrop above hides the top/bottom letterbox.
+                fillMode:     Image.PreserveAspectFit
                 asynchronous: true
-            }
-
-            Rectangle {
-                anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
-                height:  90
-                color:   "#cc0e0e0e"
-
-                // Item gives the Column a margin-adjusted parent width.
-                // Qt Quick forbids mixing x/width with anchors on the same
-                // item, so we can't do x:24 + anchors.verticalCenter on the
-                // Column directly — the x is silently ignored.
-                Item {
-                    anchors.fill: parent
-                    anchors.leftMargin:  24
-                    anchors.rightMargin: 24
-
-                    Column {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width:   parent.width
-                        spacing: 4
-
-                        Text {
-                            width: parent.width
-                            text:  model.title
-                            color: "#e87a00"
-                            font { pixelSize: 18; weight: Font.Bold; family: "sans-serif" }
-                            elide: Text.ElideRight
-                        }
-                        Text {
-                            width:    parent.width
-                            text:     model.body
-                            color:    "#e0e0e0"
-                            wrapMode: Text.WordWrap
-                            font { pixelSize: 13; family: "sans-serif" }
-                        }
-                    }
-                }
             }
         }
     }

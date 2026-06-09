@@ -3,17 +3,27 @@ set -euo pipefail
 
 echo "=== Activating Foundry Linux Plymouth theme ==="
 
-if ! plymouth-set-default-theme foundry-linux 2>/dev/null; then
-    echo "WARNING: plymouth-set-default-theme failed — theme files may be missing" >&2
-    plymouth-set-default-theme --list || true
-    exit 0
+THEME=/usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth
+
+# The `plymouth` runtime package (which provides plymouth-set-default-theme) is
+# NOT installed in the live-build chroot — only the theme files are, shipped by
+# a foundry package.  So drive the default.plymouth alternative directly with
+# update-alternatives (dpkg, always present), exactly as hook 1100 does.  Using
+# plymouth-set-default-theme here printed a scary "command not found" warning on
+# every build while the theme was actually being set correctly by 1100.
+if [[ -f "$THEME" ]]; then
+    update-alternatives --install \
+        /usr/share/plymouth/themes/default.plymouth default.plymouth "$THEME" 100
+    update-alternatives --set default.plymouth "$THEME"
+    echo "Plymouth default theme → $THEME"
+
+    # Rebuild initramfs so the theme is embedded before squashfs is snapshotted.
+    # Tolerates missing kernel / plymouth tooling (Docker test environments).
+    if ! update-initramfs -u -k all 2>/dev/null; then
+        echo "NOTE: update-initramfs skipped — live-build regenerates it later"
+    fi
+else
+    echo "NOTE: $THEME absent (minimal build) — skipping Plymouth theme"
 fi
 
-echo "Plymouth theme set to: $(plymouth-set-default-theme)"
-
-# Rebuild initramfs so the theme is embedded before squashfs is snapshotted.
-# Tolerates missing kernel (Docker test environments).
-if ! update-initramfs -u -k all 2>/dev/null; then
-    echo "WARNING: update-initramfs failed — live-build will regenerate initramfs" >&2
-fi
 echo "=== Plymouth theme activation complete ==="

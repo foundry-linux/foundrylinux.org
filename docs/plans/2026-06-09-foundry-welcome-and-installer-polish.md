@@ -1,44 +1,198 @@
 # foundry-welcome + Calamares installer polish — 2026-06-09
 
-Small fixes reported after first successful install test on ISO 0.9.82.
+Polish pass after first successful install test (ISO 0.9.82). Covers foundry-welcome UX fixes,
+Calamares slideshow text clipping (5-attempt debug), live/installed wallpaper, and Plymouth messages.
 
-## Changes
+---
 
-### foundry-welcome
+## Items
 
-| # | Issue | Fix |
-|---|-------|-----|
-| 1 | Won't re-launch explicitly (sentinel blocks all paths) | Pass `--autostart` from XDG autostart entry; sentinel only exits when that flag is present. Direct launches always show the window. |
-| 2 | foundrylinux.org link has no hover cursor / not browser-like | Replace `QQC2.Label` rich-text link + `HoverHandler` with a plain `Text` item: `color: Kirigami.Theme.linkColor`, `font.underline: true`, `MouseArea { cursorShape: Qt.PointingHandCursor; onClicked: Qt.openUrlExternally(...) }` |
-| 3 | No icon in application menu (`Icon=foundry-linux` resolves nothing) | Ship `foundry-linux.png` (256×256 anvil logo) inside the foundry-welcome package; install to `/usr/share/icons/hicolor/256x256/apps/` via CMakeLists.txt |
+| # | Status | Issue | Package / hook |
+|---|--------|-------|---------------|
+| 1 | ✅ done | foundry-welcome won't re-launch explicitly | foundry-welcome 1.0.7 |
+| 2 | ✅ done | foundrylinux.org link: no hover cursor, not browser-like | foundry-welcome 1.0.7 |
+| 3 | ✅ done | No icon in app menu (`Icon=foundry-linux` resolves nothing) | foundry-welcome 1.0.7 |
+| 4 | ✅ done | Installer desktop icon shows generic Calamares icon | hook 1110 |
+| 5 | ✅ done | Plymouth shutdown messages invisible | calamares-settings 1.0.19 |
+| 6 | 🔄 verify | Carousel heading clipped on left — **6 attempts; takes 1–5 fixed the wrong element** (clipped text is baked into the slide PNG, not the QML caption) | calamares-settings 1.0.22 |
+| 7 | ✅ done | Wallpaper reverts to Kubuntu default on live session | hook 1100 |
+| 8 | 🔄 verify | Wallpaper reverts to Kubuntu "cones" on installed first boot — **real cause: SDDM background.png purged with calamares-settings** | hook 1100 (ForgeHorizon path) |
+| 9 | ✅ done | `kconf_update` calendar-migration crash popup on first login | hook 1100 (patch upstream script) |
+| 10 | ✅ done | Build log not captured / build warnings unreviewed | Taskfile `iso-build` tees to `dist/build-*.log`; Plymouth hook 1050 cleaned |
 
-### Calamares settings (1.0.17)
+---
 
-| # | Issue | Fix |
-|---|-------|-----|
-| 4 | Carousel slide text clipped on left | Replace `anchors.leftMargin/rightMargin` on `Column` with explicit `x: 24; width: parent.width - 48` — breaks the circular width dependency |
-| 5 | Installer desktop icon shows generic Calamares icon | Hook copies `logo.png` → `/usr/share/pixmaps/foundry-linux-installer.png`; `.desktop` uses `Icon=foundry-linux-installer` |
+## Fixes
 
-Items 4 and 5 are already committed (f80d2f0).
+### 1 — foundry-welcome re-launch (`--autostart` flag gate)
+
+**Root cause**: sentinel (`~/.config/foundry-welcome-shown`) was checked unconditionally on
+every launch, so the app exited immediately on any invocation after first run.
+
+**Fix**: parse `--autostart` from `argv` in `main.cpp`. Only check the sentinel when that flag
+is present. Direct launches (app menu, terminal) bypass the sentinel and always show the window.
+XDG autostart `.desktop` updated: `Exec=foundry-welcome --autostart`.
+
+Sentinel write policy: written on `Qt.quit()` regardless of launch path. Shows on each live
+login (skel recreated → no sentinel), shows exactly once on installed system, re-launchable
+from app menu at any time.
+
+### 2 — foundrylinux.org link hover cursor
+
+**Fix**: replaced `QQC2.Label` rich-text link + `HoverHandler` with a plain `Text` item:
+`color: Kirigami.Theme.linkColor`, `font.underline: true`,
+`MouseArea { cursorShape: Qt.PointingHandCursor; onClicked: Qt.openUrlExternally(...) }`.
+
+### 3 — App menu icon
+
+**Fix**: ship `foundry-linux.png` (256×256 anvil) inside the package; install to
+`/usr/share/icons/hicolor/256x256/apps/` via `CMakeLists.txt`.
+
+### 4 — Installer desktop icon (glowing anvil)
+
+Hook 1110 copies `logo.png` from the calamares-settings branding dir to
+`/usr/share/pixmaps/foundry-linux-installer.png`. `.desktop` uses `Icon=foundry-linux-installer`.
+`shellprocess.conf` removes the installer icon from the installed target before `users` runs.
+
+### 5 — Plymouth messages
+
+Plymouth `script` module silently drops all messages unless `Plymouth.SetMessageFunction(callback)`
+is registered. Added `message_callback(text)` → `Image.Text` sprite centred horizontally at 82%
+screen height. Registered with `Plymouth.SetMessageFunction`. "Remove the media and press enter
+to continue" now visible on shutdown screen.
+
+---
+
+## Carousel text clipping — failure log
+
+**The actual clipped text was baked into the slide PNGs, not rendered by QML.** Takes 1–5 all
+edited a QML `Text` caption that overlaid the *same* heading at the bottom of the slide — a real
+Qt Quick anchor quirk, but on the wrong element. The heading that visibly clipped
+("Where"→"Vhere") is typeset into the 800×440 slide artwork ~32 px from the left, and
+`fillMode: Image.PreserveAspectCrop` cropped ~77 px off each side when the slide was scaled to
+fill the taller installer pane.
+
+| Attempt | Version | Approach | Why it failed |
+|---------|---------|----------|---------------|
+| 1 | 1.0.17 | `anchors.leftMargin/rightMargin` on Column + children `width: parent.width` | Wrong element (QML caption, not the clipped PNG text). Also circular implicit-width → Column at x=0. |
+| 2 | 1.0.18 | `x: 24; width: parent.width - 48; anchors.verticalCenter` on Column | Wrong element. Qt Quick ignores `x`/`width` when an anchor is set; Column at x=0. |
+| 3 | 1.0.18 | `Item { anchors.fill + leftMargin/rightMargin }` wrapping Column | Wrong element. Still x=0 in Calamares host. |
+| 4 | 1.0.20 | Pure-anchor Column: `anchors.left + leftMargin + anchors.right + rightMargin + anchors.verticalCenter` | Wrong element. All-anchor, still x=0 — confirms the anchor quirk on `Column`/positioners in `ListView` delegates, but the caption was never the clipped text. |
+| 5 | 1.0.21 | `x: 24; y: Math.round((parent.height-height)/2); width: parent.width-48` — NO anchors on Column | **Did** correctly position the QML caption (ISO 0.9.90/0.9.91) — but the *baked PNG heading* still clipped, so the screen looked unchanged. |
+| **6** | **1.0.22** | **`Image.PreserveAspectFit` + dark backdrop; delete the redundant QML caption** | **Whole slide shown, nothing cropped; the PNG's own heading is the only text. ISO 0.9.96.** |
+
+**Root cause**: `fillMode: Image.PreserveAspectCrop` on the slide `Image`. The slides are 1.818:1;
+the installer pane is taller, so Crop scaled to fill the height and cropped the width, eating the
+near-left-edge heading baked into each PNG. The five QML-caption patches chased an unrelated (if
+genuine) anchor quirk in Calamares's `QQuickWidget` host. **Lesson logged in the howto**: when
+text is "clipped", first decide whether it is QML text or raster-baked — `PreserveAspectCrop`
+crops the long axis and eats near-edge content.
+
+---
+
+## Wallpaper
+
+### Live session (DONE)
+
+1. `sleep 5` — rejected (no bare sleep fixes).
+2. Poll for plasmashell DBus registration — fires too early; LAF overwrites afterward.
+3. Poll for `[Containments]` in appletsrc — confirmed working on live ISO (0.9.88+).
+
+**Active fix**: autostart script polls every second until `plasma-apply-wallpaperimage` exits 0.
+
+### Installed system first boot — **real root cause found in 0.9.96 (the "cones" bug)**
+
+**Symptom**: installed first boot shows the Kubuntu 26.04 "cones" wallpaper; live is fine.
+
+**Real root cause** (from `build.log`): every wallpaper lever pointed at
+`/usr/share/sddm/themes/foundry-linux/background.png`, shipped by
+**`calamares-settings-foundry-linux`**, which `Depends: calamares`. Calamares's
+`modules/packages.conf` runs `remove: calamares` on the installed target; apt drops the
+reverse-dependency too, **deleting the SDDM theme + background.png**. The installed system's
+wallpaper config then referenced a dead path → Plasma fell back to the Kubuntu default. Live
+worked only because the installer (and its background.png) is still present there.
+
+The earlier theories (DBus-timing, `[Containments]` poll, LAF `kconf_update` ordering, the
+skel-vs-system-wide autostart) were all secondary — the wallpaper image file simply wasn't on
+the installed system. Full write-up:
+[`docs/investigations/2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md`](../investigations/2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md).
+
+**Fix** (hook 1100, ISO 0.9.96): point all three levers at the wallpaper shipped by
+**`foundry-kde-theme`** — `/usr/share/wallpapers/FoundryLinux-ForgeHorizon/` — which is a normal
+edition package and is **not** purged on install:
+
+1. LAF `defaults` (6 files) → `Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/`
+2. System appletsrc (`/etc/xdg/plasma-org.kde.plasma.desktop-appletsrc`, shipped by
+   foundry-kde-theme) → re-asserted to the same path
+3. System-wide autostart `plasma-apply-wallpaperimage <ForgeHorizon>` (load-bearing lever),
+   sentinel-gated, polling ≤60 s
+
+**Lesson**: any path the *installed* system references must come from a package that survives the
+install — never `calamares-settings-*` (installer-only, purged with `calamares`).
+
+---
 
 ## Files changed
 
-- `foundry-apt/packages/foundry-welcome/src/main.cpp` — `--autostart` flag gate
-- `foundry-apt/packages/foundry-welcome/src/qml/pages/IntroPage.qml` — browser-like link
-- `foundry-apt/packages/foundry-welcome/data/autostart.desktop` — add `--autostart`
-- `foundry-apt/packages/foundry-welcome/data/foundry-linux.png` — icon asset (new)
-- `foundry-apt/packages/foundry-welcome/CMakeLists.txt` — install icon to hicolor
-- `foundry-apt/packages/foundry-welcome/debian/changelog` — bump to 1.0.7
+```
+foundry-apt/packages/calamares-settings-foundry-linux/
+  data/branding/foundry-linux/slideshow.qml        — carousel: PreserveAspectFit + drop caption (take 6 → 1.0.22)
+  data/config/plymouth/foundry-linux.script        — Plymouth message callback (1.0.19)
+  data/config/shellprocess.conf                    — remove installer icon from target
+  debian/changelog                                 — 1.0.17 → 1.0.22
+
+foundry-iso/config/hooks/
+  1050-plymouth-theme.hook.chroot                  — use update-alternatives (no more "command not found")
+  1100-live-autologin.hook.chroot                  — wallpaper → ForgeHorizon (survives install); kconf_update patch
+
+Taskfile.yml                                       — iso-build tees build to dist/build-<edition>-<version>.log
+docs/investigations/2026-06-09-kconf-update-calendar-crash.md                    (new)
+docs/investigations/2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md   (new)
+
+foundry-apt/packages/foundry-welcome/
+  src/main.cpp                                     — --autostart flag gate
+  src/qml/pages/IntroPage.qml                      — browser-like link
+  data/autostart.desktop                           — Exec=foundry-welcome --autostart
+  data/foundry-linux.png                           — icon asset (new)
+  CMakeLists.txt                                   — install icon to hicolor
+  debian/changelog                                 — 1.0.5 → 1.0.7
+
+foundry-iso/config/hooks/
+  1100-live-autologin.hook.chroot                  — wallpaper LAF patch + improved autostart
+  1110-live-install-button.hook.chroot             — anvil icon for installer desktop file
+
+foundry-iso/docs/howto-kubuntu-remix.md            — pitfalls updated (wallpaper, carousel)
+```
+
+---
+
+## ISO version history
+
+| ISO | Change |
+|-----|--------|
+| 0.9.82 | baseline — first successful grub install |
+| 0.9.83–0.9.87 | grub, unpackfsc, mount.conf fixes |
+| 0.9.88 | wallpaper [Containments] poll; carousel attempts 2–3; Plymouth messages; foundry-welcome 1.0.7 |
+| 0.9.89 | wallpaper LAF patch (6 files); carousel attempt 4 (pure anchors — still broken) |
+| 0.9.90 | carousel attempt 5 (pure positional x/y/width) — fixed the QML caption, PNG still clipped |
+| 0.9.91–0.9.95 | system-wide wallpaper autostart + sentinel; kconf_update crash investigated |
+| **0.9.96** | **carousel take 6 (PreserveAspectFit, drop caption); wallpaper → ForgeHorizon (cones bug fixed); kconf_update patch; plymouth hook cleanup; build-log capture** |
+
+---
 
 ## Verification
 
-1. Boot ISO; foundry-welcome appears on first login.
-2. Close it; re-launch from app menu → opens again (no sentinel block).
-3. Log out and back in → autostart shows it again (sentinel was written on close, but... wait — should autostart show it again after manual close?)
+Run once 0.9.96 boots. **Do not upload to R2 until all pass.**
 
-**Sentinel write policy**: the sentinel is written when the app closes (`Qt.quit()`), regardless of how it was launched. So after any close, subsequent autostart invocations won't show it. Manual launches always show it. This is the correct behaviour: "shows once on login, re-launchable from app menu any time."
-
-4. Hover over foundrylinux.org → pointer cursor, underline visible, click opens browser.
-5. Open app menu → Foundry Welcome has the anvil icon.
-6. Installer carousel → text properly padded from left edge.
-7. Installer desktop icon → glowing anvil, not Calamares blue circle.
+1. Boot live ISO → Foundry Linux wallpaper (not Kubuntu raccoon/cones).
+2. Installer carousel → heading and body fully visible, no left-edge clipping ("Where", not "Vhere").
+3. Carousel → all 4 slides cycle; whole slide shown (dark letterbox top/bottom is fine, no cropping).
+4. Shut down/reboot from installer → Plymouth shows "remove the media and press enter to continue".
+5. **Boot installed system first login → Foundry ForgeHorizon wallpaper (NOT Kubuntu cones).** ← the cones-bug check
+6. foundry-welcome appears on first login; close; relaunch from app menu → opens again.
+7. foundrylinux.org link: hover shows pointer cursor; click opens browser.
+8. App menu → foundry-welcome shows anvil icon.
+9. First login → **no `kconf_update` crash-notification popup** (patched migrate-calendar script).
+10. `build.log` (dist/build-anvil-0.9.96.log) → no "command not found" / no unexpected hook failures.
+9. Installed desktop → no "Install Foundry Linux" icon.
+10. grub-install succeeds — installed system boots without live ISO.
