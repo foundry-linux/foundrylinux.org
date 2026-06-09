@@ -38,49 +38,82 @@ export HOST="foundry-linux"
 export BUILD_SYSTEM="Ubuntu"
 EOF
 
-# Set the Foundry Linux wallpaper via a Plasma autostart entry.
-# The static skel appletsrc approach requires knowing the containment ID, which
-# Plasma 6 assigns dynamically on first run.  plasma-apply-wallpaperimage (from
-# plasma-workspace) sets the wallpaper for all screens on session start and is
-# the supported automation interface for this.
+# Set the Foundry Linux wallpaper.
 #
-# The wrapper script polls for ~/.config/plasma-org.kde.plasma.desktop-appletsrc
-# to contain a [Containments] section — that's written by plasmashell only AFTER
-# the Kubuntu Look-and-Feel defaults (including the cones wallpaper) have been
-# applied.  Polling for DBus registration alone fires too early: plasmashell
-# registers on DBus before it processes the LAF, so our apply gets overwritten.
+# ROOT CAUSE (diagnosed in 0.9.90):
+#   foundry-welcome (system-wide /etc/xdg/autostart/) works on installed first
+#   boot; wallpaper (skel ~/.config/autostart/) does NOT — Calamares users module
+#   does not reliably copy .config/autostart/ from skel to the installed user.
+#   Moving the wallpaper autostart to /etc/xdg/autostart/ (system-wide, same as
+#   foundry-welcome) fixes the installed-system case.  A sentinel file prevents
+#   the script from overriding user wallpaper changes on subsequent logins.
+#
+# TWO-LAYER APPROACH:
+#
+# Layer 1 — patch Kubuntu LAF defaults + system appletsrc (build time, below).
+# Layer 2 — system-wide autostart with per-user sentinel (run time, below).
+
 if [[ -f /usr/share/sddm/themes/foundry-linux/background.png ]]; then
+  FOUNDRY_WP=/usr/share/sddm/themes/foundry-linux/background.png
+
+  # Layer 1a: patch Kubuntu Look-and-Feel defaults files.
+  laf_count=0
+  while IFS= read -r -d '' laf_defaults; do
+      if grep -qE "^Image=" "$laf_defaults" 2>/dev/null; then
+          sed -i "s|^Image=.*|Image=file://${FOUNDRY_WP}|" "$laf_defaults"
+          echo "Patched LAF wallpaper: $laf_defaults"
+          laf_count=$((laf_count + 1))
+      fi
+  done < <(find /usr/share/plasma/look-and-feel -name "defaults" -print0 2>/dev/null)
+  echo "Patched ${laf_count} look-and-feel defaults file(s)"
+
+  # Layer 1b: patch system-wide plasma desktop appletsrc if it exists.
+  # kubuntu-settings-desktop ships /etc/xdg/plasma-org.kde.plasma.desktop-appletsrc
+  # with Image=<kubuntu wallpaper>.  Plasma uses this as the default for any user
+  # whose ~/.config/ copy doesn't exist yet (i.e. every first login).
+  APPLETSRC=/etc/xdg/plasma-org.kde.plasma.desktop-appletsrc
+  if [[ -f "$APPLETSRC" ]]; then
+      sed -i "s|^Image=.*|Image=file://${FOUNDRY_WP}|g" "$APPLETSRC"
+      echo "Patched system appletsrc: $APPLETSRC"
+  fi
+
+  # Layer 2: system-wide autostart with per-user sentinel.
+  # /etc/xdg/autostart/ is read by KDE for ALL users (same mechanism as
+  # foundry-welcome.desktop which works reliably on installed-system first boot).
+  # Sentinel ~/.config/foundry-wallpaper-set prevents re-applying on subsequent
+  # logins (preserving user wallpaper changes); absent on each live session boot
+  # (skel recreated by casper) so live always shows the Foundry wallpaper.
   cat > /usr/local/bin/foundry-set-wallpaper.sh <<'EOF'
 #!/bin/sh
-# Polling for plasmashell DBus registration is not sufficient: plasmashell
-# registers on DBus before it applies the Kubuntu Look-and-Feel defaults,
-# so firing plasma-apply-wallpaperimage at that point gets overwritten by
-# the LAF step (which sets the Kubuntu cones wallpaper).
-#
-# The right condition is the appearance of a [Containments] section in
-# ~/.config/plasma-org.kde.plasma.desktop-appletsrc — plasmashell writes
-# that file only after the LAF wallpaper has been applied, so we are
-# guaranteed to fire last.
 WALLPAPER=/usr/share/sddm/themes/foundry-linux/background.png
-CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/plasma-org.kde.plasma.desktop-appletsrc"
+SENTINEL="${XDG_CONFIG_HOME:-$HOME/.config}/foundry-wallpaper-set"
+# Already ran for this user — don't override their wallpaper changes.
+[ -f "$SENTINEL" ] && exit 0
+# Poll until plasma-apply-wallpaperimage succeeds (plasmashell is ready).
 i=0
 while [ $i -lt 60 ]; do
-    grep -qs "\[Containments\]" "$CONFIG" 2>/dev/null && break
+    plasma-apply-wallpaperimage "$WALLPAPER" >/dev/null 2>&1 && break
     sleep 1
     i=$((i+1))
 done
-plasma-apply-wallpaperimage "$WALLPAPER" >/dev/null 2>&1 || true
+touch "$SENTINEL"
 EOF
   chmod +x /usr/local/bin/foundry-set-wallpaper.sh
 
-  mkdir -p /etc/skel/.config/autostart
-  cat > /etc/skel/.config/autostart/foundry-wallpaper.desktop <<'EOF'
+  # System-wide autostart — runs for every user, not just skel-seeded ones.
+  mkdir -p /etc/xdg/autostart
+  cat > /etc/xdg/autostart/foundry-wallpaper.desktop <<'EOF'
 [Desktop Entry]
 Type=Application
 Name=Set Foundry Linux Wallpaper
 Exec=/usr/local/bin/foundry-set-wallpaper.sh
 X-KDE-autostart-phase=2
 EOF
+
+  # Keep the skel copy as belt-and-suspenders for DEs that skip /etc/xdg/autostart.
+  mkdir -p /etc/skel/.config/autostart
+  cp /etc/xdg/autostart/foundry-wallpaper.desktop \
+     /etc/skel/.config/autostart/foundry-wallpaper.desktop
 fi
 
 # foundry-welcome gates its own run-once via the sentinel file
@@ -186,6 +219,82 @@ if [[ -f /usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth ]]; the
     /usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth 100
   update-alternatives --set default.plymouth \
     /usr/share/plymouth/themes/foundry-linux/foundry-linux.plymouth
+fi
+
+# Patch plasma-workspace's migrate-calendar-to-plugin-id.py to avoid a
+# PermissionError crash on first login.
+#
+# UPSTREAM BUG: the script calls qtpaths6 --locate-file ConfigLocation which
+# returns the first *existing* appletsrc — on a fresh install that is the
+# root-owned /etc/xdg/ copy (shipped by kubuntu-settings-desktop), not the
+# user's ~/.config/ copy (which doesn't exist yet).  Opening it with "r+"
+# raises PermissionError, apport catches it, KDE crash notifier fires.
+#
+# FIX: use --writable-path to get only the user's writable config dir, then
+# construct the path manually.  If the user has no personal appletsrc, exit
+# cleanly — nothing to migrate.  See docs/investigations/2026-06-09-kconf-update-calendar-crash.md
+MIGRATE_SCRIPT=/usr/share/kconf_update/migrate-calendar-to-plugin-id.py
+if [[ -f "$MIGRATE_SCRIPT" ]]; then
+  python3 - <<'PYEOF'
+import sys, os
+
+path = '/usr/share/kconf_update/migrate-calendar-to-plugin-id.py'
+with open(path) as f:
+    src = f.read()
+
+old = (
+    'proc = subprocess.Popen(\n'
+    '    [\n'
+    '        "/usr/lib/qt6/bin/qtpaths6",\n'
+    '        "--locate-file",\n'
+    '        "ConfigLocation",\n'
+    '        "plasma-org.kde.plasma.desktop-appletsrc",\n'
+    '    ],\n'
+    '    stdout=subprocess.PIPE,\n'
+    ')\n'
+    'if proc.wait(3) != 0:\n'
+    '    sys.exit(1)\n'
+    '\n'
+    'for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):\n'
+    '    appletsrcPath = line.removesuffix("\\n")\n'
+    '\n'
+    'if len(appletsrcPath) == 0 or not appletsrcPath.endswith("appletsrc"):\n'
+    '    # something is wrong\n'
+    '    exit()'
+)
+
+new = (
+    'import os  # noqa: E402 (added by Foundry Linux distro patch)\n'
+    '\n'
+    'proc = subprocess.Popen(\n'
+    '    [\n'
+    '        "/usr/lib/qt6/bin/qtpaths6",\n'
+    '        "--writable-path",\n'
+    '        "ConfigLocation",\n'
+    '    ],\n'
+    '    stdout=subprocess.PIPE,\n'
+    ')\n'
+    'if proc.wait(3) != 0:\n'
+    '    sys.exit(1)\n'
+    '\n'
+    'writableConfigDir = ""\n'
+    'for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):\n'
+    '    writableConfigDir = line.removesuffix("\\n")\n'
+    '\n'
+    'appletsrcPath = os.path.join(writableConfigDir, "plasma-org.kde.plasma.desktop-appletsrc")\n'
+    '\n'
+    'if not writableConfigDir or not os.path.isfile(appletsrcPath):\n'
+    '    sys.exit(0)'
+)
+
+if old not in src:
+    print(f"WARNING: expected block not found in {path} — patch skipped (upstream may have fixed it)", file=sys.stderr)
+    sys.exit(0)
+src = src.replace(old, new)
+with open(path, 'w') as f:
+    f.write(src)
+print(f"Patched {path}")
+PYEOF
 fi
 
 # Patch casper's 15autologin before it gets bundled into the initramfs.
