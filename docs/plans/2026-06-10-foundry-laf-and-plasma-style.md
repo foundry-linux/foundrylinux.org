@@ -185,3 +185,8 @@ Built `foundry-anvil-0.9.110-amd64.iso`, booted headless in QEMU, SSH-corroborat
 | 8 | Package + divert | ✅ | build clean (no conffile prompt after the divert-and-replace fix); both diversions active in the booted system; avatar (anvil, 15786 B) inherited to `/home/user/.face` |
 
 **Biggest risk RESOLVED:** the LAF activates and its `layout.js` executes on first login (the Foundry `launchers=` is present in the user's appletsrc), so the taskbar favorites apply — the consolidation fixed it (a reliable `/etc/xdg/kdeglobals` package file instead of the old non-executable hook 1150). The full-appletsrc fallback (Option B) was not needed.
+
+### Post-verification follow-ups completed (2026-06-11)
+
+- **LAF preview (foundry-kde-theme 1.0.5)** — `contents/previews/preview.png` (a scaled live-desktop screenshot) is now shipped, so "Foundry Linux" shows a thumbnail in System Settings → Appearance → Global Theme. **Implemented, not deferred** (item 7 above moves from config-only to shipped).
+- **Security: removed the baked live-SSH credential** — the `1200-live-ssh` hook installed openssh, set `PermitRootLogin yes`, and baked `root:foundry` into the live squashfs. Removed entirely (renamed `1200-live-network`, Ethernet-only). Verified zero `root:foundry`/`chpasswd`/`PermitRootLogin` matches across `config/`. No known credential ships in the image (live or installed).
