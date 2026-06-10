@@ -3,7 +3,6 @@ data/wallpapers/FoundryLinux-ForgeHorizon/metadata.json  usr/share/wallpapers/Fo
 data/wallpapers/FoundryLinux-ForgeHorizon/contents/images/1920x1080.png  usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/
 data/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png  usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/
 data/xdg/plasma-org.kde.plasma.desktop-appletsrc  etc/xdg/
-data/xdg/kscreenlockerrc  etc/xdg/
 data/sddm-theme/Main.qml          usr/share/sddm/themes/foundry-linux/
 data/sddm-theme/background.png    usr/share/sddm/themes/foundry-linux/
 data/sddm-theme/metadata.desktop  usr/share/sddm/themes/foundry-linux/

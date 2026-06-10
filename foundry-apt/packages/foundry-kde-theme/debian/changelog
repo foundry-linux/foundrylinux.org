@@ -1,13 +1,3 @@
-foundry-kde-theme (1.0.4) resolute; urgency=medium
-
-  * Ship /etc/xdg/kscreenlockerrc setting the lock screen wallpaper to
-    FoundryLinux-ForgeHorizon. Without it the Plasma lock screen fell back to
-    Kubuntu's global default (the cones) even though the desktop wallpaper, SDDM
-    greeter, and avatar were already Foundry. Same /etc/xdg mechanism as the
-    desktop appletsrc — system-wide default, survives install.
-
- -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 15:45:00 +0700
-
 foundry-kde-theme (1.0.3) resolute; urgency=medium
 
   * Ship the Foundry anvil avatar to /usr/share/foundry-linux/avatar.png. Hook
