@@ -1,3 +1,12 @@
+calamares-settings-foundry-linux (1.0.25) resolute; urgency=medium
+
+  * Replace the installer welcome banner (branding/foundry-linux/banner.png) with
+    the metallic "FOUNDRY [anvil] LINUX" horizontal wordmark (2100x450) — the
+    anvil set between the two words. Drops the old flat-text + "26.04 LTS · ANVIL"
+    subtitle banner.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 12:35:00 +0700
+
 calamares-settings-foundry-linux (1.0.24) resolute; urgency=medium
 
   * Hide the swap chooser in the partition page and force no-swap.
