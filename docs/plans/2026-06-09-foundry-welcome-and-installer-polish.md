@@ -21,6 +21,7 @@ Calamares slideshow text clipping (5-attempt debug), live/installed wallpaper, a
 | 10 | ✅ done | Build log not captured / build warnings unreviewed | Taskfile `iso-build` tees to `dist/build-*.log`; Plymouth hook 1050 cleaned |
 | 11 | 🔄 verify | **SDDM login screen** shows cones on installed system — foundry SDDM theme purged with calamares-settings (same family as item 8). Move theme → foundry-kde-theme (survives install). | foundry-kde-theme 1.0.2 + calamares-settings 1.0.23 |
 | 12 | 👀 monitor | Autologin intermittently prompts on installed first boot — worked on 2nd boot ("didn't have to do anything"). Likely `Relogin=false` (20-kubuntu.conf): autologin fires once per boot, a bounced first session strands you on the greeter. Not reliably reproducible; watch. | — |
+| 13 | 🔄 verify | Swap chooser dropdown appeared in partition page despite `userSwapChoices: []`. Hide it + keep no-swap default. **See [Swap / hibernate research](#swap--hibernate-research).** | calamares-settings 1.0.24 |
 
 ---
 
@@ -205,6 +206,45 @@ lock screen — must ship from a survives-install package, never `calamares-sett
 
 ---
 
+## Swap / hibernate research
+
+**Trigger**: Will noticed a swap dropdown (No swap / Swap with Hibernate) on the partition page
+and asked why no-swap is the default and whether the dropdown was new.
+
+### Why the dropdown appeared (and how to hide it)
+
+`partition.conf` had `userSwapChoices: []`. Calamares 3.3.14 treats an **empty** list as
+*unconfigured* and backfills its built-in choices (none + suspend), so a dropdown shows. The
+combo box is shown only when `userSwapChoices` has **> 1** entry — so a **single-entry** list
+(`- none`) leaves nothing to choose and Calamares hides it. Fix in calamares-settings 1.0.24:
+`userSwapChoices: [ none ]`, `initialSwapChoice: "none"` unchanged. Confirmed via live SSH the
+running installer used our config; `git blame` shows the swap lines unchanged since 2026-06-06
+(`1f4d540`) — so the dropdown was **not** a Foundry-side change, it's Calamares' empty-list
+fallback (possibly surfaced by a Calamares package update; not confirmed without an old-ISO A/B).
+
+### Why no-swap (no hibernate) is the right default — three reasons
+
+1. **Hibernate is blocked under Secure Boot.** Foundry ships Secure Boot support (`shim-signed`).
+   Ubuntu's kernel enters *lockdown* mode when Secure Boot is on, and lockdown **disables
+   hibernation** (the resume image isn't validated → treated as a code-injection vector). So on a
+   Secure-Boot-**on** machine, "Swap (with Hibernate)" yields a large swap partition but hibernate
+   still won't work; it only functions with Secure Boot **off**.
+2. **Hibernate swap is RAM-sized.** The `suspend` choice sizes swap ≥ RAM — e.g. 32 GB of disk on
+   a 32 GB box, costly when storing large game assets.
+3. **Plasma 6 / Wayland hibernate-resume is historically flaky** (black screens, failed resumes).
+
+The genuinely weak part of the *old* setup was defaulting to **zero** swap (no OOM protection
+during heavy compiles/asset processing), not the lack of hibernate. Options were offered
+(swapfile / small-swap default, hibernate-by-default, swapfile-no-hibernate); **Will chose to
+keep no-swap as the default and hide the chooser** (2026-06-10). Revisit if OOM-during-build
+becomes a real complaint — a swapfile (`initialSwapChoice: "file"`) is the low-cost mitigation
+(resizable, no partition planning, no Secure Boot interaction).
+
+`SwapChoice` values for reference: `none`, `small` (swap, no hibernate), `suspend` (RAM-sized,
+hibernate), `file` (swapfile), `reuse` (existing swap).
+
+---
+
 ## Verification
 
 Run once 0.9.97 boots. **Do not upload to R2 until all pass.**
@@ -221,5 +261,6 @@ Run once 0.9.97 boots. **Do not upload to R2 until all pass.**
 10. `build.log` (dist/build-anvil-0.9.97.log) → no "command not found" / no unexpected hook failures.
 11. **Installed system SDDM login screen → Foundry greeter background, NOT Kubuntu cones** (new in 0.9.97). If autologin skips the greeter, log out to reach it.
 12. Autologin → on installed first boot, lands at desktop without a login prompt (watch for the `Relogin=false` once-per-boot behaviour).
-9. Installed desktop → no "Install Foundry Linux" icon.
-10. grub-install succeeds — installed system boots without live ISO.
+13. **Partition page → NO swap dropdown** (calamares-settings 1.0.24, next build). Just "Erase disk" with no swap chooser; no-swap forced.
+14. Installed desktop → no "Install Foundry Linux" icon.
+15. grub-install succeeds — installed system boots without live ISO.

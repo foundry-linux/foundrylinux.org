@@ -1,3 +1,13 @@
+calamares-settings-foundry-linux (1.0.24) resolute; urgency=medium
+
+  * Hide the swap chooser in the partition page and force no-swap.
+    userSwapChoices was [] (empty) which Calamares treats as "unconfigured" and
+    backfills with its built-in choices (none + suspend) — so a swap dropdown
+    appeared despite the intent. A single-entry list (- none) leaves nothing to
+    choose, so Calamares hides the combo box. initialSwapChoice stays "none".
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 10:45:00 +0700
+
 calamares-settings-foundry-linux (1.0.23) resolute; urgency=medium
 
   * Stop shipping the foundry-linux SDDM theme (Main.qml + background.png +
