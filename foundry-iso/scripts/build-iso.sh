@@ -22,6 +22,20 @@ DIST_DIR="$REPO_ROOT/dist"
 
 mkdir -p "$DIST_DIR"
 
+# lb build runs as root inside Docker on the bind-mounted tree (-v REPO_ROOT:/work)
+# and leaves root-owned files in config/ (and dist/). Chown them back to the invoking
+# user on exit -- success OR failure -- so later edits and git work without sudo. A
+# tiny root container does the chown since the host user cannot chown files it does not
+# own. GRUB_PATCH (a host tmp file set later) is cleaned here too, so this one EXIT
+# trap covers both (bash has a single EXIT slot).
+GRUB_PATCH=""
+_cleanup() {
+  [[ -n "$GRUB_PATCH" ]] && rm -f "$GRUB_PATCH"
+  docker run --rm -v "$REPO_ROOT:/work" ubuntu:26.04 \
+    chown -R "$(id -u):$(id -g)" /work/config /work/dist >/dev/null 2>&1 || true
+}
+trap _cleanup EXIT
+
 echo "=== Fetching apt signing keys ==="
 # Hardened against transient name-resolution / connection failures at this first
 # network call: a momentary DNS blip (flaky upstream resolver, VPN tunnel hiccup,
@@ -284,8 +298,7 @@ GCFG
 # -boot_image any keep preserves El Torito entries from the EFI injection above.
 ISO_SRC="$REPO_ROOT/binary.hybrid.iso"
 ISO_DST="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
-GRUB_PATCH="/tmp/foundry-grub-$$.cfg"
-trap 'rm -f "$GRUB_PATCH"' EXIT
+GRUB_PATCH="/tmp/foundry-grub-$$.cfg"   # cleaned by _cleanup (single EXIT trap above)
 echo "=== Patching grub.cfg ==="
 xorriso -osirrox on -dev "$ISO_SRC" -extract /boot/grub/grub.cfg "$GRUB_PATCH"
 chmod +w "$GRUB_PATCH"
