@@ -38,101 +38,8 @@ export HOST="foundry-linux"
 export BUILD_SYSTEM="Ubuntu"
 EOF
 
-# Set the Foundry Linux wallpaper.
-#
-# ROOT CAUSE #1 (diagnosed in 0.9.90):
-#   foundry-welcome (system-wide /etc/xdg/autostart/) works on installed first
-#   boot; wallpaper (skel ~/.config/autostart/) does NOT — Calamares users module
-#   does not reliably copy .config/autostart/ from skel to the installed user.
-#   Moving the wallpaper autostart to /etc/xdg/autostart/ (system-wide, same as
-#   foundry-welcome) fixes the installed-system case.  A sentinel file prevents
-#   the script from overriding user wallpaper changes on subsequent logins.
-#
-# ROOT CAUSE #2 (diagnosed in 0.9.95 from build.log — the "cones" wallpaper bug):
-#   The wallpaper used to point at /usr/share/sddm/themes/foundry-linux/
-#   background.png, shipped by calamares-settings-foundry-linux.  That package
-#   `Depends: calamares`, and Calamares's packages.conf removes `calamares` from
-#   the installed target — apt drops the reverse-dependency too, deleting the
-#   SDDM theme and its background.png.  On the installed system the appletsrc /
-#   autostart then pointed at a DEAD path, so Plasma fell back to the Kubuntu
-#   "cones" default.  Live was fine (calamares-settings still present); only the
-#   installed first boot regressed.  Fix: use the wallpaper shipped by
-#   foundry-kde-theme (/usr/share/wallpapers/FoundryLinux-ForgeHorizon/), which
-#   is NOT removed on install.  See
-#   docs/investigations/2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md
-#
-# TWO-LAYER APPROACH:
-#
-# Layer 1 — patch Kubuntu LAF defaults + system appletsrc (build time, below).
-# Layer 2 — system-wide autostart with per-user sentinel (run time, below).
-
-# The install-surviving Foundry wallpaper (foundry-kde-theme, stays on target).
-FOUNDRY_WP_DIR=/usr/share/wallpapers/FoundryLinux-ForgeHorizon
-if [[ -d "$FOUNDRY_WP_DIR" ]]; then
-  FOUNDRY_WP_URL="file://${FOUNDRY_WP_DIR}/"
-
-  # Layer 1a: patch Kubuntu Look-and-Feel defaults files.
-  laf_count=0
-  while IFS= read -r -d '' laf_defaults; do
-      if grep -qE "^Image=" "$laf_defaults" 2>/dev/null; then
-          sed -i "s|^Image=.*|Image=${FOUNDRY_WP_URL}|" "$laf_defaults"
-          echo "Patched LAF wallpaper: $laf_defaults"
-          laf_count=$((laf_count + 1))
-      fi
-  done < <(find /usr/share/plasma/look-and-feel -name "defaults" -print0 2>/dev/null)
-  echo "Patched ${laf_count} look-and-feel defaults file(s)"
-
-  # Layer 1b: re-assert the system-wide plasma desktop appletsrc.
-  # foundry-kde-theme already ships /etc/xdg/plasma-org.kde.plasma.desktop-appletsrc
-  # pointing at ForgeHorizon; re-write Image= idempotently so any merged-in
-  # Kubuntu default is overridden.  Plasma uses this as the default for any user
-  # whose ~/.config/ copy doesn't exist yet (i.e. every first login).
-  APPLETSRC=/etc/xdg/plasma-org.kde.plasma.desktop-appletsrc
-  if [[ -f "$APPLETSRC" ]]; then
-      sed -i "s|^Image=.*|Image=${FOUNDRY_WP_URL}|g" "$APPLETSRC"
-      echo "Patched system appletsrc: $APPLETSRC"
-  fi
-
-  # Layer 2: system-wide autostart with per-user sentinel.
-  # /etc/xdg/autostart/ is read by KDE for ALL users (same mechanism as
-  # foundry-welcome.desktop which works reliably on installed-system first boot).
-  # Sentinel ~/.config/foundry-wallpaper-set prevents re-applying on subsequent
-  # logins (preserving user wallpaper changes); absent on each live session boot
-  # (skel recreated by casper) so live always shows the Foundry wallpaper.
-  cat > /usr/local/bin/foundry-set-wallpaper.sh <<'EOF'
-#!/bin/sh
-# ForgeHorizon wallpaper package (foundry-kde-theme) — survives the Calamares
-# install that purges calamares-settings + its SDDM theme background.png.
-WALLPAPER=/usr/share/wallpapers/FoundryLinux-ForgeHorizon/
-SENTINEL="${XDG_CONFIG_HOME:-$HOME/.config}/foundry-wallpaper-set"
-# Already ran for this user — don't override their wallpaper changes.
-[ -f "$SENTINEL" ] && exit 0
-# Poll until plasma-apply-wallpaperimage succeeds (plasmashell is ready).
-i=0
-while [ $i -lt 60 ]; do
-    plasma-apply-wallpaperimage "$WALLPAPER" >/dev/null 2>&1 && break
-    sleep 1
-    i=$((i+1))
-done
-touch "$SENTINEL"
-EOF
-  chmod +x /usr/local/bin/foundry-set-wallpaper.sh
-
-  # System-wide autostart — runs for every user, not just skel-seeded ones.
-  mkdir -p /etc/xdg/autostart
-  cat > /etc/xdg/autostart/foundry-wallpaper.desktop <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=Set Foundry Linux Wallpaper
-Exec=/usr/local/bin/foundry-set-wallpaper.sh
-X-KDE-autostart-phase=2
-EOF
-
-  # Keep the skel copy as belt-and-suspenders for DEs that skip /etc/xdg/autostart.
-  mkdir -p /etc/skel/.config/autostart
-  cp /etc/xdg/autostart/foundry-wallpaper.desktop \
-     /etc/skel/.config/autostart/foundry-wallpaper.desktop
-fi
+# Wallpaper is now shipped by the foundry-kde-theme package (the LAF layout +
+# the /etc/xdg/autostart/foundry-wallpaper.desktop setter); no longer set here.
 
 # foundry-welcome gates its own run-once via the sentinel file
 # ~/.config/foundry-welcome-shown (created when the app first closes). On the
@@ -142,40 +49,8 @@ fi
 # see foundry-iso/docs/howto-kubuntu-remix.md (Common Pitfalls) for why the
 # X-KDE-autostart-condition approach is wrong here.
 
-# Set Foundry Linux color scheme as default for the live user.
-if [[ -f /usr/share/color-schemes/FoundryLinux.colors ]]; then
-  mkdir -p /etc/skel/.config
-  cat >> /etc/skel/.config/kdeglobals <<'EOF'
-[General]
-ColorScheme=FoundryLinux
-EOF
-fi
-
-# Foundry-brand the default user avatar.
-# kubuntu-settings-desktop ships the Kubuntu blue-gear logo as the default avatar:
-# /etc/skel/.face is the PNG (a CONFFILE) and /etc/skel/.face.icon is a symlink to
-# it.  New users inherit skel (live user via casper 25adduser, installed user via
-# Calamares' users module), so login/logout/lock screens show the gear.  Overwrite
-# .face with the Foundry anvil mark and keep .face.icon pointing at it.
-#
-# Survives upgrades WITHOUT dpkg-divert: .face is a conffile, so a later
-# kubuntu-settings-desktop upgrade keeps our locally-modified version (dpkg
-# confold default) instead of restoring the gear.
-#
-# Source preference: the avatar shipped by foundry-kde-theme (survives install) →
-# the foundry-welcome icon → the calamares branding logo (build-time-only fallback,
-# fine because /etc/skel is captured into the squashfs at build time).
-FOUNDRY_AVATAR=""
-for _src in /usr/share/foundry-linux/avatar.png \
-            /usr/share/icons/hicolor/256x256/apps/foundry-linux.png \
-            /usr/share/calamares/branding/foundry-linux/logo.png; do
-    [[ -f "$_src" ]] && { FOUNDRY_AVATAR="$_src"; break; }
-done
-if [[ -n "$FOUNDRY_AVATAR" ]]; then
-    cp "$FOUNDRY_AVATAR" /etc/skel/.face        # the real (conffile) avatar
-    ln -sf .face /etc/skel/.face.icon           # KDE/SDDM read .face.icon → .face
-    echo "Foundry avatar → /etc/skel/.face (from $FOUNDRY_AVATAR)"
-fi
+# Color scheme + the default avatar are now shipped by foundry-kde-theme
+# (/etc/xdg/kdeglobals + the /etc/skel/.face dpkg-divert); no longer set here.
 
 # Pre-configure KWin display output for QEMU virtio-vga-gl, which boots at
 # 640×480 by default even when xres=1280,yres=800 is passed to QEMU.  The
