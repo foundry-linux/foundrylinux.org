@@ -1,3 +1,10 @@
+calamares-settings-foundry-linux (1.0.26) resolute; urgency=medium
+
+  * Welcome banner: use the 4:1-fitted wordmark (2400x600) so it matches the
+    banner slot's aspect (the 2100x450 in 1.0.25 was 4.67:1 and sat oddly).
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 12:40:00 +0700
+
 calamares-settings-foundry-linux (1.0.25) resolute; urgency=medium
 
   * Replace the installer welcome banner (branding/foundry-linux/banner.png) with

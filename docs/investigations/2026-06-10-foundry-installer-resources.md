@@ -146,13 +146,14 @@ Sidebar palette: background <span style="display:inline-block;width:12px;height:
 The Foundry anvil on a circular near-black field with orange sparks. **Same mark as the user
 avatar** (`foundry-kde-theme`) and the app-menu/installer icon — one logo everywhere.
 
-### `banner.png` — 2100×450 (`productWelcome`)
+### `banner.png` — 2400×600 (4:1, `productWelcome`)
 
 <img src="screenshots/branding-banner.png" width="760">
 
 The Welcome-page header: the metallic **"FOUNDRY [anvil] LINUX"** horizontal wordmark — chrome /
-brushed-silver lettering on black with the anvil set between the two words. (Replaced the older
-flat-text banner that carried the orange rule and "26.04 LTS · ANVIL" subtitle.)
+brushed-silver lettering on black with the anvil set between the two words, fitted to the slot's
+4:1 aspect. (Replaced the older flat-text banner that carried the orange rule and "26.04 LTS ·
+ANVIL" subtitle.)
 
 ### The carousel — `slideshow.qml` + 4 slides
 
@@ -274,6 +275,6 @@ Module configs (`data/modules/`):
 
 - **Slides**: 800×440 (1.818:1) on a near-black field — keep new slides at that size so the
   carousel's `PreserveAspectFit` letterbox stays invisible.
-- **Logo**: 256×256 square (anvil). **Banner**: 2100×450 (~4.67:1) metallic wordmark.
+- **Logo**: 256×256 square (anvil). **Banner**: 2400×600 (4:1) metallic wordmark.
   **Backgrounds** (GRUB, Plymouth, wallpapers): 1920×1080+.
 - **Colors**: accent <span style="display:inline-block;width:12px;height:12px;background:#ff5b1a;border-radius:2px;vertical-align:middle"></span> `#ff5b1a`, surfaces <span style="display:inline-block;width:12px;height:12px;background:#0a0a0a;border-radius:2px;vertical-align:middle;border:1px solid #333"></span> `#0a0a0a`–<span style="display:inline-block;width:12px;height:12px;background:#0e0e0e;border-radius:2px;vertical-align:middle;border:1px solid #333"></span> `#0e0e0e`, text <span style="display:inline-block;width:12px;height:12px;background:#f7f7f7;border-radius:2px;vertical-align:middle;border:1px solid #333"></span> `#f7f7f7`.
