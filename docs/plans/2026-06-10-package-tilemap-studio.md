@@ -59,10 +59,120 @@ build **FLTK 1.4.5 X11-only and static-link** it; png/zlib/jpeg come from the sy
 
 ## Upstreaming (step 9 detail)
 
-Both patches are toolchain/portability fixes that help every Linux packager, not Debian glue, so they
-go upstream:
+Both patches are toolchain/portability fixes (GCC 15 / FLTK 1.4.5), not Debian glue, so they're
+candidates to go upstream. **But check `master` first** — one of them is already fixed there.
 
-- Fork `Rangi42/tilemap-studio`, branch per fix, apply the hunk, PR with the DEP-3 `Description` as
-  the body (note build env: Ubuntu 26.04, GCC 15, FLTK 1.4.5).
-- Update `Forwarded: <PR-url>` in `debian/patches/000*.patch` and note in `debian/changelog`.
-- Drop each patch once an upstream release ships the fix.
+### Step 9.0 — Pre-flight: reproduce on upstream `master` (gating, do NOT skip)
+
+A patch against the **v4.0.1 tag** may already be fixed on `master`. Verified 2026-06-10
+(`master` @ `244378b`, ahead of the `v4.0.1` tag):
+
+| Our patch | Status on `master` | Action |
+|---|---|---|
+| `0002-cstring-in-preferences.patch` | **Already fixed** — `src/preferences.cpp` line 1 is `#include <cstring>`. | **No PR.** It will ship in the next release after v4.0.1; drop our patch then. Set `Forwarded: not-needed (fixed in master 244378b)`. |
+| `0001-x11-platform-includes.patch` | **Still missing** — `src/utils.h` has no `<FL/platform.H>`/`<X11/*>` includes. | **PR it** (below), after confirming it still fails to build `master` against FLTK 1.4.5. |
+
+Confirm `0001` still reproduces before opening the PR:
+
+```bash
+git clone --depth 1 https://github.com/Rangi42/tilemap-studio /tmp/tms-master
+# build FLTK 1.4.5 X11-only into /tmp/tms-master (same cmake flags as debian/rules), then:
+cd /tmp/tms-master && PATH="$PWD/bin:$PATH" make 2>&1 | grep -E "fl_display|XA_CARDINAL|Pixmap"
+# expect: 'fl_display'/'XA_CARDINAL' not declared  -> the fix is still needed
+```
+
+### Step 9.1 — Open the PR for `0001` (X11 platform includes)
+
+The change (CRLF-preserving, as upstream uses CRLF):
+
+```diff
+--- a/src/utils.h
++++ b/src/utils.h
+@@ -13,6 +13,11 @@
+ #pragma warning(push, 0)
+ #include <FL/fl_types.h>
++#ifndef _WIN32
++#include <FL/platform.H>
++#include <X11/Xlib.h>
++#include <X11/Xatom.h>
++#endif
+ #pragma warning(pop)
+```
+
+Why: on FLTK 1.4.5's cleaned-up headers, `main-window.{cpp,h}`, `modal-dialog.cpp` and
+`option-dialogs.cpp` use `fl_display`, `fl_xid`, `Pixmap` and `XA_CARDINAL` under `#ifndef _WIN32`
+but only `<X11/xpm.h>` was included; these no longer come in transitively. Adding the includes to the
+shared `utils.h` fixes every TU that needs them. (FLTK ≤1.4.4 leaked them, which is why older builds
+compiled.)
+
+```bash
+# 1. Fork + clone (gh sets up the 'origin' fork + 'upstream' remote)
+gh repo fork Rangi42/tilemap-studio --clone --remote
+cd tilemap-studio
+git checkout -b fix-fltk145-x11-includes
+
+# 2. Apply just the utils.h hunk from our quilt patch (strip the DEP-3 header / keep CRLF)
+patch -p1 < ~/SRC/foundrylinux.org/foundry-apt/packages/tilemap-studio/debian/patches/0001-x11-platform-includes.patch
+
+# 3. Commit
+git commit -am "Include FLTK platform + X11 headers explicitly for the X11 build
+
+main-window, modal-dialog and option-dialogs use fl_display, fl_xid, Pixmap
+and XA_CARDINAL under #ifndef _WIN32 but only included <X11/xpm.h>. These
+resolved transitively on FLTK <= 1.4.4 but not on FLTK 1.4.5's cleaned-up
+headers, so the X11 build fails with 'fl_display'/'XA_CARDINAL' not declared.
+Add the includes to the shared utils.h. Built on Ubuntu 26.04, GCC 15,
+FLTK 1.4.5."
+
+# 4. Push to the fork + open the PR
+git push -u origin fix-fltk145-x11-includes
+gh pr create --repo Rangi42/tilemap-studio \
+  --title "Fix X11 build against FLTK 1.4.5 (explicit platform/X11 includes)" \
+  --body "$(cat <<'BODY'
+### Problem
+Building the Linux (X11) target against **FLTK 1.4.5** fails:
+
+```
+src/main-window.cpp: error: 'fl_display' was not declared in this scope
+src/main-window.cpp: error: 'XA_CARDINAL' was not declared in this scope
+src/main-window.h:  error: 'Pixmap' does not name a type
+```
+
+`main-window.{cpp,h}`, `modal-dialog.cpp` and `option-dialogs.cpp` use `fl_display`,
+`fl_xid`, `Pixmap` and `XA_CARDINAL` under `#ifndef _WIN32`, but only `<X11/xpm.h>` is
+included. These came in transitively on FLTK ≤ 1.4.4; FLTK 1.4.5 cleaned up its headers
+and no longer leaks them.
+
+### Fix
+Add the X11 / FLTK-platform includes to the shared `src/utils.h` (guarded `#ifndef _WIN32`),
+so every translation unit that needs them gets them.
+
+### Build environment
+Ubuntu 26.04, GCC 15, FLTK 1.4.5 built X11-only (`FLTK_BACKEND_WAYLAND=0`). Found while
+packaging Tilemap Studio for Foundry Linux.
+BODY
+)"
+```
+
+### Step 9.2 — Record the outcome back in our tree
+
+1. Put the PR URL in `0001`'s header: `Forwarded: github.com/Rangi42/tilemap-studio/pull/<n>` (with the `https://` prefix in the actual header).
+2. Set `0002`'s header to `Forwarded: not-needed (fixed in upstream master 244378b)`.
+3. Note both in `debian/changelog` (e.g. "0001 sent upstream as PR #N; 0002 already fixed upstream,
+   carried until next release"). Bump `tilemap-studio` to `4.0.1-1foundry2` if the patch headers
+   change after the first build was published.
+
+### Step 9.3 — Follow-up (drop patches on the next release)
+
+When upstream tags a release after v4.0.1:
+- If it includes `<cstring>` (it will) → delete `0002` from `debian/patches/series` and the file.
+- If PR #N (the X11 includes) merged and shipped → delete `0001` too.
+- Bump `TILEMAP_VERSION`/`SHA256` in `build.sh`, rebuild, confirm the now-smaller series still
+  applies, and bump the changelog.
+
+> **One-PR-vs-two**: only `0001` needs a PR now, so it's a single focused PR — easiest for the
+> maintainer to review and merge. If a future packaging run produces more upstreamable hunks, prefer
+> one PR per independent fix so a rejection of one doesn't block the others.
+>
+> **Gating note**: opening a PR touches a third-party repo (outward-facing) — do it only on explicit
+> go-ahead, or hand the user the ready-to-run block above.
