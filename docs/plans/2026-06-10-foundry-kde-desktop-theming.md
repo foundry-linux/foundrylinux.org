@@ -46,11 +46,27 @@ hook-patch Kubuntu's template, move the default to a Foundry-owned mechanism.
    icontasks_obj.writeConfig( 'launchers', launcher_list );
    ```
 
-**Note — Kate is NOT in the Kubuntu default list.** So the Kate that Will sees is coming from
-somewhere else: a different active LAF (breeze/plasma default panel), or a panel that was
-customised. **Open item:** read the installed system's `~/.config/plasma-org.kde.plasma.desktop-appletsrc`
-`launchers=` line to confirm the real current set and the active LAF. (No SSH to the installed
-target during this session — needs a fresh install + read, or Will pastes it.)
+**Note — Kate is NOT in the Kubuntu default list.** And on a live 0.9.103 session (read via
+SSH 2026-06-10) the running config is *not* Kubuntu's template at all:
+
+- `~/.config/kdeglobals` has **no `LookAndFeelPackage`** (compiled-in default LAF, not org.kubuntu).
+- The icontasks applet in `plasma-org.kde.plasma.desktop-appletsrc` has **no `launchers=` line**
+  → the taskbar pins are the **applet's compiled-in defaults**, not the Kubuntu template's list.
+- The kickoff applet has **`favoritesPortedToKAstats=true`** → the **app-menu "Favorites" tab is
+  stored in a KActivities-stats SQLite DB** (`~/.local/share/kactivitymanagerd/resources/database`),
+  not in any config file.
+
+**So "favorites" is two separate backends:**
+
+| Surface | Stored in | To set a distro default |
+|---------|-----------|-------------------------|
+| Taskbar pins | icontasks `launchers=` in the desktop appletsrc | ship a default appletsrc / panel layout with the `launchers` list |
+| App-menu Favorites tab | KActivities-stats **SQLite DB** (`favoritesPortedToKAstats`) | seed the DB, or pre-port a `favorites=` list before KAStats migration — finicky |
+
+**Implication:** we do **not** need to reverse-engineer where the current "Kate" comes from — for a
+distro we just **define** the Foundry set and ship it. But which surface Will means matters,
+because the taskbar-pins path is straightforward (config) and the menu-favorites path is a DB seed.
+**Open: which surface?** (app-menu Favorites tab vs taskbar pins — likely both.)
 
 Favorites only apply to a **fresh** user session (first login); existing profiles keep their panel.
 
