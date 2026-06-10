@@ -1,3 +1,11 @@
+calamares-settings-foundry-linux (1.0.32) resolute; urgency=medium
+
+  * Fix services-systemd: enable ssh.socket (not ssh) so Ubuntu 26.04's
+    socket-activation path actually starts sshd on the installed system.
+    Enabling the service unit alone doesn't activate the socket listener.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 11 Jun 2026 06:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.31) resolute; urgency=medium
 
   * Enable sshd on the installed system (services-systemd module, already in the
