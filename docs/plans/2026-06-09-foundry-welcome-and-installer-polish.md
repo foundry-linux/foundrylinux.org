@@ -279,28 +279,40 @@ lever.
 
 ---
 
-## Lock screen wallpaper (0.9.106)
+## Lock screen wallpaper (0.9.106 path → 0.9.107 WallpaperPlugin)
 
 **Trigger** (Image #20): the installed **lock screen** (when you lock the session — distinct from
 the SDDM *login* greeter) still showed the Kubuntu cones, even though desktop wallpaper, SDDM
 login, and avatar were all correct Foundry.
 
-**Root cause**: the lock-screen wallpaper is set by the static include
-`foundry-iso/config/includes.chroot/etc/xdg/kscreenlockerrc`, which pointed at
-`/usr/share/backgrounds/foundry-linux-wallpaper.png` — a path that **does not exist** on the
-installed system (it was an install-only asset). Plasma fell back to the global cones default.
-Same class as the desktop-wallpaper cones bug, a different dead path.
+**Two stacked bugs** in `foundry-iso/config/includes.chroot/etc/xdg/kscreenlockerrc`:
 
-**Fix**: repoint the include at the survives-install `foundry-kde-theme` wallpaper, using a
-concrete image file:
+1. **Dead path** — `Image=` pointed at `/usr/share/backgrounds/foundry-linux-wallpaper.png`, which
+   **does not exist** on the installed system (an install-only asset). Fixed in **0.9.106** by
+   repointing at the survives-install `foundry-kde-theme` wallpaper.
+2. **Missing `WallpaperPlugin`** — even after 0.9.106, still cones. The include set `Image=` under
+   `[Greeter][Wallpaper][org.kde.image]` but never set `[Greeter] WallpaperPlugin=org.kde.image`.
+   The lock greeter does **not** default to `org.kde.image` (desktop containments do), so the
+   `Image=` was ignored and it fell back to the global cones default. `kreadconfig6` confirmed the
+   path *resolved* correctly — proving "config resolves" ≠ "surface renders". Fixed in **0.9.107**.
+
+**Working config** (verified live on 0.9.106 by writing it + re-locking → ForgeHorizon):
 ```ini
+[Greeter]
+WallpaperPlugin=org.kde.image
+
 [Greeter][Wallpaper][org.kde.image][General]
-Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png
+Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/
 ```
+
+<img src="screenshots/lock-screen-forgehorizon-0.9.106.png" width="500">
+
+_The fixed lock screen — ForgeHorizon, not cones. Captured live after writing the working config on
+the 0.9.106 session and re-locking (Will, 2026-06-10)._
 
 **Dead end**: shipping `kscreenlockerrc` from `foundry-kde-theme` (1.0.4) as a conffile collided
 with this static include — dpkg halted on a conffile prompt inside a non-interactive hook and broke
-the 0.9.105 build. Reverted to 1.0.3; the one-line path fix in the include is the correct lever.
+the 0.9.105 build. Reverted to 1.0.3; the static include (with **both** fixes) is the correct lever.
 See the [wallpaper/cones investigation follow-up](../investigations/2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md#follow-up-2026-06-10-the-lock-screen-was-a-fourth-surface-fixed-in-09106).
 
 ---
@@ -325,4 +337,4 @@ Run once 0.9.97 boots. **Do not upload to R2 until all pass.**
 14. Installed desktop → no "Install Foundry Linux" icon.
 15. grub-install succeeds — installed system boots without live ISO.
 16. **Login/logout/lock screens → Foundry anvil avatar, NOT the Kubuntu blue gear** (new in 0.9.99).
-17. **Lock the installed session → Foundry ForgeHorizon wallpaper, NOT the Kubuntu cones** (new in 0.9.106). Lock via the app menu / Meta+L, or wait for the idle lock.
+17. ~~**Lock the installed session → Foundry ForgeHorizon wallpaper, NOT the Kubuntu cones**~~ **PASS (0.9.107)** — required the `WallpaperPlugin=org.kde.image` fix on top of the 0.9.106 path fix; verified live on the 0.9.106 session by writing the working config and re-locking (screenshot in the Lock screen section above). 0.9.107 bakes it into the include.

@@ -248,10 +248,9 @@ is set in `/etc/sddm.conf.d/30-foundry-live.conf` and resolves on the installed 
 
 ## Lock screen — `kscreenlockerrc`
 
-> 📸 **Screenshot pending** — the fixed ForgeHorizon lock screen ships in **0.9.106** (verifying
-> at time of writing). To be captured (`screenshots/lock-screen-foundry.png`) once that build is
-> confirmed. The prior **cones** fallback is the bug this section documents, not a resource worth
-> showing here.
+<img src="screenshots/forgehorizon-wallpaper.png" width="760">
+
+_The ForgeHorizon wallpaper — the lock screen background (also the desktop wallpaper), shipped by `foundry-kde-theme`._
 
 The Plasma **lock screen** (when you lock the session, distinct from the SDDM *login* greeter
 above) is its own surface. Its wallpaper is set by a static include shipped in the ISO:
@@ -260,16 +259,26 @@ above) is its own surface. Its wallpaper is set by a static include shipped in t
 foundry-iso/config/includes.chroot/etc/xdg/kscreenlockerrc
 ```
 ```ini
+[Greeter]
+WallpaperPlugin=org.kde.image
+
 [Greeter][Wallpaper][org.kde.image][General]
-Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png
+Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/
 ```
 
-**Gotcha (fixed 0.9.106):** it used to point at `/usr/share/backgrounds/foundry-linux-wallpaper.png`
-— the install-time-only wallpaper above (shipped by `calamares-settings`, **purged on install**),
-so the installed lock screen fell back to the Kubuntu cones. Repointed at the `foundry-kde-theme`
-wallpaper (survives install). The file is owned by **no package** (`dpkg -S` finds nothing) — it
-is a static include, not a deb. Do **not** also ship `kscreenlockerrc` from `foundry-kde-theme`:
-it collides with this include and dpkg halts on a conffile prompt mid-build (cost us 0.9.105). See
+**Two gotchas, both real:**
+- **`WallpaperPlugin=org.kde.image` is mandatory** (fixed 0.9.107). The lock greeter does **not**
+  default to `org.kde.image` the way desktop containments do, so without that line the `Image=`
+  below it is silently ignored and the greeter falls back to cones — even with a perfectly valid
+  path. `kreadconfig6` will happily show the right `Image=` while the pixels stay cones.
+- **The path must survive install** (fixed 0.9.106). It used to point at
+  `/usr/share/backgrounds/foundry-linux-wallpaper.png` — the install-time-only wallpaper (shipped by
+  `calamares-settings`, **purged on install**) — so the path went dead and it fell back to cones.
+  Repointed at the `foundry-kde-theme` wallpaper (survives install).
+
+The file is owned by **no package** (`dpkg -S` finds nothing) — it is a static include, not a deb.
+Do **not** also ship `kscreenlockerrc` from `foundry-kde-theme`: it collides with this include and
+dpkg halts on a conffile prompt mid-build (cost us 0.9.105). See
 [the wallpaper/cones investigation follow-up](2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md#follow-up-2026-06-10-the-lock-screen-was-a-fourth-surface-fixed-in-09106).
 
 ---

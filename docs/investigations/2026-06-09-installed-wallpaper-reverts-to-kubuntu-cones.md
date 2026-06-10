@@ -153,12 +153,22 @@ With the Image unreadable, the lock greeter fell back to the global Kubuntu cone
 exactly as the desktop did. (`/etc/xdg/kscreenlockerrc` is owned by **no package** — `dpkg -S`
 finds nothing — because the ISO ships it as a static include, not via a deb.)
 
-**Fix (0.9.106):** repoint the include at the real wallpaper shipped by `foundry-kde-theme`
-(survives install), using a concrete image file (the greeter is happier with a file than a
-package dir):
+**Fix — two parts (the second is the load-bearing one):**
 
-```
-Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png
+1. **(0.9.106) Repoint the path** at the survives-install `foundry-kde-theme` wallpaper.
+2. **(0.9.107) Add `[Greeter] WallpaperPlugin=org.kde.image`.** The path fix alone was **not**
+   enough — the lock screen *still* showed cones, because the lock greeter does not default to
+   `org.kde.image` (desktop containments do), so the `Image=` under it was silently ignored and it
+   fell back to the global cones default. `kreadconfig6` reported the right `Image=` the whole time
+   — a sharp reminder that **"config resolves correctly" is not "the surface renders it."** The
+   working include:
+
+```ini
+[Greeter]
+WallpaperPlugin=org.kde.image
+
+[Greeter][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/
 ```
 
 **Dead end worth recording:** the first attempt shipped `/etc/xdg/kscreenlockerrc` *from*
