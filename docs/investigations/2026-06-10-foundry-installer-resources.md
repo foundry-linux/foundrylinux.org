@@ -248,6 +248,11 @@ is set in `/etc/sddm.conf.d/30-foundry-live.conf` and resolves on the installed 
 
 ## Lock screen — `kscreenlockerrc`
 
+> 📸 **Screenshot pending** — the fixed ForgeHorizon lock screen ships in **0.9.106** (verifying
+> at time of writing). To be captured (`screenshots/lock-screen-foundry.png`) once that build is
+> confirmed. The prior **cones** fallback is the bug this section documents, not a resource worth
+> showing here.
+
 The Plasma **lock screen** (when you lock the session, distinct from the SDDM *login* greeter
 above) is its own surface. Its wallpaper is set by a static include shipped in the ISO:
 
