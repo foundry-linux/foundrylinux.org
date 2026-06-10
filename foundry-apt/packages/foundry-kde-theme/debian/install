@@ -10,6 +10,7 @@ data/avatar.png                   usr/share/foundry-linux/
 data/look-and-feel/org.foundrylinux.foundry-linux/metadata.json  usr/share/plasma/look-and-feel/org.foundrylinux.foundry-linux/
 data/look-and-feel/org.foundrylinux.foundry-linux/contents/defaults  usr/share/plasma/look-and-feel/org.foundrylinux.foundry-linux/contents/
 data/look-and-feel/org.foundrylinux.foundry-linux/contents/splash/Splash.qml  usr/share/plasma/look-and-feel/org.foundrylinux.foundry-linux/contents/splash/
+data/look-and-feel/org.foundrylinux.foundry-linux/contents/layouts/org.kde.plasma.desktop-layout.js  usr/share/plasma/look-and-feel/org.foundrylinux.foundry-linux/contents/layouts/
 data/xdg/kdeglobals  etc/xdg/
 data/xdg/ksplashrc  etc/xdg/
 data/xdg/kscreenlockerrc  etc/xdg/

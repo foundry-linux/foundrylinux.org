@@ -10,8 +10,11 @@ foundry-kde-theme (1.0.4) resolute; urgency=medium
     kscreenlockerrc, and the wallpaper autostart.
   * Ship /etc/xdg/kicker-extra-favoritesrc (app-menu Favorites: Kate out,
     Blender in) via dpkg-divert of kubuntu-settings-desktop's copy.
-  * Partial: taskbar-pins layout.js, the Plasma Style, the avatar skel
-    divert, and deleting the redundant foundry-iso hooks are still pending.
+  * Ship the LAF panel layout (taskbar pins: settings, software, files,
+    terminal, Blender, browser) + re-home the avatar (/etc/skel/.face = the
+    anvil) via dpkg-divert.
+  * Partial: the custom Plasma Style + deleting the redundant foundry-iso
+    theming hooks/includes are still pending.
 
  -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 17:30:00 +0700
 

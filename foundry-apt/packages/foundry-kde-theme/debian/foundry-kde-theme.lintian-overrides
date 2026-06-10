@@ -1,0 +1,6 @@
+# The Foundry anvil avatar replaces Kubuntu's gear at /etc/skel/.face via the
+# standard divert-and-replace pattern (cf. dash diverting /bin/sh): preinst
+# diverts Kubuntu's copy, postinst writes ours from /usr/share/foundry-linux.
+# The avatar is created in postinst, not shipped as a package file -- hence the
+# diversion is intentionally for a path this package does not itself contain.
+foundry-kde-theme: diversion-for-unknown-file

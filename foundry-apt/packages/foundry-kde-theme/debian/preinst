@@ -10,6 +10,12 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ]; then
     dpkg-divert --add --rename --package foundry-kde-theme \
         --divert /etc/xdg/kicker-extra-favoritesrc.kubuntu \
         /etc/xdg/kicker-extra-favoritesrc
+    # Avatar: kubuntu-settings-desktop owns /etc/skel/.face (the blue gear).
+    # Divert it so we ship the Foundry anvil at the same path. The .face.icon
+    # symlink (kubuntu's, -> .face) then resolves to our avatar.
+    dpkg-divert --add --rename --package foundry-kde-theme \
+        --divert /etc/skel/.face.kubuntu \
+        /etc/skel/.face
 fi
 
 #DEBHELPER#
