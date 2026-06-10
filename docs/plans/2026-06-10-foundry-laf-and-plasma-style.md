@@ -166,3 +166,22 @@ The 2026-06-10 live read found **no `LookAndFeelPackage` in the running `~/.conf
 **foundry-iso (deletions + trims, AFTER the deb is confirmed in the chroot):**
 - DELETE hook `1150-kde-color-scheme.hook.chroot`, the `kscreenlockerrc` + `ksplashrc` static includes, and the LAF static-include dir
 - `config/hooks/1100-live-autologin.hook.chroot` — REMOVE the theming sed-loops (avatar/wallpaper/color-scheme — incl. the `FoundryLinux`→`Foundry Linux` typo line); KEEP autologin + the QEMU virtio EDID/display config
+
+---
+
+## Verification Results — 0.9.110 anvil live boot (2026-06-11)
+
+Built `foundry-anvil-0.9.110-amd64.iso`, booted headless in QEMU, SSH-corroborated (root:foundry) + screenshotted via the QEMU monitor.
+
+| # | Surface | Result | Evidence |
+|---|---|---|---|
+| 1 | Splash | ✅ config | `ksplashrc Theme=org.foundrylinux.foundry-linux`; both dead `Splash.qml` paths now point at survives-install assets (boot-brief, not screenshotted) |
+| 2 | Desktop wallpaper | ✅ **pixel** | ForgeHorizon forge-glow renders on the live desktop |
+| 3 | Lock screen | ✅ **pixel** | locked the session → ForgeHorizon, **not** cones; the 0.9.107 `WallpaperPlugin` fix holds |
+| 4 | Color scheme | ✅ **pixel** + config | dark/ember UI; `ColorScheme=Foundry Linux` + applied hash in the user config |
+| 5 | Favorites (both) | ✅ **pixel** + config | **the LAF layout RAN** — user appletsrc `launchers=…,blender.desktop,preferred://browser`; kicker `Prepend=…;blender.desktop;…` (Kate out). Blender icon visible in the taskbar. |
+| 6 | Plasma Style | ✅ config | `FoundryLinux` desktoptheme referenced by the LAF defaults; panel renders dark (distinctive-shape SVGs are the follow-up) |
+| 7 | Global Theme entry | ✅ config | LAF installed; `LookAndFeelPackage=org.foundrylinux.foundry-linux` active |
+| 8 | Package + divert | ✅ | build clean (no conffile prompt after the divert-and-replace fix); both diversions active in the booted system; avatar (anvil, 15786 B) inherited to `/home/user/.face` |
+
+**Biggest risk RESOLVED:** the LAF activates and its `layout.js` executes on first login (the Foundry `launchers=` is present in the user's appletsrc), so the taskbar favorites apply — the consolidation fixed it (a reliable `/etc/xdg/kdeglobals` package file instead of the old non-executable hook 1150). The full-appletsrc fallback (Option B) was not needed.
