@@ -84,13 +84,12 @@ need them locally.
 │   │   ├── 0020-strip-kubuntu-bloat.hook.chroot
 │   │   ├── 0025-mozilla-pin.hook.chroot
 │   │   ├── 0030-install-{distro}-edition.hook.chroot
+│   │   ├── 0035-install-ssh-server.hook.chroot  # openssh-server; disabled on live
 │   │   ├── 0040-firstboot-cleanup.hook.chroot
 │   │   ├── 1000-install-local-debs.hook.chroot
 │   │   ├── 1050-plymouth-theme.hook.chroot
 │   │   ├── 1100-live-autologin.hook.chroot
-│   │   ├── 1110-live-install-button.hook.chroot
-│   │   ├── 1150-kde-color-scheme.hook.chroot
-│   │   └── 1200-live-ssh.hook.chroot
+│   │   └── 1110-live-install-button.hook.chroot
 │   ├── includes.chroot/                 # files copied verbatim into chroot
 │   │   └── tmp/local-debs/             # .deb files injected at build time
 │   └── package-lists/
@@ -951,11 +950,38 @@ corner to resize it — QEMU's `zoom-to-fit=on` flag makes the guest display
 scale to fill whatever size you drag it to, so you get a full-resolution view
 at any window size.
 
-**SSH into the live session** (if hook 1200 or equivalent is installed):
-```bash
-ssh -p 2222 {live-username}@localhost   # password: live
-ssh -p 2222 root@localhost             # password: (set in hook)
-```
+**SSH access — installed system only, never the live session.**
+The live `{live-username}` account has passwordless `sudo`, so a live sshd is an
+instant-root hole. Do NOT enable sshd in the live session.
+
+Instead, enable sshd on the **installed** system only:
+
+1. **Hook `0035-install-ssh-server.hook.chroot`** — installs `openssh-server` into
+   the squashfs, then immediately disables it on the live session:
+   ```bash
+   #!/bin/bash
+   set -euo pipefail
+   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openssh-server
+   # Disable on live: passwordless-sudo live account = instant-root hole.
+   systemctl disable ssh.socket ssh.service 2>/dev/null || true
+   ```
+   `systemctl disable` works in the chroot even without systemd running — it just
+   removes the symlinks from `/etc/systemd/system/sockets.target.wants/`.
+
+2. **`calamares-settings-{distro-slug}/modules/services-systemd.conf`** — re-enables
+   sshd on the installed target via Calamares's `services-systemd` module:
+   ```yaml
+   services:
+     - name: ssh.socket    # NOT "ssh" — see Common Pitfalls below
+       mandatory: false
+   ```
+   The `services-systemd` module must also be in `settings.conf`'s exec sequence.
+
+3. Run the Calamares installer, create your test account (e.g. `will` / `foundry`),
+   then SSH in from the host:
+   ```bash
+   ssh -p 2222 will@localhost   # password: foundry (or whatever you chose)
+   ```
 
 ---
 
@@ -1132,6 +1158,7 @@ debian/
 | Slideshow (carousel) heading clipped on the left ("Where"→"Vhere") | **The clipped text was baked into the slide PNG, not rendered by QML.** The slides are 800×440 PNGs with the heading + body typeset into the artwork ~32 px from the left edge, displayed with `fillMode: Image.PreserveAspectCrop`. The installer pane is taller (narrower aspect) than 1.818:1, so Crop scaled each slide to fill the height and cropped ~77 px off **each side** — clipping the first glyph of every heading. A redundant QML `Text` caption overlaid the *same* text at the bottom; five successive "text margin" patches all edited that caption (chasing a real-but-irrelevant Qt Quick anchor quirk on `Column` positioners in `ListView` delegates) while the actually-clipped text sat untouched in the PNG. | Switch the slide `Image` to `fillMode: Image.PreserveAspectFit` (whole slide shown, no edge crop) with a dark backdrop `Rectangle` behind the `ListView` to hide the letterbox, and **delete the redundant QML caption** — the PNG already carries the heading + body. Lesson: when "text is clipped", first determine whether it is QML text or baked into a raster asset; `Image.PreserveAspectCrop` crops the long axis and will eat near-edge content. |
 | Plymouth messages not visible ("remove the media and press enter to continue" etc.) | The Plymouth `script` module drops all messages unless `Plymouth.SetMessageFunction(callback)` is registered. | Add a `message_callback(text)` that calls `Image.Text(text, r, g, b)` and positions the resulting sprite centred horizontally at roughly 82 % of screen height (below the logo). Register it with `Plymouth.SetMessageFunction(message_callback)`. |
 | `foundry-welcome` won't re-launch from app menu | Sentinel file (`~/.config/{app}-shown`) is checked unconditionally — even for explicit launches. The "Done" page says the user can re-open the app, but it exits immediately every time after first run. | Pass `--autostart` from the XDG autostart `.desktop` entry (`Exec=foundry-welcome --autostart`). Check the sentinel only when that flag is present in `argv`. Direct launches (app menu, terminal) skip the check and always show the window. |
+| `sshd` inactive on installed system despite `services-systemd.conf` listing `name: ssh` | Ubuntu 22.04+ uses **socket activation** for openssh. `systemctl enable ssh` takes the SysV compat path and creates `multi-user.target.wants/ssh.service`, but leaves `ssh.socket` **disabled**. Without `ssh.socket` in `sockets.target.wants`, no one is listening on port 22 and sshd never starts — even though `systemctl is-enabled ssh.service` says `enabled`. This is also why `systemctl is-active ssh.service` reports `inactive` on the installed system. | Use `name: ssh.socket` (not `ssh`) in `modules/services-systemd.conf`. `systemctl enable ssh.socket` creates `sockets.target.wants/ssh.socket` — the real socket listener — and sshd starts on the first inbound connection. |
 
 ---
 
