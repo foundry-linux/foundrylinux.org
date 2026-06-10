@@ -1,3 +1,13 @@
+calamares-settings-foundry-linux (1.0.23) resolute; urgency=medium
+
+  * Stop shipping the foundry-linux SDDM theme (Main.qml + background.png +
+    metadata.desktop) — moved to foundry-kde-theme. This package `Depends:
+    calamares` and is purged from the installed target, so shipping the login
+    theme here meant it disappeared on install and SDDM fell back to the Kubuntu
+    cones greeter. foundry-kde-theme survives the install and now owns it.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 10:12:00 +0700
+
 calamares-settings-foundry-linux (1.0.22) resolute; urgency=medium
 
   * Fix slideshow text clipping (take 6 — ACTUAL root cause). The clipped text

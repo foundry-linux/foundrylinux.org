@@ -1,3 +1,15 @@
+foundry-kde-theme (1.0.2) resolute; urgency=medium
+
+  * Ship the foundry-linux SDDM login-screen theme (Main.qml + background.png +
+    metadata.desktop) to /usr/share/sddm/themes/foundry-linux/. Moved here from
+    calamares-settings-foundry-linux, which `Depends: calamares` and is PURGED
+    from the installed target — so the login theme used to vanish on install and
+    SDDM fell back to the Kubuntu "cones" greeter. foundry-kde-theme survives the
+    install, so the branded login screen now persists. Hook 1100 already sets
+    Theme.Current=foundry-linux; it now resolves on the installed system too.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 10:10:00 +0700
+
 foundry-kde-theme (1.0.1) resolute; urgency=medium
 
   * Ship FoundryLinux-ForgeHorizon wallpaper to /usr/share/wallpapers/.
