@@ -16,6 +16,6 @@ data/desktoptheme/FoundryLinux/colors  usr/share/plasma/desktoptheme/FoundryLinu
 data/xdg/kdeglobals  etc/xdg/
 data/xdg/ksplashrc  etc/xdg/
 data/xdg/kscreenlockerrc  etc/xdg/
-data/xdg/kicker-extra-favoritesrc  etc/xdg/
+data/xdg/kicker-extra-favoritesrc  usr/share/foundry-kde-theme/
 data/autostart/foundry-wallpaper.desktop  etc/xdg/autostart/
 data/bin/foundry-set-wallpaper.sh  usr/lib/foundry-kde-theme/

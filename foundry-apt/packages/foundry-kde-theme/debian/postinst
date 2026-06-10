@@ -1,11 +1,21 @@
 #!/bin/sh
 set -e
 
-# Avatar: the divert-and-replace pattern (cf. dash diverting /bin/sh). preinst
-# diverted Kubuntu's /etc/skel/.face gear; create the Foundry anvil here from
-# the shipped avatar. The .face.icon symlink (kubuntu's, -> .face) resolves to it.
-if [ "$1" = "configure" ] && [ -f /usr/share/foundry-linux/avatar.png ]; then
-    cp /usr/share/foundry-linux/avatar.png /etc/skel/.face
+if [ "$1" = "configure" ]; then
+    # Avatar: divert-and-replace (kubuntu's gear diverted in preinst). Created
+    # here from the shipped avatar, not shipped as a package file (avoids the
+    # etc/skel lint and any conffile prompt). The kubuntu .face.icon symlink
+    # (-> .face) resolves to it.
+    if [ -f /usr/share/foundry-linux/avatar.png ]; then
+        cp /usr/share/foundry-linux/avatar.png /etc/skel/.face
+    fi
+    # App-menu Favorites: divert-and-replace (kubuntu's kicker diverted in
+    # preinst). Shipped under /usr/share (NOT /etc) so it is not a dpkg conffile
+    # -- shipping it as a conffile AND diverting it caused an upgrade conffile
+    # prompt that halted the non-interactive ISO build.
+    if [ -f /usr/share/foundry-kde-theme/kicker-extra-favoritesrc ]; then
+        cp /usr/share/foundry-kde-theme/kicker-extra-favoritesrc /etc/xdg/kicker-extra-favoritesrc
+    fi
 fi
 
 #DEBHELPER#

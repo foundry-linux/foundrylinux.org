@@ -46,7 +46,14 @@ if [[ ${#skipped[@]} -gt 0 ]]; then
 fi
 
 if [[ ${#installed[@]} -gt 0 ]]; then
-    apt-get install -y --allow-downgrades "${installed[@]}"
+    # These local debs UPGRADE the published versions, so any differing conffile
+    # would raise an interactive prompt and halt the non-interactive build.
+    # Force the package (new) version — these are all our own packages, so our
+    # shipped conffile is always the one we want.
+    apt-get install -y --allow-downgrades \
+        -o Dpkg::Options::=--force-confdef \
+        -o Dpkg::Options::=--force-confnew \
+        "${installed[@]}"
 fi
 
 rm -rf /tmp/local-debs
