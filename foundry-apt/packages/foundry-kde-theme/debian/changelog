@@ -13,8 +13,10 @@ foundry-kde-theme (1.0.4) resolute; urgency=medium
   * Ship the LAF panel layout (taskbar pins: settings, software, files,
     terminal, Blender, browser) + re-home the avatar (/etc/skel/.face = the
     anvil) via dpkg-divert.
-  * Partial: the custom Plasma Style + deleting the redundant foundry-iso
-    theming hooks/includes are still pending.
+  * Ship a minimal Foundry Plasma Style (desktoptheme, forge palette inheriting
+    Breeze shapes), referenced by the LAF defaults.
+  * Partial: distinctive-shape Plasma Style SVGs + deleting the redundant
+    foundry-iso theming hooks/includes are still pending.
 
  -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 17:30:00 +0700
 

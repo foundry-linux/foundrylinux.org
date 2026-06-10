@@ -1,0 +1,15 @@
+{
+    "KPackageStructure": "Plasma/Theme",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Foundry Linux"
+            }
+        ],
+        "Description": "Foundry Linux Plasma theme — forge palette (near-black panel, ember-orange accents). v1 inherits Breeze widget shapes and recolours via the Foundry color scheme.",
+        "Id": "FoundryLinux",
+        "Name": "Foundry Linux",
+        "Version": "1.0.0",
+        "Website": "https://foundrylinux.org"
+    }
+}
