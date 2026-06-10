@@ -1,3 +1,13 @@
+calamares-settings-foundry-linux (1.0.29) resolute; urgency=medium
+
+  * Add modules/users.conf with setRootPassword: false so Calamares leaves the
+    root account alone — preserving the squashfs root:foundry (live-ssh debug
+    hook) into the installed system, restoring `ssh root@target` debug access.
+    Also sets defaultGroups (silences the "fallback groups" build warning).
+    DEBUG ONLY — gate with the live-ssh hook before public release.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 13:10:00 +0700
+
 calamares-settings-foundry-linux (1.0.28) resolute; urgency=medium
 
   * Welcome banner: swap in the native-rendered 1600x400 export (69 KB) — no
