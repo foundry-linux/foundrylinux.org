@@ -1,0 +1,126 @@
+These are the files on this disk:                       June 18, 2000
+
+TUME2667.ZIP    tUME version v00.2667 executables. PKUNZIP into \TUME
+DEMOMAPS.ZIP    Example maps for tUME. PKUNZIP into \TUME\EXAMPLES
+README.TXT      Quick guided tour of tUME features
+DUMPTUME.ZIP    Source for DUMPTUME. use -d with PKUNZIP into \DUMPTUME
+TPBIN.ZIP       Source for TPBIN. use -d with PKUNZIP into \TPBIN
+TPMCKID2.ZIP    Source for TPMCKID2. use -d with PKUNZIP into \TPMCKID2
+TUMETOOL.ZIP    Various support tools for tUME
+PACKLIST.TXT    This text file
+
+To build DUMPTUME.EXE, TPBIN.EXE and TPMCKID2.EXE, you need Borland C++ 3.1.
+
+To build DUMPTUME.EXE, type:
+
+     md \DUMPTUME
+     PKUNZIP -d DUMPTUME.ZIP \DUMPTUME
+     make
+
+To build TPBIN.EXE, you must unzip DUMPTUME first, then TPBIN:
+
+     md \TPBIN
+     PKUNZIP -d DUMPTUME.ZIP \TPBIN
+     PKUNZIP -d TPBIN.ZIP \TPBIN
+     make
+
+To build TPMCKID2.EXE, you must unzip DUMPTUME first, then TPMCKID2:
+
+     md \TPMCKID2
+     PKUNZIP -d DUMPTUME.ZIP \TPMCKID2
+     PKUNZIP -d TPMCKID2.ZIP \TPMCKID2
+     make
+
+TUME2667.ZIP:
+     TUME     EXE
+     TUME     INI
+     TUME     FPF
+     TUME     ICO
+     TUME     PIF
+
+DEMOMAPS.ZIP:
+     SIMPLE   LBM
+     GOODBACK LBM
+     BADBACK  LBM
+     BOXED    LBM
+     16X16    LBM
+     8X8      LBM
+     COLLIDE  LBM
+     OBJECTS  LBM
+     BRUSHES  LBM
+     3LAYER   MAP
+     CONVERT  MAP
+     COMPOSIT MAP
+     GRASS    LBM
+     MOUNTAIN LBM
+     GLOBALS  LBM
+     MEAD_1   MAP
+     DEMO     SCR
+     DEMOTUME BAT
+
+DUMPTUME.ZIP:
+     DUMPTUME C  
+     SWITCHES H  
+     DUMPTUME DOC
+     DUMPTUME MAK
+     DUMPTUME LBS
+     DOIT.BAT
+     DUMPTUME LNK
+     echidna/BEIFFH   LIB
+     echidna/MISCH    LIB
+     echidna/LDSH     LIB
+     echidna/MEMH     LIB
+     echidna/PLATFORM H  
+     echidna/BTUME    H  
+     echidna/LISTFUNC H  
+     echidna/READIFF  H  
+     echidna/BILBM    H  
+     echidna/XTRAMEM  H  
+     echidna/EMS      H  
+     echidna/XMS      H  
+     echidna/MEMORY   H  
+     echidna/EIO      H  
+     echidna/ARGPARSE H  
+     echidna/EERRORS  H  
+     echidna/BBYTEMAP H  
+     exec/TYPES    H  
+     graphics/GFX      H  
+
+TPBIN.ZIP
+     MTABLE   C  
+     PRNTERR  C  
+     VERSION  C  
+     TPBIN    C  
+     PRNTERR  H  
+     SWITCHES H  
+     README      
+     LINKFILE LNK
+     LIBS     LNK
+     MAKEFILE MAK
+     TPBIN    DOC
+     echidna/DATAFILE H
+     echidna/VERSION  H
+     echidna/STRINGS  H
+
+TPMCKID2.ZIP:
+     MTABLE   C  
+     PRNTERR  C  
+     VERSION  C  
+     TPMCKID2 C  
+     PRNTERR  H  
+     SWITCHES H  
+     README      
+     MAKEFILE MAK
+     LINKFILE LNK
+     LIBS     LNK
+     TPMCKID2 DOC
+     echidna/DATAFILE H
+     echidna/VERSION  H
+
+TUMETOOL.ZIP:
+     CUTTILES EXE
+     DUMPTUME EXE
+     MAKEROOM EXE
+     MAP2PIC  EXE
+     TPBIN    EXE
+     TPMCKID2 EXE

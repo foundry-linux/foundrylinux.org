@@ -1,0 +1,15 @@
+The keyboard is misbehaving!
+
+Sometimes tUME goes into color setting mode by itself (as if you pressed
+the numeric keypad), or acts as if the shift key is stuck down. If you
+are observing these symptoms, try the following solutions:
+
+1. Quick fix: If you are still in tUME, and the keys stop responding
+(e.g., pressing b has no effect), press the left shift key, the right
+shift key, the . (period) key on the numeric keypad, and turn off Num Lock.
+
+2. Permanent fix: To configure your machine to make the problem go away,
+install QEMM (instead of EMM386), and use the following QEMM options:
+/IA (Ignore A20) and /U8 (Unusual 8042).
+
+3. Use XMS instead of EMS.

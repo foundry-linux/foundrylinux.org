@@ -1,0 +1,32 @@
+How to build tUME                                          June 18, 2000 
+----------------- 
+One-time system configuration steps 
+----------------------------------- 
+1. Install Echidna Game Generation System libraries. (e.g., C:\EGGS) 
+   NB: tUME has NOT yet been updated to work with the most recent 
+   version of EGGS. To build tUME, you must use the version of EGGS 
+   included in the tUME source code distribution. The current version 
+   of EGGS may be found at http://www.greggman.com/ 
+
+2. tUME requires Borland C Compiler 3.1 and Borland Turbo Assembler 3.1. 
+   Make sure your PATH includes the directories that contain BCC & TASM. 
+
+3. Tell Borland C Compiler about the EGGS header files include directory. 
+   One way is to do this is to add a TURBOC.CFG file to your \BC\BIN 
+   directory. An example TURBOC.CFG contains these three lines: 
+
+-ID:\BC\INCLUDE
+-ID:\BC\CLASSLIB\INCLUDE
+-ID:\EGGS\INCLUDE
+
+4. Update TUMEVARS.BAT so CLIB refers to the Borland C libraries 
+   directory (e.g., set CLIB=C:\BC\LIB), and ELIB refers to the EGGS 
+   library directory (e.g., set ELIB=C:\EGGS\LIB). 
+
+5. Unzip tUMESRC.ZIP into a directory. E.g., C:\SRC\TUME. 
+
+Building tUME
+-------------
+1. Build the EGGS libraries. 
+2. CD C:\SRC\TUME. 
+3. Type BUILD to execute the BUILD.BAT batch file. 

@@ -1,0 +1,15 @@
+*.bbm
+*.err
+*.exe
+*.lbm
+*.obf
+*.obj
+*.obs
+*.ovf
+*.ovj
+*.ovs
+*.lnk
+*.map
+*.tum
+*.tmp
+state.rst

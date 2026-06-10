@@ -1,0 +1,144 @@
+/* 
+ * The contents of this file are subject to the Mozilla Public 
+ * License Version 1.1 (the "License"); you may not use this file 
+ * except in compliance with the License. You may obtain a copy of 
+ * the License at http://www.mozilla.org/MPL/ 
+ * 
+ * Software distributed under the License is distributed on an "AS 
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * rights and limitations under the License. 
+ * 
+ * The Original Code is tUME: the Universal Map Editor, released 
+ * June 18, 2000. 
+ * 
+ * The Initial Developer of the Original Code is Echidna. 
+ * Portions created by Echidna are Copyright (c) 1989-2000 Echidna. 
+ * All Rights Reserved. 
+ * 
+ * Contributor(s): 
+ */
+
+/*
+ * SYSBPI.bps
+ *
+ *	     |///-_
+ *	     oo///_
+ *	-----w/-w------
+ *	 E C H I D N A
+ *	---------------
+ *
+ *	Written by FontScan
+ *
+ *	Fri Feb 21 13:11:35 1992
+ *
+ */
+
+#ifndef SYSBPI_BPS
+#define SYSBPI_BPS
+
+#include <echidna/bpconst.h>
+
+SYSTEM_SYSBPI {
+	type (PREMADE_TYPE)
+	indir (EUI_SYSTEM_DIR)
+	"CHAR-032.spr"
+	"CHAR-033.spr"
+	"CHAR-034.spr"
+	"CHAR-035.spr"
+	"CHAR-036.spr"
+	"CHAR-037.spr"
+	"CHAR-038.spr"
+	"CHAR-039.spr"
+	"CHAR-040.spr"
+	"CHAR-041.spr"
+	"CHAR-042.spr"
+	"CHAR-043.spr"
+	"CHAR-044.spr"
+	"CHAR-045.spr"
+	"CHAR-046.spr"
+	"CHAR-047.spr"
+	"CHAR-0.spr"
+	"CHAR-1.spr"
+	"CHAR-2.spr"
+	"CHAR-3.spr"
+	"CHAR-4.spr"
+	"CHAR-5.spr"
+	"CHAR-6.spr"
+	"CHAR-7.spr"
+	"CHAR-8.spr"
+	"CHAR-9.spr"
+	"CHAR-058.spr"
+	"CHAR-059.spr"
+	"CHAR-060.spr"
+	"CHAR-061.spr"
+	"CHAR-062.spr"
+	"CHAR-063.spr"
+	"CHAR-064.spr"
+	"CHAR-A.spr"
+	"CHAR-B.spr"
+	"CHAR-C.spr"
+	"CHAR-D.spr"
+	"CHAR-E.spr"
+	"CHAR-F.spr"
+	"CHAR-G.spr"
+	"CHAR-H.spr"
+	"CHAR-I.spr"
+	"CHAR-J.spr"
+	"CHAR-K.spr"
+	"CHAR-L.spr"
+	"CHAR-M.spr"
+	"CHAR-N.spr"
+	"CHAR-O.spr"
+	"CHAR-P.spr"
+	"CHAR-Q.spr"
+	"CHAR-R.spr"
+	"CHAR-S.spr"
+	"CHAR-T.spr"
+	"CHAR-U.spr"
+	"CHAR-V.spr"
+	"CHAR-W.spr"
+	"CHAR-X.spr"
+	"CHAR-Y.spr"
+	"CHAR-Z.spr"
+	"CHAR-091.spr"
+	"CHAR-092.spr"
+	"CHAR-093.spr"
+	"CHAR-094.spr"
+	"CHAR-095.spr"
+	"CHAR-096.spr"
+	"CHAR-097.spr"
+	"CHAR-098.spr"
+	"CHAR-099.spr"
+	"CHAR-100.spr"
+	"CHAR-101.spr"
+	"CHAR-102.spr"
+	"CHAR-103.spr"
+	"CHAR-104.spr"
+	"CHAR-105.spr"
+	"CHAR-106.spr"
+	"CHAR-107.spr"
+	"CHAR-108.spr"
+	"CHAR-109.spr"
+	"CHAR-110.spr"
+	"CHAR-111.spr"
+	"CHAR-112.spr"
+	"CHAR-113.spr"
+	"CHAR-114.spr"
+	"CHAR-115.spr"
+	"CHAR-116.spr"
+	"CHAR-117.spr"
+	"CHAR-118.spr"
+	"CHAR-119.spr"
+	"CHAR-120.spr"
+	"CHAR-121.spr"
+	"CHAR-122.spr"
+	"CHAR-123.spr"
+	"CHAR-124.spr"
+	"CHAR-125.spr"
+	"CHAR-126.spr"
+	"CHAR-127.spr"
+}
+
+#endif /* SYSBPI_BPS */
+

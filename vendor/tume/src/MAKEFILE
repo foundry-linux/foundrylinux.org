@@ -1,0 +1,317 @@
+# 
+# The contents of this file are subject to the Mozilla Public 
+# License Version 1.1 (the "License"); you may not use this file 
+# except in compliance with the License. You may obtain a copy of 
+# the License at http://www.mozilla.org/MPL/ 
+# 
+# Software distributed under the License is distributed on an "AS 
+# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
+# implied. See the License for the specific language governing 
+# rights and limitations under the License. 
+# 
+# The Original Code is tUME: the Universal Map Editor, released 
+# June 18, 2000. 
+# 
+# The Initial Developer of the Original Code is Echidna. 
+# Portions created by Echidna are Copyright (c) 1989-2000 Echidna. 
+# All Rights Reserved. 
+# 
+# Contributor(s): 
+# 
+
+#
+# Name of program.
+#
+PROGRAM   = tUME
+
+#
+# Program Modules.
+#
+PDEP =	\
+	$(PROGRAM).obs		\
+	assert.obj		\
+	div0trap.obj		\
+	nullptr.obj		\
+	showcpu.obj		\
+	colorseq.obs		\
+	events.obs		\
+	grabpal.obj		\
+	ibmmouse.obs		\
+	keyboard.obs		\
+	layer.obf		\
+	mcopyrec.obj		\
+	misc.obs		\
+	mitems.obj		\
+	msdos.obs		\
+	msup.obs		\
+	mwrtcrng.obj		\
+	parallel.obj		\
+	recorder.obs		\
+	roomio.obs		\
+	roomwin.obs		\
+	rtsup.obs		\
+	sparse.obf		\
+	stackchk.obs		\
+	tilebits.obs		\
+	tiosup.obs		\
+	tsetio.obs		\
+	tumedraw.obf		\
+	zpane.obs		\
+	zerrors.obs		\
+	stubs.obs		\
+
+OVDEP = \
+	menuitem.ovs		\
+	ioini.ovs		\
+	colorrei.ovs		\
+	colorreq.ovs		\
+	count.ovs		\
+	download.ovs		\
+	getname.ovs		\
+	histogrm.ovs		\
+	hilitile.ovs		\
+	layrtile.ovs		\
+	layrtili.ovs		\
+	maketile.ovs		\
+	menuitm2.ovs		\
+	message.ovs		\
+	objlist.ovs		\
+	objroom.ovs		\
+	paraglue.ovs		\
+	parseini.ovs		\
+	printmap.ovf		\
+	readtume.ovj		\
+	rmlst.ovs		\
+	rm_tsinf.ovs		\
+	rmtsglue.ovs		\
+	rsreq.ovs		\
+	sdqio.ovf		\
+	search.ovs		\
+	selprint.ovs		\
+	tumei.ovs		\
+	typelist.ovs		\
+	writetum.ovj		\
+	xportmap.ovs		\
+	znumbers.ovs		\
+	eui.ovs			\
+	$(ELIB)\echidna\beifflib\readilbm.ovj	\
+	$(ELIB)\echidna\beifflib\readiff.ovj	\
+	$(ELIB)\echidna\beifflib\pcx.ovj	\
+	$(ELIB)\echidna\euilib\filereq.ovj	\
+	$(ELIB)\echidna\misclib\readini.ovj	\
+
+ODEP =	\
+	version.obj
+
+
+#
+# Memory Model
+#   s = Small
+#   m = Medium
+#   c = Compact
+#   l = Large
+#   h = Huge
+MDL		= h
+STARTUP	= c0$(MDL).obj
+
+
+ELDEP = \
+	echidna\beiff$(MDL).lib	\
+	echidna\eui$(MDL).lib	\
+	echidna\xpak$(MDL).lib	\
+	echidna\grafx$(MDL).lib	\
+	echidna\misc$(MDL).lib	\
+	echidna\mem$(MDL).lib	\
+	echidna\lds$(MDL).lib	\
+	echidna\timer$(MDL).lib	\
+
+LDEP =	\
+	overlay.lib		\
+	c$(MDL).lib		\
+
+#
+# 'C' compiler and global compiler flags.
+#
+CFLAGS    = $(CMN_CFLAGS) -wpia -m$(MDL) -g1
+CCOMPILER = $(CMN_CC)
+
+#
+# Assembler and global assembler flags.
+#
+ASSEMBLER = $(CMN_ASM)
+AFLAGS    = /mx /zi
+
+
+#
+# Linker and global linker flags + libraries to like with.
+#
+LINKER    = $(CMN_LINK)
+LFLAGS    = /c /x /v /m /o
+LIBFILE   = libs.lnk
+LINKFILE  = linkfile.lnk
+
+#
+# Rule for Assembly modules.
+#
+.asm.obj:
+	$(ASSEMBLER) $(AFLAGS) $*.asm
+
+#
+# Rule for 'C' modules, compile for smallest size.
+#
+!if $(BUILD)==DEBUG
+.c.obs:
+	$(CCOMPILER) $(CFLAGS) $(CMN_CSIZE) -wpia -Y -S $*.c
+	ren $*.asm $*.foo
+	nulltrap $*.foo $*.csm
+	del $*.foo
+	$(ASSEMBLER) /ml /o /m5 $*.csm,$*.obs
+	del $*.csm
+!else
+.c.obs:
+	$(CCOMPILER) $(CFLAGS) $(CMN_CSIZE) -Y -o$*.obs $*.c
+!endif
+
+#
+# Rule for 'C' modules, compile for smallest size.
+#
+!if $(BUILD)==DEBUG
+.c.obj:
+	$(CCOMPILER) $(CFLAGS) -wpia -Y -S $*.c
+	ren $*.asm $*.foo
+	nulltrap $*.foo $*.csm
+	del $*.foo
+	$(ASSEMBLER) /ml /o /m5 $*.csm,$*.obj
+	del $*.csm
+!else
+.c.obj:
+	$(CCOMPILER) $(CFLAGS) -Y $*.c
+!endif
+
+#
+# Rule for 'C' modules, compile for speed.
+#
+!if $(BUILD)==DEBUG
+.c.obf:
+	$(CCOMPILER) $(CFLAGS) $(CMN_CSPEED) -wpia -Y -S $*.c
+	ren $*.asm $*.foo
+	nulltrap $*.foo $*.csm
+	del $*.foo
+	$(ASSEMBLER) /ml /o /m5 $*.csm,$*.obf
+	del $*.csm
+!else
+.c.obf:
+	$(CCOMPILER) $(CFLAGS) $(CMN_CSPEED) -Y -o$*.obf $*.c
+!endif
+
+#
+# Rule for 'C' overlaid modules, compile for smallest size.
+#
+!if $(BUILD)==DEBUG
+.c.ovs:
+	$(CCOMPILER) $(CFLAGS) $(CMN_CSIZE) -wpia -Yo -S $*.c
+	ren $*.asm $*.foo
+	nulltrap $*.foo $*.csm
+	del $*.foo
+	$(ASSEMBLER) /ml /o /m5 $*.csm,$*.ovs
+	del $*.csm
+!else
+.c.ovs:
+	$(CCOMPILER) $(CFLAGS) $(CMN_CSIZE) -Yo -o$*.ovs $*.c
+!endif
+
+#
+# Rule for 'C' overlaid modules, compile for smallest size.
+#
+!if $(BUILD)==DEBUG
+.c.ovj:
+	$(CCOMPILER) $(CFLAGS) -wpia -Yo -S $*.c
+	ren $*.asm $*.foo
+	nulltrap $*.foo $*.csm
+	del $*.foo
+	$(ASSEMBLER) /ml /o /m5 $*.csm,$*.ovj
+	del $*.csm
+!else
+.c.ovj:
+	$(CCOMPILER) $(CFLAGS) -Yo -o$*.ovj $*.c
+!endif
+
+#
+# Rule for 'C' overlaid modules, compile for speed.
+#
+!if $(BUILD)==DEBUG
+.c.ovf:
+	$(CCOMPILER) $(CFLAGS) $(CMN_CSPEED) -wpia -Yo -S $*.c
+	ren $*.asm $*.foo
+	nulltrap $*.foo $*.csm
+	del $*.foo
+	$(ASSEMBLER) /ml /o /m5 $*.csm,$*.ovf
+	del $*.csm
+!else
+.c.ovf:
+	$(CCOMPILER) $(CFLAGS) $(CMN_CSPEED) -Yo -o$*.ovf $*.c
+!endif
+
+#
+# Dependency for program.
+#
+$(PROGRAM).exe: $(PDEP) $(OVDEP)
+	bump version.c
+	$(CCOMPILER) $(CFLAGS) version.c
+	makescan OVERLAY MAKEFILE makefile
+	$(LINKER) $(LFLAGS) @$(LINKFILE), $(PROGRAM).EXE, , @$(LIBFILE)
+	dir $(PROGRAM).EXE
+
+#
+# extra dependencies
+#
+#TMENUS.c: TMENUS.m EVENTS.e
+
+EVENTS.h: EVENTS.e
+	evntcomp EVENTS.e EXTERN
+
+EVENTS.c: EVENTS.e
+	evntcomp EVENTS.e EXTERN
+
+
+#
+# explicit dependencies
+#
+menuitem.obs:	menuitem.c	switch1.h
+
+misc.obf:	misc.c		switch1.h	switch2.h
+misc.obj:	misc.c		switch1.h	switch2.h
+misc.obs:	misc.c		switch1.h	switch2.h
+
+msdos.obf:	msdos.c		switch1.h
+msdos.obj:	msdos.c		switch1.h
+msdos.obs:	msdos.c		switch1.h
+
+parallel.obj:	parallel.asm	switch2.inc
+
+download.ovs:	download.c	switch2.h
+
+nullptr.obj:	nullptr.asm	switch1.inc
+
+paraglue.ovs:	paraglue.c	switch2.h
+
+parseini.ovs:	parseini.c	switch1.h	switch2.h
+
+printmap.ovf:	printmap.c	switch1.h
+
+sdqio.ovf:	sdqio.c		switch1.h
+
+stackchk.obs:	stackchk.c	switch1.h
+
+tume.obs:	tume.c		switch1.h	events.h
+
+tumedraw.obf:	tumedraw.c	switch1.h
+
+tumei.ovs:	tumei.c		switch1.h
+
+# explicit dependency only for PixelLayers
+
+count.ovs:	count.c		switch1.h
+
+histogrm.ovs:	histogrm.c	switch1.h
+

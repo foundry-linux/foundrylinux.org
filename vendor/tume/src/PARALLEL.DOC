@@ -1,0 +1,60 @@
+Here are the steps to download a tUME map to a parallel-connected device:
+
+0. Executed once, when initializing tUME downloading code:
+
+A. Query the target device as to which device is attached:
+    i. Target reports $00 (Genesis): set ulDownloadInfoBlock = $00000200;
+   ii. Target reports $01 (SNES): set ulDownloadInfoBlock = $0000nnnn.
+
+B. Read nnnn bytes from address ulDownloadInfoBlock:
+
+UWORD	uwVersion		;version number
+
+UWORD	uwInfoBlockSize		;length of this download info block in bytes
+
+
+ULONG	ulTargetPaletteAddress	;address to download palette
+UWORD	uwPaletteMax		;number of palette entries (*2 = bytes)
+ULONG	ulTargetMapInfoAddress	;address to store map info block
+UWORD	ulTargetMapInfoLength	;length of map info block in bytes
+ULONG	ulTargetMapRowAddress	;address to store pointers to start of map rows
+UWORD	uwTargetMapRowMax	;maximum number of map row pointers (*3 = bytes)
+
+UWORD	uwCharacterSetAreas	;number of character set storage areas defined
+				;each must be <= 32K
+
+<uwCharacterSetAreas> occurrences of
+{
+ ULONG	ulTargetCharAddress<n>	;address to store character set <n>
+ UWORD	uwTargetCharLength<n>	;length of area <n>
+}
+
+UWORD	uwMapStorageAreas	;number of map storage areas defined
+				;each must be <= 32K
+
+<uwMapStorageAreas> occurrences of
+{
+ ULONG	
+}
+
+			SNASM Gen	Parallel Gen	SNSNES	Par SNES
+
+uwVersion		$    DC01	$    DC01	$  DC01	$  DC01
+
+uwInfoBlockSize		$    0026	$    0026	$  0026	$  0026
+
+ulTargetPaletteAddress	$00001000	$00FF0000	$008000	$
+uwPaletteMax		$    0100	$    0040	$  0100	$
+ulTargetMapInfoAddress	$00001200	$00FF0080	$008200	$
+uwTargetMapInfoLength	$    000E	$    000E	$  000E	$00000E
+ulTargetMapRowAddress	$00010000	$00FF00A0	$00A000	$
+uwTargetMapRowMax	$    2AAA	$    0C00	$  2000	$
+
+uwCharacterSetAreas	$    0002	$    0002	$  0002	$  0002
+
+ ulTargetCharAddress0	$00001300	$FF000000	$018000	$
+ uwTargetCharLength0	$    8000	$    8000	$  8000	$
+ ulTargetCharAddress1	$00009300	$FF008000	$028000	$
+ uwTargetCharLength1	$    4000	$    4000	$  6000	$
+
+uwMapStorageAreas	

@@ -1,0 +1,1105 @@
+tUME User's Guide Updates                                        06/18/00
+Confidential Information - Property of Echidna
+Copyright (c) 1989-2000 Echidna
+
+This file describes the enhancements, changes and bug fixes made to
+tUME v00.2667. It also includes excerpts from the updated
+_tUME User's Guide_ to explain the enhancements.
+
+tUME v00.2667, 06/18/00 *******************************************************
+
+.	Released under Mozilla Public License 1.1. 
+
+tUME v00.2664, 04/03/95 *******************************************************
+
+.	Fix program lock-up bug.
+.	Fix 'm' on empty layer crashes w/ div by 0.
+
+tUME v00.2663, 03/06/95 *******************************************************
+
+.	Fix appending maps not working.
+
+tUME v00.2662, 02/02/95 *******************************************************
+
+.	Fix running out of memory trying to load COLLIDE.LBM (broke v0.2658).
+
+tUME v00.2661, 01/03/95 *******************************************************
+
+.	Fix Tile|Load|Boxed crashing with divide by zero error (broke v0.2650).
+
+tUME v00.2660, 11/11/94 *******************************************************
+
+.	Fix 'n' key acting erratically in menu bar area.
+
+tUME v00.2659, 10/20/94 *******************************************************
+
+.	Fix Layer|Lock checkbox not always up-to-date.
+.	Use less memory to store UNDO information.
+
+tUME v00.2658, 10/19/94 *******************************************************
+
+.	Only merge tileset if UserType and UserNumber are the same.
+
+.	Fix stratify pasting into empty layer creating a crash.
+.	Fix file requester locking on empty directories.
+.	Fix Smart Flip crashing.
+
+tUME v00.2657, 09/19/94 *******************************************************
+
+
+tUME v00.2653, 08/09/94 *******************************************************
+
+.	Fix deleted tiles not removed from composite rooms properly.
+.	Fix making a composite tileset messing up selecting tiles.
+.	Fix Room|Save not saving locked composite rooms properly.
+.	Fix showing partial LBM on loading if room was clipped (broke v0.2624).
+.	Fix tile usage counts not updated if cut-select a brush.
+.	Fix selecting tiles grabbing too many if ISO tiles loaded.
+.	Fix selection rectangle disappearing at edge of rooms (broke v0.2624).
+
+tUME v00.2652, 07/19/94 *******************************************************
+
+.	Fix EditOnlyFloor display not working (broke v00.2624).
+.	Fix graphics junk left past edge of screen (broke v00.2624).
+
+tUME v00.2651, 07/18/94 *******************************************************
+
+.	Fix scrolling large distance messing up display (broke v00.2624).
+.	Fix unable to enter ".5" into print req (broke v00.2295).
+
+tUME v00.2650, 07/08/94 *******************************************************
+
+.	Add ability to print maps in portrait or landscape mode.
+.	Add -m command-line switch to specify maximum EMS / XMS memory usage.
+
+.	Make separate PsyQ and SNASM SCSI IDs in tUME.INI.
+
+.	Fix left edge of printout sometimes missing part of pixel.
+.	Fix version v00.2626's diagonal scrolling, hiding title bar.
+
+tUME v00.2631, 06/17/94 *******************************************************
+
+.	Add support for '.' and '..' to SearchDir's in tUME.INI.
+
+tUME v00.2630, 05/19/94 *******************************************************
+
+.	Fix video state not restored on exit on certain video cards.
+
+tUME v00.2629, 04/27/94 *******************************************************
+
+.	Fix not highlighting tiles that come from composite rooms.
+.	Fix resizing composite tiles that are used in composite rooms.
+.	Fix resizing composite tiles that are not 2x2 in size.
+
+tUME v00.2628, 04/05/94 *******************************************************
+
+.	Fix locked composite room initially appearing in unlocked panes.
+.	Fix garbage pixels appearing on-screen at startup.
+.	Fix menuitem name from View|Pane|Only Source to View|Pane|Only Locked.
+.	Fix menuitem name from View|Pane|Only Edit to View|Pane|Only Unlocked.
+	(Actual operation is unchanged; only the menu names were revised
+	 to be more descriptive).
+
+tUME v00.2627, 03/30/94 *******************************************************
+
+.	Fix not displaying tile usage properly for composite tiles.
+
+tUME v00.2626, 03/02/94 *******************************************************
+
+.	Fix not update iso tiles on edge when scrolling around.
+.	Fix isometric guide lines erasing during brush stamp & during scroll.
+
+tUME v00.2625, 02/24/94 *******************************************************
+
+.	Add ability to divide shift layer amounts before displaying:
+
+          The [Shift Units] section has been added to tUME.INI, which
+          define what to divide the shift layer values with before displaying.
+
+.	Fix direction of [Shift]-[Up] & [Shift]-[Down] in tUME.INI.
+.	Fix [Shift]-[Up] & [Shift]-[Down] to move by two tiles in tUME.INI.
+
+tUME v00.2624, 02/21/94 *******************************************************
+
+.	Add ability shift (offset) a layer:
+
+          You may shift an unlocked layer by one or more tiles. By default,
+          tUME sets up these key definitions:
+
+          KEY             ACTION
+          ---             ------
+          [Shift]-[Up]    shift layer "north" one tile
+          [Shift]-[Down]  shift layer "south" one tile
+
+          A shifted layer will be marked by an "*" between the total number
+          of layers and the current layer on the status bar. To unshift an
+          unlocked layer, press lower-case [z]. To unshift all unlocked
+          layers in the current room, press [Shift]-[Z].
+
+          You may change how many tiles a layer is shifted for each key
+          press by modifying the [Shift Layer Events] in the tUME.INI file.
+
+          The layer shift information is not saved.
+
+.	Add ability to display on the status bar how far a layer has
+	been shifted. The "coordinates" change to angle brackets when
+	displaying the layer shift amounts.
+
+          By default this event is attached to [F4].
+
+.	Add support for pixel-level tile select:
+
+          Tile selection is now made on a pixel level. Any tiles pixel
+          that is touched by the selection rectangle will be included
+          in the tile-brush. This allows for more flexibility in selecting
+          isometric tiles.
+
+.	Add support for isometric tiles:
+
+          tUME now supports isometric tiles. When you load the tileset,
+          set the tileset user type to 13 (Isometric Tiles), the tile width
+          to 32, and the tile height to 16. The isometric tiles should be
+          drawn as a 32x16 pixel diamond shape tile. Isometric tiles are
+          pasted into an 8x8 pixel tile grid, with the additional restriction
+          that they are pasted into an isometric grid.
+
+tUME v00.2623, 02/04/94 *******************************************************
+
+.	Add allowing [Shift] key to highlight letters in dialog boxes.
+
+.	Change palette download address for SNASM & PsyQ SNES & Genesis:
+
+	New SNES palette address: $000202, length $100.
+	New Genesis palette address: $FFFF80, length $80.
+
+	In addition, a word which contains the palette size is downloaded
+	each time the palette is downloaded. You may examine this word
+	to determine when a new palette has arrived (if you set it to 0
+	after you have processed the new palette):
+
+	For SNES, the value 256 is stored at address $000200.
+	For Genesis, the value 128 is stored at address $FFFF7E.
+
+.	Fix deleting highlighted letters in file requester deleting too much.
+
+tUME v00.2622, 01/28/94 *******************************************************
+
+.	Fix Layer|Insert sometimes crashing.
+.	Fix loading layers with extra tilesets crashing.
+
+tUME v00.2621, 12/15/93 *******************************************************
+
+.	Fix smart flip info for layer 8 in tUME.INI file.
+.	Fix crashing if grid on and select tiles beyond edge of room.
+
+tUME v00.2619, 12/13/93 *******************************************************
+
+.	Fix not able to load/append a layer that contains composited tiles.
+.	Fix erratic operation if room's floor layer is empty.
+
+tUME v00.2618, 11/18/93 *******************************************************
+
+.	Fix fit to page not working for 320x31 tile room on 34"x200" page.
+.	Fix Room|Copy Color|All running slow (test code)(broke v00.2616).
+
+tUME v00.2617, 11/11/93 *******************************************************
+
+.	Make print requester default to sizing map by pages down.
+
+.	Fix page heights taller than 220.68" high.
+
+tUME v00.2616, 11/05/93 *******************************************************
+
+.	Implement Room|Copy Color|Color Cycles.
+
+.	Fix not generating E-size plot properly on HP-650C plotter.
+.	Fix Room|Copy Color|Palette not working properly.
+.	Fix UNDO breaking if you widen the current room.
+
+tUME v00.2615, 10/26/93 *******************************************************
+
+.	Change HP-650C UseLightShades to apply gamma correction of 0.45.
+
+.	Fix so page width is never wider than 32.27" on HP-650C plotter.
+.	Fix composite tiles drawn w/ gaps @ 27:64 zoom (broke v0.2078).
+
+tUME v00.2614, 10/12/93 *******************************************************
+
+.	Fix accessing floppy drive w/out disk crashing program (broke v0.2624).
+
+tUME v00.2613, 10/03/93 *******************************************************
+
+.	Make restore video mode on exit work better.
+
+tUME v00.2612, 10/01/93 *******************************************************
+
+.	Make light shades lighter yet on HP-650C plotter.
+
+tUME v00.2611, 09/28/93 *******************************************************
+
+.	Add reconfigurable diagonal guides (mapped to Ctrl-O).
+
+.	Fix not being able to map events to F11 and F12 keys.
+
+tUME v00.2609, 09/23/93 *******************************************************
+
+.	HP 650C: fix printing maps wider than 31".
+
+tUME v00.2608, 09/07/93 *******************************************************
+
+.	HP 650C: map white to color 0 to prevent printing bands of colors.
+
+tUME v00.2607, 08/30/93 *******************************************************
+
+.	Add Project|Choose Printer menu option:
+
+	From this menu option you may specify the printer as well as the
+	page size.
+
+.	Add support for HP DesignJet 650C printer.
+
+tUME v00.2606, 08/25/93 *******************************************************
+
+.	Add SearchAsSpecified switch to [Load Options].
+	If you set SearchAsSpecified=0 and SearchCurrentDir=1, then tUME
+	will search first for tilesets in the same sub-directory as the map.
+
+.	Enhance loading tileset status message to show full path.
+
+tUME v00.2605, 08/18/93 *******************************************************
+
+.	Enhance print requester to specify to nearest 0.01" (was 0.02").
+
+.	Fix export room saving only 1st tile column (broke v00.2600).
+.	Fix unable to enter numbers like "1.08" into print req (broke v00.2295).
+.	Fix so you can incr. numbers like "1.08" in print req (broke v00.2295).
+.	Fix print requester arrows so they increment better (broke v00.2295).
+
+tUME v00.2604, 08/12/93 *******************************************************
+
+.	Fix not searching path for tUME.INI (broke v00.2600).
+
+tUME v00.2603, 08/11/93 *******************************************************
+
+.	Add support to download to new Chip Level Designs development station.
+
+.	Fix cancelling Tiles|Export... reporting an error.
+.	Fix pointer being a wait shape in Tiles|Export... dialog box.
+.	Fix difficult to set print size in tile-separated rooms.
+.	Fix difficult to set print size using SPECIFY SIZE BY PAGES option.
+.	Fix downloading to SNASM Genesis (broke v00.2518).
+
+tUME v00.2602, 08/09/93 *******************************************************
+
+.	Fix able to add layers to composite rooms (broke v00.2521).
+
+tUME v00.2601, 08/06/93 *******************************************************
+
+.	Add ability to move to the topmost layer:
+
+          This function is assigned to the event "TopFloor".
+          By default this event is attached to [Alt]-[Shift]-[Up Arrow].
+
+.	Add ability to move to the bottommost layer:
+
+          This function is assigned to the event "BottomFloor".
+          By default this event is attached to [Alt]-[Shift]-[Down Arrow].
+
+.	Fix pressing [Spacebar] not interrupting COPY, SPREAD, BLEND,
+	and HSVSPREAD (broken in v00.2600).
+
+tUME v00.2600, 08/04/93 *******************************************************
+
+.	Add ability to insert a layer:
+
+          Inserting a Layer
+
+          To insert a layer at the current floor layer of the current
+          room, choose Layer|Insert. The previous floor layer and all
+          layers above the floor get pushed up.
+
+          This function is assigned to the event "InsertLayer".
+
+.	Add ability to save a layer:
+
+          Saving a Layer
+
+          To save a layer from the current room, move the floor to the
+          layer to be saved and choose Layer|Save...
+
+          This function is assigned to the event "SaveLayer".
+
+.	Add ability to load a layer:
+
+          Loading a Layer
+
+          To load a saved layer and insert it as the current floor layer
+          of the current room, choose Layer|Load... The previous floor
+          layers and all layers above the floor get pushed up.
+
+          This function is assigned to the event "LoadLayer".
+
+.	Add ability to append a layer:
+
+          Appending a Layer
+
+          To load a saved layer and append it as the topmost layer of the
+          current room, choose Layer|Append...
+
+          This function is assigned to the event "AppendLayer".
+
+.	Add ability to export the screen as an IFF picture:
+
+          You can export the current screen as an IFF picture by choosing
+          View|Export Screen...
+
+          This function is assigned to the event "ExportScreen".
+
+.	Add ability to export current room as an IFF picture:
+
+          To export the current room as an IFF picture choose
+          Room|Export.... The following settings affect how the exported
+          image will appear:
+
+          * the layers currently visible (choose Layer|Invisible to change);
+          * the current View|Zoom and View|Guide settings;
+          * the current View|EditOnlyFloor, View|Spaced Toggle, and
+            View|EditColorsOnly settings;
+          * the current View|Disable|Priority, View|Disable|Flip, and
+            View|Disable|Colorsets settings; and
+          * the current View|Background Color setting.
+
+          To export the floor layer in a form that can re-imported back
+          into tUME, use the following settings:
+
+          * disable Layer|Invisible (make the current floor visible);
+          * disable View|Zoom (display tiles at actual size) and disable
+            View|Guide (don't show guides);
+          * enable View|EditOnlyFloor (show only one layer) and disable
+            View|Spaced Toggle (don't separate tiles);
+          * choose View|Disable|Priority(don't show priority) & choose
+            View|Disable|Colorsets (don't show colorsets);
+          * set the Background Color to the same color as the transparent
+            color.
+
+          This function is assigned to the event "ExportRoom".
+
+.	Add ability to export current brush as an IFF picture:
+
+          You can export the current brush as an IFF picture by choosing
+          Brush|Export... Note that the zoom and tile-spacing setting of
+          the current room affects the exported image.
+
+          This function is assigned to the event "ExportBrush".
+
+.	Add ability to highlight tiles in source rooms:
+
+          Highlight Tile in Source Room
+
+          Sometimes, when you have many source tiles, it becomes difficult
+          to see where a particular tile is defined. Use Highlight Tile to
+          locate the tile within the source room where the tile is defined.
+
+          To highlight a tile in a source room, first select a tile-brush
+          that includes the tile you wish to highlight in the upper left
+          corner. Choose Tiles|Highlight Tile (or press [Alt]-h), and tUME
+          will change the view to show the source room and the highlighted
+          tile.
+
+          If there are more tiles in the tile-brush then subsequent presses
+          of [Alt]-h will cycle through the tiles in the tile-brush from
+          left to right, top to bottom, floor layer to ceiling (wrapping at
+          end).
+
+          This function is assigned to the event "HighlightTile" ('<Alt-H>').
+
+.	Add ability to smart flip to tileset for current layer:
+
+          Smart Flip makes the appropriate source tiles for the current
+          edit room floor layer visible when you press [Spacebar] in an
+          edit room pane. Choosing View|Toggle Smart Flip enables this
+          feature and redefines the behavior of View|Flip Panes, [Spacebar]
+          and j.
+
+          If you have more than one source room whose tiles can appear in
+          the same layer, Smart Flip will show the source room that you
+          most recently selected a tile-brush from.
+
+          The tileset chosen for a given layer are specified through the
+          tileset user types and are defined in the tUME.INI file; see the
+          Redefining Layer Types section of the tUME Configuration Guide.
+
+          Redefining Layer Types
+
+          Layer Types are currently only used by the Smart Flip feature.
+          Layer Types define which tileset user types are associated with
+          each layer. Thus, when you press [Spacebar] while Smart Flip is
+          enabled, tUME will find the last source room with the same
+          tileset user type for the floor layer.
+
+          In the tUME.INI file, there is a section called [Type Groups]
+          with three lines in it:
+
+               TileType=MCKids 2 Tileset Types
+               RoomTypes=MCKids 2 Room Types
+               LayerTypes=MCKids 2 Layer Types
+
+          Only LayerTypes are described here. The string following the
+          LayerType= defines the name of the section to look in for the
+          of layer types. You may have several layer type lists in the
+          tUME.INI file, and select one just by changing the label
+          following the TileType=. In tUME.INI, there is a section called
+          [MCKids 2 Layer Types] that looks like this:
+
+               [MCKids 2 Layer Types]
+               Layer 1=0,4,5,6,7,8
+               Layer 2=1
+               Layer 3=2
+               Layer 4=3
+               Layer 5=0,4,5,6,7,8
+               Layer 6=1
+               Layer 7=2
+               Layer 4=3
+
+          This section lists all the layers that are defined. The text to
+          the left of the '=' is the layer number being defined. The comma-
+          separated list following the '=' lists all tileset user types
+          that may be pasted into the layer on the left.
+
+          Thus when Smart Flip is enabled, and the floor is layer 2 of an
+          edit room, pressing [Spacebar] will display the source room that
+          contains the most recently selected tiles of user type 1 (defined
+          as Contour Tiles in the next section). Or if the floor is layer 1
+          of an edit room, will display the most recently selected tiles in
+          a source room containing tiles of user type 0, 4, 5, 6, 7, or 8.
+
+          This function is enabled with the event "ToggleSmartFlip".
+
+.	Add ability to display tile usage counts:
+
+          Chhoosing Tiles|Show Tile Usage will cause a grid of tile usage
+          numbers to appear over every floor tile in the room. The number
+          shows how many times the tile in the floor layer is used.
+
+          The numbers have different meanings, depending on whether the
+          room is an edit or a source room. In an edit room, the tile usage
+          number indicates how many times the floor tile appears in the
+          current edit room only. In a source room, the number indicates
+          how many times the floor tile appears in all edit rooms.
+
+          If the tile usage count is too large to be displayed in the
+          current tile, +'s will displayed instead of the tile usage count.
+          In this case, zoom in to make each tile larger and to show more
+          of the tile usage count.
+
+          You can limit the largest tile usage count displayed by choosing
+          Tiles|Set Usage Limit...
+
+.	Add ability to set largest tile usage count to display:
+
+          Choosing Tiles|Set Usage Limit... will bring up a dialog box that
+          will allow you to set the largest tile usage count that will be
+          displayed. Enter a new maximum tile usage count, press [Enter],
+          and tUME will display all tile usage counts that are less than or
+          equal to your limit value.
+
+          E.g., you want to see tiles that are "infrequently used". You
+          have arbitrarily decided that a tile is infrequently used if it
+          appears five times or less. Choose Tiles|Set Usage Limit...,
+          enter 5, and press [Enter]. tUME will now display tile usage
+          numbers only for the tiles that are used five times or less.
+
+.	Add ability to save and load palettes:
+
+          When the palette requester is active the menus change to allow
+          you to save and load palettes.
+
+          Colors|Load...
+
+          Choose this option to load a palette stored in an IFF file into
+          the currently active palette. This function is enabled with the
+          event "LoadPalette". You may not attach a key to this event.
+          This event only works when the palette requester is active.
+
+          Colors|Save...
+
+          Choose this option to save the currently active palette to an IFF
+          file. This function is enabled with the event "SavePalette".
+          You may not attach a key to this event. This event only works
+          when the palette requester is active.
+
+.	Add ability to save and load a palette range:
+
+          When the palette requester is active the menus change to allow
+          you to save and load palette ranges.
+
+          Range|Load...
+
+          Choose this option to load a saved color cycling range stored in
+          an IFF file into the currently selected palette range. This
+          function is enabled with the event "LoadPaletteRange". You may
+          not attach a key to this event. This event only works when the
+          palette requester is active.
+
+          After selecting the file to load, a dialog will be presented,
+          requesting you to specify the first color to copy. This defaults
+          to the first color of the first color cycle range in the palette.
+          Press [Enter] to accept this default value, or enter a new first
+          paletter number. The number of colors loaded will be the number
+          of colors selected in the palette.
+
+          Range|Save...
+
+          Choose this option to save the currently selected palette range
+          to an IFF file as a color cycling range. This function is enabled
+          with the event "SavePaletteRange". You may not attach a key to
+          this event. This event only works when the palette requester
+          is active.
+
+          The first color and number of colors saved in the color cycle
+          range is based on the currently selected palette range.
+
+.	Add keys for INSERT, DELETE, COPY, BLEND, SWAP in palette requester.
+
+.	Add ability to specify a initial map filename on the command line.
+
+.	Change menu so they are easier to navigate via a keyboard.
+
+.	Fix pressing [Spacebar] erasing selection range in palette requester.
+.	Fix so fatal error message are displayed in text mode.
+
+tUME v00.2525, 07/14/93 *******************************************************
+
+.	Change "Tiles|Save...|As TMG file" to "Tiles|Save...".
+.	Change "Tiles|Save...|As Brushes" to "Tiles|Export...".
+.	Change "EditOnlyFloor" event so it appears in Layer menu (was View).
+
+tUME v00.2524, 07/11/93 *******************************************************
+
+.	Change small font so '3' and '8' are more distinct.
+
+.	Fix not displaying long pathnames properly in dialog boxes.
+.	Fix not being able to enter a drive by highlight it and then
+	pressing [Enter] or [Spacebar] (broken 00.2521).
+.	Fix guide displayed off by 1 pixel when separated (broken v00.2522).
+.	Fix crashing if tiles deleted from source room with other tilesets.
+.	DLCPE will now search the PATH for the file to download.
+
+tUME v00.2523, 05/19/93 *******************************************************
+
+.	Change map loader so it only expects one FORM.
+
+tUME v00.2522, 05/18/93 *******************************************************
+
+.	Fix brush being displayed in wrong size after printing map.
+.	Fix not working correctly with XMS (broken v00.2516).
+
+tUME v00.2521, 05/13/93 *******************************************************
+
+.	Add configurable tile flag matching when counting brushes & searching:
+
+          Configuring Search and Replace
+
+          As supplied, when tUME is counting brushes, searching, or
+          replacing, it tries to match tiles exactly; i.e., it searches for
+          tiles with the same flipping, same priority, and same colorset.
+          The FlagBits= line in the group [Search Options] defines which
+          tile flag bits to match. Thus if the tile flag bit 4 is the
+          priority bit, then the following lines will ignore tile
+          priorities when searching:
+
+                    [Search Options]
+                    FlagBits=111x1111
+
+.	Fix not Y-flipping brush correctly when using XMS (broke 00.2516).
+.	Fix so colors 0 & 15 no longer set by [Alt]-P (was used by mouse).
+.	Fix not always using right pointer in palette requester.
+.	Fix so cursor key presses are not buffer (broke 00.2511).
+.	Fix not able to save using certain filenames (broke 00.2512).
+
+tUME v00.2520, 05/05/93 *******************************************************
+
+.	Fix [MCKids 2 Tileset Types] section in tUME.INI so that contour,
+	special & object defaults to no flip and no priority.
+
+tUME v00.2519, 04/29/93 *******************************************************
+
+.	Add ability to specify search directories for tilesets:
+
+          Configuring Tileset Search Path
+
+          By default, tUME loads tilesets using the directory and filename
+          specified in the tUME map file. This can be a problem if you move
+          tilesets to another sub-directory (perhaps on a different
+          machine). To adress this problem, tUME will use the following
+          search strategy in loading tilesets:
+
+          1. [DEFAULT]        Load tileset using the directory saved in the
+                              tUME map file. If not found, then
+          2. [USER-SPECIFIED] Search sub-directories specified by user, if
+                              any. If not found, then
+          3. [tUME.INI]       Search sub-directories specified by
+                              SearchDir's, if any. If not found, then
+          4. [tUME.INI]       Search current sub-directory, if
+                              SearchCurrentDir=1. If not found, then
+          5. [ASK USER]       Can't load 'tileset'! Would you like to try a
+                              different file?
+
+          Option 2 sub-directories are added by the user when they click
+          Yes in response to the question "Try to load other 'problem'
+          tilesets from here?"
+
+          Option 3 is useful when you copy maps from another machine and
+          you want to place all tilesets in a separate sub-directory from
+          the tUME map. E.g., if you want tUME to search the sub-directory
+          Z:\PROJECT\ART for tileset files, add the following lines to the
+          tUME.INI file:
+
+               [Load Options]
+               SearchDir=Z:\PROJECT\ART
+
+          If you want to search the sub-directory C:\GOOD\ART as well,
+          simply add another line:
+
+               SearchDir=C:\GOOD\ART
+
+          Option 4 is useful when you copy maps from another machine and
+          you want to place the tUME map and its tileset files in the same
+          sub-directory. To enable this option, add the following lines to
+          the tUME.INI file:
+
+               [Load Options]
+               SearchCurrentDir=1
+
+          Option 5 is useful if you want to rename a tileset. Change the
+          tileset name before you start tUME. When tUME tries to load the
+          renamed tileset, it won't find it, and then it will give you a
+          chance to specify the new filename.
+
+.	Fix file requesters to show network drives again (broke 00.2506).
+
+tUME v00.2518, 04/22/93 *******************************************************
+
+.	Add support to download to Western Technology SegaDev card.
+
+.	Fix parallel downloading crashing if not attached.
+.	Fix Genesis downloading wasting 32K per 32K of map.
+.	Fix SNES scroller sometimes not updating screen properly.
+
+tUME v00.2517, 04/06/93 *******************************************************
+
+.	Change Genesis downloading to support 40x28 instead of 32x28.
+
+tUME v00.2516, 04/06/93 *******************************************************
+
+.	Add improved status display when loading maps.
+
+.	Allow more layers by using less main memory per row.
+
+.	Fix not erasing Room|Set Info... dialog properly (broke 00.2515).
+
+tUME v00.2515, 04/01/93 *******************************************************
+
+WARNING! The tUME IFF output file has been extended by adding a CMNT chunk!
+
+.	Add room comments to Room|Set Info... dialog box.
+.	Add ability to save and load room comments. Comments are
+	written as a CMNT chunk that follows USER in the ROOM chunk:
+
+          CHUNK   'CMNT' (optional chunk)
+          ULONG   <size>
+
+            UWORD                  <Comment1 Length>
+            CHAR[Comment1 Length]  <Comment1> (from Room Info dialog box)
+            UWORD                  <Comment2 Length>
+            CHAR[Comment2 Length]  <Comment2> (from Room Info dialog box)
+
+.	Highlight nearest match on entry to file requester.
+.	Report "Can't find tileset 'T'." instead of Trouble Loading Tileset.
+
+.	Fix not returning to original drive on exit(broke 00.2512).
+
+tUME v00.2514, 03/25/93 *******************************************************
+
+.	Make about 32K more of main memory available than v00.2513.
+
+tUME v00.2513, 03/23/93 *******************************************************
+
+.	Add new keyboard support that works better with EMS.
+
+.	ZeroBackColor event assigned to [Ctrl]-\ (was [Ctrl]-').
+
+.	Fix pressing [Ctrl]-[Break] printing '^C' in file requester.
+
+tUME v00.2512, 03/23/93 *******************************************************
+
+.	Add keyboard shortcuts to enhance file requester:
+
+          File Requester Special Keys
+
+          [Spacebar]               complete filename using highlighted name
+          ..\                      move to parent directory
+          \ on empty line          move to root directory
+          \                        move into sub-directory
+          [Enter]                  enter sub-directory or choose file
+
+tUME v00.2510, 03/20/93 *******************************************************
+
+.	Make configuration stuff print error if out of mem.
+
+.	Fix edit hilite wrong w/ initial click (broke 00.2507).
+.	Fix Out of Memory errors reported as Can't Load Map.
+
+tUME v00.2509, 03/19/93 *******************************************************
+
+.	Add pressing [Ctrl]-[Home] moves to upper-left corner of room.
+.	Add pressing [Ctrl]-[End] moves to lower-right corner of room.
+
+.	Always deal with all 256 colors and save all 256 colors.
+.	Store tileset palettes in XTRA instead of main memory.
+
+.	Fix 'z' press crashing file requester (broke 00.2506).
+.	Fix not running if [Tile Mask Display Events] missing.
+.	Fix breaking if more zoom then cursor movements.
+.	Fix breaking if there are no zoom events defined.
+.	Fix not auto-scrolling @ bottom if no initial menu bar.
+.	Fix garbage left on screen if no initial menu bar.
+
+tUME v00.2508, 03/05/93 *******************************************************
+
+.	Fix not printing error if no mouse attached (broke 00.2007).
+
+tUME v00.2506, 02/18/93 *******************************************************
+
+.	Add pressing a letter moves highlighter in file requester.
+.	Add pressing [PgUp] & [PgDn] moves highlighter in file requester.
+.	Add [File Requester] section & ability to mix dirs & files:
+
+          Configuring the File Requester
+
+          You may configure the file requester to either display the
+          directories and files alphabetically intermixed or display all
+          the directories first, then all the files.
+
+          To configure the file requester to list all the directories
+          first, then all the files, set DirsAtTop= in the [File Requester]
+          section of the tUME.INI file to 1; to configure the file
+          requester to list the directories and files intermixed
+          alphabetically, set DirsAtTop= in the [File Requester] section of
+          the tUME.INI file to 0:
+
+               [File Requester]
+               DirsAtTop=0
+
+          Note that if you set DirsAtTop=0, the [Files] and [Dirs] buttons
+          do not appear in the file requester.
+
+tUME v00.2503, 02/04/93 *******************************************************
+
+.	Brushes shown with no transp if EditOnlyFloor.
+
+.	Fix downloaded colorset wrong if priority set.
+
+tUME v00.2502, 01/27/93 *******************************************************
+
+.	Add ability to not display priority, flipping & colorsets:
+
+          Displaying Priorities
+
+          By default, tUME shows the tile priority settings. You may
+          disable the display of priorities by choosing
+          View|Disable|Priority, and re-enable display of priorities by
+          choosing the same option again.
+
+          Displaying Flip
+
+          By default, tUME shows flipped tiles as they have been set. You
+          may disable the display of tile flipping by choosing
+          View|Disable|Flip, and re-enable display of flipped tiles by
+          choosing the same option again.
+
+          Displaying Colorsets
+
+          By default, tUME shows tile in the colorsets as they have been
+          set. You may disable the display of tile colorsets by choosing
+          View|Disable|Colorsets, and re-enable display of tile colorsets
+          by choosing the same option again.
+
+.	Add ability to reset priority with the right mouse button:
+
+          Colorsets
+
+          ...
+
+          To use the default 8 colorsets you need to draw your tiles in a
+          particular way. Each tile needs to use one set of 16 colors in
+          DPaint. Either the first set of 16 colors (0 - 15) or the second
+          set of 16 colors (16 - 31) or the third set of 16 colors (32 -
+          47) and on to the eighth set of 16 colors (112 - 128).
+
+          When you make your rooms in tUME using these tiles they will be
+          drawn in the color you used in DPaint. If you want to change them
+          to one of the other colorsets, first pick up a tile-brush, then
+          press 1, 2, 3 through 8 on the numeric keypad to choose colorsets
+          1 thru 8 (or 0 thru 7 for you programmer types). The word 'COLOR'
+          will appear attached to the cursor, and now when you stamp a
+          brush with the left mouse button, instead of actually placing
+          tiles in your room, you will be changing the colorsets of
+          ("coloring") the tiles you stamp over. To change the tiles back
+          to their original colors, stamp with the right mouse button.
+
+          Press . (period) on the keypad to exit the colorset coloring mode
+          and return to the regular tUME drawing mode (where you place
+          tiles instead of just changing their colors).
+
+          Priorities
+
+          Priorities are something that is really only used on the
+          SNES/GENESIS systems, though you may find other uses for it. On
+          those systems individual tiles may be marked as having a higher
+          priority so that the system's sprites will appear to go behind
+          those tiles. Editing or setting the priorities of tiles works
+          exactly like the colorsets.
+
+          Grab a tile-brush and then press + on the numeric keypad. The
+          word 'COLOR' will appear attached to the cursor, and now when you
+
+          stamp with the left mouse button, you will set the priority bit
+          of all the tiles you stamp on to 1. If you stamp with the right
+          mouse button, you will reset the priority bit of the tiles you
+          stamp on back to 0.
+
+          Tiles that have there priority set to 1 will be draw in colors
+          128 through 255. For example if your tile uses colors 16..31 and
+          you set its priority to 1 then it will now be drawn in colors
+          144..159 (16+128..31+128). It is up to you to set these colors to
+          something you will recognize. You may want to set them to that
+          same colors as the originals except with a lighter or darker
+          shade, or you may want to set them all to shades of red or shades
+          of grey. Choose anything that will make it clear which tiles have
+          their priority set to 1.
+
+          Press . (period) on the keypad to exit priority setting mode and
+          return to the regular tUME drawing mode (where you place tiles
+          instead of just changing their priorities).
+
+.	Add msg "Search Buffer defined." when user presses Ctrl-S.
+.	Add ability to press ESC to escape from Replacing ALL.
+.	Add ESC to leave Replace dialog, Enter to replace one.
+
+.	Make zoom in/out start from 1:1 (vs. previous) if zoom off.
+.	Create EditOnlyFloor event, replaces ShowOnlyFloor event.
+
+tUME v00.2501, 01/22/93 *******************************************************
+
+.	Always show flipped tiles, even if tileset is unflipped.
+.	Make brush pick-up unflipped brush if tileset is unflipped.
+
+tUME v00.2500, 01/20/93 *******************************************************
+
+.	Add ability to display rooms using edit palettes only:
+
+          Tileset Display Colors
+
+          A tileset is normally displayed using the palette found in its
+          DPaint picture. However, there is an option to display the source
+          tiles using the current edit room's palette. Choose
+          View|EditColorsOnly or press [Alt]-E, and the source room will be
+          displayed using the last edit room's palette. This feature is
+          useful when you have a tileset that is designed to use different
+          palettes to change its appearance.
+
+          E.g., lets say you have a marble tileset that's designed to
+          appear as green marble in the OFFICE edit room, and as grey
+          marble in the HALL edit room. Switch to the OFFICE edit room, and
+          choose View|EditColorsOnly. Now when you switch to the marble
+          tileset, the tiles will appear green. Switch to the HALL edit
+          room, and then when you switch to the marble tileset, the tiles
+          will appear grey. Choose View|EditColorsOnly again, and the
+          marble tileset will be displayed using its DPaint palette.
+
+          Note that if you select this option while in a source room, it
+          will not take effect until you switch to an edit room.
+
+.	Add ability to search, search and replace:
+
+          Search and Replace
+
+          tUME allows you search for a particular tile-brush, and to
+          replace what you've found with another tile-brush.
+
+          The Search Buffer
+
+          tUME will search for whatever is in the Search Buffer. You place
+          a tile-brush in the Search Buffer by pressing [Ctrl]-S. Pressing
+          s will search across, then down, starting at the current pointer
+          location, for the next occurrence of the Search Buffer.
+
+          Searching
+
+          To find a particular group of tiles, follow these steps:
+
+          1. Select the tiles to search for: press v or b, then select the
+          tiles you want to search for.
+
+          2. Place the tiles to search for in the Search Buffer by pressing
+          [Ctrl]-S or choosing Brush|Search|Set Buffer.
+
+          3. Switch to the room you wish to search, then position the
+          pointer to where you want to start searching from. Note that if
+          you position the pointer directly over a match, search will find
+          the next match.
+
+          4. Press s or choose Brush|Search|Search to find the first match.
+          tUME will search across, then down starting from the current
+          pointer location. The room will be re-positioned, and the pointer
+          will be placed over the match, which will be surrounded by an
+          outline.
+
+          5. Press s again to find the next match. Once a match has been
+          found, subsequent searches will continue from the previous match
+          (the search outline).
+
+          When searching, tUME matches tiles starting from the current
+          floor and up. Invisible layers match everything. E.g., you place
+          a three layer brush in the Search Buffer. In the edit room, you
+          place the floor on the first layer, and you make the second layer
+          invisible. tUME will match the first layer of the Search Buffer
+          with the first layer of the edit room, and the third layer of the
+          Search Buffer with the third layer of the edit room. Since the
+          second layer of the edit room is invisible, it matches
+          everything, and is not compared against the second layer of the
+          Search Buffer.
+
+          Note: you may wish to press [Ctrl]-[Home] between steps 3 and 4
+          to move to the start of the room.
+
+          Note: when you place a tile brush into the Search Buffer, the
+          previous match (search outline) is removed.
+
+          Searching and Replacing
+
+          To find a particular group of tiles, and replace the tiles with
+          another group of tiles, follow these steps:
+
+          1. Select the tiles to search for: press v or b, then select the
+          tiles you want to search for.
+
+          2. Place the tiles to search for in the Search Buffer by pressing
+          [Ctrl]-S or choosing Brush|Search|Set Buffer.
+
+          3. Select the tiles to replace with: press v or b, then select
+          the tiles you want to replace with.
+
+          4. Switch to the room you wish to search and replace, then
+          position the pointer to where you want to start searching and
+          replacing from. Note that if you position the pointer directly
+          over a match, the replacing will start from the next match.
+
+          5. Press r or choose Brush|Search|Replace to find the first
+          match. tUME will search across, then down starting from the
+          current pointer location. The room will be re-positioned, and the
+          pointer will be placed over the match, which will be surrounded
+          by an outline.
+
+          6. tUME will bring up a dialog box that asks you, "Replace
+          tiles?", with four options: Yes, No, All, and Exit.
+
+               A. Selecting Yes or pressing [Enter] will replace the
+               matching tiles with the tiles in the tile-brush, and tUME
+               will find the next matching tiles, and bring up the "Replace
+               tiles?" dialog box again.
+
+               B. Selecting No will skip replacing this match, and tUME
+               will find the next matching tiles, and bring up the "Replace
+               tiles?" dialog box again.
+
+               C. Selecting All will cause tUME to find each and every
+               matching group of tiles in the current room, and replace
+               each and every one with the current tile-brush. Pressing
+               [Spacebar] will interrupt this function.
+
+               D. Selecting Exit or pressing [Esc] will stop the replace
+               function.
+
+               Notes about Search and Replace
+
+          You may undo the last search and replace operation by pressing u.
+
+          Invisible layers match everything; they are not searched.
+
+          tUME only replaces tiles in unlocked layers. Search and replace
+          uses the current brush paste mode setting (either paint mode or
+          replace mode) when replacing tiles.
+
+.	Adjust current room palette, even if showing edit palettes.
+
+tUME v00.2447, 01/18/93 *******************************************************
+
+.	Regain some of lost memory by changing compile options.
+.	Tiles drawn with no transparencies if ShowOnlyFloor.
+.	Don't redraw room if just changing the floor layer.
+.	Make brush counting flip, colorset, & priority sensitive.
+.	Make Room|Clear|Complete clears brush if from the room (fix div0).
+.	Make Room|Delete... clears brush if from the same room.
+.	Put locked layers in brushes when cut-selecting brushes.
+
+tUME v00.2446, 01/15/93 *******************************************************
+
+.	Fix stratify paste using brushes with NULL tiles.
+.	Fix screen garbage that sometimes appears when exiting.
+
+tUME v00.2445, 01/14/93 *******************************************************
+
+.	Don't report 0K EMS (XMS) if not using EMS (XMS).
+
+.	Fix sometimes corrupted graphics if load a different map in EMS.
+
+tUME v00.2444, 12/17/92 *******************************************************
+
+WARNING! The tUME IFF output file has been extended by adding
+	GRID, GUID & ZOOM chunks to FORM TSET chunks!
+
+.	Add Block Table Rm & Global 16 Tiles to tUME.INI.
+.	Add save & restore GRID, GUID, & ZOOM chunks from source rooms.
+
+tUME v00.2443, 12/12/92 *******************************************************
+
+.	Add ability to copy part of palette from a room to another:
+
+          You may also copy colors from one room's palette to another
+          room's palette. Follow the following instructions:
+
+               1. Drag-select the colors you want to copy.
+
+               2. Select COPY. The palette requester's title bar should
+               read COPY TO->.
+
+               3. Select OK to leave the current room's palette.
+
+               4. Make the destination room visible (press [Spacebar], 1
+               or 2 until it becomes visible), then press p or choose
+               Room|Set Palette to edit the destination room's palette.
+               Note that the palette requester's title bar reads COPY TO->;
+               this indicates your are in the middle of a copy operation.
+
+               5. Move the mouse pointer to where you want to paste the
+               colors, and press the left mouse button.
+
+.	Delete Layer verifies operation with user before deleting.
+
+tUME v00.2442, 11/16/92 *******************************************************
+
+.	Add toggle between downloading one screen and entire map.
+
+tUME v00.2441, 11/14/92 *******************************************************
+
+.	Add support to download SNES 256-color characters.
+
+tUME v00.2439, 10/27/92 *******************************************************
+
+.	Add ability to put brush into replace mode.
+
+tUME v00.2437, 10/19/92 *******************************************************
+
+.	Different mouse pointer displays implemented.

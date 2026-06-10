@@ -1,0 +1,51 @@
+void StartPage()
+{
+	[ESC] E		/* Job Control: Printer Reset */
+	[ESC] &k5W			/* Text Scale Off */
+	[ESC] (0U	/* Font Selection: Symbol Set: Primary: ISO 6 (ASCII) */
+	[ESC] (s0p	/* Font Selection: Spacing: Primary: Fixed */
+	  10h		/* Font Selection: Pitch: Primary: 10 chars per inch */
+	  12v		/* Font Selection: Height: Primary: 12 points */
+	  0s		/* Font Selection: Style: Primary: Upright */
+	  0b		/* Font Selection: Stroke Weight: Primary: 0 (medium) */
+	  3T		/* Font Selection: Typeface Selection: Primary: Courier */
+	[ESC] &l0o	/* Page Control: Page Orientation: Portrait */
+	  2E		/* Page Control: Top Margin: 2 lines */
+
+    if (IdiotNumbers && !onepage)
+    {
+	("pg. (%d,%d)\n", xpage, ypage);
+    }
+
+			/* Raster Graphics: Raster Graphics Resolution */
+	("[ESC] *t%dR", (Resolution) ? 300 : 150);
+
+			/* Cursor Positioning: Vertical Cursor Positioning (Dots) */
+	("[ESC] *p%dY", (skip / 2) + (IdiotNumbers ? (150) : 0));
+
+			/* Cursor Positioning: Horizontal Cursor Positioning (Dots) */
+	("[ESC] *p%dX", skip );
+
+	[ESC] *r1A	/* Raster Graphics: Start Raster Graphics at C.A.P. */
+	[ESC] *b0M	/* Raster Graphics: Set Compression Method: Unencoded */
+}
+
+void PrintLineBuf(UWORD bytes)
+{
+	("[ESC] *b%dW", bytes);	/* Raster Graphics: Transfer Raster Data */
+	(LineBuf, (size_t)bytes);
+}
+
+void FinishPage(void)
+{
+	[ESC] *rB	/* Raster Graphics: End Raster Graphics */
+	[ESC] (0U	/* Font Selection: Symbol Set: Primary: ISO 6 (ASCII) */
+	[ESC] (s0p	/* Font Selection: Spacing: Primary: Fixed */
+	  10h		/* Font Selection: Pitch: Primary: 10 chars per inch */
+	  12v		/* Font Selection: Height: Primary: 12 points */
+	  0s		/* Font Selection: Style: Primary: Upright */
+	  0b		/* Font Selection: Stroke Weight: Primary: 0 (medium) */
+	  3T		/* Font Selection: Typeface Selection: Primary: Courier */
+	[Ctrl-L]
+	[ESC] E		/* Job Control: Printer Reset */
+}

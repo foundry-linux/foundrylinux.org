@@ -1,0 +1,18 @@
+Dear tUME version 00.2667 user:				June 18, 2000
+
+There are five zip files on this disk:
+
+TUME2667.ZIP	tUME version 00.2667. Unzip into directory \TUME
+DUMPTUME.ZIP	source code for DumptUME. Unzip -d into directory \DUMPTUME
+TPMCKID2.ZIP	source code for TPMCKID2. Unzip -d into directory \DUMPTUME
+TUMETOOL.ZIP	executables for tUME support tools. Unzip into directory \TUME
+EXAMPLES.ZIP	example LBMs and MAPs for tUME. Unzip into \TUME\EXAMPLES
+
+You should add \TUME to your PATH environment variable.
+
+To run tUME, type TUME at the DOS prompt.
+
+To view the demo, change to the \TUME\EXAMPLES directory, and type DEMOTUME.
+Your PATH must include \TUME for the demo to operate properly.
+
+Dan
