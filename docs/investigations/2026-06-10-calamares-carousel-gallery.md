@@ -120,13 +120,87 @@ deleted the redundant caption. Full write-up: the carousel rows in
 
 ---
 
-## Related branding files (not carousel, same dir)
+## The other branding files (same dir)
 
-| File | Role |
-|------|------|
-| `banner.png` (800×??) | Calamares sidebar banner |
-| `logo.png` (256×256) | Installer window logo / branding mark (the anvil) |
-| `branding.desc` | Calamares branding descriptor (strings, colors, slide list) |
+### `logo.png` — 256×256
+
+<img src="screenshots/branding-logo.png" width="256">
+
+Used as both `productLogo` (installer window header / welcome page) and `productIcon`. The Foundry
+anvil mark on a circular near-black field with orange sparks. **Same image as the user avatar**
+(`foundry-kde-theme`'s `/usr/share/foundry-linux/avatar.png`) — one mark across the installer
+logo, the app-menu/installer icon, and the login/logout avatar.
+
+### `banner.png` — 800×200 (4:1)
+
+<img src="screenshots/branding-banner.png" width="760">
+
+Used as `productWelcome` — the header strip on the installer's Welcome page. "FOUNDRY LINUX" in
+bold with the orange rule and "26.04 LTS · ANVIL" beneath.
+
+### `branding.desc` — the Calamares branding descriptor
+
+The YAML that ties it all together: window geometry, product strings/URLs, which images to use,
+the sidebar palette, and the slideshow entrypoint.
+
+```yaml
+---
+componentName: foundry-linux
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo:  true
+
+windowExpanding:    normal
+windowSize:         1100px,680px
+windowPlacement:    center
+
+sidebar:    widget
+navigation: widget
+
+strings:
+    productName:      "Foundry Linux"
+    shortProductName: "Foundry"
+    version:          "26.04"
+    shortVersion:     "26.04"
+    versionedName:    "Foundry Linux 26.04"
+    shortVersionedName: "Foundry 26.04"
+    bootloaderEntryName: "Foundry Linux"
+    productUrl:       "https://foundrylinux.org/"
+    supportUrl:       "https://foundrylinux.org/docs"
+    knownIssuesUrl:   "https://github.com/foundry-linux/foundrylinux.org/issues"
+    releaseNotesUrl:  "https://foundrylinux.org/"
+
+images:
+    productLogo:    "logo.png"
+    productIcon:    "logo.png"
+    productWelcome: "banner.png"
+
+style:
+    SidebarBackground:        "#0a0a0a"
+    SidebarText:              "#f7f7f7"
+    SidebarTextCurrent:       "#0a0a0a"
+    SidebarBackgroundCurrent: "#ff5b1a"
+
+slideshow:    "slideshow.qml"
+slideshowAPI: 2
+```
+
+Field guide:
+
+| Key | Effect |
+|-----|--------|
+| `componentName: foundry-linux` | Branding dir name — must match `/usr/share/calamares/branding/foundry-linux/` |
+| `windowSize: 1100px,680px` | Installer window size (the carousel pane scales with it — see the `PreserveAspectFit` note) |
+| `strings:` | Product name, version, and the URLs shown on Welcome/Finish pages |
+| `images:` | `productLogo`/`productIcon` → `logo.png` (anvil); `productWelcome` → `banner.png` |
+| `style:` | Sidebar palette — Foundry near-black `#0a0a0a` + orange accent `#ff5b1a` (the current step's highlight) |
+| `slideshow` / `slideshowAPI: 2` | The carousel QML and its API version (2 = the `Presentation`-less `ListView` form used here) |
+
+---
+
+## Conventions
 
 Slide dimensions: **800×440** (aspect 1.818:1). Keep new slides at that size and the same
-near-black background so the `PreserveAspectFit` letterbox stays invisible.
+near-black background so the `PreserveAspectFit` letterbox stays invisible. `logo.png` is square
+(256×256); `banner.png` is the 4:1 (800×200) welcome strip. Orange accent throughout is
+`#ff5b1a`; backgrounds are `#0a0a0a`–`#0e0e0e`.
