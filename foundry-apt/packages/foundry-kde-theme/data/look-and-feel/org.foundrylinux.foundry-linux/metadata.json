@@ -1,0 +1,11 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Id": "org.foundrylinux.foundry-linux",
+        "Name": "Foundry Linux",
+        "Description": "Foundry Linux look and feel",
+        "Version": "1.0.0",
+        "Website": "https://foundrylinux.org"
+    },
+    "X-Plasma-APIVersion": "2"
+}

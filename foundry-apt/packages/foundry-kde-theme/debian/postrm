@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+# Undo the kicker-extra-favoritesrc diversion on final removal so Kubuntu's
+# file is restored cleanly (no orphaned diversion).
+if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+    dpkg-divert --remove --rename --package foundry-kde-theme \
+        --divert /etc/xdg/kicker-extra-favoritesrc.kubuntu \
+        /etc/xdg/kicker-extra-favoritesrc
+fi
+
+#DEBHELPER#
+exit 0

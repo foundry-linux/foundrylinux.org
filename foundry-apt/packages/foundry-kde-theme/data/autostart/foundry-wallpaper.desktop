@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Set Foundry Linux Wallpaper
+Exec=/usr/lib/foundry-kde-theme/foundry-set-wallpaper.sh
+X-KDE-autostart-phase=2

@@ -1,3 +1,20 @@
+foundry-kde-theme (1.0.4) resolute; urgency=medium
+
+  * Build out the Foundry Look-and-Feel package into a real global theme:
+    ship contents/defaults + the splash (moved from the foundry-iso static
+    include) + X-Plasma-APIVersion.
+  * Fix Splash.qml's two dead asset paths (background + logo shipped only by
+    the purged calamares-settings) -> ForgeHorizon wallpaper + anvil avatar.
+  * Re-home scattered theming into this one package: /etc/xdg/kdeglobals
+    (color scheme + LookAndFeelPackage activation), ksplashrc,
+    kscreenlockerrc, and the wallpaper autostart.
+  * Ship /etc/xdg/kicker-extra-favoritesrc (app-menu Favorites: Kate out,
+    Blender in) via dpkg-divert of kubuntu-settings-desktop's copy.
+  * Partial: taskbar-pins layout.js, the Plasma Style, the avatar skel
+    divert, and deleting the redundant foundry-iso hooks are still pending.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 17:30:00 +0700
+
 foundry-kde-theme (1.0.3) resolute; urgency=medium
 
   * Ship the Foundry anvil avatar to /usr/share/foundry-linux/avatar.png. Hook

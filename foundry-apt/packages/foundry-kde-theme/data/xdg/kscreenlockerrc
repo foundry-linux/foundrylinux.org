@@ -1,0 +1,8 @@
+# WallpaperPlugin is REQUIRED: the lock greeter does not default to org.kde.image
+# (unlike desktop containments), so without this line the Image= below is ignored
+# and the greeter falls back to the global cones default. Verified on 0.9.106.
+[Greeter]
+WallpaperPlugin=org.kde.image
+
+[Greeter][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/

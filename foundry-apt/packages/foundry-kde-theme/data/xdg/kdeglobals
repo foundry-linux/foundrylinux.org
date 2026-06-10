@@ -1,0 +1,5 @@
+[General]
+ColorScheme=Foundry Linux
+
+[KDE]
+LookAndFeelPackage=org.foundrylinux.foundry-linux
