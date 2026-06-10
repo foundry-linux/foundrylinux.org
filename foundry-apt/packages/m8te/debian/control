@@ -1,0 +1,33 @@
+Source: m8te
+Section: graphics
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13), icoutils
+Standards-Version: 4.7.0
+Homepage: https://github.com/nesdoug/M8TE
+Rules-Requires-Root: no
+
+Package: m8te
+Architecture: all
+Depends: ${misc:Depends},
+ mono-runtime,
+ mono-libraries,
+ libgdiplus
+Recommends: libgtk2.0-0t64
+Description: SNES 8bpp tile, tilemap and palette editor
+ M8TE ("mate") is a graphical editor for Super Nintendo / Super Famicom
+ 8-bits-per-pixel graphics. It generates, edits and arranges SNES tiles,
+ tilemaps and palettes for use in homebrew SNES game development:
+ .
+   * Mode 3 / 4 — planar (bitplane) format, a 32x32 map, up to four
+     tilesets, with horizontal and/or vertical tile flipping.
+   * Mode 7    — linear format, a 128x128 map (sixteen 32x32 sub-maps),
+     a single tileset, no flipping.
+ .
+ Import images as tiles or palettes, paint maps with multi-select and
+ map-edit brushes, sort palettes by brightness, and export data ready to
+ drop into an SNES project. Part of the Foundry Linux retro
+ game-development toolchain.
+ .
+ M8TE is a Mono/.NET (WinForms) application and runs on the Mono runtime;
+ the /usr/bin/m8te launcher invokes it via mono.

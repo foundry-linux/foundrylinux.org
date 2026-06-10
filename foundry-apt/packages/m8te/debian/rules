@@ -1,0 +1,37 @@
+#!/usr/bin/make -f
+# M8TE is a Mono/.NET (WinForms) application that upstream distributes as a
+# pre-built CIL assembly (bin/Release/M8TE.exe). There is no native compile
+# step — the .exe is architecture-independent IL, run via the mono runtime.
+# We install the assembly under /usr/lib/m8te, convert the upstream .ico into
+# a hicolor PNG, and ship a /usr/bin/m8te wrapper that execs `mono`.
+#
+# hardening=+all is a no-op for a managed assembly (no native objects to
+# harden) but is harmless and keeps the rules consistent with the rest of
+# the repo.
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+# No upstream build system — the release artifact is the committed .exe.
+override_dh_auto_configure:
+override_dh_auto_build:
+override_dh_auto_test:
+
+override_dh_auto_install:
+	# The Mono assembly (CIL — architecture-independent). 0644: it is never
+	# executed directly; the wrapper runs `mono` on it.
+	install -D -m 0644 bin/Release/M8TE.exe \
+	    $(CURDIR)/debian/m8te/usr/lib/m8te/M8TE.exe
+	# /usr/bin/m8te launcher -> mono.
+	install -D -m 0755 debian/m8te.wrapper \
+	    $(CURDIR)/debian/m8te/usr/bin/m8te
+	# Desktop entry.
+	install -D -m 0644 debian/m8te.desktop \
+	    $(CURDIR)/debian/m8te/usr/share/applications/m8te.desktop
+	# Icon: extract the 32-bit frame from the upstream Logo8.ico -> hicolor.
+	mkdir -p $(CURDIR)/debian/tmp-icons
+	icotool -x -o $(CURDIR)/debian/tmp-icons Logo8.ico
+	install -D -m 0644 \
+	    "$$(ls $(CURDIR)/debian/tmp-icons/*x32.png | head -1)" \
+	    $(CURDIR)/debian/m8te/usr/share/icons/hicolor/32x32/apps/m8te.png

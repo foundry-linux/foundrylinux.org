@@ -1,0 +1,53 @@
+.TH M8TE 1 "June 2026" "m8te 1.5" "Foundry Linux"
+.SH NAME
+m8te \- SNES 8bpp tile, tilemap and palette editor
+.SH SYNOPSIS
+.B m8te
+.SH DESCRIPTION
+.B M8TE
+("mate") is a graphical editor for Super Nintendo / Super Famicom
+8-bits-per-pixel graphics. It generates, edits and arranges SNES tiles,
+tilemaps and palettes for homebrew SNES game development. It is a
+Mono/.NET (WinForms) application; the
+.B m8te
+command launches it on the Mono runtime.
+.PP
+M8TE targets two SNES graphics modes, which use 8bpp tiles but incompatible
+data formats:
+.TP
+.B Mode 3 / 4
+Planar (bitplane) format. One 32x32 map, up to four tilesets, with
+horizontal and/or vertical tile flipping. Maps are 2 bytes per tile.
+.TP
+.B Mode 7
+Linear format. One 128x128 map (sixteen 32x32 sub-maps), a single tileset,
+no flipping. Maps are 1 byte per tile.
+.SH USAGE
+M8TE is driven entirely through its graphical interface. Import images as
+tiles or palettes, paint maps with the multi-select and map-edit brushes,
+sort palettes by brightness, and export tile/map/palette data to drop into
+an SNES project.
+.PP
+Single-key editor commands include
+.B x
+(cut),
+.B a
+(select all),
+.B v
+(paste) and
+.B y
+(vertical flip).
+.SH NOTES
+The last 64 tiles (on tileset 4) are reserved and cannot be used \(em 8bpp
+graphics are large, and reserving them leaves room for tilemaps and sprites.
+Map height is disabled in Mode 7, and Mode 3 is limited to map 1.
+.SH SEE ALSO
+Project page:
+.UR https://github.com/nesdoug/M8TE
+.UE .
+Companion 4bpp editor: M1TE.
+.SH AUTHORS
+M8TE was written by Doug Fraker (https://www.nesdoug.com/).
+This man page was written for Foundry Linux.
+.SH COPYRIGHT
+Copyright \(co 2021-2022 Doug Fraker. Released under the MIT (Expat) license.

@@ -1,3 +1,9 @@
+foundry-pixel-art (1.0.1) resolute; urgency=medium
+
+  * Add m8te (SNES 8bpp tile/tilemap/palette editor).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 10 Jun 2026 14:05:52 +0700
+
 foundry-pixel-art (1.0.0) resolute; urgency=medium
 
   * Initial release. Part of the Phase 2 nested-editions hierarchy

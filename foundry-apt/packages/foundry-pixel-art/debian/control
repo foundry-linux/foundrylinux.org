@@ -11,9 +11,12 @@ Package: foundry-pixel-art
 Architecture: all
 Depends: ${misc:Depends},
  mtpaint,
- grafx2
-Description: pixel-art paint programs
- Lightweight raster paint programs focused on pixel-perfect art:
+ grafx2,
+ m8te
+Description: pixel-art paint and tile editors
+ Lightweight raster paint programs and console tile editors focused on
+ pixel-perfect art:
  .
    * mtpaint   minimalist pixel-art paint
    * grafx2    256-colour Deluxe-Paint-style raster editor
+   * m8te      SNES 8bpp tile, tilemap and palette editor (Mode 3 / Mode 7)

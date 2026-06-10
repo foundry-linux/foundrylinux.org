@@ -1,0 +1,6 @@
+#!/bin/sh
+# Launch M8TE (SNES 8bpp tile/tilemap/palette editor) on the Mono runtime.
+# M8TE.exe is a .NET Framework 4.5.2 WinForms assembly; mono provides the
+# runtime and System.Windows.Forms / System.Drawing (mono-libraries).
+set -eu
+exec /usr/bin/mono /usr/lib/m8te/M8TE.exe "$@"

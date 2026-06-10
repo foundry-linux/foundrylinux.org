@@ -74,6 +74,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 ## Done
 
+- 2026-06-10 — [package-m8te] packaged M8TE 1.5 (SNES 8bpp tile/tilemap/palette editor, MIT) — first Mono/.NET WinForms package: repacks the upstream pre-built CIL `M8TE.exe` (Arch: all) behind a `/usr/bin/m8te` mono wrapper; Depends mono-runtime/mono-libraries/libgdiplus. Built + lintian-clean + headless-launch verified. Wired into both `foundry-retro-tools` (1.0.8 → lands in anvil) and `foundry-pixel-art` (1.0.1). Pending publish via `task bump`. See [plan](docs/plans/2026-06-10-package-m8te.md).
 - 2026-06-05 — [usb-sizing] anvil 0.9.53 at 3.837 GiB: ghidra → atelier ✅, snapd purged ✅, python3-opencv purged ✅, opencv C++ libs kept (Blender/KDE need them). 4 GB target not reachable without removing intentional content (ibus-data, fonts-noto-cjk, python3-llvmlite, libicu-dev); **minimum stick is 8 GB**. See [plan](docs/plans/2026-06-04-usb-sized-iso-editions.md).
 - 2026-06-05 — [snapd-ships-bug] snapd confirmed absent from 0.9.53 via `dpkg --purge` in hook 0025 (apt-get purge silently failed — apt index still showed snap-transitional PreDepending snapd after dpkg replaced firefox). See [plan](docs/plans/2026-06-04-fix-snapd-ships-despite-strip-list.md).
 - 2026-06-04 — [create-foundry-usb] `foundry-create-usb.sh` shipped in `foundry-desktop` 1.0.2: GUI (isoimagewriter) + dd mode (lsblk + mount-guard + YES confirm + conv=fsync); desktop entry + `/etc/skel/Desktop` icon; `task iso-write DEVICE=/dev/sdX` for dev.

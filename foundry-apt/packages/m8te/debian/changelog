@@ -1,0 +1,14 @@
+m8te (1.5-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux package of M8TE 1.5, the SNES 8bpp tile, tilemap
+    and palette editor by Doug Fraker (nesdoug.com).
+  * Repacks the upstream pre-built Mono/.NET assembly (M8TE.exe): upstream
+    ships this CIL binary as its official 1.5 release artifact and documents
+    Mono compatibility on non-Windows systems. The committed
+    bin/Release/M8TE.exe is byte-identical to the 1.5 release download.
+  * Installs the assembly under /usr/lib/m8te and ships a /usr/bin/m8te
+    wrapper that runs it on the mono runtime, plus a desktop entry and a
+    32x32 icon extracted from the upstream Logo8.ico.
+  * Depends: mono-runtime, mono-libraries, libgdiplus.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 10 Jun 2026 14:05:52 +0700

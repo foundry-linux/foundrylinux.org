@@ -1,3 +1,10 @@
+foundry-retro-tools (1.0.8) resolute; urgency=medium
+
+  * Add m8te (SNES 8bpp tile/tilemap/palette editor). Broaden the package
+    scope from arcade RE/porting to also cover retro-console asset authoring.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 10 Jun 2026 14:05:52 +0700
+
 foundry-retro-tools (1.0.7) resolute; urgency=medium
 
   * Drop ghidra (and its java-common Suggests) from Depends. Ghidra (~860 MiB

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=M8TE
+GenericName=SNES Tile & Map Editor
+Comment=Edit SNES 8bpp tiles, tilemaps and palettes (Mode 3 / Mode 7)
+Exec=m8te
+Icon=m8te
+Terminal=false
+Categories=Graphics;2DGraphics;
+Keywords=SNES;tile;tilemap;palette;sprite;gamedev;retro;
