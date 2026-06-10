@@ -88,11 +88,46 @@ docker run --rm \
           _latest_deb[$_pkg]="$_deb"
         fi
       done
+      # Only bundle local debs NEWER than (or absent from) the published
+      # apt.foundrylinux.org repo.  A local deb identical to the published version
+      # installs from the bundle, marking the installed package origin as local
+      # -- apt then surfaces a confusing "Refresh available" for the very same
+      # version.  Leaving identical packages to the wired repo avoids that.
+      # If the repo index cannot be fetched, fall back to staging ALL: a network
+      # blip must never silently drop an unpublished fix (e.g. a security revert)
+      # from the image.
+      # NOTE: this whole block runs inside docker ... bash -c (SINGLE-QUOTED), so
+      # NO apostrophes or single quotes (including ANSI-C dollar-quote) may appear
+      # ANYWHERE here, comments included -- each one would end the bash -c string.
+      # Hence process substitution below, and no contractions in these comments.
+      declare -A _pub_ver
+      _have_idx=0; _cp=""
+      for _a in amd64 all; do
+        while IFS= read -r _l; do
+          case "$_l" in
+            "Package: "*) _cp="${_l#Package: }" ;;
+            "Version: "*) _pub_ver["$_cp"]="${_l#Version: }" ;;
+          esac
+        done < <(curl -fsSL "https://apt.foundrylinux.org/dists/resolute/main/binary-${_a}/Packages" 2>/dev/null || true)
+      done
+      [[ ${#_pub_ver[@]} -gt 0 ]] && _have_idx=1
+      [[ "$_have_idx" == 0 ]] && echo "  WARNING: apt.foundrylinux.org Packages unreachable - staging ALL local debs (no published-version filter)"
       for _deb in "${_latest_deb[@]}"; do
-        echo "  staging local deb: $(basename "$_deb")"
+        _pkg=$(dpkg-deb --field "$_deb" Package)
+        _ver=$(dpkg-deb --field "$_deb" Version)
+        _pub="${_pub_ver[$_pkg]:-}"
+        if [[ "$_have_idx" == 1 && -n "$_pub" ]] && dpkg --compare-versions "$_ver" le "$_pub"; then
+          echo "  skip (published $_pub covers local $_ver): $_pkg"
+          continue
+        fi
+        if [[ -n "$_pub" ]]; then
+          echo "  staging local deb (newer than published $_pub): $(basename "$_deb")"
+        else
+          echo "  staging local deb (unpublished): $(basename "$_deb")"
+        fi
         cp "$_deb" config/includes.chroot/tmp/local-debs/
       done
-      unset _latest_deb _deb _pkg _ver _cur
+      unset _latest_deb _pub_ver _deb _pkg _ver _cur _pub _cp _l _idx _have_idx _a
     fi
     # Patch bootstrap cache DNS before lb bootstrap runs.  Docker containers
     # run in a separate network namespace where the host resolver (injected by
