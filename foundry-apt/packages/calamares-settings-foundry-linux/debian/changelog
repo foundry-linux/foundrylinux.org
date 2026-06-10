@@ -1,3 +1,11 @@
+calamares-settings-foundry-linux (1.0.28) resolute; urgency=medium
+
+  * Welcome banner: swap in the native-rendered 1600x400 export (69 KB) — no
+    longer a downscale of the 4800x1200 master, so the chrome gradient is clean
+    (no resample banding/aliasing). Same metallic wordmark, 4:1.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 12:55:00 +0700
+
 calamares-settings-foundry-linux (1.0.27) resolute; urgency=medium
 
   * Welcome banner: downscale the metallic wordmark to 1600x400 (51 KB) — 2x the
