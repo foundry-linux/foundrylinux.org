@@ -1,3 +1,13 @@
+foundry-kde-theme (1.0.3) resolute; urgency=medium
+
+  * Ship the Foundry anvil avatar to /usr/share/foundry-linux/avatar.png. Hook
+    1100 copies it over /etc/skel/.face (the Kubuntu blue-gear default avatar from
+    kubuntu-settings-desktop) so login/logout/lock screens show the Foundry mark.
+    Owning the avatar here (a survives-install package) keeps it out of the
+    installer-only calamares-settings, consistent with the wallpaper + SDDM theme.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 12:05:00 +0700
+
 foundry-kde-theme (1.0.2) resolute; urgency=medium
 
   * Ship the foundry-linux SDDM login-screen theme (Main.qml + background.png +

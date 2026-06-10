@@ -23,6 +23,7 @@ Calamares slideshow text clipping (5-attempt debug), live/installed wallpaper, a
 | 12 | ✅ done | Autologin on installed system — **confirmed working by Will (0.9.97, multiple boots)**. One early hiccup (a single boot prompted) never reproduced; likely `Relogin=false` (20-kubuntu.conf) stranding a bounced first session on the greeter until reboot. Watch, don't chase. | — |
 | 13 | ✅ done | Swap chooser dropdown appeared in partition page despite `userSwapChoices: []`. Hidden via single-entry `[none]`. **Verified by Will (0.9.98): Erase disk shows no swap chooser.** **See [Swap / hibernate research](#swap--hibernate-research).** | calamares-settings 1.0.24 |
 | 14 | 👀 note | Reinstall edge case: live session auto-`swapon`s an existing swap partition, which makes Calamares disable "Erase disk" (`any-mounted? true`). Self-resolves for Foundry-over-Foundry now that no-swap is the default; reinstalling over another distro's swap still hits it. Fix = stop live auto-swap-activation. **Open — Will to decide.** | (live config, TBD) |
+| 15 | 🔄 verify | Default user avatar is the Kubuntu blue gear (login/logout/lock screens). Replace with the Foundry anvil mark. **See [User avatar](#user-avatar).** | hook 1100 |
 
 ---
 
@@ -182,7 +183,9 @@ foundry-iso/docs/howto-kubuntu-remix.md            — pitfalls updated (wallpap
 | 0.9.91–0.9.95 | system-wide wallpaper autostart + sentinel; kconf_update crash investigated |
 | 0.9.96 | carousel take 6 (PreserveAspectFit, drop caption) — **verified**; desktop wallpaper → ForgeHorizon — **verified (Image #2)**; kconf_update patch; plymouth hook cleanup; build-log capture |
 | 0.9.97 | SDDM login-screen theme → foundry-kde-theme (survives install; fixes login-screen cones) — **login screen + autologin verified by Will**; calamares-settings 1.0.23 stops shipping it |
-| **0.9.98** | **swap chooser hidden (calamares-settings 1.0.24) — verified. All items green; clear for R2.** |
+| 0.9.98 | swap chooser hidden (calamares-settings 1.0.24) — verified |
+| 0.9.99 | (aborted mid-build — superseded by 0.9.100; avatar source moved to foundry-kde-theme) |
+| **0.9.100** | **Foundry anvil avatar replaces the Kubuntu gear — image from foundry-kde-theme 1.0.3, hook 1100 overwrites `/etc/skel/.face` (conffile, survives upgrades)** |
 
 ---
 
@@ -247,6 +250,35 @@ hibernate), `file` (swapfile), `reuse` (existing swap).
 
 ---
 
+## User avatar
+
+**Trigger** (Image #5): the login/logout/lock screens show the **Kubuntu blue-gear** logo as
+the user avatar for `will`.
+
+**Source**: `kubuntu-settings-desktop` ships the Kubuntu logo in skel. `/etc/skel/.face` is the
+PNG (a **conffile**); `/etc/skel/.face.icon` is a symlink to it. New users inherit skel — the
+live user via casper's `25adduser`, the installed user via Calamares' `users` module — so both
+show the gear. (Found via Docker: `dpkg -L kubuntu-settings-desktop | grep face` + `.conffiles`.)
+
+**Fix** (hook 1100): the avatar ships from **`foundry-kde-theme` (1.0.3)** to
+`/usr/share/foundry-linux/avatar.png` — a survives-install package, consistent with the wallpaper
+and SDDM theme. The hook overwrites `/etc/skel/.face` with it and repoints the `.face.icon`
+symlink. Source preference: the foundry-kde-theme path → foundry-welcome icon → calamares logo
+(build-time fallback). A build-time hook overwrite avoids a dpkg file-conflict with kubuntu-settings
+(which owns `/etc/skel/.face`).
+
+**Upgrade-safe without dpkg-divert**: Will asked what happens if kubuntu-settings-desktop is
+upgraded. Because `/etc/skel/.face` is a **conffile**, dpkg keeps our locally-modified version on
+upgrade (`confold` default) — the gear is not restored. If it were a regular file, an upgrade
+would revert it and a `dpkg-divert` (rename Kubuntu's file aside) would be needed; it isn't.
+
+**Note**: `.face.icon` is the per-user KDE/SDDM avatar lookup (→ `.face`); setting skel covers
+live + installed. If a greeter ever reads only AccountsService
+(`/var/lib/AccountsService/icons/<user>`), revisit — but skel `.face`/`.face.icon` is the standard
+lever.
+
+---
+
 ## Verification
 
 Run once 0.9.97 boots. **Do not upload to R2 until all pass.**
@@ -266,3 +298,4 @@ Run once 0.9.97 boots. **Do not upload to R2 until all pass.**
 13. **Partition page → NO swap dropdown** (calamares-settings 1.0.24, next build). Just "Erase disk" with no swap chooser; no-swap forced.
 14. Installed desktop → no "Install Foundry Linux" icon.
 15. grub-install succeeds — installed system boots without live ISO.
+16. **Login/logout/lock screens → Foundry anvil avatar, NOT the Kubuntu blue gear** (new in 0.9.99).

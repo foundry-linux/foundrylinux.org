@@ -151,6 +151,32 @@ ColorScheme=FoundryLinux
 EOF
 fi
 
+# Foundry-brand the default user avatar.
+# kubuntu-settings-desktop ships the Kubuntu blue-gear logo as the default avatar:
+# /etc/skel/.face is the PNG (a CONFFILE) and /etc/skel/.face.icon is a symlink to
+# it.  New users inherit skel (live user via casper 25adduser, installed user via
+# Calamares' users module), so login/logout/lock screens show the gear.  Overwrite
+# .face with the Foundry anvil mark and keep .face.icon pointing at it.
+#
+# Survives upgrades WITHOUT dpkg-divert: .face is a conffile, so a later
+# kubuntu-settings-desktop upgrade keeps our locally-modified version (dpkg
+# confold default) instead of restoring the gear.
+#
+# Source preference: the avatar shipped by foundry-kde-theme (survives install) →
+# the foundry-welcome icon → the calamares branding logo (build-time-only fallback,
+# fine because /etc/skel is captured into the squashfs at build time).
+FOUNDRY_AVATAR=""
+for _src in /usr/share/foundry-linux/avatar.png \
+            /usr/share/icons/hicolor/256x256/apps/foundry-linux.png \
+            /usr/share/calamares/branding/foundry-linux/logo.png; do
+    [[ -f "$_src" ]] && { FOUNDRY_AVATAR="$_src"; break; }
+done
+if [[ -n "$FOUNDRY_AVATAR" ]]; then
+    cp "$FOUNDRY_AVATAR" /etc/skel/.face        # the real (conffile) avatar
+    ln -sf .face /etc/skel/.face.icon           # KDE/SDDM read .face.icon → .face
+    echo "Foundry avatar → /etc/skel/.face (from $FOUNDRY_AVATAR)"
+fi
+
 # Pre-configure KWin display output for QEMU virtio-vga-gl, which boots at
 # 640×480 by default even when xres=1280,yres=800 is passed to QEMU.  The
 # edidHash/uuid below are stable for QEMU's synthetic virtual EDID; real
