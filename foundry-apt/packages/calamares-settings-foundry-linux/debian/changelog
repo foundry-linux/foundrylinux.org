@@ -1,3 +1,12 @@
+calamares-settings-foundry-linux (1.0.31) resolute; urgency=medium
+
+  * Enable sshd on the installed system (services-systemd module, already in the
+    exec sequence) so the user can SSH in with the account they create during
+    installation. sshd stays OFF on the live session (handled by the foundry-iso
+    0035-install-ssh-server hook); no credential is baked.
+
+ -- Will Norris <wbnorris@gmail.com>  Thu, 11 Jun 2026 02:00:00 +0700
+
 calamares-settings-foundry-linux (1.0.30) resolute; urgency=medium
 
   * SECURITY: revert setRootPassword: false. It preserved the squashfs

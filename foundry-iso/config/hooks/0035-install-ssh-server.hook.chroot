@@ -1,0 +1,24 @@
+#!/bin/bash
+set -euo pipefail
+
+# Install openssh-server into the image, but keep sshd OFF on the LIVE session.
+#
+# Why: the admin/testing workflow is to SSH into the INSTALLED system using the
+# account created during installation (e.g. will/<password the user chose>). That
+# needs sshd running on the installed system — but it must NOT run on the live
+# session, because the live 'user' account has passwordless sudo, so a live sshd
+# would be an instant-root hole reachable with the well-known live password (the
+# same class of problem as the old baked root:foundry).
+#
+# So: install openssh here (disabled on live), and let Calamares enable ssh on
+# the installed target (calamares-settings services-systemd module). NO credential
+# is baked — Ubuntu's default sshd refuses root password login
+# (PermitRootLogin prohibit-password), and the only login account on the
+# installed system is the one the user created at install time.
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openssh-server
+
+# Ensure sshd is OFF on the live session. live-build's policy-rc.d usually blocks
+# the enable already; this is belt-and-suspenders. Calamares re-enables ssh on
+# the installed target.
+systemctl disable ssh.socket ssh.service 2>/dev/null || true
