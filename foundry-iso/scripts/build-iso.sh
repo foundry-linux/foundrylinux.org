@@ -112,10 +112,23 @@ docker run --rm \
       done
       [[ ${#_pub_ver[@]} -gt 0 ]] && _have_idx=1
       [[ "$_have_idx" == 0 ]] && echo "  WARNING: apt.foundrylinux.org Packages unreachable - staging ALL local debs (no published-version filter)"
+      # Packages we ALWAYS bundle from local, never deferring to the published repo.
+      # Currently just the installer config (calamares-settings-foundry-linux), which
+      # is PURGED on install -- so bundling it costs zero Discover "Refresh" noise (it
+      # never reaches an installed system) while guaranteeing the ISO ships exactly the
+      # installer build tested here, not a same-version published build that may differ.
+      # The installer sets root passwords and partitions disks, so a version match is
+      # not enough assurance for it. Space-delimited; add future installer-only debs.
+      _always_local=" calamares-settings-foundry-linux "
       for _deb in "${_latest_deb[@]}"; do
         _pkg=$(dpkg-deb --field "$_deb" Package)
         _ver=$(dpkg-deb --field "$_deb" Version)
         _pub="${_pub_ver[$_pkg]:-}"
+        if [[ "$_always_local" == *" $_pkg "* ]]; then
+          echo "  staging local deb (always-local installer config): $(basename "$_deb")"
+          cp "$_deb" config/includes.chroot/tmp/local-debs/
+          continue
+        fi
         if [[ "$_have_idx" == 1 && -n "$_pub" ]] && dpkg --compare-versions "$_ver" le "$_pub"; then
           echo "  skip (published $_pub covers local $_ver): $_pkg"
           continue
@@ -127,7 +140,7 @@ docker run --rm \
         fi
         cp "$_deb" config/includes.chroot/tmp/local-debs/
       done
-      unset _latest_deb _pub_ver _deb _pkg _ver _cur _pub _cp _l _idx _have_idx _a
+      unset _latest_deb _pub_ver _deb _pkg _ver _cur _pub _cp _l _idx _have_idx _a _always_local
     fi
     # Patch bootstrap cache DNS before lb bootstrap runs.  Docker containers
     # run in a separate network namespace where the host resolver (injected by
