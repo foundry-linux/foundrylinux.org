@@ -1,3 +1,11 @@
+calamares-settings-foundry-linux (1.0.27) resolute; urgency=medium
+
+  * Welcome banner: downscale the metallic wordmark to 1600x400 (51 KB) — 2x the
+    original 800x200 footprint, crisp on HiDPI without the 2400x600/4800x1200
+    over-resolution. 4:1 aspect, same wordmark.
+
+ -- Will Norris <wbnorris@gmail.com>  Wed, 10 Jun 2026 12:50:00 +0700
+
 calamares-settings-foundry-linux (1.0.26) resolute; urgency=medium
 
   * Welcome banner: use the 4:1-fitted wordmark (2400x600) so it matches the
