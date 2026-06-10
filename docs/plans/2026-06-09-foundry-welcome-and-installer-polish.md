@@ -20,8 +20,9 @@ Calamares slideshow text clipping (5-attempt debug), live/installed wallpaper, a
 | 9 | ✅ done | `kconf_update` calendar-migration crash popup on first login | hook 1100 (patch upstream script) |
 | 10 | ✅ done | Build log not captured / build warnings unreviewed | Taskfile `iso-build` tees to `dist/build-*.log`; Plymouth hook 1050 cleaned |
 | 11 | 🔄 verify | **SDDM login screen** shows cones on installed system — foundry SDDM theme purged with calamares-settings (same family as item 8). Move theme → foundry-kde-theme (survives install). | foundry-kde-theme 1.0.2 + calamares-settings 1.0.23 |
-| 12 | 👀 monitor | Autologin intermittently prompts on installed first boot — worked on 2nd boot ("didn't have to do anything"). Likely `Relogin=false` (20-kubuntu.conf): autologin fires once per boot, a bounced first session strands you on the greeter. Not reliably reproducible; watch. | — |
-| 13 | 🔄 verify | Swap chooser dropdown appeared in partition page despite `userSwapChoices: []`. Hide it + keep no-swap default. **See [Swap / hibernate research](#swap--hibernate-research).** | calamares-settings 1.0.24 |
+| 12 | ✅ done | Autologin on installed system — **confirmed working by Will (0.9.97, multiple boots)**. One early hiccup (a single boot prompted) never reproduced; likely `Relogin=false` (20-kubuntu.conf) stranding a bounced first session on the greeter until reboot. Watch, don't chase. | — |
+| 13 | ✅ done | Swap chooser dropdown appeared in partition page despite `userSwapChoices: []`. Hidden via single-entry `[none]`. **Verified by Will (0.9.98): Erase disk shows no swap chooser.** **See [Swap / hibernate research](#swap--hibernate-research).** | calamares-settings 1.0.24 |
+| 14 | 👀 note | Reinstall edge case: live session auto-`swapon`s an existing swap partition, which makes Calamares disable "Erase disk" (`any-mounted? true`). Self-resolves for Foundry-over-Foundry now that no-swap is the default; reinstalling over another distro's swap still hits it. Fix = stop live auto-swap-activation. **Open — Will to decide.** | (live config, TBD) |
 
 ---
 
@@ -180,7 +181,8 @@ foundry-iso/docs/howto-kubuntu-remix.md            — pitfalls updated (wallpap
 | 0.9.90 | carousel attempt 5 (pure positional x/y/width) — fixed the QML caption, PNG still clipped |
 | 0.9.91–0.9.95 | system-wide wallpaper autostart + sentinel; kconf_update crash investigated |
 | 0.9.96 | carousel take 6 (PreserveAspectFit, drop caption) — **verified**; desktop wallpaper → ForgeHorizon — **verified (Image #2)**; kconf_update patch; plymouth hook cleanup; build-log capture |
-| **0.9.97** | **SDDM login-screen theme → foundry-kde-theme (survives install; fixes login-screen cones); calamares-settings 1.0.23 stops shipping it** |
+| 0.9.97 | SDDM login-screen theme → foundry-kde-theme (survives install; fixes login-screen cones) — **login screen + autologin verified by Will**; calamares-settings 1.0.23 stops shipping it |
+| **0.9.98** | **swap chooser hidden (calamares-settings 1.0.24) — verified. All items green; clear for R2.** |
 
 ---
 
