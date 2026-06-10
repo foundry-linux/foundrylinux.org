@@ -60,6 +60,21 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 
 ### Packaging — dropped packages to investigate
 
+- [ ] **Add 64tass to `foundry-retro-tools`** — already in Ubuntu Noble/Resolute (1.60.3243-1) and
+  Debian bookworm (1.59.3120-1); just needs `64tass` added to the `Depends:` list in
+  `foundry-apt/packages/foundry-retro-tools/debian/control`. One-liner change, no custom deb
+  needed. See [SNES toolchain survey](../drdevtools/docs/investigations/2026-06-11-snes-65816-toolchains.md).
+- [ ] **Package WLA-DX and wire into `foundry-retro-tools`** — GPL-2.0+, cmake build, absent from
+  Debian/Ubuntu (NixOS/Arch AUR/Guix only). Supports 65816 + SPC-700 (both SNES CPUs) and is
+  PVSnesLib's assembler backend. Source: [vhelin/wla-dx](https://github.com/vhelin/wla-dx),
+  v10.6, active (June 2026 commits). Build a custom `.deb`, publish to foundry-apt, add to
+  `foundry-retro-tools` Depends. See [SNES toolchain survey](../drdevtools/docs/investigations/2026-06-11-snes-65816-toolchains.md).
+- [ ] **Package asar and wire into `foundry-retro-tools`** — GPL-3.0/LGPL-3.0 (core/library
+  split), cmake build, absent from Debian/Ubuntu (Arch AUR + SlackBuilds only). De facto SNES
+  ROM hacking standard (SMW Central); libasar embeddable form useful for tool integration.
+  Source: [RPGHacker/asar](https://github.com/RPGHacker/asar), v1.91, active (Sep 2025 commit).
+  Build a custom `.deb`, publish to foundry-apt, add to `foundry-retro-tools` Depends. See
+  [SNES toolchain survey](../drdevtools/docs/investigations/2026-06-11-snes-65816-toolchains.md).
 
 ### Deferred follow-ups (surfaced by the 2026-06-04 plan sweep)
 
