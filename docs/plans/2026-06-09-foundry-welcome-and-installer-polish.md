@@ -279,6 +279,32 @@ lever.
 
 ---
 
+## Lock screen wallpaper (0.9.106)
+
+**Trigger** (Image #20): the installed **lock screen** (when you lock the session — distinct from
+the SDDM *login* greeter) still showed the Kubuntu cones, even though desktop wallpaper, SDDM
+login, and avatar were all correct Foundry.
+
+**Root cause**: the lock-screen wallpaper is set by the static include
+`foundry-iso/config/includes.chroot/etc/xdg/kscreenlockerrc`, which pointed at
+`/usr/share/backgrounds/foundry-linux-wallpaper.png` — a path that **does not exist** on the
+installed system (it was an install-only asset). Plasma fell back to the global cones default.
+Same class as the desktop-wallpaper cones bug, a different dead path.
+
+**Fix**: repoint the include at the survives-install `foundry-kde-theme` wallpaper, using a
+concrete image file:
+```ini
+[Greeter][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png
+```
+
+**Dead end**: shipping `kscreenlockerrc` from `foundry-kde-theme` (1.0.4) as a conffile collided
+with this static include — dpkg halted on a conffile prompt inside a non-interactive hook and broke
+the 0.9.105 build. Reverted to 1.0.3; the one-line path fix in the include is the correct lever.
+See the [wallpaper/cones investigation follow-up](../investigations/2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md#follow-up-2026-06-10-the-lock-screen-was-a-fourth-surface-fixed-in-09106).
+
+---
+
 ## Verification
 
 Run once 0.9.97 boots. **Do not upload to R2 until all pass.**
@@ -299,3 +325,4 @@ Run once 0.9.97 boots. **Do not upload to R2 until all pass.**
 14. Installed desktop → no "Install Foundry Linux" icon.
 15. grub-install succeeds — installed system boots without live ISO.
 16. **Login/logout/lock screens → Foundry anvil avatar, NOT the Kubuntu blue gear** (new in 0.9.99).
+17. **Lock the installed session → Foundry ForgeHorizon wallpaper, NOT the Kubuntu cones** (new in 0.9.106). Lock via the app menu / Meta+L, or wait for the idle lock.

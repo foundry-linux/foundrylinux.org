@@ -1,10 +1,12 @@
 # Investigation: installed system reverts to the Kubuntu "cones" wallpaper
 
 **Date**: 2026-06-09
-**ISO versions affected**: every build through 0.9.95 (fixed in 0.9.96)
+**ISO versions affected**: desktop wallpaper through 0.9.95 (fixed 0.9.96); **lock screen** — a
+separate surface — through 0.9.105 (fixed 0.9.106, see [follow-up](#follow-up-2026-06-10-the-lock-screen-was-a-fourth-surface-fixed-in-09106))
 **Severity**: high — first impression. A brand-new install of *Foundry* Linux greets the user
 with the *Kubuntu* default wallpaper.
-**Status**: fixed in hook `1100-live-autologin.hook.chroot` (0.9.96)
+**Status**: desktop fixed in hook `1100-live-autologin.hook.chroot` (0.9.96); lock screen fixed in
+the `kscreenlockerrc` static include (0.9.106)
 
 ---
 
@@ -121,3 +123,55 @@ branding package.
 
 This is the same class of bug as the rsync-error-11 disk-exhaustion lesson: a file present in
 the live chroot is not necessarily present on the installed target.
+
+---
+
+## Follow-up 2026-06-10: the lock screen was a fourth surface (fixed in 0.9.106)
+
+The 0.9.96 fix covered the **desktop** wallpaper. Three other "who shows art" surfaces are
+separate: the **SDDM login greeter** and the **avatar** (both via `foundry-kde-theme`, which
+survives install) — and the **lock screen** (`kscreenlocker`), which this follow-up is about.
+
+**Symptom (observed on installed 0.9.104):** desktop wallpaper correct, SDDM login correct,
+avatar (the anvil) correct — but **locking the session** still showed the Kubuntu cones.
+
+**Root cause — same class of bug, a different dead path.** The lock-screen wallpaper is set by a
+static include shipped in the ISO:
+
+```
+foundry-iso/config/includes.chroot/etc/xdg/kscreenlockerrc
+```
+
+It already declared a Foundry wallpaper, but pointed at a path that **does not exist** on the
+installed system (`ls` → No such file or directory) — a leftover from an older layout:
+
+```
+Image=file:///usr/share/backgrounds/foundry-linux-wallpaper.png
+```
+
+With the Image unreadable, the lock greeter fell back to the global Kubuntu cones default,
+exactly as the desktop did. (`/etc/xdg/kscreenlockerrc` is owned by **no package** — `dpkg -S`
+finds nothing — because the ISO ships it as a static include, not via a deb.)
+
+**Fix (0.9.106):** repoint the include at the real wallpaper shipped by `foundry-kde-theme`
+(survives install), using a concrete image file (the greeter is happier with a file than a
+package dir):
+
+```
+Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png
+```
+
+**Dead end worth recording:** the first attempt shipped `/etc/xdg/kscreenlockerrc` *from*
+`foundry-kde-theme` (1.0.4) as a conffile. That **collided** with the static include — the file
+already existed in the chroot, so dpkg halted on a conffile prompt (`kscreenlockerrc
+(Y/I/N/O/D/Z)`) inside a non-interactive hook and **broke the 0.9.105 build**. Reverted to 1.0.3;
+the correct fix is the one-line path correction in the include that already owned the surface.
+
+**Surface inventory — so none is missed again:**
+
+| Surface | Config | Shipped by | Wallpaper / art source |
+|---------|--------|-----------|------------------------|
+| Desktop | `plasma-org.kde.plasma.desktop-appletsrc` (+ autostart) | foundry-kde-theme + hook 1100 | ForgeHorizon |
+| SDDM login | `/etc/sddm.conf.d/*` → `foundry-linux` theme | foundry-kde-theme | theme `background.png` |
+| **Lock screen** | `/etc/xdg/kscreenlockerrc` | **foundry-iso static include** | ForgeHorizon `3840x2160.png` |
+| Avatar (login/lock/logout) | `/etc/skel/.face` (+ `.face.icon`) | foundry-kde-theme + hook 1100 | anvil avatar |

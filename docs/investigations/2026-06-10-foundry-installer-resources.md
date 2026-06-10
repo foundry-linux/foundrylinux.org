@@ -246,6 +246,29 @@ is set in `/etc/sddm.conf.d/30-foundry-live.conf` and resolves on the installed 
 
 ---
 
+## Lock screen — `kscreenlockerrc`
+
+The Plasma **lock screen** (when you lock the session, distinct from the SDDM *login* greeter
+above) is its own surface. Its wallpaper is set by a static include shipped in the ISO:
+
+```
+foundry-iso/config/includes.chroot/etc/xdg/kscreenlockerrc
+```
+```ini
+[Greeter][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png
+```
+
+**Gotcha (fixed 0.9.106):** it used to point at `/usr/share/backgrounds/foundry-linux-wallpaper.png`
+— the install-time-only wallpaper above (shipped by `calamares-settings`, **purged on install**),
+so the installed lock screen fell back to the Kubuntu cones. Repointed at the `foundry-kde-theme`
+wallpaper (survives install). The file is owned by **no package** (`dpkg -S` finds nothing) — it
+is a static include, not a deb. Do **not** also ship `kscreenlockerrc` from `foundry-kde-theme`:
+it collides with this include and dpkg halts on a conffile prompt mid-build (cost us 0.9.105). See
+[the wallpaper/cones investigation follow-up](2026-06-09-installed-wallpaper-reverts-to-kubuntu-cones.md#follow-up-2026-06-10-the-lock-screen-was-a-fourth-surface-fixed-in-09106).
+
+---
+
 ## Calamares module sequence (`settings.conf`)
 
 ```yaml

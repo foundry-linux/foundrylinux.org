@@ -31,8 +31,8 @@ before writing any config.
 | `{live-username}` | Username of the auto-created live account | `user` |
 | `{live-fullname}` | Display name for the live account | `Foundry Linux` |
 | `{live-hostname}` | Hostname in the live session | `foundry-linux` |
-| `{apt-repo-url}` | URL of your custom apt repository | `https://apt.foundrylinux.org` |
-| `{apt-key-url}` | URL of the apt repo signing key (GPG armored) | `https://apt.foundrylinux.org/key.gpg` |
+| `{apt-repo-url}` | URL of your custom apt repository | [https://apt.foundrylinux.org](https://apt.foundrylinux.org) |
+| `{apt-key-url}` | URL of the apt repo signing key (GPG armored) | [https://apt.foundrylinux.org/key.gpg](https://apt.foundrylinux.org/key.gpg) |
 | `{sddm-theme}` | SDDM theme name (empty string = default) | `foundry-linux` |
 | `{wallpaper-path}` | Absolute path to wallpaper PNG inside the chroot | `/usr/share/backgrounds/foundry-linux-wallpaper.png` |
 
@@ -500,7 +500,7 @@ the hook writes `casper.conf`, so a second pass is mandatory.
 | SDDM greeter | `/etc/sddm.conf.d/30-{distro}-live.conf` → `Current=`; **theme files must ship from a survives-install package** (`{distro}-kde-theme`, *not* `calamares-settings-*`) | `{sddm-theme}` |
 | Plasma splash screen | `includes.chroot/etc/xdg/ksplashrc` + Look-and-Feel package | `{laf-id}` |
 | Desktop wallpaper | System-wide autostart `/etc/xdg/autostart/{distro}-wallpaper.desktop` → `plasma-apply-wallpaperimage`, sentinel-gated; wallpaper file from a survives-install package (`{distro}-kde-theme`'s `/usr/share/wallpapers/`) | `{wallpaper-path}` |
-| Lock screen wallpaper | `includes.chroot/etc/xdg/kscreenlockerrc` | `{wallpaper-path}` |
+| Lock screen wallpaper | `includes.chroot/etc/xdg/kscreenlockerrc` (`[Greeter][Wallpaper][org.kde.image][General] Image=`). **Must point at a survives-install path** (`{distro}-kde-theme`'s `/usr/share/wallpapers/…/contents/images/3840x2160.png`), *not* an install-only `/usr/share/backgrounds/*` (purged with `calamares-settings` → lock screen falls back to cones). Do **NOT** also ship `kscreenlockerrc` from the theme deb — it collides with this static include and dpkg halts on a conffile prompt mid-build. | survives-install wallpaper |
 | KDE color scheme | Hook → `/usr/share/color-schemes/` + `/etc/xdg/kdeglobals` | `{ColorSchemeName}` |
 | User avatar (login/logout/lock) | Hook overwrites `/etc/skel/.face` (the conffile PNG; `.face.icon` symlinks to it) — Kubuntu ships its gear there; new users inherit skel. Image from `{distro}-kde-theme` (`/usr/share/{distro}/avatar.png`) | `{distro}` logo PNG (square, ~256×256) |
 | Calamares installer | `calamares-settings-{distro-slug}` package | Branding YAML, slideshow, sidebar colors |
