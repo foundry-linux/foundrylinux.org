@@ -53,6 +53,7 @@ mkdir -p "$REPO_ROOT/dist"
 # globally; these are the rest from debian/control). Root in Docker, sudo on the
 # GitHub runner.
 if command -v apt-get >/dev/null; then
+    # shellcheck disable=SC2015  # root path runs apt-get; non-root falls back to sudo
     _apt() { [[ $EUID -eq 0 ]] && apt-get "$@" || sudo apt-get "$@"; }
     _apt install -y --no-install-recommends \
         cmake pkg-config zlib1g-dev libpng-dev libjpeg-dev libxpm-dev libx11-dev \

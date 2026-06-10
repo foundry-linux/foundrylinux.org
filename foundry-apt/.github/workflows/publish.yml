@@ -20,6 +20,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: shellcheck scripts (same lint gate as the PR workflow)
+        # A release must clear the same bar as a PR. Run BEFORE the ~25 min
+        # build so a lint failure aborts the publish fast instead of shipping
+        # a script that test.yml would have rejected.
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y shellcheck
+          shellcheck scripts/*.sh
+          find packages -name '*.sh' -exec shellcheck {} +
+
       - name: Install runner-side deps (aptly, signing, R2 sync)
         # These run on the GitHub-hosted host — they only touch metadata that
         # already exists (aptly, gnupg) or move bytes around (rclone). They do
