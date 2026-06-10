@@ -60,10 +60,7 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 
 ### Packaging — dropped packages to investigate
 
-- [ ] **Add 64tass to `foundry-retro-tools`** — already in Ubuntu Noble/Resolute (1.60.3243-1) and
-  Debian bookworm (1.59.3120-1); just needs `64tass` added to the `Depends:` list in
-  `foundry-apt/packages/foundry-retro-tools/debian/control`. One-liner change, no custom deb
-  needed. See [SNES toolchain survey](../drdevtools/docs/investigations/2026-06-11-snes-65816-toolchains.md).
+- [x] **Add 64tass to `foundry-retro-tools`** — added to Depends in 1.0.10; resolves from Ubuntu universe (1.60.3243-1 on Noble/Resolute).
 - [ ] **Package WLA-DX and wire into `foundry-retro-tools`** — GPL-2.0+, cmake build, absent from
   Debian/Ubuntu (NixOS/Arch AUR/Guix only). Supports 65816 + SPC-700 (both SNES CPUs) and is
   PVSnesLib's assembler backend. Source: [vhelin/wla-dx](https://github.com/vhelin/wla-dx),

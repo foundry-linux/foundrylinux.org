@@ -1,3 +1,9 @@
+foundry-retro-tools (1.0.10) resolute; urgency=medium
+
+  * Add 64tass (multi-pass 65816/65xx macro assembler; in Ubuntu universe).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 11 Jun 2026 00:00:00 +0000
+
 foundry-retro-tools (1.0.9) resolute; urgency=medium
 
   * Add tilemap-studio (Game Boy / GBC / GBA / NES / SNES tilemap editor) — a
