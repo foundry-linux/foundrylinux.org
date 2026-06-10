@@ -1,0 +1,42 @@
+Source: tilemap-studio
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ cmake,
+ pkg-config,
+ zlib1g-dev,
+ libpng-dev,
+ libjpeg-dev,
+ libxpm-dev,
+ libx11-dev,
+ libxft-dev,
+ libxinerama-dev,
+ libfontconfig1-dev,
+ libxext-dev,
+ libxrender-dev,
+ libxfixes-dev,
+ libcairo2-dev,
+ libpango1.0-dev
+Standards-Version: 4.7.2
+Homepage: https://github.com/Rangi42/tilemap-studio
+X-Repology-Project: tilemap-studio
+Rules-Requires-Root: no
+
+Package: tilemap-studio
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: tilemap editor for Game Boy, GBC, GBA, NES and SNES
+ Tilemap Studio is a tilemap editor for retro consoles. It can open and save
+ tilemaps in the native VRAM formats of the Game Boy, Game Boy Color, Game Boy
+ Advance, Nintendo Entertainment System (Famicom) and Super NES (Super Famicom),
+ as well as the formats used by the Pokemon Game Boy and Game Boy Advance games
+ and several other homebrew and decompilation projects.
+ .
+ It pairs a tileset image with a tilemap, supports per-tile palette, flip and
+ priority attributes, and edits maps of arbitrary size in a resizable, zoomable
+ canvas. This makes it a modern, maintained successor to 1990s map editors such
+ as tUME for authoring 8-bit and 16-bit console graphics.
+ .
+ Tilemap Studio statically links FLTK 1.4.5 (built X11-only); see
+ /usr/share/doc/tilemap-studio/copyright for licensing of the bundled code.

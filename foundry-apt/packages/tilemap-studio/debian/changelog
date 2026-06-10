@@ -1,0 +1,9 @@
+tilemap-studio (4.0.1-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of Tilemap Studio (v4.0.1).
+  * Statically links vendored FLTK 1.4.5, built X11-only
+    (FLTK_BACKEND_WAYLAND=0), per upstream's supported build; Ubuntu 26.04
+    ships FLTK 1.4.4 as a Wayland-hybrid build that the upstream X11
+    transparency code will not compile against.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 10 Jun 2026 13:58:50 +0700

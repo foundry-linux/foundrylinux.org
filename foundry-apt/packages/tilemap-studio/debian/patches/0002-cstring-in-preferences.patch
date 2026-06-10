@@ -1,0 +1,15 @@
+Description: include <cstring> in preferences.cpp for GCC 15 / FLTK 1.4.5
+ preferences.cpp calls strcpy/strncpy/strcat/strrchr but relied on a
+ transitive include that FLTK 1.4.5's headers no longer provide, so the
+ build fails with "was not declared in this scope" under GCC 15.
+Author: Foundry Linux <packages@foundrylinux.org>
+Forwarded: not-yet
+Last-Update: 2026-06-10
+--- a/src/preferences.cpp
++++ b/src/preferences.cpp
+@@ -1,4 +1,5 @@
+ #pragma warning(push, 0)
++#include <cstring>
+ #include <FL/Fl_Preferences.H>
+ #include <FL/filename.H>
+ #include <FL/fl_utf8.h>

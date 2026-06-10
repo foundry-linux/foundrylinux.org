@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Tilemap Studio
+GenericName=Tilemap Editor
+Comment=Edit Game Boy, Color, Advance, NES and SNES tilemaps
+Icon=tilemapstudio48
+Exec=tilemapstudio %F
+Type=Application
+Terminal=false
+Categories=Graphics;2DGraphics;Development;
+Keywords=tilemap;tileset;tiles;gameboy;nes;snes;gba;retro;

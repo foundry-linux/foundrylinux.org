@@ -1,3 +1,10 @@
+foundry-retro-tools (1.0.9) resolute; urgency=medium
+
+  * Add tilemap-studio (Game Boy / GBC / GBA / NES / SNES tilemap editor) — a
+    maintained modern successor to tUME, complementing m8te's SNES focus.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 10 Jun 2026 15:30:00 +0700
+
 foundry-retro-tools (1.0.8) resolute; urgency=medium
 
   * Add m8te (SNES 8bpp tile/tilemap/palette editor). Broaden the package

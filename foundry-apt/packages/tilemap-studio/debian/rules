@@ -1,0 +1,53 @@
+#!/usr/bin/make -f
+# Tilemap Studio needs FLTK 1.4.5 built X11-only; Ubuntu 26.04 ships 1.4.4 as a
+# Wayland-hybrid build that upstream's X11 window code won't compile against. So
+# we build a sha256-pinned FLTK 1.4.5 (placed in lib/fltk by build.sh) and link
+# it statically into the binary, as upstream's Makefile expects.
+#
+#  * FLTK_USE_SYSTEM_{LIBPNG,ZLIB,LIBJPEG}=1 — link png/zlib/jpeg from the system
+#    shared libs (proper ${shlibs:Depends}); only FLTK itself is embedded.
+#  * CMAKE_POSITION_INDEPENDENT_CODE=ON — so the static FLTK objects are PIC and
+#    the final app links as PIE under dpkg's hardening LDFLAGS.
+#  * The upstream Makefile finds FLTK via a bare `fltk-config`; we put the freshly
+#    installed lib/fltk prefix's bin/ first on PATH so it resolves (the Makefile's
+#    hyphenated `fltk-config` variable can't be overridden on the command line).
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+FLTK_FLAGS = \
+	-D CMAKE_BUILD_TYPE=Release \
+	-D CMAKE_POSITION_INDEPENDENT_CODE=ON \
+	-D FLTK_ABI_VERSION=10405 \
+	-D FLTK_BUILD_GL=0 \
+	-D FLTK_BUILD_TEST=0 \
+	-D FLTK_BUILD_FLUID=0 \
+	-D FLTK_GRAPHICS_CAIRO=1 \
+	-D FLTK_BACKEND_WAYLAND=0 \
+	-D FLTK_USE_SYSTEM_LIBPNG=1 \
+	-D FLTK_USE_SYSTEM_ZLIB=1 \
+	-D FLTK_USE_SYSTEM_LIBJPEG=1
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	cmake -S lib/fltk -B lib/fltk/build \
+	    -D CMAKE_INSTALL_PREFIX=$(CURDIR) $(FLTK_FLAGS)
+
+override_dh_auto_build:
+	cmake --build lib/fltk/build -j$(shell nproc)
+	cmake --install lib/fltk/build
+	PATH="$(CURDIR)/bin:$$PATH" dh_auto_build
+
+override_dh_auto_install:
+	install -D -m 0755 bin/tilemapstudio \
+	    $(CURDIR)/debian/tilemap-studio/usr/bin/tilemapstudio
+	install -D -m 0644 res/app.xpm \
+	    $(CURDIR)/debian/tilemap-studio/usr/share/pixmaps/tilemapstudio48.xpm
+	install -D -m 0644 res/app-icon.xpm \
+	    $(CURDIR)/debian/tilemap-studio/usr/share/pixmaps/tilemapstudio16.xpm
+	install -D -m 0644 debian/tilemap-studio.desktop \
+	    $(CURDIR)/debian/tilemap-studio/usr/share/applications/tilemap-studio.desktop
+
+override_dh_auto_clean:
+	rm -rf bin tmp lib/fltk/build

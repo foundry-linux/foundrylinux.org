@@ -24,7 +24,8 @@ Depends: ${misc:Depends},
  f9dasm,
  libvgm,
  vgmstream,
- m8te
+ m8te,
+ tilemap-studio
 Description: retro game reverse-engineering, porting and authoring toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine and
  authoring retro-console assets:

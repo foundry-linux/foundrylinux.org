@@ -1,0 +1,49 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Tilemap Studio
+Upstream-Contact: Rangi <https://github.com/Rangi42>
+Source: https://github.com/Rangi42/tilemap-studio
+
+Files: *
+Copyright: 2018-2025 Rangi
+License: LGPL-3
+
+Files: lib/fltk/*
+Copyright: 1998-2025 Bill Spitzak and others
+License: FLTK
+Comment: FLTK 1.4.5 is fetched from a sha256-pinned upstream release by build.sh
+ and statically linked into the binary. It is licensed under the GNU LGPL
+ version 2 with an exception that permits static linking; see the FLTK license
+ at https://www.fltk.org/COPYING.php for the full text and exceptions.
+
+License: LGPL-3
+ This package is free software; you can redistribute it and/or modify it under
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 3 of the License, or (at your option) any
+ later version.
+ .
+ This package is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ .
+ On Debian systems, the complete text of the GNU Lesser General Public License
+ version 3 can be found in "/usr/share/common-licenses/LGPL-3".
+
+License: FLTK
+ The FLTK library and included programs are provided under the terms of the GNU
+ Library General Public License (LGPL) version 2 with the following exceptions:
+ .
+   1. Modifications to the FLTK configure script, config header file, and
+      makefiles by themselves to support a specific platform do not constitute a
+      modified or derivative work.
+ .
+   2. Widgets that are subclassed from FLTK widgets do not constitute a
+      derivative work.
+ .
+   3. Static linking of applications and widgets to the FLTK library does not
+      constitute a derivative work and does not require the author to provide
+      source code for the application or widget, use the shared FLTK libraries,
+      or link their applications or widgets against a user-supplied version of
+      FLTK.
+ .
+ The complete FLTK license is published at https://www.fltk.org/COPYING.php and,
+ for the LGPL-2 base text, in "/usr/share/common-licenses/LGPL-2".

@@ -5,6 +5,12 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
+### Tilemap Studio — retro tile/map editor ([plan](docs/plans/2026-06-10-package-tilemap-studio.md))
+
+- [ ] **Package Tilemap Studio** (v4.0.1, LGPL-3) into `foundry-apt/packages/tilemap-studio/`, wired into `foundry-retro-tools`. Static-links FLTK 1.4.5 X11-only (26.04 ships 1.4.4 Wayland-hybrid that won't compile it; system FLTK pkg would clash with the SONAME — see [linkage investigation](docs/investigations/2026-06-10-tilemap-studio-fltk-linkage.md)). debian/ tree + 2 quilt patches + build.sh authored; static build proven (PIE, 2.1 MB, no libfltk in ldd). Remaining: lintian-clean build via build.sh, wire into `foundry-retro-tools` Depends, dep-chain smoke test, commit + publish.
+- [ ] **Upstream the two patches** to `Rangi42/tilemap-studio` — `0001-x11-platform-includes` and `0002-cstring-in-preferences` are toolchain/portability fixes (GCC 15 / FLTK 1.4.5), not Debian glue. Open PRs, record URLs in each patch `Forwarded:` header + changelog, drop on next upstream release. (New mandatory Step 7 in the `/package` skill.)
+- [ ] **Recovered tUME source is vendored** at `vendor/tume/` (MPL-1.1, from Wayback) — parked as a possible future SDL/Qt port; not packaged. See [successor investigation](docs/investigations/2026-06-10-tume-map-editor-port-and-successors.md).
+
 ### Phase 1 — package the source-built retro tools — COMPLETE ✓
 
 All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are now `.deb` packages in the live repo. CI is green. Phase 1 is done.

@@ -1,0 +1,38 @@
+.TH TILEMAPSTUDIO 1 "2026-06-10" "tilemap-studio 4.0.1" "User Commands"
+.SH NAME
+tilemapstudio \- tilemap editor for Game Boy, GBC, GBA, NES and SNES
+.SH SYNOPSIS
+.B tilemapstudio
+.RI [ tilemap-file ]
+.SH DESCRIPTION
+.B Tilemap Studio
+is a graphical editor for the tilemaps used by retro game consoles. It opens
+and saves tilemaps in the native VRAM formats of the Game Boy, Game Boy Color,
+Game Boy Advance, Nintendo Entertainment System (Famicom) and Super NES
+(Super Famicom), as well as the formats used by the Pokemon Game Boy and Game
+Boy Advance games and several homebrew and decompilation projects.
+.PP
+It pairs a tileset image with a tilemap, supports per-tile palette, flip and
+priority attributes, and edits maps of arbitrary size in a resizable, zoomable
+canvas.
+.PP
+Tilemap Studio is a graphical (FLTK) application; it takes no command-line
+options other than an optional tilemap file to open at startup. All editing is
+done through the window's menus and toolbar.
+.SH ARGUMENTS
+.TP
+.I tilemap-file
+Open the given tilemap file on startup.
+.SH FILES
+.TP
+.I ~/.tilemap-studio.prefs
+Per-user preferences, stored via FLTK's preferences mechanism.
+.SH AUTHOR
+Tilemap Studio was written by Rangi (https://github.com/Rangi42).
+.PP
+This manual page was written for the Foundry Linux package.
+.SH SEE ALSO
+Project homepage: https://github.com/Rangi42/tilemap-studio
+.SH COPYRIGHT
+Copyright \(co 2018-2025 Rangi.
+License LGPL-3: GNU LGPL version 3 or later.
