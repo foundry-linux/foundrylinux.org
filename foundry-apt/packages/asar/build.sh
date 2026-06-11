@@ -70,7 +70,7 @@ mv "$WORKDIR/package" "$SRC_DIR"
 
 echo "=== Installing build dependencies ==="
 if command -v apt-get >/dev/null; then
-    _apt() { [[ $EUID -eq 0 ]] && apt-get "$@" || sudo apt-get "$@"; }
+    _apt() { if [[ $EUID -eq 0 ]]; then apt-get "$@"; else sudo apt-get "$@"; fi; }
     _apt install -y --no-install-recommends nodejs npm debhelper dpkg-dev
 fi
 

@@ -75,6 +75,7 @@ mkdir -p "$SRC_DIR/libs"
 cp -a "$LIBS_SRC/." "$SRC_DIR/libs/"
 
 echo "=== Patching CMakeLists.txt: ../../../libs -> libs ==="
+# shellcheck disable=SC2016  # ${CMAKE_CURRENT_SOURCE_DIR} is a literal CMake variable, must NOT expand in shell
 sed -i 's|\${CMAKE_CURRENT_SOURCE_DIR}/../../../libs|${CMAKE_CURRENT_SOURCE_DIR}/libs|g' \
     "$SRC_DIR/CMakeLists.txt"
 
@@ -83,7 +84,7 @@ cp -a "$PKG_DIR/debian" "$SRC_DIR/"
 
 echo "=== Installing Build-Depends ==="
 if command -v apt-get >/dev/null; then
-    _apt() { [[ $EUID -eq 0 ]] && apt-get "$@" || sudo apt-get "$@"; }
+    _apt() { if [[ $EUID -eq 0 ]]; then apt-get "$@"; else sudo apt-get "$@"; fi; }
     _apt install -y --no-install-recommends \
         cmake ninja-build libncurses-dev
 fi
