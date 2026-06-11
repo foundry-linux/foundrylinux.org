@@ -41,7 +41,7 @@ build **FLTK 1.4.5 X11-only and static-link** it; png/zlib/jpeg come from the sy
 5. ~~**Build via `build.sh` in `ubuntu:26.04` + lintian clean**~~ — zero E/W (lintian didn't even flag FLTK embedded-library; no override entry consumed). PIE + stripped. ✅
 6. ~~**Wire into `foundry-retro-tools`**~~ — already wired in 1.0.9; fixed description body + Wed→Thu changelog day (1d2c65c). ✅
 7. ~~**Local dependency-chain smoke test**~~ — `apt-cache depends` resolves `tilemap-studio`; fresh-container `apt install` succeeds. ✅
-8. **Commit**, then `task sync` / tag to publish; verify live `apt install tilemap-studio`.
+8. ~~**Commit**, then `task sync` / tag to publish; verify live `apt install tilemap-studio`~~ — tagged v1.5.14; live `apt install` confirms `4.0.1-1foundry1` installed. ✅
 9. **Upstream the two patches** — open PRs against `Rangi42/tilemap-studio`, record the URLs in each
    patch's `Forwarded:` header and the changelog. (New mandatory last step in the `/package` skill,
    added this session.)
