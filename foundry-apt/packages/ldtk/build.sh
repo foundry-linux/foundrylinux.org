@@ -21,6 +21,7 @@ mkdir -p "$DIST_DIR"
 
 # Build-Depends (CI runners are non-root w/ sudo; containers are root).
 if command -v apt-get >/dev/null; then
+    # shellcheck disable=SC2015  # root path runs apt-get; non-root falls back to sudo
     _apt() { [[ $EUID -eq 0 ]] && apt-get "$@" || sudo apt-get "$@"; }
     _apt install -y --no-install-recommends unzip ca-certificates curl >/dev/null 2>&1 || true
 fi
