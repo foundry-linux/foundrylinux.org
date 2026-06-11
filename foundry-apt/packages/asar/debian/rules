@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	install -d $(CURDIR)/debian/asar/usr/lib/asar
+	install -d $(CURDIR)/debian/asar/usr/bin
+	cp -r bin lib node_modules package.json $(CURDIR)/debian/asar/usr/lib/asar/
+	printf '#!/bin/sh\nexec /usr/bin/node /usr/lib/asar/bin/asar.mjs "$$@"\n' \
+		> $(CURDIR)/debian/asar/usr/bin/asar
+	chmod 755 $(CURDIR)/debian/asar/usr/bin/asar
+
+override_dh_strip:
+	# Pure JavaScript — no ELF binaries to strip

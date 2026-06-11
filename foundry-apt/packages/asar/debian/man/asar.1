@@ -1,0 +1,139 @@
+.TH ASAR 1 "June 2026" "asar 4.2.0" "User Commands"
+.SH NAME
+asar \- create and extract Electron .asar archives
+.SH SYNOPSIS
+.B asar
+.RI [ options ]
+.I command
+.RI [ args ]
+.SH DESCRIPTION
+.B asar
+is the official command-line tool for creating and extracting
+.I .asar
+archives \(em the format used by Electron applications to bundle their source
+files into a single immutable file.
+.PP
+.I .asar
+archives are simple concatenated file archives similar to
+.BR tar (1),
+but with a random-access JSON index at the start so individual files can be
+read without scanning the whole archive.
+They are used by Electron at runtime to load application code efficiently.
+.SH COMMANDS
+.TP
+.BI "pack " "dir output"
+Create a new
+.I .asar
+archive from the contents of
+.IR dir ,
+writing the result to
+.IR output .
+Alias:
+.BR p .
+.RS
+.TP
+.BI "--ordering " file
+Path to a text file listing relative paths in the desired packing order.
+One path per line.
+.TP
+.BI "--unpack " expression
+Glob expression; matching files are excluded from the archive and left on
+disk next to it as unpacked files.
+.TP
+.BI "--unpack-dir " expression
+Glob expression or literal prefix; matching directories are excluded from
+the archive.
+.TP
+.B --exclude-hidden
+Exclude hidden files (those whose name starts with
+.IR . ).
+.RE
+.TP
+.BI "list " archive
+Print the paths of all files contained in
+.IR archive ,
+one per line.
+Alias:
+.BR l .
+.RS
+.TP
+.B "-i, --is-pack"
+Annotate each path with whether it is packed or unpacked.
+.RE
+.TP
+.BI "extract-file " "archive filename"
+Extract a single file named
+.I filename
+from
+.IR archive ,
+writing it to the current directory.
+Alias:
+.BR ef .
+.TP
+.BI "extract " "archive dest"
+Extract all files from
+.I archive
+into the directory
+.IR dest .
+Alias:
+.BR e .
+.SH OPTIONS
+.TP
+.B "-V, --version"
+Print the version number and exit.
+.TP
+.B "-h, --help"
+Print a usage summary and exit.
+.SH EXAMPLES
+Pack a directory:
+.PP
+.RS
+.nf
+asar pack myapp/ myapp.asar
+.fi
+.RE
+.PP
+Pack, leaving native modules unpacked:
+.PP
+.RS
+.nf
+asar pack myapp/ myapp.asar --unpack "*.node"
+.fi
+.RE
+.PP
+List archive contents:
+.PP
+.RS
+.nf
+asar list myapp.asar
+.fi
+.RE
+.PP
+Extract the whole archive:
+.PP
+.RS
+.nf
+asar extract myapp.asar ./extracted/
+.fi
+.RE
+.PP
+Extract a single file:
+.PP
+.RS
+.nf
+asar extract-file myapp.asar app/main.js
+.fi
+.RE
+.SH SEE ALSO
+.BR tar (1),
+.BR node (1)
+.PP
+Upstream: https://github.com/electron/asar
+.SH AUTHORS
+Originally written by GitHub Inc.
+Packaged for Foundry Linux by Foundry Linux <packages@foundrylinux.org>.
+.SH COPYRIGHT
+Copyright \(co 2014 GitHub Inc.
+License MIT: see
+.I /usr/share/doc/asar/LICENSE.md
+for the full text.

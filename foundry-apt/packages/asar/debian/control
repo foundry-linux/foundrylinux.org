@@ -1,0 +1,19 @@
+Source: asar
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13), nodejs, npm
+Standards-Version: 4.7.0
+Homepage: https://github.com/electron/asar
+
+Package: asar
+Architecture: all
+Depends: ${misc:Depends}, nodejs (>= 22)
+Description: Electron archive format tool
+ asar is the official command-line tool for creating and extracting .asar
+ archives — the format used by Electron applications to bundle their source
+ files. Supports pack, extract, list, and extract-file operations.
+ .
+ This package vendors @electron/asar 4.2.0 and its JavaScript dependencies.
+ Node.js 22 or later is required at runtime (provided by the nodejs package
+ in Ubuntu 26.04 universe).
