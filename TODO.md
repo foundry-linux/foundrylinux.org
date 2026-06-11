@@ -11,6 +11,11 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 - [ ] **Upstream the two patches** to `Rangi42/tilemap-studio` — `0001-x11-platform-includes` and `0002-cstring-in-preferences` are toolchain/portability fixes (GCC 15 / FLTK 1.4.5), not Debian glue. Open PRs, record URLs in each patch `Forwarded:` header + changelog, drop on next upstream release. (New mandatory Step 7 in the `/package` skill.)
 - [ ] **Recovered tUME source is vendored** at `vendor/tume/` (MPL-1.1, from Wayback) — parked as a possible future SDL/Qt port; not packaged. See [successor investigation](docs/investigations/2026-06-10-tume-map-editor-port-and-successors.md).
 
+### wla-dx — vendor ABFS spec PDF ([plan](docs/plans/2026-06-11-vendor-abfs-pdf-post-to-wla-dx-issue-589.md))
+
+- [x] Vendor `abfs.pdf` (Amiga Binary File Structure spec, 2005) to `foundry-apt/packages/wla-dx/docs/abfs.pdf`; original URL dead, sourced from Wayback Machine.
+- [x] Comment on [vhelin/wla-dx#589](https://github.com/vhelin/wla-dx/issues/589) with the Wayback Machine URL so the upstream issue has a working reference.
+
 ### Phase 1 — package the source-built retro tools — COMPLETE ✓
 
 All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are now `.deb` packages in the live repo. CI is green. Phase 1 is done.
