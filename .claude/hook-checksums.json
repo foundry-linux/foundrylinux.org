@@ -1,0 +1,14 @@
+{
+  "commit-checklist.sh": "dae8a886314dbd65827bc40b0927a949b937b6a27937f0838e9098ea6f8182b3",
+  "git-add-guard.sh": "bbd215e4b8125395dd63acb708d996acb46081176c8a69f182a1a26aa6488263",
+  "md-preview.sh": "9930323695c2f9a24ece98c6436a828befc26ea6731b7be2ab73226d85985dd0",
+  "plan-first.sh": "3ebb01180ecf9def46a63aaf2eda26425d71017cb5aa12e29f1cc4c692a6a249",
+  "plan-migrate.sh": "4603fb1223c0b29fc7524408606d139832532c6d9a08262db029aa62f1c2e137",
+  "py-syntax.sh": "ada8d0de3a5dc9e67046079b7971cbefdba588aff4a50b489f5febde2c99a1af",
+  "session-clear-md-flags.sh": "b1e6bbe013bbfbbc937e6bccd8b4b91499e3c8758c34512d5d91f36efda402c5",
+  "shell-strict.sh": "64c9f59ef438e90756a679fd0e2f983777dbc71edf74a6699f55753a039839cd",
+  "sleep-blocker.sh": "76fb8a5860a22325842d501cc69247ca77a051e84c6e8cd8ecf853c8e0d75470",
+  "tf-blocker.sh": "8dda5bd7a4dc082c76b9b687f28c58db872f25eb1dcc6f4b90623fdeea847e75",
+  "todo-reminder.sh": "988dda668dbec9a77f9b0a60bf35e04470acf8c1855b5052da6f7a22ed0ba3a3",
+  "transcript-logger.sh": "1f8e8c8de4fc2cd2d7e7d25a96acc0ee4ed5a23a9675723b99aa48867ef07e5d"
+}

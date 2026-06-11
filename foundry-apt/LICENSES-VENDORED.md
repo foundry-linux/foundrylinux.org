@@ -18,6 +18,11 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 | `python3-pydub` | [jiaaro/pydub](https://github.com/jiaaro/pydub) | [MIT](https://github.com/jiaaro/pydub/blob/master/LICENSE) | `/usr/share/doc/python3-pydub/copyright` |
 | `blender-asset-finder` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder/copyright` |
 | `blender-asset-finder-cli` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder-cli/copyright` |
+| `asar` | [electron/asar](https://github.com/electron/asar) | [MIT](https://github.com/electron/asar/blob/main/LICENSE) | `/usr/share/doc/asar/copyright` |
+| `ldtk` | [deepnight/ldtk](https://github.com/deepnight/ldtk) | [MIT](https://github.com/deepnight/ldtk/blob/master/LICENSE) | `/usr/share/doc/ldtk/copyright` |
+| `m8te` | [nesdoug/M8TE](https://github.com/nesdoug/M8TE) | [MIT](https://github.com/nesdoug/M8TE/blob/main/LICENSE) | `/usr/share/doc/m8te/copyright` |
+| `tilemap-studio` | [Rangi42/tilemap-studio](https://github.com/Rangi42/tilemap-studio) | [LGPL-3.0](https://github.com/Rangi42/tilemap-studio/blob/master/LICENSE) (statically links FLTK under [FLTK licence](https://www.fltk.org/doc-1.4/license.html)) | `/usr/share/doc/tilemap-studio/copyright` |
+| `wla-dx` | [vhelin/wla-dx](https://github.com/vhelin/wla-dx) | [GPL-2.0+](https://github.com/vhelin/wla-dx/blob/master/COPYING) | `/usr/share/doc/wla-dx/copyright` |
 
 > ⚠️ **`snes9x-gtk` ships under the Snes9x licence, which forbids commercial redistribution.** The source may be freely distributed for non-commercial use; binaries are likewise non-commercial. It is fine for Foundry Linux's free, non-commercial apt repo, but it must never be bundled into a paid product. See the [upstream LICENSE](https://github.com/snes9xgit/snes9x/blob/master/LICENSE).
 

@@ -98,3 +98,8 @@ tasks:
     desc: "Lint all shell scripts"
     cmds:
       - shellcheck scripts/*.sh packages/*/build.sh 2>/dev/null || shellcheck scripts/*.sh
+
+  check-licenses:
+    desc: "Verify every packages/*/build.sh has an entry in LICENSES-VENDORED.md"
+    cmds:
+      - bash scripts/check-licenses-vendored.sh
