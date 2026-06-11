@@ -38,9 +38,9 @@ build **FLTK 1.4.5 X11-only and static-link** it; png/zlib/jpeg come from the sy
 3. ~~Prove the static build recipe in Docker~~ — PIE, 2.1 MB, `ldd` shows no libfltk (static), png/z
    dynamic. ✅
 4. ~~Author the `debian/` tree + patches + build.sh~~. ✅
-5. **Build via `build.sh` in `ubuntu:26.04` + lintian clean** (zero E/W beyond the FLTK override).
-6. **Wire into `foundry-retro-tools`**: add `tilemap-studio` to `Depends:`, `dch` a changelog bump.
-7. **Local dependency-chain smoke test** (`dpkg-scanpackages` + install in a fresh container).
+5. ~~**Build via `build.sh` in `ubuntu:26.04` + lintian clean**~~ — zero E/W (lintian didn't even flag FLTK embedded-library; no override entry consumed). PIE + stripped. ✅
+6. ~~**Wire into `foundry-retro-tools`**~~ — already wired in 1.0.9; fixed description body + Wed→Thu changelog day (1d2c65c). ✅
+7. ~~**Local dependency-chain smoke test**~~ — `apt-cache depends` resolves `tilemap-studio`; fresh-container `apt install` succeeds. ✅
 8. **Commit**, then `task sync` / tag to publish; verify live `apt install tilemap-studio`.
 9. **Upstream the two patches** — open PRs against `Rangi42/tilemap-studio`, record the URLs in each
    patch's `Forwarded:` header and the changelog. (New mandatory last step in the `/package` skill,
@@ -49,13 +49,62 @@ build **FLTK 1.4.5 X11-only and static-link** it; png/zlib/jpeg come from the sy
 ## Verification
 
 1. `bash build.sh` in `ubuntu:26.04` produces `dist/tilemap-studio_4.0.1-1foundry1_amd64.deb`.
+
+```
+OK   /repo/foundry-apt/dist/tilemap-studio_4.0.1-1foundry1_amd64.deb  (661804 bytes)
+```
+
+PASS
+
 2. `lintian` returns clean apart from the documented FLTK `embedded-library` override.
+
+```
+running with root privileges is not recommended!
+```
+
+PASS (zero E: or W: lines; lintian did not even trigger the embedded-library tag — FLTK static link went undetected, so no override was needed)
+
 3. `dpkg-deb -I` shows `${shlibs:Depends}` resolved (libpng16, libz, cairo, pango, X11), no libfltk.
+
+```
+Depends: libc6 (>= 2.38), libcairo2 (>= 1.10.0), libgcc-s1 (>= 3.3.1),
+ libglib2.0-0t64 (>= 2.12.0), libpango-1.0-0 (>= 1.44.3),
+ libpangocairo-1.0-0 (>= 1.14.0), libpng16-16t64 (>= 1.6.46),
+ libstdc++6 (>= 14), libx11-6, libxfixes3, libxinerama1 (>= 2:1.1.4),
+ libxpm4, zlib1g (>= 1:1.1.4)
+```
+
+PASS (libfltk absent; png16/zlib/cairo/pango/X11 all present with version constraints)
+
 4. `file usr/bin/tilemapstudio` reports `pie executable`, stripped after `dh_strip`.
+
+```
+/dev/stdin: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV),
+ dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2,
+ BuildID[sha1]=3bc04cba5e664fd7efe167c76885211208c46887,
+ for GNU/Linux 3.2.0, stripped
+```
+
+PASS
+
 5. Fresh-container `apt install ./tilemap-studio_*.deb` succeeds; binary launches `--help`/version.
+
+```
+Setting up tilemap-studio (4.0.1-1foundry1) ...
+-rwxr-xr-x 1 root root 1.7M Jun 10 06:58 /usr/bin/tilemapstudio
+Can't open display:
+```
+
+PASS (`Can't open display:` is expected — FLTK launched and hit the headless X11 check; binary executes correctly)
+
 6. `foundry-retro-tools` resolves `tilemap-studio` via `apt-cache depends`.
 
-(Paste raw command output under each step as it's run, per the SRC plan-verification convention.)
+```
+apt-cache depends foundry-retro-tools
+  Depends: tilemap-studio
+```
+
+PASS
 
 ## Upstreaming (step 9 detail)
 
