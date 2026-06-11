@@ -1,6 +1,6 @@
 # Package WLA-DX as a .deb for foundry-apt
 
-**Status:** In progress  
+**Status:** Complete — shipped as [v1.5.16](https://github.com/foundry-linux/foundry-apt/actions)  
 **Tracking:** [wla-dx in TODO.md](../../TODO.md) — Packaging — dropped packages to investigate
 
 ## Context
@@ -11,19 +11,20 @@ CPUs). Absent from Debian/Ubuntu. Once packaged, it wires into `foundry-retro-to
 
 ## Decisions
 
-- **Version**: v10.6 (latest tagged release; v10.7 exists in HEAD but untagged)
+- **Version**: v10.6 (latest tagged release; HEAD is 191 commits ahead — ez80, cx4, sh2
+  added post-tag; bump to v10.7 when tagged)
 - **sha256**: `010c4d426fd1733b978cbca7530a5e68bdfb6f62976c0d5ff7bff447894e19a8`
 - **Build system**: pure cmake, no external deps beyond libc/libm
 - **Debian version**: `10.6-1foundry1`
-- **Man pages**: 21 total — `wla-6502.1` canonical (full options), 18 other `wla-*` get
+- **Man pages**: 18 total — `wla-6502.1` canonical (full options), 15 other `wla-*` get
   individual short pages with arch description + cross-reference; `wlalink.1` and `wlab.1`
   hand-written from source
-- **No upstream patches expected** (clean cmake build, no legacy Makefile/configure.ac)
+- **No upstream patches needed** (clean cmake build, no legacy Makefile/configure.ac)
 - **foundry-retro-tools bump**: 1.0.10 → 1.0.11
 
-## Binaries (21 total)
+## Binaries (18 total — v10.6)
 
-All installed to `/usr/bin/`:
+All installed to `/usr/bin/`. cx4/ez80/sh2 added in HEAD post-v10.6; will appear in v10.7.
 
 | Binary | CPU |
 |---|---|
@@ -36,7 +37,6 @@ All installed to `/usr/bin/`:
 | `wla-huc6280` | HuC6280 (PC Engine) |
 | `wla-z80` | Zilog Z80 |
 | `wla-z80n` | Z80N (ZX Spectrum Next) |
-| `wla-ez80` | eZ80 |
 | `wla-68000` | Motorola 68000 |
 | `wla-6800` | Motorola 6800 |
 | `wla-6801` | Motorola 6801 |
@@ -44,8 +44,6 @@ All installed to `/usr/bin/`:
 | `wla-8008` | Intel 8008 |
 | `wla-8080` | Intel 8080 |
 | `wla-superfx` | SuperFX (SNES) |
-| `wla-sh2` | SH-2 (Sega 32X) |
-| `wla-cx4` | CX4 (SNES) |
 | `wlalink` | WLA linker |
 | `wlab` | WLA batch assembler |
 
@@ -86,31 +84,28 @@ foundry-apt/packages/wla-dx/
     ├── control, changelog, copyright, rules
     ├── source/format (3.0 quilt), watch, patches/series
     ├── wla-dx.manpages
-    └── man/  (21 × .1 files)
+    └── man/  (18 × .1 files)
         wla-6502.1  (full options page — all wla-* share the same flags)
-        wla-65c02.1 … wla-cx4.1  (18 × short pages: arch desc + SEE ALSO wla-6502(1))
+        wla-65c02.1 … wla-superfx.1  (15 × short pages: arch desc + SEE ALSO wla-6502(1))
         wlalink.1   (linker options from --help)
         wlab.1      (batch assembler from --help)
 ```
 
-## debian/control sketch
+## debian/control (as shipped)
 
 ```
 Source: wla-dx
 Section: devel
 Architecture: any
 Build-Depends: debhelper-compat (= 13), cmake
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libc6 (>= 2.34)
 Homepage: https://github.com/vhelin/wla-dx
-Description: multi-platform cross-assembler for 19 retro CPUs
- WLA DX is a cross-assembler suite targeting 19 CPU architectures used
- in retro consoles and home computers: 6502, 65C02, 65816 (SNES),
- SPC700 (SNES DSP), Game Boy, HuC6280 (PC Engine), Z80, eZ80, 68000,
- 6800, 6801, 6809, 8008, 8080, SuperFX (SNES), SH-2 (Sega 32X), and
- CX4 (SNES). It is the assembler backend used by PVSnesLib and many
- retro homebrew and decompilation projects.
- .
- Includes the wlalink linker and wlab batch assembler.
+Description: multi-platform cross-assembler package (16 CPU architectures)
+ WLA DX is a set of tools for assembling source code to object files
+ (wla-ARCH) and linking them together (wlalink). Each wla-ARCH binary
+ targets one specific CPU: 6502/65C02/65CE02/65816, SPC700, SuperFX,
+ 6800/6801/6809, 68000, Z80/Z80N/GB, 8008/8080, HuC6280.
+ Includes wlalink (linker) and wlab (binary-to-WLA-DB converter).
 ```
 
 ## Steps
@@ -121,7 +116,7 @@ Description: multi-platform cross-assembler for 19 retro CPUs
 4. ~~Build in `ubuntu:26.04` Docker + lintian clean~~ (zero E/W). ✅
 5. ~~Wire into `foundry-retro-tools`~~ — changelog 1.0.11, control Depends + description. ✅
 6. ~~Local dep-chain smoke test~~ — `dpkg-deb -I` + fresh-container install. ✅
-7. **Commit + tag** (`task bump`); verify live `apt install wla-dx`.
+7. ~~Commit + tag~~ — [v1.5.16](https://github.com/foundry-linux/foundry-apt/actions) tagged and CI publishing. ✅
 
 ## Verification
 
@@ -192,3 +187,12 @@ PASS
 ```
 
 PASS
+
+## When v10.7 is tagged
+
+1. Update `UPSTREAM_VERSION` + `SHA256` in `build.sh`.
+2. Add `debian/man/wla-cx4.1`, `wla-ez80.1`, `wla-sh2.1` (short pages, SEE ALSO `wla-6502(1)`).
+3. Add those 3 entries to `debian/wla-dx.manpages`.
+4. Update `debian/control`: "16 CPU architectures" → "19 CPU architectures"; add cx4/ez80/sh2 lines.
+5. Add `debian/changelog` entry.
+6. `task bump`.
