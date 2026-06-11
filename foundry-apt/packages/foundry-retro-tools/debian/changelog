@@ -1,3 +1,10 @@
+foundry-retro-tools (1.0.12) resolute; urgency=medium
+
+  * Add pvsneslib-core (PVSnesLib SNES homebrew SDK: 816-tcc C compiler,
+    pinned WLA DX, and a C library; used via PVSNESLIB_HOME + make).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 12 Jun 2026 00:00:00 +0000
+
 foundry-retro-tools (1.0.11) resolute; urgency=medium
 
   * Add wla-dx (16-CPU multi-platform cross-assembler suite: 6502, 65816,

@@ -19,7 +19,8 @@ Depends: ${misc:Depends},
  libtcod-dev,
  glslang-tools,
  spirv-cross,
- spirv-tools
+ spirv-tools,
+ pvsneslib-core
 Description: 2D/3D game-dev frameworks, headers, and shader tools
  SDK headers and tools for game-engine development against the standard
  cross-platform C/C++ frameworks plus Vulkan shader tooling:
@@ -34,6 +35,7 @@ Description: 2D/3D game-dev frameworks, headers, and shader tools
    * glslang-tools    glslangValidator (Vulkan GLSL → SPIR-V)
    * spirv-cross      SPIR-V → other shader languages
    * spirv-tools      SPIR-V assembler, validator, optimizer
+   * pvsneslib-core   PVSnesLib SNES homebrew SDK (816-tcc + WLA + C library)
  .
  NOTE: love (LÖVE 2D Lua game engine) was originally listed here but
  Ubuntu 26.04's love 11.5-3 package has a broken postinst — it calls

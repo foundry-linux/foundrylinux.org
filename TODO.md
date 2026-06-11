@@ -5,6 +5,11 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
+### PVSnesLib — SNES homebrew SDK ([plan](docs/plans/2026-06-12-package-pvsneslib.md))
+
+- [ ] **Publish PVSnesLib 4.5.0** — `foundry-apt/packages/pvsneslib/` built + tested locally (3 binaries: `pvsneslib-core` amd64 / `pvsneslib-examples` all / `pvsneslib` meta; pre-built upstream Linux zip repacked to `/usr/lib/pvsneslib` with `PVSNESLIB_HOME` via `/etc/profile.d`). All 7 verification steps PASS — lintian-clean, end-to-end hello_world ROM build (262144-byte .sfc) confirmed in a fresh `ubuntu:26.04`. Wired into `foundry-retro-tools` (1.0.12) + `foundry-game-frameworks` (1.0.3). Remaining: `task bump` to sync + publish to R2.
+- [ ] **De-vendor watch:** PVSnesLib bundles its own pinned WLA DX (`wla-65816`/`wla-spc700`/`wlalink`) and `816-tcc` under `devkitsnes/bin/` — intentional (self-contained, library `.obj`s assembled against the pinned WLA). No `/usr/bin` symlinks, so no conflict with the standalone `wla-dx` package. If upstream ever ships a source-buildable toolchain cleanly, revisit building from source for arch portability (currently amd64-only — the prebuilt zip is 64-bit Linux only).
+
 ### Tilemap Studio — retro tile/map editor ([plan](docs/plans/2026-06-10-package-tilemap-studio.md))
 
 - [ ] **Package Tilemap Studio** (v4.0.1, LGPL-3) into `foundry-apt/packages/tilemap-studio/`, wired into `foundry-retro-tools`. Static-links FLTK 1.4.5 X11-only (26.04 ships 1.4.4 Wayland-hybrid that won't compile it; system FLTK pkg would clash with the SONAME — see [linkage investigation](docs/investigations/2026-06-10-tilemap-studio-fltk-linkage.md)). debian/ tree + 2 quilt patches + build.sh authored; static build proven (PIE, 2.1 MB, no libfltk in ldd). Remaining: lintian-clean build via build.sh, wire into `foundry-retro-tools` Depends, dep-chain smoke test, commit + publish.

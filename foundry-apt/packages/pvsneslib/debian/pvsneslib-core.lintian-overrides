@@ -1,0 +1,11 @@
+# PVSnesLib 4.5.0 — pre-built upstream release packaging.
+# Tags genuinely irreducible without recompiling upstream's binary distribution.
+# Finalized against the actual lintian run (only the tag below fires; the
+# 816-tcc/wla-* ELFs are already PIE, so no hardening overrides are needed).
+# See docs/plans/2026-06-12-package-pvsneslib.md for evidence.
+
+# ── Statically-linked converters ───────────────────────────────────────────
+# The asset-conversion tools (gfx2snes, gfx4snes, smconv, snesbrr, snestools,
+# tmx2snes, bin2txt, constify, 816-opt) are shipped as upstream static builds;
+# we ship the pre-built distribution and cannot relink them dynamically.
+pvsneslib-core: statically-linked-binary *

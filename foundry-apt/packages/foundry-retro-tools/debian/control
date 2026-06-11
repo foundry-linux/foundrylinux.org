@@ -27,18 +27,22 @@ Depends: ${misc:Depends},
  vgmstream,
  m8te,
  tilemap-studio,
- wla-dx
+ wla-dx,
+ pvsneslib-core
 Description: retro game reverse-engineering, porting and authoring toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine and
  authoring retro-console assets:
  MAME (debugger + tools), 6502/Z80/68k/6809 disassemblers and assemblers,
  64tass multi-pass 65816 macro assembler,
- wla-dx (16-CPU multi-platform cross-assembler suite: 6502/65816/SPC700/Z80/68000/…),
+ wla-dx (16-CPU multi-platform cross-assembler suite:
+ 6502/65816/SPC700/Z80/68000/…),
  radare2, binwalk, sox (audio conversion), xa65 6502 cross-assembler,
  f9dasm 6800/6809/6309 disassembler, libvgm (vgm-player + vgm2wav for
  chip-register VGM playback and rendering), vgmstream-cli (100+ game audio
  formats decoded to WAV), m8te (SNES 8bpp tile/tilemap/palette editor),
- tilemap-studio (Game Boy / GBC / GBA / NES / SNES tilemap editor).
+ tilemap-studio (Game Boy / GBC / GBA / NES / SNES tilemap editor),
+ pvsneslib-core (PVSnesLib SNES homebrew SDK — 816-tcc C compiler, pinned
+ WLA DX, and a C library, used via PVSNESLIB_HOME + make).
  .
  ghidra (the NSA SRE framework, ~860 MiB) is not here — it lives in the
  atelier edition, to keep core/anvil small enough for a 4 GB USB stick.

@@ -1,0 +1,6 @@
+version=4
+# PVSnesLib release tags are bare numeric versions (e.g. 4.5.0). The release
+# asset we actually vendor is a pre-built Linux zip, not a source tarball;
+# this watch tracks new tags for version-bump awareness.
+https://github.com/alekmaul/pvsneslib/tags \
+    .*/archive/refs/tags/v?@ANY_VERSION@\.tar\.gz

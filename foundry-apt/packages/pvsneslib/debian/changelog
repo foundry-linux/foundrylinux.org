@@ -1,0 +1,11 @@
+pvsneslib (4.5.0-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of PVSnesLib 4.5.0 (2025-12-28 release).
+  * Source: https://github.com/alekmaul/pvsneslib/releases/tag/4.5.0
+  * Pre-built upstream Linux zip; self-contained SNES SDK (816-tcc compiler,
+    pinned WLA DX, asset-conversion tools, C library) installed under
+    /usr/lib/pvsneslib with PVSNESLIB_HOME set via /etc/profile.d.
+  * Split into three binaries: pvsneslib-core (toolchain + library, amd64),
+    pvsneslib-examples (sample projects, arch-all), and pvsneslib (metapackage).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 12 Jun 2026 00:00:00 +0000

@@ -1,0 +1,61 @@
+Source: pvsneslib
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ unzip
+Standards-Version: 4.7.2
+Homepage: https://github.com/alekmaul/pvsneslib
+X-Repology-Project: pvsneslib
+Rules-Requires-Root: no
+
+Package: pvsneslib-core
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: make
+Suggests: pvsneslib-examples
+Description: SNES homebrew development kit — toolchain and library
+ PVSnesLib is a small, open and free development kit for the Nintendo SNES.
+ It bundles a complete C toolchain (the 816-tcc compiler plus a pinned WLA DX
+ cross-assembler/linker) and a C library, along with asset-conversion tools
+ for graphics, tilemaps, and sound (gfx4snes, gfx2snes, smconv, snesbrr,
+ snestools, tmx2snes, bin2txt, constify, 816-opt).
+ .
+ This package ships upstream's pre-built Linux release under
+ /usr/lib/pvsneslib. It installs /etc/profile.d/pvsneslib.sh which exports
+ PVSNESLIB_HOME=/usr/lib/pvsneslib. Projects are built by writing a Makefile
+ that includes $PVSNESLIB_HOME/devkitsnes/snes_rules and running make — the
+ bundled tools are invoked through that rules file, not from $PATH (which is
+ why nothing is symlinked into /usr/bin).
+ .
+ Install pvsneslib-examples for the bundled sample projects, or the pvsneslib
+ metapackage to pull in both.
+
+Package: pvsneslib-examples
+Architecture: all
+Depends: ${misc:Depends},
+ pvsneslib-core (>= ${source:Version})
+Recommends: make
+Description: SNES homebrew development kit — example projects
+ The bundled PVSnesLib sample projects (graphics, sound, input, sprites, maps,
+ and more), installed under /usr/lib/pvsneslib/snes-examples so they resolve
+ against PVSNESLIB_HOME=/usr/lib/pvsneslib.
+ .
+ Each example is built by running make inside its directory after sourcing
+ /etc/profile.d/pvsneslib.sh (or exporting PVSNESLIB_HOME). This is the
+ quickest way to confirm the toolchain works and to learn the API.
+ .
+ This package is architecture-independent (sources and assets only); the
+ toolchain it needs lives in pvsneslib-core.
+
+Package: pvsneslib
+Architecture: all
+Depends: ${misc:Depends},
+ pvsneslib-core (>= ${source:Version}),
+ pvsneslib-examples (>= ${source:Version})
+Description: SNES homebrew development kit (complete)
+ PVSnesLib is a small, open and free development kit for the Nintendo SNES,
+ providing a C toolchain, library, and asset-conversion tools.
+ .
+ This metapackage installs the complete kit: the toolchain and library
+ (pvsneslib-core) plus the sample projects (pvsneslib-examples).

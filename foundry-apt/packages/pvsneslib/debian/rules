@@ -1,0 +1,102 @@
+#!/usr/bin/make -f
+# PVSnesLib — pre-built upstream release packaging (model: packages/ghidra).
+# One source tree produces three binaries:
+#   pvsneslib-core      the devkit tree under /usr/lib/pvsneslib  (amd64)
+#   pvsneslib-examples  the snes-examples tree under /usr/lib/pvsneslib  (all)
+#   pvsneslib           metapackage (no files)
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+CORE  = $(CURDIR)/debian/pvsneslib-core/usr/lib/pvsneslib
+EXAMP = $(CURDIR)/debian/pvsneslib-examples/usr/lib/pvsneslib
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# pre-built upstream distribution — no configure step
+
+override_dh_auto_build:
+	# pre-built upstream distribution — no build step
+
+override_dh_auto_test:
+	# no test suite in the binary distribution
+
+override_dh_auto_install:
+	# --- pvsneslib-core: the devkit (toolchain + library + headers) ---
+	install -d $(CORE)
+	# Enumerate top-level items so the debian/ overlay and the 47 MB
+	# snes-examples tree (its own package) are excluded.
+	for item in devkitsnes pvsneslib vscode-template; do \
+	    if [ -e "$(CURDIR)/$$item" ]; then \
+	        cp -a "$(CURDIR)/$$item" $(CORE)/; \
+	    fi; \
+	done
+	# Top-level loose files (logo, license/version text, readme).
+	for f in $(CURDIR)/*.txt $(CURDIR)/*.png $(CURDIR)/*.gal; do \
+	    [ -e "$$f" ] && cp -a "$$f" $(CORE)/ || true; \
+	done
+	# Environment: PVSNESLIB_HOME must point at the install root for
+	# snes_rules to resolve $(PVSNESLIB_HOME)/devkitsnes/... and .../pvsneslib/...
+	install -d $(CURDIR)/debian/pvsneslib-core/etc/profile.d
+	printf '# Set by the pvsneslib-core package.\nexport PVSNESLIB_HOME=/usr/lib/pvsneslib\n' \
+	    > $(CURDIR)/debian/pvsneslib-core/etc/profile.d/pvsneslib.sh
+	chmod 644 $(CURDIR)/debian/pvsneslib-core/etc/profile.d/pvsneslib.sh
+	# --- pvsneslib-examples: the sample projects ---
+	install -d $(EXAMP)
+	if [ -e "$(CURDIR)/snes-examples" ]; then \
+	    cp -a "$(CURDIR)/snes-examples" $(EXAMP)/; \
+	fi
+	# The upstream zip sets +x on essentially every file. Strip it from all
+	# files in both trees, then selectively restore it to ELF binaries and
+	# shell scripts.
+	for d in $(CORE) $(EXAMP); do \
+	    find "$$d" -type f -exec chmod 644 {} + ; \
+	    find "$$d" -type f -print0 \
+	        | xargs -0 file \
+	        | grep ": ELF " \
+	        | cut -d: -f1 \
+	        | xargs -r chmod 755 ; \
+	    find "$$d" -type f -print0 \
+	        | xargs -0 -I{} sh -c \
+	          'head -c 2 "$$1" | grep -qF "#!" && chmod 755 "$$1" || true' -- {} ; \
+	done
+
+override_dh_fixperms:
+	dh_fixperms
+	# dh_fixperms only propagates existing +x in standard binary dirs; it does
+	# not add +x in /usr/lib. Re-apply +x to ELF binaries and shebang scripts.
+	for d in $(CORE) $(EXAMP); do \
+	    [ -d "$$d" ] || continue ; \
+	    find "$$d" -type f -print0 \
+	        | xargs -0 file \
+	        | grep ": ELF " \
+	        | cut -d: -f1 \
+	        | xargs -r chmod 755 ; \
+	    find "$$d" -type f -print0 \
+	        | xargs -0 -I{} sh -c \
+	          'head -c 2 "$$1" | grep -qF "#!" && chmod 755 "$$1" || true' -- {} ; \
+	done
+
+override_dh_strip:
+	# Strip debug info from the toolchain ELF binaries (they ship unstripped).
+	dh_strip
+	# dh_strip + objcopy --add-gnu-debuglink may reset permissions on modified
+	# ELF files. Restore +x as the last step that touches binaries. Exclude
+	# .so files — shared libraries must be 0644 (Debian Policy §8.1).
+	for d in $(CORE) $(EXAMP); do \
+	    [ -d "$$d" ] || continue ; \
+	    find "$$d" -type f ! -name "*.so" ! -name "*.so.*" \
+	        -exec sh -c 'file "$$1" | grep -q ": ELF " && chmod 755 "$$1" || true' \
+	        sh {} \; ; \
+	done
+
+override_dh_compress:
+	# Don't compress the HTML API docs (keep them browsable) or PNGs (already
+	# compressed). Examples' assets are left as-is too.
+	dh_compress -X.png -X.html -X.htm
+
+override_dh_shlibdeps:
+	# Resolve ${shlibs:Depends} from the native ELF binaries in pvsneslib-core.
+	# --ignore-missing-info suppresses noise for the statically-linked tools.
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
