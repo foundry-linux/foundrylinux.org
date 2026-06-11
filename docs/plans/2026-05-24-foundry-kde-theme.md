@@ -1,6 +1,6 @@
 # foundry-kde-theme — KDE Plasma Theming Package
 
-**Status:** In progress  
+**Status:** Complete (v1.0.5) — single-package consolidation done; Aurorae/Kvantum pending (future)  
 **Package:** `foundry-kde-theme` (`foundry-apt/packages/foundry-kde-theme/`)  
 **Repo:** `apt.foundrylinux.org`
 
@@ -9,8 +9,8 @@
 ## Goal
 
 Ship KDE Plasma desktop branding for Foundry Linux as a single `foundry-kde-theme`
-package installable from `apt.foundrylinux.org`. The package starts with the minimal
-viable set (color scheme + wallpaper + system default) and gains more layers over time.
+package installable from `apt.foundrylinux.org`. `foundry-kde-theme` is the **sole
+owner** of all desktop theming — no theming hooks or static includes in `foundry-iso/`.
 
 ---
 
@@ -26,7 +26,7 @@ viable set (color scheme + wallpaper + system default) and gains more layers ove
 
 ## What ships in each version
 
-### 1.0.0 — Color scheme (done)
+### 1.0.0 — Color scheme
 
 `FoundryLinux.colors` → `/usr/share/color-schemes/`
 
@@ -34,39 +34,121 @@ KDE INI color scheme covering all KDE color groups (Window, Button, View, Select
 Tooltip, Complementary, Header). Sets the near-black / warm-white / orange palette
 across all KDE applications and Plasma shell elements.
 
-### 1.0.1 — Wallpaper wiring (done)
+### 1.0.1 — Wallpaper + system default
 
 Three additions:
 
-1. **`metadata.json`** → `/usr/share/wallpapers/FoundryLinux-ForgeHorizon/`  
-   KPackage manifest that makes Plasma recognize the wallpaper in System Settings.
+1. **`metadata.json`** → `/usr/share/wallpapers/FoundryLinux-ForgeHorizon/`
+   KPackage manifest that makes Plasma recognise the wallpaper in System Settings.
 
-2. **PNG images** → `/usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/`  
-   `1920x1080.png` and `3840x2160.png`. Plasma downscales the highest available
-   resolution automatically.
+2. **PNG images** → `/usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/`
+   `1920x1080.png` and `3840x2160.png`. Plasma downscales the highest available resolution.
 
-3. **`/etc/xdg/plasma-org.kde.plasma.desktop-appletsrc`**  
-   System-wide KDE default — sets containment 1 wallpaper to `FoundryLinux-ForgeHorizon`
-   for any new user session before they customise anything.  
-   Format:
-   ```ini
-   [Containments][1][Wallpaper][org.kde.image][General]
-   Image=file:///usr/share/wallpapers/FoundryLinux-ForgeHorizon/
-   ```
-   Pointing at the package directory (not a specific resolution file) lets KDE pick the
-   best match for the display.
+3. **`/etc/xdg/plasma-org.kde.plasma.desktop-appletsrc`**
+   System-wide KDE default — sets containment 1 wallpaper to `FoundryLinux-ForgeHorizon`.
 
-### Future layers (not started)
+### 1.0.2 — SDDM login theme
 
-| Layer | Location | Effort |
+`data/sddm-theme/` → `/usr/share/sddm/themes/foundry-linux/`
+
+`Main.qml`, `background.png`, and `metadata.desktop`. The SDDM greeter uses
+`foundry-linux` as its theme. **Must ship from a survives-install package** — shipping
+it from `calamares-settings-*` causes the greeter to revert to Kubuntu cones after
+install (calamares and its settings package are purged by the installer).
+
+### 1.0.3 — Anvil avatar
+
+`data/avatar.png` → `/usr/share/foundry-linux/avatar.png`
+
+The Foundry anvil logo (square, ~256×256, used as the user avatar on login/logout/lock
+screens). Placement in `/etc/skel/.face` is handled by `preinst`/`postinst` via
+`dpkg-divert` (see Kubuntu-owned paths below).
+
+### 1.0.4 — Full theming consolidation (LAF, Plasma Style, single-package)
+
+The headline release. Moves all scattered theming into this one package and deletes
+the `foundry-iso` theming hooks and static includes:
+
+- **Look-and-Feel package** (`org.foundrylinux.foundry-linux`) — moved from
+  `foundry-iso` static include into the package. Gains `contents/defaults` (wires
+  color scheme, Plasma Style, splash, wallpaper), `contents/layouts/org.kde.plasma.desktop-layout.js`
+  (taskbar pins: settings, software, files, terminal, Blender, browser — Kate omitted),
+  and a fixed `Splash.qml` (both dead asset paths corrected to survives-install paths:
+  ForgeHorizon wallpaper + anvil avatar). **X-Plasma-APIVersion: 2** added to
+  `metadata.json` for the layout.js globals (`applicationExists`, `loadTemplate`).
+
+- **Plasma Style** (`FoundryLinux` desktoptheme) — minimal `metadata.json` +
+  `colors` file inheriting Breeze SVGs with the forge palette. Panel renders dark.
+  Referenced by the LAF defaults (`[plasmarc][Theme] name=FoundryLinux`). Distinctive-shape
+  SVG overrides are the follow-up.
+
+- **`/etc/xdg/kdeglobals`** — ships `ColorScheme=Foundry Linux` +
+  `LookAndFeelPackage=org.foundrylinux.foundry-linux`. Replaces the old non-executable
+  hook `1150-kde-color-scheme.hook.chroot`.
+
+- **`/etc/xdg/kscreenlockerrc`** — ForgeHorizon wallpaper for the lock screen,
+  with `WallpaperPlugin=org.kde.image` set (required — lock greeter does not default
+  to it; without it the `Image=` path is silently ignored → cones).
+
+- **`/etc/xdg/ksplashrc`** — points at `org.foundrylinux.foundry-linux`.
+
+- **`/etc/xdg/autostart/foundry-wallpaper.desktop`** + `/usr/lib/foundry-kde-theme/foundry-set-wallpaper.sh`
+  — per-user wallpaper autostart. Runs `plasma-apply-wallpaperimage` once per login,
+  sentinel-gated. The autostart is the load-bearing lever for the wallpaper on the
+  **installed** system (LAF defaults + appletsrc are belt-and-suspenders).
+
+- **`dpkg-divert`** for two Kubuntu-owned paths (see below):
+  - `/etc/skel/.face` → kubuntu's blue gear diverted to `.face.kubuntu`; postinst
+    copies `/usr/share/foundry-linux/avatar.png` to `.face`.
+  - `/etc/xdg/kicker-extra-favoritesrc` → kubuntu's Kate-containing list diverted;
+    postinst copies Foundry's version (Kate out, Blender in) to the same path.
+
+**foundry-iso deletions (done in this version):** hook `1150-kde-color-scheme.hook.chroot`
+(removed), `config/includes.chroot/etc/xdg/kscreenlockerrc` + `ksplashrc` (removed),
+`config/includes.chroot/usr/share/plasma/look-and-feel/org.foundrylinux.foundry-linux/`
+(removed). Hook `1100` kept for autologin + QEMU virtio EDID; theming sed-loops removed.
+
+### 1.0.5 — LAF preview thumbnail
+
+`data/look-and-feel/org.foundrylinux.foundry-linux/contents/previews/preview.png` →
+`/usr/share/plasma/look-and-feel/org.foundrylinux.foundry-linux/contents/previews/`
+
+"Foundry Linux" now shows a live-desktop screenshot thumbnail in System Settings →
+Appearance → Global Theme.
+
+### Future layers
+
+| Layer | Status | Location |
 |---|---|---|
-| Plasma Style | `/usr/share/plasma/desktoptheme/FoundryLinux/` | 1–2 days |
-| Look-and-Feel | `/usr/share/plasma/look-and-feel/org.foundrylinux.desktop/` | 1 day |
-| Aurorae window decoration | `/usr/share/aurorae/themes/FoundryLinux/` | 2–4 days |
-| Kvantum application style | `/usr/share/Kvantum/FoundryLinux/` | 1–2 days |
-| SDDM login theme | `/usr/share/sddm/themes/FoundryLinux/` | 1 day |
+| Plasma Style (full SVG set) | Partial — forge-palette `colors` + Breeze inherit done; distinctive panel/widget SVGs pending | `/usr/share/plasma/desktoptheme/FoundryLinux/` |
+| Aurorae window decoration | Not started | `/usr/share/aurorae/themes/FoundryLinux/` |
+| Kvantum application style | Not started | `/usr/share/Kvantum/FoundryLinux/` |
 
-See `docs/investigations/2026-05-24-kde-themes.md` for detailed design notes on each layer.
+See [`docs/investigations/2026-05-24-kde-themes.md`](../investigations/2026-05-24-kde-themes.md) for design notes on each layer.
+
+---
+
+## Kubuntu-owned paths and dpkg-divert
+
+`foundry-kde-theme` uses `dpkg-divert` to take ownership of two paths that
+`kubuntu-settings-desktop` ships:
+
+| Path | Kubuntu file | Divert destination | Foundry replacement |
+|---|---|---|---|
+| `/etc/skel/.face` | blue-gear avatar PNG (conffile) | `/etc/skel/.face.kubuntu` | anvil avatar copied from `/usr/share/foundry-linux/avatar.png` in `postinst` |
+| `/etc/xdg/kicker-extra-favoritesrc` | app-menu Favorites (Kate included) | `/etc/xdg/kicker-extra-favoritesrc.kubuntu` | Foundry's list (Kate out, Blender in) copied from `/usr/share/foundry-kde-theme/kicker-extra-favoritesrc` in `postinst` |
+
+The divert is registered in `preinst` (install + upgrade), removed in `postrm`
+(remove + purge). Survives `kubuntu-settings-desktop` upgrades: dpkg keeps the
+diverted Kubuntu file, installs its new version to `.kubuntu`, and never touches
+the Foundry file.
+
+**Why divert, not hook overwrite?** `/etc/skel/.face` is a **conffile** — dpkg
+tracks its hash and prompts the user on upgrade if the file has changed. A hook
+overwrite dodges the conffile mechanic and works for the initial install, but a
+kubuntu-settings upgrade then prompts the user to keep or drop the "modified"
+conffile, breaking the silent upgrade path. The divert moves the Kubuntu file
+aside entirely so dpkg never sees a conflict.
 
 ---
 
@@ -75,23 +157,54 @@ See `docs/investigations/2026-05-24-kde-themes.md` for detailed design notes on 
 ```
 foundry-apt/packages/foundry-kde-theme/
   debian/
-    control          Depends: plasma-workspace
-    changelog        version source (1.0.1 current)
-    rules            "%: dh $@"
-    install          explicit file → destination mapping
-    source/format    "3.0 (native)"
+    control            Depends: plasma-workspace, sqlite3
+    changelog          version source (1.0.5 current)
+    rules              "%: dh $@"
+    install            explicit file → destination mapping
+    preinst            dpkg-divert --add for .face + kicker-extra-favoritesrc
+    postinst           copy avatar + kicker favoritesrc to diverted paths
+    postrm             dpkg-divert --remove on remove/purge
+    source/format      "3.0 (native)"
     copyright
   data/
+    avatar.png                                  → /usr/share/foundry-linux/
     color-schemes/
-      FoundryLinux.colors
+      FoundryLinux.colors                       → /usr/share/color-schemes/
     wallpapers/
       FoundryLinux-ForgeHorizon/
         metadata.json
         contents/images/
           1920x1080.png
           3840x2160.png
+    sddm-theme/
+      Main.qml                                  → /usr/share/sddm/themes/foundry-linux/
+      background.png
+      metadata.desktop
+    look-and-feel/
+      org.foundrylinux.foundry-linux/
+        metadata.json                           → /usr/share/plasma/look-and-feel/…/
+        contents/
+          defaults
+          layouts/
+            org.kde.plasma.desktop-layout.js
+          splash/
+            Splash.qml
+          previews/
+            preview.png
+    desktoptheme/
+      FoundryLinux/
+        metadata.json                           → /usr/share/plasma/desktoptheme/FoundryLinux/
+        colors
     xdg/
-      plasma-org.kde.plasma.desktop-appletsrc
+      kdeglobals                                → /etc/xdg/
+      ksplashrc                                 → /etc/xdg/
+      kscreenlockerrc                           → /etc/xdg/
+      plasma-org.kde.plasma.desktop-appletsrc  → /etc/xdg/
+      kicker-extra-favoritesrc                 → /usr/share/foundry-kde-theme/ (postinst copies to /etc/xdg/)
+    autostart/
+      foundry-wallpaper.desktop                → /etc/xdg/autostart/
+    bin/
+      foundry-set-wallpaper.sh                 → /usr/lib/foundry-kde-theme/
 ```
 
 ---
@@ -99,98 +212,25 @@ foundry-apt/packages/foundry-kde-theme/
 ## Build
 
 ```bash
-# In the foundrylinux.org repo root:
-docker run --rm -v "$PWD:/work" -w /work/foundry-apt ubuntu:26.04 bash -c \
-  'apt-get update -qq && apt-get install -y -qq debhelper devscripts && \
-   cd packages/foundry-kde-theme && dpkg-buildpackage -us -uc -b'
-
-# Or via Taskfile:
+# Via Taskfile (builds all packages):
 task build
+
+# Single package:
+cd foundry-apt && bash scripts/build-all.sh
 ```
 
 ---
 
 ## Verification
 
-Steps run against the 1.0.1 build:
+Full pixel-level verification run against 0.9.110 anvil ISO (2026-06-11). All surfaces
+passed. See [docs/plans/2026-06-10-foundry-laf-and-plasma-style.md](2026-06-10-foundry-laf-and-plasma-style.md)
+§ "Verification Results" for the complete evidence table.
 
-1. **`.deb` produced and installs cleanly**
-
-   ```bash
-   dpkg-deb --info foundry-apt/foundry-kde-theme_1.0.1_all.deb
-   ```
-
-   Expected: `Version: 1.0.1`, `Architecture: all`, `Depends: plasma-workspace`.
-
-   ```
-   Package: foundry-kde-theme
-   Version: 1.0.1
-   Architecture: all
-   Depends: plasma-workspace
-   ```
-
-   PASS
-
-2. **Color scheme installs to the right path**
-
-   ```bash
-   dpkg -c foundry-apt/foundry-kde-theme_1.0.1_all.deb | grep color-schemes
-   ```
-
-   Expected: `./usr/share/color-schemes/FoundryLinux.colors`
-
-   ```
-   -rw-r--r-- root/root  3606 2026-05-24 07:00 ./usr/share/color-schemes/FoundryLinux.colors
-   ```
-
-   PASS
-
-3. **Wallpaper package installs to the right paths**
-
-   ```bash
-   dpkg -c foundry-apt/foundry-kde-theme_1.0.1_all.deb | grep wallpaper
-   ```
-
-   Expected lines:
-   - `./usr/share/wallpapers/FoundryLinux-ForgeHorizon/metadata.json`
-   - `./usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/1920x1080.png`
-   - `./usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png`
-
-   ```
-   drwxr-xr-x root/root         0 ./usr/share/wallpapers/FoundryLinux-ForgeHorizon/
-   drwxr-xr-x root/root         0 ./usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/
-   drwxr-xr-x root/root         0 ./usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/
-   -rw-r--r-- root/root   1331650 ./usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/1920x1080.png
-   -rw-r--r-- root/root   3211881 ./usr/share/wallpapers/FoundryLinux-ForgeHorizon/contents/images/3840x2160.png
-   -rw-r--r-- root/root       513 ./usr/share/wallpapers/FoundryLinux-ForgeHorizon/metadata.json
-   ```
-
-   PASS
-
-   > **Note:** `dh_strip_nondeterminism` emits a warning about an "invalid length in IDAT header"
-   > for the 3840×2160 PNG. This is a false positive in the perl handler — the PNG has a valid
-   > signature and IHDR, and the deb build completes exit 0. File opens correctly in image viewers.
-
-4. **System default appletsrc installs**
-
-   ```bash
-   dpkg -c foundry-apt/foundry-kde-theme_1.0.1_all.deb | grep etc/xdg
-   ```
-
-   Expected: `./etc/xdg/plasma-org.kde.plasma.desktop-appletsrc`
-
-   ```
-   -rw-r--r-- root/root  115 2026-05-24 07:00 ./etc/xdg/plasma-org.kde.plasma.desktop-appletsrc
-   ```
-
-   PASS
-
-5. **Wallpaper appears in KDE System Settings** (manual; requires a Foundry Linux KDE session)
-
-   Install the `.deb`, open System Settings → Wallpaper — "Forge Horizon" should appear
-   in the wallpaper chooser with thumbnail.
-
-6. **New user session defaults to Forge Horizon wallpaper** (manual; requires a Foundry Linux KDE session)
-
-   Create a new user account. First login should show the Forge Horizon wallpaper without
-   any manual selection.
+Summary of what was verified pixel-level:
+- ForgeHorizon wallpaper on live desktop and after install
+- Lock screen → ForgeHorizon (not cones) — WallpaperPlugin fix holds
+- Taskbar pins: Blender present, Kate absent; Blender pin launches Blender
+- App-menu Favorites: Foundry set (LAF layout.js ran on first login)
+- "Foundry Linux" Global Theme thumbnail in System Settings
+- dpkg-divert: avatar (anvil) + kicker Favorites (Blender, no Kate) — both active

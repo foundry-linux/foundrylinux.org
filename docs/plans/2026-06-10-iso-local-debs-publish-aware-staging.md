@@ -145,16 +145,39 @@ Flow:
 4. Install an ISO built **after** the allowlist; confirm Discover shows **no** same-version
    "Refresh" for foundry packages, and the installer behaves exactly as the local
    `calamares-settings` build (admin-settings UI present, no forced root password).
-   [pending — next post-allowlist install]
+
+   Verified on 0.9.110 installed system (2026-06-11):
+
+   ```
+   $ apt list --upgradable 2>/dev/null | grep -i foundry
+   (no output)
+
+   $ apt-cache policy foundry-kde-theme foundry-core | grep -E 'Installed:|Candidate:|100 |500 '
+   foundry-kde-theme:
+     Installed: 1.0.5    Candidate: 1.0.5
+       100 /var/lib/dpkg/status
+       500 https://apt.foundrylinux.org resolute/main amd64 Packages
+       500 https://apt.foundrylinux.org resolute/main all Packages
+   foundry-core:
+     Installed: 1.0.4    Candidate: 1.0.4
+       500 https://apt.foundrylinux.org resolute/main amd64 Packages
+       500 https://apt.foundrylinux.org resolute/main all Packages
+       100 /var/lib/dpkg/status
+   ```
+
+   `foundry-kde-theme` 1.0.5 was staged (was newer than published at build time); repo
+   caught up to 1.0.5 after the build, but `Installed == Candidate` so no upgrade is offered.
+   `foundry-core` 1.0.4 was NOT staged (filter correctly skipped the identical published
+   version); installed directly from the apt repo at priority 500.
+   No foundry packages appear in `apt list --upgradable` → no Discover "Refresh" noise. **PASS.**
+
+   Calamares install behaviour: completed successfully; Will set own password during install
+   (no forced root password); calamares + calamares-settings purged post-install. **PASS.**
 
 ---
 
 ## Status
 
-- Layer 1 (publish-aware filter): implemented + committed; verified by dry-run + 0.9.105 log.
-- Layer 2 (always-local installer): implemented + committed; takes effect from 0.9.106.
-- Step 4 verification pending the next post-allowlist install.
-- Related, same session: lock-screen wallpaper fix (foundry-kde-theme 1.0.4), Firefox
-  staleness finding (no cache entry to clear — Mozilla index is fetched fresh), and the
-  `dist/` ISO-pruning need (builds do not clean old ISOs; disk filled and broke an `xorriso`
-  step until cleared).
+- Layer 1 (publish-aware filter): **VERIFIED** — dry-run + 0.9.105 build log + 0.9.110 install.
+- Layer 2 (always-local installer): **VERIFIED** — 0.9.110 install completed correctly.
+- All four verification steps **PASS**.

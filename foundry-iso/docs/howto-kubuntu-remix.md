@@ -497,11 +497,11 @@ the hook writes `casper.conf`, so a second pass is mandatory.
 | GRUB menu | `config/binary_grub/grub.cfg` or post-processed via xorriso | Colors, background image, timeout |
 | Plymouth boot splash | `update-alternatives --set default.plymouth` in a hook | Plymouth theme name |
 | SDDM greeter | `/etc/sddm.conf.d/30-{distro}-live.conf` → `Current=`; **theme files must ship from a survives-install package** (`{distro}-kde-theme`, *not* `calamares-settings-*`) | `{sddm-theme}` |
-| Plasma splash screen | `includes.chroot/etc/xdg/ksplashrc` + Look-and-Feel package | `{laf-id}` |
+| Plasma splash screen | `{distro}-kde-theme` package ships `/etc/xdg/ksplashrc` (pointing at `{laf-id}`) and the full LAF under `/usr/share/plasma/look-and-feel/{laf-id}/` (splash QML, `contents/defaults`, panel layout). Using `includes.chroot/etc/xdg/ksplashrc` alone is a bootstrap shortcut but the LAF splash paths in `Splash.qml` must reference **survives-install** assets — assets from `calamares-settings-*` are purged after install, producing blank dots on boot. | `{laf-id}` |
 | Desktop wallpaper | System-wide autostart `/etc/xdg/autostart/{distro}-wallpaper.desktop` → `plasma-apply-wallpaperimage`, sentinel-gated; wallpaper file from a survives-install package (`{distro}-kde-theme`'s `/usr/share/wallpapers/`) | `{wallpaper-path}` |
-| Lock screen wallpaper | `includes.chroot/etc/xdg/kscreenlockerrc`. **MUST set `[Greeter] WallpaperPlugin=org.kde.image`** — the lock greeter does *not* default to it (desktop containments do), so without it the `[Greeter][Wallpaper][org.kde.image][General] Image=` is silently ignored → cones (`kreadconfig6` shows the right path while the pixels stay cones). The `Image=` must also point at a **survives-install** path (`{distro}-kde-theme`'s `/usr/share/wallpapers/…/`), *not* an install-only `/usr/share/backgrounds/*` (purged with `calamares-settings`). Do **NOT** also ship `kscreenlockerrc` from the theme deb — it collides with this static include and dpkg halts on a conffile prompt mid-build. | survives-install wallpaper |
-| KDE color scheme | Hook → `/usr/share/color-schemes/` + `/etc/xdg/kdeglobals` | `{ColorSchemeName}` |
-| User avatar (login/logout/lock) | Hook overwrites `/etc/skel/.face` (the conffile PNG; `.face.icon` symlinks to it) — Kubuntu ships its gear there; new users inherit skel. Image from `{distro}-kde-theme` (`/usr/share/{distro}/avatar.png`) | `{distro}` logo PNG (square, ~256×256) |
+| Lock screen wallpaper | `{distro}-kde-theme` package ships `/etc/xdg/kscreenlockerrc`. **MUST set `[Greeter] WallpaperPlugin=org.kde.image`** — the lock greeter does *not* default to it (desktop containments do), so without it the `[Greeter][Wallpaper][org.kde.image][General] Image=` is silently ignored → cones (`kreadconfig6` shows the right path while the pixels stay cones). The `Image=` must point at a **survives-install** path. Do **NOT** also put `kscreenlockerrc` in `config/includes.chroot/etc/xdg/` — it creates a conffile collision with the package file and `dpkg` halts on a prompt mid-build. | survives-install wallpaper |
+| KDE color scheme | `{distro}-kde-theme` package ships `{ColorSchemeName}.colors` → `/usr/share/color-schemes/` and `/etc/xdg/kdeglobals` (`ColorScheme=` + `LookAndFeelPackage=` activation). | `{ColorSchemeName}` |
+| User avatar (login/logout/lock) | `{distro}-kde-theme` uses `dpkg-divert` in `preinst` to push `kubuntu-settings-desktop`'s `/etc/skel/.face` (blue-gear conffile) aside; `postinst` copies the distro logo there. New users inherit via skel; Calamares install copies skel to the created user. Image at `/usr/share/{distro}/avatar.png`. | `{distro}` logo PNG (square, ~256×256) |
 | Calamares installer | `calamares-settings-{distro-slug}` package | Branding YAML, slideshow, sidebar colors |
 
 ### Calamares Branding (`branding.desc`)
@@ -605,21 +605,30 @@ The Python `unpackfs` module iterates an `unpack:` list and treats empty destina
 ### Plasma Splash Screen (KSplashQML)
 
 The animated loading screen shown between SDDM autologin and the Plasma desktop
-appearing is a KSplash Look-and-Feel package. Ship it via `config/includes.chroot/`
-— no hook or package required.
+appearing is a KSplash Look-and-Feel package.
 
-**File layout:**
+**Recommended approach: ship everything from the `{distro}-kde-theme` package.**
+The package ships `ksplashrc`, `kscreenlockerrc`, and the full LAF tree.
+The critical constraint: **all asset paths in `Splash.qml` must be survives-install**
+— if the LAF is shipped by `calamares-settings-*`, the splash assets are purged
+with the installer after install, leaving blank dots on every subsequent boot.
+
+Ship `ksplashrc` and `kscreenlockerrc` from the **package** (under `data/xdg/`),
+not via `config/includes.chroot/etc/xdg/` — a static include AND a package file at
+the same path is a conffile collision; `dpkg` halts with a prompt mid-build.
+
+**LAF tree (delivered by the package to `/usr/share/plasma/look-and-feel/{laf-id}/`):**
 ```
-config/includes.chroot/
-├── etc/xdg/
-│   ├── ksplashrc                        # system-wide KSplash theme pointer
-│   └── kscreenlockerrc                  # system-wide lock screen wallpaper
-└── usr/share/plasma/look-and-feel/
-    └── {laf-id}/
-        ├── metadata.json                # Look-and-Feel package declaration
-        └── contents/
-            └── splash/
-                └── Splash.qml           # QML splash animation
+{laf-id}/
+├── metadata.json                # KPlugin descriptor (X-Plasma-APIVersion: 2)
+└── contents/
+    ├── defaults                 # INI: ColorScheme, Plasma Style, Splash, Wallpaper
+    ├── layouts/
+    │   └── org.kde.plasma.desktop-layout.js   # panel pins + wallpaper (runs on first login)
+    ├── splash/
+    │   └── Splash.qml           # QML splash animation (paths must survive install)
+    └── previews/
+        └── preview.png          # thumbnail in System Settings → Global Theme
 ```
 
 **`ksplashrc`:**
@@ -630,6 +639,9 @@ Theme={laf-id}
 
 **`kscreenlockerrc`:**
 ```ini
+[Greeter]
+WallpaperPlugin=org.kde.image
+
 [Greeter][Wallpaper][org.kde.image][General]
 Image=file://{wallpaper-path}
 ```
@@ -678,9 +690,9 @@ or `update-initramfs` needed for xdg config files.
 ### KDE Color Scheme
 
 A `.colors` file sets the application color palette used across all KDE apps.
-Place it via a hook or directly in `includes.chroot/usr/share/color-schemes/`.
+Ship it from the `{distro}-kde-theme` package to `/usr/share/color-schemes/`.
 
-Wire it as the system default via `/etc/xdg/kdeglobals`:
+Wire it as the system default via `/etc/xdg/kdeglobals` (also shipped from the package):
 ```ini
 [General]
 ColorScheme={ColorSchemeName}
@@ -1154,7 +1166,7 @@ debian/
 | Wallpaper reverts to Kubuntu "cones" default on installed-system first boot (live is fine) | **The wallpaper image path pointed into an installer-only package.** The hook set the wallpaper to `/usr/share/sddm/themes/{distro}/background.png`, shipped by `calamares-settings-{distro}`. That package `Depends: calamares`, and Calamares's `modules/packages.conf` runs `remove: calamares` on the installed target — apt drops the reverse-dependency too, **deleting the SDDM theme and its background.png**. On the installed system the wallpaper config then pointed at a dead path, so Plasma fell back to the Kubuntu cones default. Live worked because the installer (and its background.png) is still present there. Two earlier red herrings: the per-user autostart vs skel question (real but secondary), and the LAF/appletsrc patching (Kubuntu LAF `defaults` use collection names like `Image=Kubuntu`; the appletsrc IS shipped — by the distro's own theme package, not kubuntu-settings — so neither is the load-bearing lever). | **Point the wallpaper at a path shipped by a package that survives the install** — the distro's *theme* package (e.g. `foundry-kde-theme` ships `/usr/share/wallpapers/{Distro}-{Name}/`), never `calamares-settings-*`. The load-bearing lever is the system-wide autostart (`/etc/xdg/autostart/`, same mechanism as `foundry-welcome`) running `plasma-apply-wallpaperimage <surviving-path>` once per user, sentinel-gated (`~/.config/{distro}-wallpaper-set`), polling up to 60 s (condition-based, not bare sleep). LAF + appletsrc patches are belt-and-suspenders. |
 | SDDM **login screen** shows Kubuntu cones on installed system (live login screen is fine) | Same root-cause family as the wallpaper bug. The custom SDDM greeter theme (`/usr/share/sddm/themes/{distro}/`) was shipped by `calamares-settings-{distro}`, which `Depends: calamares` and is **purged from the installed target**. The `[Theme] Current={distro}` setting (in an `/etc/sddm.conf.d/` file) then points at a now-missing theme, so SDDM falls back to the Kubuntu breeze greeter → cones background. Only visible when autologin doesn't fire (otherwise you skip the greeter). Note SDDM's `Relogin=false` (from `20-kubuntu.conf`) means autologin fires **once per boot** — a bounced first session strands you on the greeter until reboot, which is how this surfaces intermittently. | Ship the SDDM theme from a package that **survives the install** — the distro theme package (`foundry-kde-theme`), not `calamares-settings-*`. `Main.qml` references its background via `Qt.resolvedUrl("background.png")` (relative), so moving the whole theme dir between packages needs no path edits. Keep `[Theme] Current={distro}` in a surviving config; once the theme dir is present on the target it resolves. General rule: **any asset the installed system renders — desktop wallpaper, login greeter, lock screen — must come from a surviving package, never the installer's settings package.** |
 | Desktop installer icon shows generic Calamares icon | `Icon=calamares` in the `.desktop` file uses the upstream Calamares icon, not the distro's own branding. | Copy the branding `logo.png` to `/usr/share/pixmaps/{distro-slug}-installer.png` in the hook that creates the installer `.desktop`, then use `Icon={distro-slug}-installer`. The branding package installs the logo at build time so it is present when the hook runs. |
-| Login/logout/lock screens show the **Kubuntu blue-gear** avatar | `kubuntu-settings-desktop` ships the Kubuntu logo in skel: `/etc/skel/.face` is the PNG (a **conffile**), `/etc/skel/.face.icon` is a symlink to it. New users inherit skel — the live user (casper `25adduser`) and the installed user (Calamares `users` module copies `/etc/skel`) — so both show the gear. (Find it: `dpkg -L kubuntu-settings-desktop \| grep face` + check `.conffiles`.) | In a build-time hook, overwrite `/etc/skel/.face` (the real file) with the distro logo (square PNG, ~256×256) and `ln -sf .face /etc/skel/.face.icon`. Ship the image from a survives-install package (`{distro}-kde-theme`). A hook overwrite avoids a dpkg file-conflict with kubuntu-settings (which owns `.face`). **Survives kubuntu-settings upgrades for free**: `.face` is a conffile, so dpkg keeps the modified version (`confold`); only if it were a *regular* file would you need `dpkg-divert` to rename the package's copy aside. |
+| Login/logout/lock screens show the **Kubuntu blue-gear** avatar | `kubuntu-settings-desktop` ships the Kubuntu logo in skel: `/etc/skel/.face` is the PNG (a **conffile**), `/etc/skel/.face.icon` is a symlink to it. New users inherit skel — the live user (casper `25adduser`) and the installed user (Calamares `users` module copies `/etc/skel`) — so both show the gear. (Find it: `dpkg -L kubuntu-settings-desktop \| grep face` + check `.conffiles`.) | Use `dpkg-divert` in the `{distro}-kde-theme` `preinst` to push kubuntu's `/etc/skel/.face` to `/etc/skel/.face.kubuntu`; in `postinst`, copy the distro avatar from `/usr/share/{distro}/avatar.png` to `/etc/skel/.face`. The divert scoped to `{distro}-kde-theme` means the package's own `postinst` copy is uncontested. Survives `kubuntu-settings-desktop` upgrades: dpkg installs the new gear to `.face.kubuntu` and never touches the Foundry file. **Do NOT use a hook overwrite alone** — if the theme package `postinst` also runs, both the hook and the postinst fight for the same file; the divert avoids this race. |
 | Slideshow (carousel) heading clipped on the left ("Where"→"Vhere") | **The clipped text was baked into the slide PNG, not rendered by QML.** The slides are 800×440 PNGs with the heading + body typeset into the artwork ~32 px from the left edge, displayed with `fillMode: Image.PreserveAspectCrop`. The installer pane is taller (narrower aspect) than 1.818:1, so Crop scaled each slide to fill the height and cropped ~77 px off **each side** — clipping the first glyph of every heading. A redundant QML `Text` caption overlaid the *same* text at the bottom; five successive "text margin" patches all edited that caption (chasing a real-but-irrelevant Qt Quick anchor quirk on `Column` positioners in `ListView` delegates) while the actually-clipped text sat untouched in the PNG. | Switch the slide `Image` to `fillMode: Image.PreserveAspectFit` (whole slide shown, no edge crop) with a dark backdrop `Rectangle` behind the `ListView` to hide the letterbox, and **delete the redundant QML caption** — the PNG already carries the heading + body. Lesson: when "text is clipped", first determine whether it is QML text or baked into a raster asset; `Image.PreserveAspectCrop` crops the long axis and will eat near-edge content. |
 | Plymouth messages not visible ("remove the media and press enter to continue" etc.) | The Plymouth `script` module drops all messages unless `Plymouth.SetMessageFunction(callback)` is registered. | Add a `message_callback(text)` that calls `Image.Text(text, r, g, b)` and positions the resulting sprite centred horizontally at roughly 82 % of screen height (below the logo). Register it with `Plymouth.SetMessageFunction(message_callback)`. |
 | `foundry-welcome` won't re-launch from app menu | Sentinel file (`~/.config/{app}-shown`) is checked unconditionally — even for explicit launches. The "Done" page says the user can re-open the app, but it exits immediately every time after first run. | Pass `--autostart` from the XDG autostart `.desktop` entry (`Exec=foundry-welcome --autostart`). Check the sentinel only when that flag is present in `argv`. Direct launches (app menu, terminal) skip the check and always show the window. |
