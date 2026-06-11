@@ -22,7 +22,7 @@ Description: multi-platform cross-assembler package (16 CPU architectures)
   wla-superfx                 — Nintendo SuperFX coprocessor
   wla-6800/6801/6809          — Motorola 6800 family
   wla-68000                   — Motorola 68000
-  wla-z80/z80n/gb             — Zilog Z80 / Z80N / Game Boy (GB-Z80)
+  wla-z80/z80n/gb             — Zilog Z80 family / Game Boy (GB-Z80)
   wla-8008/8080               — Intel 8008 / 8080
   wla-huc6280                 — HuC6280 (PC Engine)
  .
