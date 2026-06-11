@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+# WLA DX: pure cmake build, no external deps beyond libc/libm.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake -- \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+
+override_dh_auto_build:
+	dh_auto_build --buildsystem=cmake
+
+override_dh_auto_test:

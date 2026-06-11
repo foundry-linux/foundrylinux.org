@@ -1,0 +1,24 @@
+.TH WLA\-8080 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-8080 \- WLA DX cross-assembler for the Intel 8080
+.SH SYNOPSIS
+.B wla\-8080
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-8080
+assembles Intel 8080 source code to a WLA DX object file.
+The 8080 is used in early microcomputers such as the Altair 8800 and
+CP/M machines.
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wla\-8008 (1),
+.BR wla\-z80 (1),
+.BR wlalink (1)

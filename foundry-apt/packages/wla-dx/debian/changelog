@@ -1,0 +1,6 @@
+wla-dx (10.6-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of WLA DX 10.6.
+  * Source: https://github.com/vhelin/wla-dx/releases/tag/v10.6
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 11 Jun 2026 00:00:00 +0000

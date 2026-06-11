@@ -1,3 +1,10 @@
+foundry-retro-tools (1.0.11) resolute; urgency=medium
+
+  * Add wla-dx (16-CPU multi-platform cross-assembler suite: 6502, 65816,
+    SPC700, Z80, 68000, and more — the assembler backend used by PVSnesLib).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 11 Jun 2026 00:00:00 +0000
+
 foundry-retro-tools (1.0.10) resolute; urgency=medium
 
   * Add 64tass (multi-pass 65816/65xx macro assembler; in Ubuntu universe).

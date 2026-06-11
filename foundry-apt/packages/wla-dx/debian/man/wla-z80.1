@@ -1,0 +1,24 @@
+.TH WLA\-Z80 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-z80 \- WLA DX cross-assembler for the Zilog Z80
+.SH SYNOPSIS
+.B wla\-z80
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-z80
+assembles Zilog Z80 source code to a WLA DX object file.
+The Z80 is used in the Sega Master System, ZX Spectrum, MSX, and many others.
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wla\-z80n (1),
+.BR wla\-gb (1),
+.BR wla\-ez80 (1),
+.BR wlalink (1)

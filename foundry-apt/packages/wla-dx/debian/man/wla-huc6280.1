@@ -1,0 +1,22 @@
+.TH WLA\-HUC6280 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-huc6280 \- WLA DX cross-assembler for the HuC6280 (PC Engine)
+.SH SYNOPSIS
+.B wla\-huc6280
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-huc6280
+assembles HuC6280 source code to a WLA DX object file.
+The HuC6280 is a 65C02-based CPU used in the NEC PC Engine (TurboGrafx-16).
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wla\-65c02 (1),
+.BR wlalink (1)

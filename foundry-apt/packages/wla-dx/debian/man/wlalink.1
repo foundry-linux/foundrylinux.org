@@ -1,0 +1,104 @@
+.TH WLALINK 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wlalink \- WLA DX object file linker
+.SH SYNOPSIS
+.B wlalink
+.RI [ OPTIONS ]
+.I linkfile
+.I outputfile
+.SH DESCRIPTION
+.B wlalink
+links WLA DX object files together to produce a final ROM or program binary.
+Object files are created by the wla\-ARCH assemblers; the link file lists
+the object files to combine and specifies the memory map.
+.SH OPTIONS
+.TP
+.BI \-a " ADDR"
+Load address (can also be a label) for CBM PRG output.
+.TP
+.B \-A
+Add address-to-line mapping data to the WLA symbol file.
+.TP
+.B \-b
+Program file output (CBM PRG).
+.TP
+.BI \-bE " ADDR"
+Ending address of the program (optional; use with \fB\-b\fP).
+.TP
+.BI \-bS " ADDR"
+Starting address of the program (optional; use with \fB\-b\fP).
+.TP
+.B \-c
+Allow duplicate labels and definitions.
+.TP
+.B \-d
+Discard unreferenced sections.
+.TP
+.B \-D
+Don't create \fI_sizeof_*\fP definitions.
+.TP
+.B \-i
+Write list files.
+.TP
+.BI \-L " DIR"
+Library directory.
+.TP
+.B \-nS
+Don't sort the sections.
+.TP
+.B \-p
+Pause printing after a screen full of text has been printed
+(use with \fB\-SX\fP and \fB\-SY\fP).
+.TP
+.B \-pR
+Write .RAMSECTIONs based on PRIORITY only, ignore .RAMSECTION types.
+.TP
+.B \-pS
+Write .SECTIONs based on PRIORITY only, ignore .SECTION types.
+.TP
+.B \-r
+ROM file output (default).
+.TP
+.B \-R
+Make file paths in the link file relative to its location.
+.TP
+.B \-s
+Write also a NO$GMB/NO$SNES symbol file.
+.TP
+.B \-S
+Write also a WLA symbol file.
+.TP
+.BI \-SX " WIDTH"
+The number of characters per line in console (default 80).
+.TP
+.BI \-SY " HEIGHT"
+The number of lines in console (default 25).
+.TP
+.BI \-t " TYPE"
+Output type (supported types: 'CBMPRG').
+.TP
+.B \-v
+Verbose messages (all).
+.TP
+.B \-v1
+Verbose messages (only discard sections).
+.TP
+.B \-v2
+Verbose messages (\fB\-v1\fP plus short summary).
+.SH EXAMPLES
+.PP
+Link with discarding unreferenced sections, verbose output, and WLA symbol file:
+.PP
+.RS
+.B wlalink \-d \-v \-S linkfile linked.rom
+.RE
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wlab (1)
+.SH AUTHORS
+WLA DX was written by Ville Helin and contributors.
+See https://github.com/vhelin/wla-dx for the full contributor list.
+.SH COPYRIGHT
+Copyright \(co 1998-2022 Ville Helin and contributors.
+License GPLv2+: GNU GPL version 2 or later
+<https://www.gnu.org/licenses/gpl-2.0.html>.

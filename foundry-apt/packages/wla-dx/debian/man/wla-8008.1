@@ -1,0 +1,22 @@
+.TH WLA\-8008 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-8008 \- WLA DX cross-assembler for the Intel 8008
+.SH SYNOPSIS
+.B wla\-8008
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-8008
+assembles Intel 8008 source code to a WLA DX object file.
+The 8008 is Intel's first 8-bit CPU (1972).
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wla\-8080 (1),
+.BR wlalink (1)

@@ -1,0 +1,21 @@
+.TH WLA\-65CE02 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-65ce02 \- WLA DX cross-assembler for the CSG 65CE02
+.SH SYNOPSIS
+.B wla\-65ce02
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-65ce02
+assembles CSG 65CE02 source code to a WLA DX object file.
+The 65CE02 is an enhanced 6502 variant used in the Commodore 65 and Amiga CD32 joypad controller.
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wlalink (1)

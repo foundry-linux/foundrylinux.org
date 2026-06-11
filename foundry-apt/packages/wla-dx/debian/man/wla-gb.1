@@ -1,0 +1,22 @@
+.TH WLA\-GB 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-gb \- WLA DX cross-assembler for the Game Boy (GB-Z80)
+.SH SYNOPSIS
+.B wla\-gb
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-gb
+assembles Game Boy (GB-Z80) source code to a WLA DX object file.
+The GB-Z80 is a Z80-derived CPU used in the Nintendo Game Boy and Game Boy Color.
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wla\-z80 (1),
+.BR wlalink (1)

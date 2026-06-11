@@ -1,0 +1,23 @@
+.TH WLA\-SPC700 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-spc700 \- WLA DX cross-assembler for the Sony SPC700 (SNES audio CPU)
+.SH SYNOPSIS
+.B wla\-spc700
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-spc700
+assembles Sony SPC700 source code to a WLA DX object file.
+The SPC700 is the audio CPU of the Super Nintendo Entertainment System (SNES),
+housed in the Sony SPC700 APU chip.
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wla\-65816 (1),
+.BR wlalink (1)

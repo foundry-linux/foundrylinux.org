@@ -1,0 +1,51 @@
+.TH WLAB 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wlab \- WLA DX binary-to-WLA-DB converter
+.SH SYNOPSIS
+.B wlab
+.B \-[ap]{bdh}
+.I binfile
+.SH DESCRIPTION
+.B wlab
+reads a binary file and outputs its contents as WLA DX assembler source
+(a WLA DB directive block), suitable for inclusion in WLA DX assembly projects.
+.SH OPTIONS
+.SS Commands (one required)
+.TP
+.B b
+Output binary (raw bytes).
+.TP
+.B d
+Output decimal.
+.TP
+.B h
+Output hexadecimal.
+.SS Options
+.TP
+.B a
+Print address alongside each value.
+.TP
+.B p
+Skip the binary file header.
+.SH EXAMPLES
+.PP
+Convert a binary file to hex WLA DB:
+.PP
+.RS
+.B wlab \-h binary.bin
+.RE
+.PP
+Convert a binary file to hex WLA DB with addresses:
+.PP
+.RS
+.B wlab \-ah binary.bin
+.RE
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wlalink (1)
+.SH AUTHORS
+WLAB was written by Ville Helin.
+.SH COPYRIGHT
+Copyright \(co 2000-2003 Ville Helin.
+License GPLv2+: GNU GPL version 2 or later
+<https://www.gnu.org/licenses/gpl-2.0.html>.

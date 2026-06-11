@@ -1,0 +1,24 @@
+.TH WLA\-SUPERFX 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-superfx \- WLA DX cross-assembler for the Nintendo SuperFX coprocessor
+.SH SYNOPSIS
+.B wla\-superfx
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-superfx
+assembles Nintendo SuperFX source code to a WLA DX object file.
+The SuperFX (GSU-1/GSU-2) is a RISC coprocessor used in SNES cartridges
+such as Star Fox, Stunt Race FX, Yoshi's Island, and Doom.
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wla\-65816 (1),
+.BR wla\-cx4 (1),
+.BR wlalink (1)

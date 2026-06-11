@@ -61,11 +61,6 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 ### Packaging — dropped packages to investigate
 
 - [x] **Add 64tass to `foundry-retro-tools`** — added to Depends in 1.0.10; resolves from Ubuntu universe (1.60.3243-1 on Noble/Resolute).
-- [ ] **Package WLA-DX and wire into `foundry-retro-tools`** — GPL-2.0+, cmake build, absent from
-  Debian/Ubuntu (NixOS/Arch AUR/Guix only). Supports 65816 + SPC-700 (both SNES CPUs) and is
-  PVSnesLib's assembler backend. Source: [vhelin/wla-dx](https://github.com/vhelin/wla-dx),
-  v10.6, active (June 2026 commits). Build a custom `.deb`, publish to foundry-apt, add to
-  `foundry-retro-tools` Depends. See [SNES toolchain survey](../drdevtools/docs/investigations/2026-06-11-snes-65816-toolchains.md).
 - [ ] **Package asar and wire into `foundry-retro-tools`** — GPL-3.0/LGPL-3.0 (core/library
   split), cmake build, absent from Debian/Ubuntu (Arch AUR + SlackBuilds only). De facto SNES
   ROM hacking standard (SMW Central); libasar embeddable form useful for tool integration.
@@ -91,6 +86,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 ## Done
 
+- 2026-06-11 — [package-wla-dx] packaged wla-dx 10.6-1foundry1 (16-CPU assembler suite: 6502/65816/SPC700/Z80/68000/…); lintian-clean; wired into foundry-retro-tools 1.0.11. See [plan](docs/plans/2026-06-11-package-wla-dx.md).
 - 2026-06-11 — [foundry-kde-theme-consolidation] foundry-kde-theme 1.0.4/1.0.5: LAF built out (defaults+layout+splash fixed), Plasma Style (forge palette), panel favorites (Blender in, Kate out), app-menu Favorites (KAStats), dpkg-divert for avatar+kicker, all theming hooks/includes removed from foundry-iso. Pixel-verified on 0.9.110. See [plan](docs/plans/2026-06-10-foundry-laf-and-plasma-style.md).
 - 2026-06-11 — [iso-local-debs-verify] step 4 PASS on 0.9.110 install: `apt list --upgradable` shows no foundry packages; foundry-core installed from repo (500), foundry-kde-theme staged+installed from local (100) but Installed==Candidate → no Discover noise. See [plan](docs/plans/2026-06-10-iso-local-debs-publish-aware-staging.md).
 - 2026-06-11 — [live-ssh-removed] removed `1200-live-ssh.hook.chroot` (baked `root:foundry` + sshd into live squashfs); replaced with `0035-install-ssh-server.hook.chroot` (openssh on installed system only, ssh.socket enabled by Calamares services-systemd). No credential baked anywhere (live or installed). Commit `b8c7377`.

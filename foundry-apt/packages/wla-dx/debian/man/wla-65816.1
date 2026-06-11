@@ -1,0 +1,22 @@
+.TH WLA\-65816 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-65816 \- WLA DX cross-assembler for the WDC 65816 (SNES main CPU)
+.SH SYNOPSIS
+.B wla\-65816
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.SH DESCRIPTION
+.B wla\-65816
+assembles WDC 65816 source code to a WLA DX object file.
+The 65816 is the main CPU of the Super Nintendo Entertainment System (SNES).
+.PP
+All WLA DX assemblers share an identical command-line interface.
+For full option descriptions, examples, and a list of all supported CPU
+architectures, see
+.BR wla\-6502 (1).
+.SH SEE ALSO
+.BR wla\-6502 (1),
+.BR wla\-spc700 (1),
+.BR wlalink (1)

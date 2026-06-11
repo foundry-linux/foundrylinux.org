@@ -1,0 +1,33 @@
+Source: wla-dx
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ cmake
+Standards-Version: 4.7.2
+Homepage: https://github.com/vhelin/wla-dx
+X-Repology-Project: wla-dx
+Rules-Requires-Root: no
+
+Package: wla-dx
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: multi-platform cross-assembler package (16 CPU architectures)
+ WLA DX is a set of tools for assembling source code to object files
+ (wla-ARCH) and linking them together (wlalink). Each wla-ARCH binary
+ targets one specific CPU:
+ .
+  wla-6502/65c02/65ce02/65816 — MOS/WDC 6502 family (NES, SNES)
+  wla-spc700                  — Sony SPC700 (SNES audio CPU)
+  wla-superfx                 — Nintendo SuperFX coprocessor
+  wla-6800/6801/6809          — Motorola 6800 family
+  wla-68000                   — Motorola 68000
+  wla-z80/z80n/gb             — Zilog Z80 / Z80N / Game Boy (GB-Z80)
+  wla-8008/8080               — Intel 8008 / 8080
+  wla-huc6280                 — HuC6280 (PC Engine)
+ .
+ WLA DX is not tied to any specific system: it lets you define your own
+ memory map (shared across object and library files), making it suitable
+ for cross-platform retro development across multiple console families.
+ .
+ Also included: wlalink (linker) and wlab (binary-to-WLA-DB converter).

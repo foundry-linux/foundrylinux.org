@@ -1,0 +1,191 @@
+.TH WLA\-6502 1 "November 2023" "WLA-DX 10.6" "WLA DX Assembler"
+.SH NAME
+wla\-6502 \- WLA DX cross-assembler for the MOS 6502 CPU
+.SH SYNOPSIS
+.B wla\-6502
+.RI [ OPTIONS ]
+.B \-o
+.I output.o
+.I source.asm
+.br
+.B wla\-6502
+.RI [ OPTIONS ]
+.B \-l
+.I output.lib
+.I source.asm
+.SH DESCRIPTION
+.B wla\-6502
+assembles MOS 6502 source code to a WLA DX object or library file.
+.PP
+WLA DX is a multi-platform cross-assembler package that provides one
+assembler executable per supported CPU architecture. All assemblers share
+an identical command-line interface; this man page serves as the reference
+for all of them. Each assembler in the suite targets a different CPU:
+.PP
+.RS
+.TP
+.B wla\-6502
+MOS Technology 6502 (NES, C64, Apple II)
+.TP
+.B wla\-65c02
+WDC 65C02 (Apple IIc, BBC Master)
+.TP
+.B wla\-65ce02
+CSG 65CE02 (Amiga CD32 joypad)
+.TP
+.B wla\-65816
+WDC 65816 \- SNES main CPU
+.TP
+.B wla\-spc700
+Sony SPC700 \- SNES audio CPU
+.TP
+.B wla\-superfx
+Nintendo SuperFX coprocessor (SNES)
+.TP
+.B wla\-cx4
+Capcom CX4 coprocessor (SNES)
+.TP
+.B wla\-6800
+Motorola 6800
+.TP
+.B wla\-6801
+Motorola 6801
+.TP
+.B wla\-6809
+Motorola 6809
+.TP
+.B wla\-68000
+Motorola 68000
+.TP
+.B wla\-z80
+Zilog Z80
+.TP
+.B wla\-z80n
+Zilog Z80N
+.TP
+.B wla\-gb
+Game Boy Z80 (GB-Z80)
+.TP
+.B wla\-ez80
+Zilog eZ80
+.TP
+.B wla\-8008
+Intel 8008
+.TP
+.B wla\-8080
+Intel 8080
+.TP
+.B wla\-huc6280
+HuC6280 (NEC PC Engine / TurboGrafx-16)
+.TP
+.B wla\-sh2
+Hitachi SH-2
+.RE
+.PP
+Object files produced by a wla\-ARCH assembler are linked together
+using
+.BR wlalink (1).
+.SH OPTIONS
+.TP
+.B \-c
+Continue parsing after an error.
+.TP
+.B \-d
+Disable WLA's ability to calculate A\-B where A and B are labels.
+.TP
+.B \-h
+Assume all label references are 16-bit by default (size hints still work).
+.TP
+.B \-i
+Add list file information.
+.TP
+.B \-k
+Keep empty sections.
+.TP
+.B \-M
+Output makefile rules.
+.TP
+.B \-MP
+Create a phony target for each dependency other than the main file
+(use with \fB\-M\fP).
+.TP
+.BI \-MF " FILE"
+Specify a file to write the dependencies to (use with \fB\-M\fP).
+.TP
+.B \-p
+Pause printing after a screen full of text has been printed
+(use with \fB\-SX\fP and \fB\-SY\fP).
+.TP
+.B \-q
+Quiet.
+.TP
+.B \-s
+Don't create \fI_sizeof_*\fP and \fI_paddingof_*\fP definitions.
+.TP
+.BI \-SX " WIDTH"
+The number of characters per line in console (default 80).
+.TP
+.BI \-SY " HEIGHT"
+The number of lines in console (default 25).
+.TP
+.B \-t
+Test assemble.
+.TP
+.B \-v
+Verbose messages.
+.TP
+.B \-v1
+Verbose messages (only discard sections).
+.TP
+.B \-v2
+Verbose messages (\fB\-v1\fP plus short summary).
+.TP
+.B \-w
+Require labels to end in a colon.
+.TP
+.B \-x
+Extra compile time labels and definitions.
+.TP
+.BI \-I " DIR"
+Include directory.
+.TP
+.BI \-D " DEF"
+Declare definition.
+.SH OUTPUT OPTIONS
+.TP
+.BI \-o " FILE"
+Output object file.
+.TP
+.BI \-l " FILE"
+Output library file.
+.SH EXAMPLES
+.PP
+Assemble to object file:
+.PP
+.RS
+.B wla\-6502 \-o main.o main.asm
+.RE
+.PP
+Assemble to object file with definitions and verbose output:
+.PP
+.RS
+.B wla\-6502 \-D VER=1 \-D TWO=2 \-v \-o main.o main.asm
+.RE
+.PP
+Output makefile dependency rules:
+.PP
+.RS
+.B wla\-6502 \-M \-t \-o main.o main.asm
+.RE
+.SH SEE ALSO
+.BR wlalink (1),
+.BR wlab (1)
+.SH AUTHORS
+WLA DX was written by Ville Helin and contributors.
+See https://github.com/vhelin/wla-dx for the full contributor list.
+.SH COPYRIGHT
+Copyright \(co 1998-2022 Ville Helin and contributors.
+License GPLv2+: GNU GPL version 2 or later
+<https://www.gnu.org/licenses/gpl-2.0.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
