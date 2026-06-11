@@ -37,7 +37,7 @@ PUB_KEY="/tmp/foundry-packages.pub.gpg"
 SEC_KEY="/tmp/foundry-packages.sec.gpg"
 
 R2_BUCKET="foundry-apt"
-SECRETS_BUCKET="foundry-secrets"
+SECRETS_BUCKET="foundry-linux-secrets"
 R2_TOKEN_NAME="foundry-apt-ci"
 BOOTSTRAP_CACHE="${REPO_ROOT}/.foundry/bootstrap.env"
 CUSTOM_DOMAIN="apt.foundrylinux.org"
