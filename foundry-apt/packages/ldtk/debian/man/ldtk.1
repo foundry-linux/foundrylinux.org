@@ -1,0 +1,31 @@
+.TH LDTK 1 "June 2026" "ldtk 1.5.3" "User Commands"
+.SH NAME
+ldtk \- Level Designer Toolkit, a 2D level editor
+.SH SYNOPSIS
+.B ldtk
+.RI [ FILE .ldtk]
+.SH DESCRIPTION
+.B LDtk
+(Level Designer Toolkit) is a modern, free, open\-source 2D level editor for
+game development. It works with tile layers, auto\-tiling rules, entities and
+integer grids, and exports a clean JSON
+.RB ( .ldtk )
+project consumed by engines and frameworks such as LibGDX, Godot, Unity,
+raylib and Heaps.
+.PP
+With no argument, LDtk opens its project chooser. Passing a
+.I .ldtk
+file opens that project directly.
+.SH FILES
+.TP
+.I /opt/ldtk
+The vendored upstream Electron application bundle.
+.SH SEE ALSO
+Project documentation at
+.UR https://ldtk.io/docs/
+.UE .
+.SH AUTHORS
+LDtk is written by Sébastien Bénard (Deepnight Games). This Debian package is
+maintained by Foundry Linux.
+.SH COPYRIGHT
+Copyright \(co 2020 Sébastien Bénard \- Deepnight Games. MIT licensed.

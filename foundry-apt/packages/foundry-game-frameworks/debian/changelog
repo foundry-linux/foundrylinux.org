@@ -1,3 +1,9 @@
+foundry-game-frameworks (1.0.2) resolute; urgency=medium
+
+  * Add ldtk (LDtk level editor v1.5.3) to Depends.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Thu, 11 Jun 2026 12:00:00 +0700
+
 foundry-game-frameworks (1.0.1) resolute; urgency=medium
 
   * Drop love (LÖVE 2D Lua game engine) from Depends. Ubuntu 26.04's

@@ -1,0 +1,7 @@
+ldtk (1.5.3-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry packaging of LDtk (deepnight/ldtk, MIT). Repackages the
+    upstream Linux AppImage (Electron) into /opt/ldtk with an `ldtk` launcher,
+    desktop entry, and icon. Not in Ubuntu universe; no upstream .deb.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 10 Jun 2026 13:30:00 +0700

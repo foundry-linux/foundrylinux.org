@@ -11,6 +11,7 @@ Package: foundry-game-frameworks
 Architecture: all
 Depends: ${misc:Depends},
  tiled,
+ ldtk,
  libsdl2-dev,
  libsdl3-dev,
  libsfml-dev,
@@ -24,6 +25,7 @@ Description: 2D/3D game-dev frameworks, headers, and shader tools
  cross-platform C/C++ frameworks plus Vulkan shader tooling:
  .
    * tiled            tile-based level editor (TMX format)
+   * ldtk             LDtk level editor (LDtk JSON format, Electron)
    * libsdl2-dev      SDL2 (Simple DirectMedia Layer)
    * libsdl3-dev      SDL3
    * libsfml-dev      SFML (Simple Fast Multimedia Library)

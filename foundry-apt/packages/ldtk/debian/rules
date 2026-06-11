@@ -1,0 +1,46 @@
+#!/usr/bin/make -f
+# LDtk — pre-built Electron AppImage repackaged into /opt/ldtk.
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+PKGDIR = $(CURDIR)/debian/ldtk
+OPT    = $(PKGDIR)/opt/ldtk
+
+%:
+	dh $@
+
+# Nothing to compile — the AppDir (this source tree, minus debian/) IS the payload.
+override_dh_auto_build:
+override_dh_auto_test:
+
+override_dh_auto_install:
+	mkdir -p $(OPT)
+	# Copy the whole extracted AppDir (everything except debian/) to /opt/ldtk.
+	find . -maxdepth 1 -mindepth 1 ! -name debian -exec cp -a {} $(OPT)/ \;
+	# Launcher (AppRun sets LD_LIBRARY_PATH for the bundled libs; --no-sandbox
+	# so we don't need a setuid chrome-sandbox).
+	mkdir -p $(PKGDIR)/usr/bin
+	printf '#!/bin/sh\nexec /opt/ldtk/AppRun --no-sandbox "$$@"\n' > $(PKGDIR)/usr/bin/ldtk
+	chmod 0755 $(PKGDIR)/usr/bin/ldtk
+	# Desktop entry + icon.
+	mkdir -p $(PKGDIR)/usr/share/applications $(PKGDIR)/usr/share/pixmaps
+	install -m 0644 debian/ldtk.desktop $(PKGDIR)/usr/share/applications/ldtk.desktop
+	install -m 0644 ldtk.png $(PKGDIR)/usr/share/pixmaps/ldtk.png
+	# The bundled chrome-sandbox is unused (--no-sandbox); drop its setuid bit.
+	[ -f $(OPT)/chrome-sandbox ] && chmod 0755 $(OPT)/chrome-sandbox || true
+
+# LDtk is a pre-built Electron AppImage. Its bundled usr/lib/ shims
+# (libindicator, libappindicator, libgconf, etc.) have transitive system deps
+# that dpkg-shlibdeps cannot resolve in a minimal build container. Skip
+# shlibdeps entirely; runtime deps are declared explicitly in debian/control.
+override_dh_shlibdeps:
+
+# Re-assert +x on the ELF launcher binaries after dh_fixperms (which doesn't
+# add +x in non-standard dirs).
+override_dh_fixperms:
+	dh_fixperms
+	chmod 0755 $(OPT)/AppRun $(OPT)/ldtk $(OPT)/chrome_crashpad_handler 2>/dev/null || true
+
+# dh_strip's objcopy resets perms on ELF files it touches; restore +x after.
+override_dh_strip:
+	dh_strip
+	chmod 0755 $(OPT)/AppRun $(OPT)/ldtk $(OPT)/chrome_crashpad_handler 2>/dev/null || true

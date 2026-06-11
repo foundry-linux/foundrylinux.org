@@ -1,0 +1,17 @@
+# Pre-built upstream Electron binary — cannot recompile/relink:
+ldtk: hardening-no-bindnow *
+ldtk: hardening-no-pie *
+# LDtk's Electron AppImage statically bundles its own runtime libs (ffmpeg,
+# swiftshader, etc.) — by design, isolated under /opt/ldtk:
+ldtk: embedded-library *
+ldtk: library-not-linked-against-libc *
+# Upstream Chromium/Electron license HTML shipped verbatim in /opt/ldtk:
+ldtk: privacy-breach-generic *
+ldtk: privacy-breach-uses-embedded-file *
+# Electron app ships its tree under /opt by design (not a shared lib dir):
+ldtk: embedded-javascript-library *
+# dh_shlibdeps skipped for pre-built Electron: bundled usr/lib shims have
+# transitive system deps that cannot be resolved in a minimal build container.
+# Runtime deps are declared explicitly in debian/control instead.
+ldtk: no-shlibs-control-file *
+ldtk: shlib-without-versioned-provides *

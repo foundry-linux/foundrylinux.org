@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=LDtk
+GenericName=Level Editor
+Comment=Modern 2D level editor for game development
+Exec=ldtk %U
+Icon=ldtk
+Terminal=false
+Categories=Development;Graphics;
+MimeType=application/x-ldtk;
+StartupWMClass=ldtk
+Keywords=level;tilemap;game;2d;editor;
