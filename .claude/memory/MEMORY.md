@@ -22,6 +22,11 @@
 - [devbox installs foundry-core, not anvil](project_devbox_foundry_core.md) — deliberate: desktop-agnostic + keeps test/CI harnesses small + fast to build/boot; never bump to foundry-anvil.
 - [Calamares rsync error 11 = target disk exhausted](feedback_calamares_rsync_error11.md) — never add large packages to foundry.list.chroot; use a hook; ~270 MiB JRE addition broke 0.9.54 installs.
 - [Calamares 3.3 partitionLayout + bootloader.conf](feedback_calamares_partition_layout.md) — `name:` mandatory in partitionLayout entries; bootloader.conf must set efiBootLoader=grub; without these no root partition and no bootloader.
+- [Calamares 3.3 mount.conf schema rules](feedback_calamares_mount_conf.md) — options MUST be YAML arrays `["bind"]` not scalars; no `extraMountsEfi:` key (use `efi: true` on entry); violations silently skip all bind mounts → grub-install error code 1.
+- [Kick off ISO build the instant any ISO-affecting change lands](feedback_start_build_immediately.md) — ANY foundry-apt package or foundry-iso/config change; abort+restart in-flight builds on newer changes; don't gate on RAM/VM contention.
+- [iso-bump does a greedy git commit](feedback_iso_bump_greedy_commit.md) — `task iso-build`→iso-bump's bare `git commit` sweeps ALL staged changes into the bump commit; don't leave staged work (esp. git mv) before building.
+- [Installed-system assets must ship from a survives-install package](project_installed_assets_surviving_package.md) — desktop wallpaper, SDDM greeter, lock screen: never from calamares-settings-* (purged with calamares on install); use foundry-kde-theme.
+- [Test installed systems via will:foundry SSH](feedback_test_account_ssh.md) — Will sets account will/pw foundry per-install for SSH debug (port 2222); NEVER bake a credential into the image (the root:foundry-on-install backdoor was reverted in calamares-settings 1.0.30).
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 

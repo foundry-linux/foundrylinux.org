@@ -41,7 +41,7 @@ tasks:
   md:
     desc: "Preview a markdown file in the browser"
     cmds:
-      - bash ../python-tui-lib/scripts/md-to-pdf.sh {{.CLI_ARGS}}
+      - bash ../python-tui-lib/scripts/md-to-html.sh {{.CLI_ARGS}}
 
   check-apt-repos:
     desc: "Health-check every apt source the ISO ships (resolve each deb line's InRelease; fail on 404). Catches upstream repo-layout rot. Pass --host to also check this machine."
@@ -56,7 +56,7 @@ tasks:
         OUT="docs/investigations/$(date +%F)-package-inventory.md"
         bash scripts/audit-apt-repos.sh -o "$OUT"
         echo "Wrote $OUT"
-        bash ../python-tui-lib/scripts/md-to-pdf.sh "$OUT"
+        bash ../python-tui-lib/scripts/md-to-html.sh "$OUT"
 
   sync:
     desc: "Sync foundry-apt/ to github.com/{{.GH_REPO}} and push"
