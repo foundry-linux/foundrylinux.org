@@ -1,0 +1,28 @@
+Source: drmon
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13), cmake, ninja-build, libncurses-dev
+Standards-Version: 4.7.2
+Homepage: https://github.com/developer-resources-co/drdevtools
+Rules-Requires-Root: no
+
+Package: drmon
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: SNES/Genesis source-level debugger for game development
+ drmon is the Developer Resources Monitor, a source-level debugger and
+ memory monitor for cartridge-console game development. It targets the
+ SNES (Nintendo 65816) and Sega Genesis (Motorola 68000). Originally a
+ DOS product from Developer Resources (1991–1994), it has been ported to
+ Linux as a wide-ncurses terminal application.
+ .
+ When connected to MAME via a custom TCP bridge (SNES) or MAME's GDB RSP
+ (Genesis), drmon provides live register read/write, memory inspection,
+ breakpoints, single-step, continue, halt, and soft reset. It also runs
+ disconnected: the full UI works and expressions/symbols/macros can be
+ used, but target reads return zero.
+ .
+ Ships two binaries: snesmon (SNES/65816 debugger) and genmon (Genesis/68000
+ debugger). Both binaries use the same UI and command language; the target
+ CPU and bridge protocol differ.

@@ -1,0 +1,4 @@
+version=4
+# drmon is maintained in the drdevtools repository (not a public upstream tag stream).
+# Version bumps are tracked manually by updating debian/changelog.
+# https://github.com/developer-resources-co/drdevtools

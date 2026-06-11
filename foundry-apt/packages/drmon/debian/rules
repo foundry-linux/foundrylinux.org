@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+BUILD_DIR = obj-$(DEB_HOST_GNU_TYPE)
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake -- \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DDRMON_ASAN=OFF \
+	    -DDRMON_MAME_BACKEND=ON
+
+override_dh_auto_build:
+	dh_auto_build --buildsystem=cmake
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	install -d $(CURDIR)/debian/drmon/usr/bin
+	install -m 0755 $(BUILD_DIR)/snesmon $(CURDIR)/debian/drmon/usr/bin/snesmon
+	install -m 0755 $(BUILD_DIR)/genmon  $(CURDIR)/debian/drmon/usr/bin/genmon

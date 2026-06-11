@@ -1,0 +1,55 @@
+.TH GENMON 1 "June 2026" "drmon 1.0.1" "Developer Tools"
+.SH NAME
+genmon \- Genesis/68000 source-level debugger for game development
+.SH SYNOPSIS
+.B genmon
+[\fIstartup-script\fR]
+.SH DESCRIPTION
+.B genmon
+is the Sega Genesis (Motorola 68000) variant of
+.BR drmon ,
+the Developer Resources Monitor.
+It is a source-level debugger and memory monitor for Genesis game development,
+running as a wide-ncurses terminal application.
+.PP
+When launched without a connected target, drmon runs in disconnected mode:
+the full text UI is available and expressions, symbols, macros, and command
+scripts can be used, but target memory reads return zero and Run/Stop/Step
+have no effect.
+.PP
+To connect to a live Genesis target, run MAME with \fB\-debugger gdbstub\fR
+and set \fBDRMON_GDB_ADDR\fR if the GDB RSP stub is not on
+\fB127.0.0.1:23946\fR.
+.SH OPTIONS
+.TP
+.I startup-script
+Path to a drmon script file (\fB.SCR\fR extension optional) to execute on
+startup.  If the argument is not a valid path, drmon appends \fB.SCR\fR and
+retries.  If omitted, drmon looks for \fBgenmon.scr\fR in the current
+directory.
+.SH ENVIRONMENT
+.TP
+.B DRMON_GDB_ADDR
+TCP address of MAME's GDB RSP stub (Genesis bridge).
+Default: \fB127.0.0.1:23946\fR.
+.TP
+.B TERM
+Must support colour and cursor addressing.  \fBxterm-256color\fR or
+\fBvte-256color\fR are typical.  The terminal must be at least 80\(mu25.
+.SH KEY BINDINGS
+The key bindings follow the original DOS product.  \fBAlt+X\fR quits.
+\fBCtrl+C\fR is intentionally ignored to avoid accidental exit during a
+debugging session.  \fBF10\fR activates the menu bar.  Each debug window is
+opened with its dedicated Alt+letter shortcut (see the User Manual).
+.SH FILES
+.TP
+.I genmon.scr
+Optional startup command script, read from the current working directory.
+.SH SEE ALSO
+.BR snesmon (1)
+.SH AUTHORS
+Developer Resources (Kevin T. Spillane, Will B. Norris IV), 1991\(en1994.
+Linux port by Will Norris, 2026.
+.SH COPYRIGHT
+Copyright \(co 1991\(en1994 Developer Resources; 2026 Will Norris.
+License: GNU General Public License version 2.

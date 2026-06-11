@@ -1,0 +1,8 @@
+drmon (1.0.1) resolute; urgency=medium
+
+  * Initial Debian packaging of drmon linux port (Phase 2 complete):
+    snesmon (SNES/65816) and genmon (Genesis/68000) with MAME TCP bridge
+    backend (sliomame.cpp for SNES, sliogdb.cpp via GDB RSP for Genesis).
+  * Source: devsys/tools/drmon/ in the drdevtools repository.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 12 Jun 2026 00:00:00 +0000
