@@ -302,6 +302,10 @@ async function main() {
     for (const mp of cat.metapackages) {
       for (const d of displayClosure(mp, all, provides)) reached.add(d);
     }
+    // standalone_packages: individual packages added explicitly to a category
+    // without going through a metapackage (e.g. atelier-only tools like ghidra
+    // that were moved out of their metapackage for size reasons).
+    for (const sp of (cat.standalone_packages || [])) reached.add(sp);
     const packages = [];
     for (const name of [...reached].sort()) {
       const rec = buildPackageRecord(name, all, upstreamYaml);

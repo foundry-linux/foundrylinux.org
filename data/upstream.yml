@@ -15,6 +15,44 @@
 # defaults to `vendored` and warns.
 
 # Foundry-built vendored upstreams (real upstreaming candidates)
+ldtk:
+  status: vendored
+  note: "LDtk (Level Designer Toolkit) — Electron app, MIT. ITP candidate once Debian Electron packaging stabilises."
+  repology_project: ldtk
+m8te:
+  status: vendored
+  note: "M8TE SNES tile/tilemap/palette editor — Mono/WinForms app, open-source. Small niche; ITP not filed."
+  repology_project: m8te
+tilemap-studio:
+  status: vendored
+  note: "Tilemap Studio — retro-console tilemap editor (GB/GBC/GBA/NES/SNES), LGPL. ITP candidate; no Debian packaging yet."
+  repology_project: tilemap-studio
+ppsspp:
+  status: vendored
+  note: "PPSSPP PSP emulator — upstream ships binaries; Debian package would need bundled-lib audit. Not yet filed."
+  repology_project: ppsspp
+snes9x-gtk:
+  status: vendored
+  note: "Snes9x GTK frontend — was in Ubuntu universe but dropped from 26.04 (removed from Debian). Repackaged from upstream."
+  repology_project: snes9x
+task:
+  status: vendored
+  note: "Task (go-task) — not in Ubuntu main/universe. Pre-built Go binary. ITP filed upstream but not merged into Debian."
+  repology_project: taskfile
+wla-dx:
+  status: vendored
+  note: "WLA-DX multi-target assembler suite — not in Ubuntu 26.04 universe. ITP candidate."
+  repology_project: wla-dx
+pvsneslib:
+  status: vendored
+  note: "PVSnesLib SNES homebrew SDK — 816-tcc cross-compiler + WLA-DX + C library. Not in Debian/Ubuntu; ITP impractical (bundled toolchain)."
+pvsneslib-core:
+  status: vendored
+  note: "PVSnesLib core runtime — sub-package of the PVSnesLib SNES SDK. Not in Debian/Ubuntu."
+asar:
+  status: vendored
+  note: "Asar SNES assembler (Alcaro) — not in Ubuntu universe. ITP candidate."
+  repology_project: asar
 f9dasm:
   status: vendored
   note: "Small, self-contained, debhelper build, no patches — natural first ITP target."
