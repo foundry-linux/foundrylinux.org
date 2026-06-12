@@ -48,8 +48,8 @@ EOF
 done
 
 # Pinned drdevtools commit + sha256 of its GitHub archive tarball.
-DRDEVTOOLS_SHA="${DRDEVTOOLS_SHA:-61e1303ddfceb6b15a8a0d234fe798b578fe3725}"
-SHA256="${DRDEVTOOLS_SHA256:-c8e90d57cd43f796f9a1fcb8002119950d3cf9953de183717fca0e7a5f6fa98d}"
+DRDEVTOOLS_SHA="${DRDEVTOOLS_SHA:-29d604918d84cc3035df245e39f67dad12e225a7}"
+SHA256="${DRDEVTOOLS_SHA256:-dccbbce7fbe08896057d50723e60e33698abbe1a1d56a4060af52a026f4aeeef}"
 TARBALL_URL="https://github.com/developer-resources-co/drdevtools/archive/${DRDEVTOOLS_SHA}.tar.gz"
 
 cd "$(dirname "$0")"
@@ -104,18 +104,6 @@ cp -a "$LIBS_SRC/." "$SRC_DIR/libs/"
 echo "=== Patching CMakeLists.txt: ../../../libs -> libs ==="
 # shellcheck disable=SC2016  # ${CMAKE_CURRENT_SOURCE_DIR} is a literal CMake variable, must NOT expand in shell
 sed -i 's|\${CMAKE_CURRENT_SOURCE_DIR}/../../../libs|${CMAKE_CURRENT_SOURCE_DIR}/libs|g' \
-    "$SRC_DIR/CMakeLists.txt"
-
-# Wire cppdap to the system jsoncpp. Upstream FetchContent-clones cppdap
-# without its git submodules, so cppdap's bundled jsoncpp tree is empty and
-# the Json::Value symbols never link. Tell cppdap to use the external jsoncpp
-# package (provided by libcppdap-dev's sibling libjsoncpp-dev), and link
-# jsoncpp_lib into the drmon-dap targets (drmon's own session.cpp uses it too).
-echo "=== Patching CMakeLists.txt: use system jsoncpp for cppdap ==="
-sed -i 's|^FetchContent_MakeAvailable(cppdap)|set(CPPDAP_USE_EXTERNAL_JSONCPP_PACKAGE ON CACHE BOOL "" FORCE)\nFetchContent_MakeAvailable(cppdap)\nfind_package(jsoncpp REQUIRED)|' \
-    "$SRC_DIR/CMakeLists.txt"
-# shellcheck disable=SC2016  # ${TARGET} is a literal CMake variable, must NOT expand in shell
-sed -i 's|target_link_libraries(${TARGET} PRIVATE cppdap Threads::Threads)|target_link_libraries(${TARGET} PRIVATE cppdap jsoncpp_lib Threads::Threads)|' \
     "$SRC_DIR/CMakeLists.txt"
 
 echo "=== Copying debian/ tree ==="
