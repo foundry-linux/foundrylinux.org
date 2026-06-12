@@ -2,7 +2,8 @@ Source: drmon
 Section: devel
 Priority: optional
 Maintainer: Foundry Linux <packages@foundrylinux.org>
-Build-Depends: debhelper-compat (= 13), cmake, ninja-build, libncurses-dev
+Build-Depends: debhelper-compat (= 13), cmake, ninja-build, libncurses-dev,
+ libcppdap-dev, libjsoncpp-dev
 Standards-Version: 4.7.2
 Homepage: https://github.com/developer-resources-co/drdevtools
 Rules-Requires-Root: no
