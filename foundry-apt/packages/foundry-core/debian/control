@@ -11,6 +11,7 @@ Package: foundry-core
 Architecture: all
 Depends: ${misc:Depends},
  btop,
+ du-dust,
  firefox,
  foundry-emulators-computers,
  foundry-emulators-consoles,
@@ -31,8 +32,9 @@ Description: Foundry Linux developer toolkit — desktop-agnostic
  Blender add-ons), the retro-porting toolkit (MAME, dasm, z80,
  cc65, …; Ghidra is atelier-only), light universe emulators, game-dev
  frameworks (SDL2/3, SFML, Allegro, libtcod, Tiled, LOVE + Vulkan shader
- tools), CLI image utilities, go-task, and the Java 17 LTS runtime
- (LibGDX, Gradle, and mod toolchains).
+ tools), CLI image utilities, go-task, btop and dust (du-dust, an intuitive
+ disk-usage viewer), and the Java 17 LTS runtime (LibGDX, Gradle, and mod
+ toolchains).
  .
  On the Foundry Linux ISO, foundry-anvil (= foundry-core + foundry-desktop)
  is pre-installed instead. Existing Ubuntu users should install this package.
