@@ -122,15 +122,21 @@ same two CMake edits via `sed` after fetching the source — so drmon builds in 
 **right now** without waiting on the upstream commit. This is a patch we carry,
 and a smell.
 
-**Follow-up tasks (tracked in TODO.md):**
+**Follow-up tasks — all done:**
 
-1. Land the CMake fix in `drdevtools` `main` (branch + diff prepared at
-   `/tmp/drdevtools-pr`, `fix/drmon-cppdap-jsoncpp-link`; we own the repo, push
-   pending Will's go-ahead — the auto-classifier blocked an unprompted push).
-2. Re-pin `packages/drmon/build.sh` `DRDEVTOOLS_SHA` + `SHA256` to the fixed
-   commit and **delete the two jsoncpp seds** (keep the `libs/` sed and the
-   `libjsoncpp-dev` build-dep). Re-verify drmon builds, then re-publish.
-3. (Optional) Evaluate switching drmon to system `libcppdap-dev`.
+1. ✅ Landed the external-JsonCpp CMake fix in `drdevtools` `main` (`29d6049`);
+   re-pinned `drmon/build.sh` and deleted the two jsoncpp seds (foundry-apt
+   `v1.5.20`).
+2. ✅ Went further to the clean end-state: switched drmon from FetchContent to
+   the **system cppdap** — `find_package(cppdap CONFIG REQUIRED)` + link
+   `cppdap::cppdap` (JsonCpp pulled transitively via cppdap's exported target;
+   Ubuntu 26.04 `libcppdap-dev` is `1.58.0a`, exactly the previously-vendored
+   tag). drdevtools `d28c9d8`; foundry-apt `v1.5.21`. drmon's build now clones
+   and compiles **nothing** external — 0 cppdap clones, fully offline,
+   reproducible via the apt-pinned `libcppdap-dev`. `build.sh` is sed-free apart
+   from the `libs/` path rewrite; `libcppdap-dev` + `libjsoncpp-dev` are genuine
+   declared Build-Depends. The earlier external-JsonCpp workaround is now moot
+   (no FetchContent), but harmless to leave in upstream history.
 
 ## Verification
 
