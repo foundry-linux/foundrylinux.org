@@ -11,7 +11,10 @@ const SKIP_EXTERNAL = process.argv.includes('--skip-external');
 
 // Domains that are legitimate but rate-limit or timeout against CI user-agents.
 // Add sparingly — prefer fixing the URL or increasing timeout instead.
-const FLAKY_DOMAINS = new Set([]);
+const FLAKY_DOMAINS = new Set([
+  'ubuntu.com',       // security/cves pages block GH Actions IPs
+  'repology.org',     // badge SVGs rate-limit non-browser agents
+]);
 const dirArg = (() => {
   const i = process.argv.indexOf('--dir');
   return i !== -1 ? process.argv[i + 1] : null;
