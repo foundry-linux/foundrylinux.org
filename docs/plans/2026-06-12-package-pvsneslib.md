@@ -47,6 +47,91 @@ Source: pvsneslib   (4.5.0-1foundry1, format 3.0 (quilt))
  └ pvsneslib           all     metapackage → Depends: core, examples
 ```
 
+## Publish-time fallout: pre-existing packages that had never hit CI
+
+Publishing pvsneslib via `task bump` syncs the whole committed `foundry-apt/`
+tree to the mirror and tags it, which built every package in CI for the first
+time since several were committed. Two packages had been committed but **never
+tag-published**, so CI met them fresh and they blocked the publish until fixed:
+
+1. **shellcheck gate (v1.5.17):** `asar`, `wla-dx`, `drmon` `build.sh` had
+   SC2015 (`A && B || C`) / SC2016 (literal-`$` sed) findings. Fixed: switched
+   to explicit `if-then-else` `_apt`, added an SC2016 disable on drmon's literal
+   `${CMAKE_CURRENT_SOURCE_DIR}` sed. (commit `c81dcfa`)
+2. **drmon could not build in CI (v1.5.18) — see the dedicated section below.**
+
+Publish landed on **v1.5.19** (green, incl. the post-publish live-repo
+smoke-check). pvsneslib + all three binaries are live at `4.5.0-1foundry1`.
+
+## drmon: making it CI-buildable + the upstream cppdap/JsonCpp bug
+
+drmon lives in the public **`developer-resources-co/drdevtools`** repo (ours;
+GPL-2.0), not as a standalone release. Three layers had to be fixed for it to
+build on a clean CI runner; the third is a genuine upstream bug.
+
+**(a) Local-only source → fetch.** `build.sh` copied from `$HOME/SRC/drdevtools`
+and aborted when absent. Rewritten to fetch the **sha256-pinned repo tarball**
+(`drdevtools @ 61e1303`, sha256 `c8e90d57…`) when no local checkout is present,
+keeping `DRDEVTOOLS=/path` as a local-iteration override.
+
+**(b) Undeclared build deps.** drmon needs `libcppdap-dev` and `libjsoncpp-dev`
+— present on the author's box, never declared. Added to `debian/control`
+Build-Depends + the `build.sh` apt line.
+
+**(c) Upstream CMake bug — cppdap never links JsonCpp.** This is the one worth
+fixing at the source. `devsys/tools/drmon/CMakeLists.txt` pulls cppdap via:
+
+```cmake
+FetchContent_Declare(cppdap GIT_REPOSITORY https://github.com/google/cppdap.git
+                            GIT_TAG dap-1.58.0-a)
+FetchContent_MakeAvailable(cppdap)
+```
+
+cppdap keeps its JSON backend (**JsonCpp**) as a **git submodule** under
+`third_party/json`. `FetchContent` clones cppdap but does **not** populate its
+submodules, so cppdap builds with an empty JSON backend and every
+`Json::Value::…` symbol is undefined at link time (≈60 undefined references in
+the `drmon-dap-snes`/`drmon-dap-gen` targets). It only ever "worked" on a box
+where an earlier checkout had populated the submodule in the FetchContent cache;
+on a clean machine it can never link.
+
+**The upstream fix (in drdevtools, validated — drmon builds clean with it):**
+
+```cmake
+# before FetchContent_MakeAvailable(cppdap):
+set(CPPDAP_USE_EXTERNAL_JSONCPP_PACKAGE ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(cppdap)
+find_package(jsoncpp REQUIRED)
+# in drmon_dap_target():
+target_link_libraries(${TARGET} PRIVATE cppdap jsoncpp_lib Threads::Threads)
+```
+
+i.e. tell cppdap to use the **system** JsonCpp (Ubuntu 26.04 ships
+`libjsoncpp-dev` at `1.58.0a`, matching the pinned cppdap tag `dap-1.58.0-a`)
+and link `jsoncpp_lib` into the dap targets (drmon's `session.cpp` uses
+`Json::Value` directly too). Alternative considered: switch drmon entirely to
+the **system** `libcppdap-dev` (`find_package(cppdap)` instead of FetchContent)
+— Ubuntu's `1.58.0a` matches the pinned tag exactly, so it would drop the
+network fetch and the submodule problem together. Cleaner for a distro but a
+bigger change (loses FetchContent portability on non-Debian hosts); not yet
+validated. Recommended: ship the minimal external-JsonCpp fix now, consider the
+system-cppdap switch later.
+
+**Carry-forward in foundry-apt today:** `packages/drmon/build.sh` applies the
+same two CMake edits via `sed` after fetching the source — so drmon builds in CI
+**right now** without waiting on the upstream commit. This is a patch we carry,
+and a smell.
+
+**Follow-up tasks (tracked in TODO.md):**
+
+1. Land the CMake fix in `drdevtools` `main` (branch + diff prepared at
+   `/tmp/drdevtools-pr`, `fix/drmon-cppdap-jsoncpp-link`; we own the repo, push
+   pending Will's go-ahead — the auto-classifier blocked an unprompted push).
+2. Re-pin `packages/drmon/build.sh` `DRDEVTOOLS_SHA` + `SHA256` to the fixed
+   commit and **delete the two jsoncpp seds** (keep the `libs/` sed and the
+   `libjsoncpp-dev` build-dep). Re-verify drmon builds, then re-publish.
+3. (Optional) Evaluate switching drmon to system `libcppdap-dev`.
+
 ## Verification
 
 (Steps run in a fresh `ubuntu:26.04` container — evidence pasted below each.)
