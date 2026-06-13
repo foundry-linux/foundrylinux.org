@@ -24,6 +24,10 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 - [ ] **foundry-kde-theme — remaining theming layers** — Plasma Style SVG set (distinctive panel/widget shapes — partial: forge-palette colors done, Breeze-inherit done; custom SVGs pending), Aurorae window decoration, Kvantum Qt-app style. See [plan](docs/plans/2026-05-24-foundry-kde-theme.md).
 - [ ] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
 - [ ] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
+### Packaging — new upstreams
+
+- [ ] **Package `bsnes-jg`** — the jgemu-framework bsnes fork (GPL-3.0), an accuracy-focused SNES emulator for `foundry-emulators-consoles-heavy`. Check Ubuntu 26.04 universe first per the always-check-universe rule; use the `/package` skill. (Companion `mesen2` shipped 2026-06-14 — see Done + [plan](docs/plans/2026-06-14-package-mesen2.md).) No plan yet.
+
 ### Debian ITP
 
 Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for existing RFP/ITP before filing each. New vendored packages get their own entry here via `/package` skill Step 6.
@@ -37,6 +41,7 @@ Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) 
 - [ ] **ITP: `ldtk`** — level design toolkit (MIT)
 - [ ] **ITP: `libvgm`** — VGM chiptune audio library (GPL-2.0+)
 - [ ] **ITP: `m8te`** — SNES 8bpp tile/map editor, Mono runtime (MIT)
+- [ ] **ITP: `mesen2`** — multi-system retro emulator, NES/SNES/GB/GBA/PCE/SMS/WS (GPL-3.0)
 - [ ] **ITP: `ppsspp`** — PSP emulator (GPL-2.0+)
 - [ ] **ITP: `pvsneslib`** — SNES homebrew SDK (Zlib)
 - [ ] **ITP: `python3-glfw`** — Python GLFW bindings (MIT)
@@ -81,6 +86,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
+- 2026-06-14 — [package-mesen2] packaged Mesen 2.1.1 as `mesen2` (GPL-3.0, NES/SNES/GB/GBA/PCE/SMS/WS) — pre-built .NET-AoT single-file repack (no-strip; bundle appended to ELF), SDL2+libicu78+X11 deps declared, lintian-clean, xvfb headless launch verified; wired into `foundry-emulators-consoles-heavy` 1.0.4 (→ atelier). See [plan](docs/plans/2026-06-14-package-mesen2.md).
 - 2026-06-14 — [ia-keys] Provisioned IA S3 keys via `scripts/bootstrap-ia.sh` (liveness-checks against s3.us.archive.org, R2 backup + GH secrets); fixed `foundry-secrets`→`foundry-linux-secrets` bucket bug in backup-secret.sh + bootstrap-r2.sh. Prereq for the v1.0.0 IA migration.
 - 2026-06-13 — [python-gamedev-extras-weight] won't do — keeping `foundry-python-gamedev-extras` (554 MiB: `libvtk9.5` 276 MiB + numba/llvmlite + scipy + librosa) in anvil; 4 GB target dropped, 8 GB is the floor.
 - 2026-06-13 — [phase-3-iso-anvil] live-build Kubuntu 26.04 ISO pipeline done; anvil-1.0 builds clean at ~4.2 GB; autologin fixed (casper bake + sddm.conf); Calamares + branding wired. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).

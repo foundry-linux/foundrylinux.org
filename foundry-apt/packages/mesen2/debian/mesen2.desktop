@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Mesen
+GenericName=Multi-system emulator
+Comment=High-accuracy emulator for NES, SNES, GB, GBA, PC Engine, SMS and WonderSwan
+Exec=mesen2 %f
+Icon=mesen2
+Terminal=false
+Categories=Game;Emulator;
+Keywords=nes;snes;gameboy;gba;pcengine;turbografx;mastersystem;gamegear;wonderswan;emulator;retro;

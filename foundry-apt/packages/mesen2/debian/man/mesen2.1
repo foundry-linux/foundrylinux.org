@@ -1,0 +1,49 @@
+.TH MESEN2 1 "June 2026" "mesen2 2.1.1" "Games"
+.SH NAME
+mesen2 \- high-accuracy multi-system console and handheld emulator
+.SH SYNOPSIS
+.B mesen2
+.RI [ file ]
+.SH DESCRIPTION
+.B Mesen
+is a cross-platform, high-accuracy emulator for a range of retro consoles and
+handhelds: NES/Famicom, Super NES/Super Famicom, Game Boy and Game Boy Color,
+Game Boy Advance, PC Engine/TurboGrafx-16, Master System/Game Gear/SG-1000, and
+WonderSwan/WonderSwan Color.
+.PP
+In addition to general play, Mesen provides an extensive debugging and
+development suite: an integrated debugger and assembler, tile/sprite/palette and
+memory viewers, an event viewer, a trace logger, and Lua scripting \(em useful
+for homebrew development and reverse engineering.
+.PP
+Mesen is a graphical application; nearly all configuration is performed through
+its user interface. This is a thin wrapper that launches the upstream
+self-contained binary installed under
+.IR /usr/lib/mesen2/Mesen .
+.SH ARGUMENTS
+.TP
+.I file
+Optional path to a ROM, save state, or movie file to open on startup. The
+desktop entry passes the file the user opens via their file manager.
+.SH FILES
+.TP
+.I ~/.config/Mesen2/
+User configuration, save data, save states, and screenshots (unless Mesen is
+run in portable mode, in which case data is stored alongside the executable).
+.SH REQUIREMENTS
+Mesen requires
+.B SDL2
+at runtime; it is pulled in automatically as a package dependency. An X11
+session with OpenGL is also required for the emulator's interface.
+.SH SEE ALSO
+Project page and documentation:
+.UR https://www.mesen.ca/
+.UE
+and
+.UR https://github.com/SourMesen/Mesen2
+.UE .
+.SH AUTHORS
+Mesen is developed by Sour and contributors. This man page was written for the
+Foundry Linux package.
+.SH COPYRIGHT
+Mesen is free software, licensed under the GNU General Public License version 3.

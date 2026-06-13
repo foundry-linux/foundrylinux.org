@@ -1,0 +1,46 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# pre-built upstream distribution — no configure step
+
+override_dh_auto_build:
+	# pre-built upstream distribution — no build step
+
+override_dh_auto_test:
+	# no test suite in the binary distribution
+
+override_dh_auto_install:
+	# The 83 MB self-contained binary goes in /usr/lib/mesen2; a thin wrapper
+	# in /usr/bin keeps the command name lowercase + matched to the package.
+	install -d $(CURDIR)/debian/mesen2/usr/lib/mesen2
+	install -m 0755 $(CURDIR)/Mesen $(CURDIR)/debian/mesen2/usr/lib/mesen2/Mesen
+	install -d $(CURDIR)/debian/mesen2/usr/bin
+	printf '#!/bin/sh\nexec /usr/lib/mesen2/Mesen "$$@"\n' \
+	    > $(CURDIR)/debian/mesen2/usr/bin/mesen2
+	chmod 0755 $(CURDIR)/debian/mesen2/usr/bin/mesen2
+	# Desktop entry + icon (vendored from upstream Linux/appimage/).
+	install -D -m 0644 $(CURDIR)/debian/mesen2.desktop \
+	    $(CURDIR)/debian/mesen2/usr/share/applications/mesen2.desktop
+	install -D -m 0644 $(CURDIR)/debian/mesen2.png \
+	    $(CURDIR)/debian/mesen2/usr/share/icons/hicolor/48x48/apps/mesen2.png
+
+override_dh_fixperms:
+	dh_fixperms
+	# Ensure the binary keeps +x (it lives outside /usr/bin, where dh_fixperms
+	# does not actively add +x).
+	chmod 0755 $(CURDIR)/debian/mesen2/usr/lib/mesen2/Mesen
+
+override_dh_strip:
+	# DO NOT strip. The upstream binary is a .NET AoT + PublishSingleFile
+	# bundle: its native libraries (libSkiaSharp.so, libHarfBuzzSharp.so) are
+	# appended to the ELF host and located via a footer at end-of-file.
+	# strip / objcopy --add-gnu-debuglink rewrites the ELF and would truncate
+	# the appended bundle, breaking the application. Upstream already ships the
+	# binary stripped, so there is nothing to remove anyway.
+
+override_dh_dwz:
+	# Same reason as dh_strip — do not let dwz rewrite the binary.

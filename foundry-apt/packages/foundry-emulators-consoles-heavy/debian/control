@@ -19,7 +19,8 @@ Depends: ${misc:Depends},
  retroarch,
  retroarch-assets,
  ppsspp,
- snes9x-gtk
+ snes9x-gtk,
+ mesen2
 Description: heavy console and handheld emulators
  Console and handheld emulators with larger installation footprints
  (up to ~270 MB for the set including assets) — left out of the base
@@ -36,3 +37,4 @@ Description: heavy console and handheld emulators
    * retroarch-assets        libretro UI assets
    * ppsspp                  PlayStation Portable
    * snes9x-gtk              Super Nintendo
+   * mesen2                  NES/SNES/GB/GBA/PCE/SMS/WS (high accuracy)

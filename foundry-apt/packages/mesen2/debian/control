@@ -1,0 +1,47 @@
+Source: mesen2
+Section: otherosfs
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ unzip
+Standards-Version: 4.7.2
+Homepage: https://github.com/SourMesen/Mesen2
+Rules-Requires-Root: no
+
+Package: mesen2
+Architecture: amd64
+Depends: ${shlibs:Depends},
+ ${misc:Depends},
+ libsdl2-2.0-0,
+ libicu78,
+ libfontconfig1,
+ libgl1,
+ libx11-6,
+ libxext6,
+ libxi6,
+ libxrandr2,
+ libxcursor1,
+ libice6,
+ libsm6
+Recommends: libgtk-3-0t64,
+ libvulkan1
+Description: high-accuracy multi-system console/handheld emulator
+ Mesen is a cross-platform, high-accuracy emulator for a range of retro
+ consoles and handhelds:
+ .
+   * NES / Famicom (incl. FDS, Dendy)
+   * Super NES / Super Famicom
+   * Game Boy / Game Boy Color
+   * Game Boy Advance
+   * PC Engine / TurboGrafx-16 (incl. SuperGrafx, CD)
+   * Master System / Game Gear / SG-1000
+   * WonderSwan / WonderSwan Color
+ .
+ It focuses on cycle accuracy and ships an extensive debugging and
+ development suite (debugger, assembler, tile/sprite/memory viewers,
+ event viewer, trace logger, Lua scripting), making it well suited to
+ homebrew and reverse-engineering work in addition to general play.
+ .
+ This package repackages the upstream self-contained Linux x64 build
+ (a .NET ahead-of-time-compiled single-file binary). SDL2 is required at
+ runtime and is pulled in via Depends.

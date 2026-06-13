@@ -1,3 +1,10 @@
+foundry-emulators-consoles-heavy (1.0.4) resolute; urgency=medium
+
+  * Add mesen2 (2.1.1) — vendored from foundry-apt; high-accuracy
+    multi-system emulator (NES/SNES/GB/GBA/PCE/SMS/WS).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 14 Jun 2026 06:20:00 +0700
+
 foundry-emulators-consoles-heavy (1.0.3) resolute; urgency=medium
 
   * Add snes9x-gtk (1.63) — vendored from foundry-apt; SNES emulator.

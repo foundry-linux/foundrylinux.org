@@ -1,0 +1,14 @@
+mesen2 (2.1.1-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of Mesen 2.1.1.
+  * Repackage the upstream self-contained Linux x64 build (.NET AoT
+    single-file); no source compile — upstream COMPILING.md requires the
+    .NET 8 SDK + clang.
+  * Declare the dlopen'd runtime deps (SDL2, X11 stack, libGL, fontconfig)
+    that dh_shlibdeps cannot see inside the single-file bundle.
+  * Skip dh_strip: the PublishSingleFile bundle appends native libs to the
+    ELF host, so stripping/objcopy would truncate it. Upstream ships it
+    stripped.
+  * Upstream repo (SourMesen/Mesen2) is archived — no patches to forward.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 14 Jun 2026 06:08:54 +0700
