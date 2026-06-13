@@ -1,3 +1,11 @@
+foundry-emulators-consoles (1.0.2) resolute; urgency=medium
+
+  * Add bsnes-jg (Foundry apt), the cycle-accurate SNES / Super Famicom emulator
+    (Jolly Good Emulation fork of bsnes), as an accuracy reference alongside
+    snes9x-gtk.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 14 Jun 2026 06:30:00 +0700
+
 foundry-emulators-consoles (1.0.1) resolute; urgency=medium
 
   * Add ppsspp and snes9x-gtk (Foundry apt) so they install with foundry-anvil.

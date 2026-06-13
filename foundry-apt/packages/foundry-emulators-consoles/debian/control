@@ -10,6 +10,7 @@ Rules-Requires-Root: no
 Package: foundry-emulators-consoles
 Architecture: all
 Depends: ${misc:Depends},
+ bsnes-jg,
  desmume,
  fceux,
  frotz,
@@ -23,6 +24,7 @@ Description: light console and adventure-engine emulators
  interpreters, and Foundry-packaged emulators for platforms not in
  Ubuntu universe:
  .
+   * bsnes-jg    cycle-accurate Super Nintendo / Super Famicom (Foundry apt)
    * desmume     Nintendo DS
    * fceux       NES / Famicom
    * frotz       Z-machine interpreter for Infocom-style text adventures

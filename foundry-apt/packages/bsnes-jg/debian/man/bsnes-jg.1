@@ -1,0 +1,61 @@
+.TH BSNES\-JG 1 "June 2026" "bsnes-jg 2.1.0" "Games"
+.SH NAME
+bsnes\-jg \- cycle-accurate Super Nintendo / Super Famicom emulator
+.SH SYNOPSIS
+.B bsnes\-jg
+.I rom
+.SH DESCRIPTION
+.B bsnes\-jg
+is a cycle-accurate emulator for the Super Famicom / Super Nintendo
+Entertainment System, a fork of byuu's bsnes v115 maintained under the Jolly
+Good Emulation project. It emulates the SNES with high accuracy, including the
+Super Game Boy, BS-X Satellaview, and Sufami Turbo, plus the SA-1, SuperFX,
+DSP-\fIn\fR, Cx4, S-DD1, SPC7110 and other enhancement coprocessors.
+.PP
+This package ships the self-contained SDL frontend. Pass a single ROM image
+(\fI.sfc\fR/\fI.smc\fR) as the only argument; the emulator opens a window and
+runs until closed. The game database that selects the correct input devices and
+coprocessors is read from
+.IR /usr/share/jollygood/bsnes/ .
+.SH OPTIONS
+.B bsnes\-jg
+takes no options \(em only a single ROM path. With no argument it prints a
+usage line and exits.
+.SH CONTROLS
+Player 1 is mapped to the keyboard:
+.TP
+.B Arrow keys
+D\-pad (Up / Down / Left / Right)
+.TP
+.B Z / X
+B / A
+.TP
+.B A / S
+Y / X
+.TP
+.B Q / W
+L / R (shoulder)
+.TP
+.B Return
+Start
+.TP
+.B Right Shift
+Select
+.PP
+The function keys (Escape, F1, F2) drive frontend actions such as quit and
+fullscreen.
+.SH FILES
+.TP
+.I /usr/share/jollygood/bsnes/
+SNES game database (board, BS Memory, Sufami Turbo, and Super Famicom tables).
+.SH NOTES
+This is the standalone reference frontend. The same upstream codebase also
+builds a Jolly Good module (\fIbsnes.so\fR) for the \fBjgrf\fR frontend, which
+this package does not ship.
+.SH SEE ALSO
+Project page: <https://gitlab.com/jgemu/bsnes>
+.SH AUTHORS
+bsnes by byuu et al; bsnes-jg maintained by Rupert Carmichael. This man page was
+written for Foundry Linux.
+.SH COPYRIGHT
+bsnes-jg is distributed under the GNU GPL version 3 or later.

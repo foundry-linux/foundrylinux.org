@@ -1,0 +1,10 @@
+bsnes-jg (2.1.0-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry packaging of bsnes-jg, the cycle-accurate SNES / Super
+    Famicom emulator (Jolly Good Emulation fork of bsnes v115).
+  * Ships the self-contained SDL frontend as /usr/bin/bsnes-jg plus the game
+    database, desktop entry, and icons.
+  * The Jolly Good API headers (jgemu/jg 1.0.0) are make-installed at build
+    time by build.sh as a build-only dependency.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 14 Jun 2026 06:26:00 +0700

@@ -1,0 +1,4 @@
+version=4
+# GitLab tags page → release archive tarball. Numeric X.Y.Z tags.
+https://gitlab.com/jgemu/bsnes/-/tags \
+  (?:.*/)?-/archive/([\d.]+)/bsnes-[\d.]+\.tar\.gz

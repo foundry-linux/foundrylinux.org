@@ -1,0 +1,44 @@
+#!/usr/bin/make -f
+# bsnes-jg — ship the self-contained SDL frontend as /usr/bin/bsnes-jg.
+#
+# The upstream Makefile's `install` target installs the Jolly Good *module*
+# (bsnes.so, loaded by the jgrf frontend), which we don't ship. We build the
+# standalone example frontend instead (ENABLE_EXAMPLE) — upstream's
+# bsnes-jg.desktop targets exactly this binary. DISABLE_MODULE skips the .so.
+# PREFIX=/usr bakes DATADIR=/usr/share/jollygood/bsnes into the binary so it
+# finds the game database we install below. libsamplerate is the system copy
+# (-lsamplerate), not the vendored deps/libsamplerate.
+#
+# The Jolly Good API headers (jg.h) are provided at build time by build.sh
+# (system make-install of jgemu/jg); they are build-only, nothing is shipped.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	dh_auto_build -- ENABLE_EXAMPLE=1 DISABLE_MODULE=1 PREFIX=/usr
+
+override_dh_auto_install:
+	# Standalone SDL emulator binary (the example frontend ELF, not the
+	# objs/bsnes-example run-from-build wrapper).
+	install -D -m 0755 objs/lib/example/bsnes-example \
+	    debian/bsnes-jg/usr/bin/bsnes-jg
+	# Game database — the binary reads it from DATADIR (/usr/share/jollygood/bsnes).
+	install -d debian/bsnes-jg/usr/share/jollygood/bsnes
+	install -m 0644 Database/boards.bml Database/BSMemory.bml \
+	    Database/SufamiTurbo.bml Database/SuperFamicom.bml \
+	    debian/bsnes-jg/usr/share/jollygood/bsnes/
+	# Desktop entry + icons (Icon=bsnes).
+	install -D -m 0644 bsnes-jg.desktop \
+	    debian/bsnes-jg/usr/share/applications/bsnes-jg.desktop
+	install -D -m 0644 icons/bsnes.svg \
+	    debian/bsnes-jg/usr/share/icons/hicolor/scalable/apps/bsnes.svg
+	set -e; for s in 32 48 64 96 128 256 512; do \
+	    install -D -m 0644 icons/bsnes$$s.png \
+	        debian/bsnes-jg/usr/share/icons/hicolor/$${s}x$${s}/apps/bsnes.png; \
+	done
+
+override_dh_auto_clean:
+	rm -rf objs bsnes

@@ -1,0 +1,32 @@
+Source: bsnes-jg
+Section: otherosfs
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ pkg-config,
+ libsdl2-dev,
+ libsamplerate0-dev
+Standards-Version: 4.7.2
+Homepage: https://gitlab.com/jgemu/bsnes
+X-Repology-Project: bsnes-jg
+Rules-Requires-Root: no
+
+Package: bsnes-jg
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: cycle-accurate Super Nintendo / Super Famicom emulator
+ bsnes-jg is a cycle-accurate emulator for the Super Famicom / Super Nintendo
+ Entertainment System — a fork of byuu's bsnes v115, maintained under the Jolly
+ Good Emulation project with the stated goal of accurate preservation. It
+ prioritises correctness over speed and stays close to ISO C++11 for long-term
+ buildability.
+ .
+ Emulation covers the SNES plus the Super Game Boy, BS-X Satellaview, and Sufami
+ Turbo, and the enhancement coprocessors (SA-1, SuperFX/GSU, the DSP-n and
+ Hitachi/ARM coprocessors, Cx4, S-DD1, SPC7110, OBC1, MSU1, …), with selectable
+ HLE or low-level coprocessor emulation.
+ .
+ This package ships the self-contained SDL frontend as /usr/bin/bsnes-jg:
+ run "bsnes-jg <rom.sfc>" to play. It is well suited to homebrew/SNES
+ development as an accuracy reference. (The same codebase also builds a Jolly
+ Good module for the jgrf frontend; that is not shipped here.)
