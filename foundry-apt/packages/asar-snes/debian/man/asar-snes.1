@@ -1,0 +1,100 @@
+.TH ASAR-SNES 1 "June 2026" "asar 1.91" "User Commands"
+.SH NAME
+asar-snes \- SNES 65816/SPC700/SuperFX cross-assembler
+.SH SYNOPSIS
+.B asar-snes
+.RI [ options ]
+.I asmfile
+.I romfile
+.SH DESCRIPTION
+.B asar-snes
+is a multi-architecture cross-assembler for the Super Nintendo Entertainment
+System (SNES) and its co-processors. It assembles 65816 (main CPU), SPC700
+(audio DSP), and SuperFX (graphics co-processor) source code into a ROM patch.
+.PP
+.B asar-snes
+reads
+.I asmfile
+(a 65816 assembly source file) and patches the ROM at
+.IR romfile ,
+or creates a new ROM file if one does not exist.
+.PP
+The assembler is widely used in SNES ROM hacking (especially Super Mario World
+hacks) and homebrew development.
+.SH OPTIONS
+.TP
+.B \-\-version
+Display version information and exit.
+.TP
+.BR \-v ", " \-\-verbose
+Enable verbose output — print extra information during assembly.
+.TP
+.BI \-\-symbols= format
+Write a symbol file alongside the ROM. Valid formats:
+.BR none " (default), " wla ", " nocash .
+.TP
+.BI \-\-symbols-path= filename
+Write the symbol file to
+.I filename
+instead of the default path.
+.TP
+.B \-\-no-title-check
+Suppress the ROM title safety check. Useful when patching ROMs with
+unexpected title fields.
+.TP
+.BI \-\-pause-mode= when
+Control when asar pauses waiting for a keypress. Valid values:
+.BR never " (default), " on-error ", " on-warning ", " always .
+.TP
+.BI \-\-fix-checksum= on|off
+Recalculate and fix the ROM checksum after assembly. Default: on.
+.TP
+.BI \-\-include " path"
+Add
+.I path
+to the include search path. May be specified multiple times.
+.TP
+.BI \-\-define " def[=val]"
+Pre-define the symbol
+.I def
+(optionally set to
+.IR val ).
+Equivalent to
+.B !def = val
+at the top of the source file.
+.TP
+.BI \-\-error-limit= N
+Stop after
+.I N
+errors (default: 20).
+.SH EXIT STATUS
+.TP
+.B 0
+Assembly succeeded.
+.TP
+.B 1
+One or more errors occurred during assembly.
+.SH EXAMPLES
+Patch a ROM:
+.PP
+.RS
+.B asar-snes hack.asm baserom.sfc
+.RE
+.PP
+Patch with nocash symbol output:
+.PP
+.RS
+.B asar-snes \-\-symbols=nocash \-\-symbols-path=hack.sym hack.asm rom.sfc
+.RE
+.SH SEE ALSO
+.BR wla-dx (1),
+.BR snes9x-gtk (1),
+.BR dasm (1)
+.SH AUTHORS
+Written by Alcaro (RPGHacker) and contributors.
+.SH COPYRIGHT
+Copyright \(co 2011\(en2024 Alcaro and contributors.
+Licensed under the GNU Lesser General Public License, version 3 or later.
+.PP
+The DLL interface files (asardll.h, asardll.c) are separately licensed
+under the WTFPL.

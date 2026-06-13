@@ -1,0 +1,24 @@
+Source: asar-snes
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13), cmake
+Standards-Version: 4.7.0
+Homepage: https://github.com/RPGHacker/asar
+Rules-Requires-Root: no
+
+Package: asar-snes
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: SNES 65816/SPC700/SuperFX cross-assembler
+ asar is a multi-architecture cross-assembler targeting the SNES and its
+ co-processors: 65816 (main CPU), SPC700 (audio DSP), and SuperFX (graphics
+ co-processor). Used extensively for SNES ROM hacking, homebrew development,
+ and Super Mario World ROM hacking toolchains.
+ .
+ Features include a macro system, math expressions, RAM map tables,
+ multiple pass assembly, symbol file output (wla/nocash format), and
+ optional ROM checksum fixing. Reads an .asm source file and patches or
+ creates a .sfc/.smc ROM.
+ .
+ Installed as asar-snes to coexist with the @electron/asar npm tool.

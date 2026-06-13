@@ -1,0 +1,9 @@
+asar-snes (1.91-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of asar 1.91.
+  * SNES 65816/SPC700/SuperFX cross-assembler by RPGHacker (Alcaro).
+  * Built with cmake -DASAR_GEN_DLL=OFF -DASAR_GEN_LIB=OFF (exe only).
+  * Binary installed as asar-snes to coexist with the @electron/asar package.
+  * Source: https://github.com/RPGHacker/asar/releases/tag/v1.91
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 13 Jun 2026 00:00:00 +0000

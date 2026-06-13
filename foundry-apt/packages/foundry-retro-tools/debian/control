@@ -28,7 +28,8 @@ Depends: ${misc:Depends},
  m8te,
  tilemap-studio,
  wla-dx,
- pvsneslib-core
+ pvsneslib-core,
+ asar-snes
 Description: retro game reverse-engineering, porting and authoring toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine and
  authoring retro-console assets:
@@ -42,7 +43,9 @@ Description: retro game reverse-engineering, porting and authoring toolchain
  formats decoded to WAV), m8te (SNES 8bpp tile/tilemap/palette editor),
  tilemap-studio (Game Boy / GBC / GBA / NES / SNES tilemap editor),
  pvsneslib-core (PVSnesLib SNES homebrew SDK — 816-tcc C compiler, pinned
- WLA DX, and a C library, used via PVSNESLIB_HOME + make).
+ WLA DX, and a C library, used via PVSNESLIB_HOME + make),
+ asar-snes (SNES 65816/SPC700/SuperFX cross-assembler by RPGHacker/Alcaro;
+ named asar-snes to coexist with the @electron/asar npm tool).
  .
  ghidra (the NSA SRE framework, ~860 MiB) is not here — it lives in the
  atelier edition, to keep core/anvil small enough for a 4 GB USB stick.

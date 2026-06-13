@@ -25,6 +25,7 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 | `tilemap-studio` | [Rangi42/tilemap-studio](https://github.com/Rangi42/tilemap-studio) | [LGPL-3.0](https://github.com/Rangi42/tilemap-studio/blob/master/LICENSE) (statically links FLTK under [FLTK licence](https://www.fltk.org/doc-1.4/license.html)) | `/usr/share/doc/tilemap-studio/copyright` |
 | `wla-dx` | [vhelin/wla-dx](https://github.com/vhelin/wla-dx) | [GPL-2.0+](https://github.com/vhelin/wla-dx/blob/master/COPYING) | `/usr/share/doc/wla-dx/copyright` |
 | `pvsneslib` | [alekmaul/pvsneslib](https://github.com/alekmaul/pvsneslib) | [Zlib](https://github.com/alekmaul/pvsneslib/blob/master/LICENSE) (bundles a pinned [WLA DX](https://github.com/vhelin/wla-dx) under GPL-2.0+ in `devkitsnes/bin/`) | `/usr/share/doc/pvsneslib-core/copyright` |
+| `asar-snes` | [RPGHacker/asar](https://github.com/RPGHacker/asar) | [LGPL-3.0+](https://github.com/RPGHacker/asar/blob/master/license-lgpl.txt) (DLL interface files separately under WTFPL) | `/usr/share/doc/asar-snes/copyright` |
 
 > ⚠️ **`snes9x-gtk` ships under the Snes9x licence, which forbids commercial redistribution.** The source may be freely distributed for non-commercial use; binaries are likewise non-commercial. It is fine for Foundry Linux's free, non-commercial apt repo, but it must never be bundled into a paid product. See the [upstream LICENSE](https://github.com/snes9xgit/snes9x/blob/master/LICENSE).
 

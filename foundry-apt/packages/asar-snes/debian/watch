@@ -1,0 +1,2 @@
+version=4
+https://github.com/RPGHacker/asar/tags .*/archive/refs/tags/v(\d[\d.]*)\.tar\.gz

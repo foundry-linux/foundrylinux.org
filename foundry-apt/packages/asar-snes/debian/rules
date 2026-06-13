@@ -1,0 +1,28 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_autoreconf:
+	# cmake-only build; src/ has no autotools
+
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake --sourcedir=src -- \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DASAR_GEN_EXE=ON \
+		-DASAR_GEN_DLL=OFF \
+		-DASAR_GEN_LIB=OFF \
+		-DASAR_GEN_DLL_TEST=OFF \
+		-DASAR_GEN_EXE_TEST=OFF
+
+override_dh_auto_build:
+	dh_auto_build --buildsystem=cmake
+
+override_dh_auto_test:
+	# skip — tests require a SNES ROM test harness not available at build time
+
+override_dh_auto_install:
+	dh_auto_install --buildsystem=cmake
+	# rename to avoid /usr/bin/asar conflict with @electron/asar
+	mv debian/asar-snes/usr/bin/asar debian/asar-snes/usr/bin/asar-snes
