@@ -1,3 +1,11 @@
+tilemap-studio (4.0.1-3foundry1) resolute; urgency=low
+
+  * Build FLTK 1.4.5 as hybrid Wayland/X11+GL (FLTK_BACKEND_WAYLAND=1,
+    FLTK_BUILD_GL=1). Binary gains native Wayland support; GL is bundled
+    but unused at runtime (app uses fltk-config --use-images only).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 13 Jun 2026 00:00:00 +0700
+
 tilemap-studio (4.0.1-2foundry1) resolute; urgency=low
 
   * 0001-x11-platform-includes.patch: sent upstream as PR #95

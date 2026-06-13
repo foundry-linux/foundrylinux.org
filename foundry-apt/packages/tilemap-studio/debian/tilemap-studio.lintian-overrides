@@ -1,6 +1,6 @@
-# Tilemap Studio statically links FLTK 1.4.5, built X11-only, because Ubuntu
-# 26.04 ships FLTK 1.4.4 as a Wayland-hybrid build that upstream's X11 window
-# code will not compile or run against. FLTK is built from a sha256-pinned
-# upstream release in build.sh against the SYSTEM png/zlib/jpeg, so only FLTK
-# itself is embedded; kept under review per FLTK release.
+# Tilemap Studio statically links FLTK 1.4.5 (hybrid Wayland/X11+GL build).
+# Ubuntu 26.04 ships FLTK 1.4.4; we vendor 1.4.5 to pick up the Wayland backend
+# and the cleaned-up X11 headers. FLTK is built from a sha256-pinned upstream
+# release against SYSTEM png/zlib/jpeg, so only FLTK itself is embedded;
+# kept under review per FLTK release.
 tilemap-studio: embedded-library [usr/bin/tilemapstudio: fltk]

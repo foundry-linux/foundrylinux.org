@@ -1,16 +1,19 @@
 #!/usr/bin/make -f
-# Tilemap Studio needs FLTK 1.4.5 built X11-only; Ubuntu 26.04 ships 1.4.4 as a
-# Wayland-hybrid build that upstream's X11 window code won't compile against. So
-# we build a sha256-pinned FLTK 1.4.5 (placed in lib/fltk by build.sh) and link
-# it statically into the binary, as upstream's Makefile expects.
+# Tilemap Studio statically links a sha256-pinned FLTK 1.4.5 (placed in lib/fltk
+# by build.sh). Ubuntu 26.04 ships FLTK 1.4.4 so we vendor 1.4.5 to pick up the
+# Wayland backend and the cleaned-up X11 headers. The build targets the hybrid
+# Wayland+X11 mode so the binary runs natively on both compositors.
 #
-#  * FLTK_USE_SYSTEM_{LIBPNG,ZLIB,LIBJPEG}=1 — link png/zlib/jpeg from the system
-#    shared libs (proper ${shlibs:Depends}); only FLTK itself is embedded.
-#  * CMAKE_POSITION_INDEPENDENT_CODE=ON — so the static FLTK objects are PIC and
-#    the final app links as PIE under dpkg's hardening LDFLAGS.
+#  * FLTK_BACKEND_WAYLAND=1 + FLTK_BACKEND_X11 (default ON) → hybrid build;
+#    runtime links libwayland-client, libdecor-0, libxkbcommon as shared libs.
+#  * FLTK_BUILD_GL=1 → builds fltk_gl into the static bundle; the app uses
+#    only fltk-config --use-images so libGL does not appear at runtime.
+#  * FLTK_USE_SYSTEM_{LIBPNG,ZLIB,LIBJPEG}=1 — png/zlib/jpeg from system shared
+#    libs; proper ${shlibs:Depends} and smaller static bundle.
+#  * CMAKE_POSITION_INDEPENDENT_CODE=ON — static FLTK objects are PIC so the
+#    final app links as PIE under dpkg's hardening LDFLAGS.
 #  * The upstream Makefile finds FLTK via a bare `fltk-config`; we put the freshly
-#    installed lib/fltk prefix's bin/ first on PATH so it resolves (the Makefile's
-#    hyphenated `fltk-config` variable can't be overridden on the command line).
+#    installed lib/fltk prefix's bin/ first on PATH so it resolves.
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
@@ -18,11 +21,10 @@ FLTK_FLAGS = \
 	-D CMAKE_BUILD_TYPE=Release \
 	-D CMAKE_POSITION_INDEPENDENT_CODE=ON \
 	-D FLTK_ABI_VERSION=10405 \
-	-D FLTK_BUILD_GL=0 \
+	-D FLTK_BUILD_GL=1 \
 	-D FLTK_BUILD_TEST=0 \
 	-D FLTK_BUILD_FLUID=0 \
-	-D FLTK_GRAPHICS_CAIRO=1 \
-	-D FLTK_BACKEND_WAYLAND=0 \
+	-D FLTK_BACKEND_WAYLAND=1 \
 	-D FLTK_USE_SYSTEM_LIBPNG=1 \
 	-D FLTK_USE_SYSTEM_ZLIB=1 \
 	-D FLTK_USE_SYSTEM_LIBJPEG=1

@@ -17,7 +17,17 @@ Build-Depends: debhelper-compat (= 13),
  libxrender-dev,
  libxfixes-dev,
  libcairo2-dev,
- libpango1.0-dev
+ libpango1.0-dev,
+ libwayland-dev,
+ wayland-protocols,
+ libxkbcommon-dev,
+ libxcursor-dev,
+ libdecor-0-dev,
+ libwayland-egl-backend-dev,
+ libegl-dev,
+ libgl-dev,
+ libglu1-mesa-dev,
+ libgtk-3-dev
 Standards-Version: 4.7.2
 Homepage: https://github.com/Rangi42/tilemap-studio
 X-Repology-Project: tilemap-studio
@@ -38,5 +48,5 @@ Description: tilemap editor for Game Boy, GBC, GBA, NES and SNES
  canvas. This makes it a modern, maintained successor to 1990s map editors such
  as tUME for authoring 8-bit and 16-bit console graphics.
  .
- Tilemap Studio statically links FLTK 1.4.5 (built X11-only); see
- /usr/share/doc/tilemap-studio/copyright for licensing of the bundled code.
+ Tilemap Studio statically links FLTK 1.4.5 (hybrid Wayland/X11 build with GL);
+ see /usr/share/doc/tilemap-studio/copyright for licensing of the bundled code.

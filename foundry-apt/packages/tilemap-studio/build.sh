@@ -10,8 +10,10 @@
 #      Wayland-hybrid build that upstream's X11 window code won't compile
 #      against). See debian/rules for the cmake flags.
 #
-# Steps: fetch + verify both tarballs -> overlay debian/ -> dpkg-buildpackage
-# (quilt auto-applies debian/patches) -> move the .deb into $REPO_ROOT/dist/.
+# Steps: fetch + verify both tarballs -> overlay debian/ -> apply Perl patches
+# (GNU patch 2.8 fails on CRLF upstream sources; perl -i -0pe handles CRLF
+# transparently) -> dpkg-buildpackage -> move the .deb into $REPO_ROOT/dist/.
+# Patches are documented in debian/patches/ for reference and upstream PR #95.
 #
 # To bump: change *_VERSION + *_SHA256 below, add a debian/changelog entry via
 #   dch -v <NEW>-1foundry1 -D resolute "..."
@@ -58,7 +60,10 @@ if command -v apt-get >/dev/null; then
     _apt install -y --no-install-recommends \
         cmake pkg-config zlib1g-dev libpng-dev libjpeg-dev libxpm-dev libx11-dev \
         libxft-dev libxinerama-dev libfontconfig1-dev libxext-dev libxrender-dev \
-        libxfixes-dev libcairo2-dev libpango1.0-dev >/dev/null
+        libxfixes-dev libcairo2-dev libpango1.0-dev \
+        libwayland-dev wayland-protocols libxkbcommon-dev libxcursor-dev libdecor-0-dev \
+        libwayland-egl-backend-dev libegl-dev libgl-dev libglu1-mesa-dev \
+        libgtk-3-dev >/dev/null
 fi
 
 if ! curl -fsI -o /dev/null https://github.com/; then
@@ -92,6 +97,32 @@ mv "$SRC_DIR/lib/fltk-release-${FLTK_VERSION}" "$SRC_DIR/lib/fltk"
 
 echo "=== Copying debian/ tree into source ==="
 cp -a "$PKG_DIR/debian" "$SRC_DIR/"
+
+# dpkg-source --before-build doesn't apply patches when debian/ is overlaid on
+# a fresh extract. GNU patch 2.8 also fails on CRLF sources. Apply via perl so
+# patches are in place before dpkg-buildpackage sees the tree.
+echo "=== Applying patches ==="
+# GNU patch 2.8 has fundamental CRLF handling issues; quilt is also unreliable
+# when debian/ is overlaid on a manually extracted tree. Apply via perl, which
+# handles CRLF transparently and preserves the upstream encoding in output.
+# Patches are documented in debian/patches/ and forwarded upstream as PR #95.
+#
+# 0001: add FL/platform.H to main-window.h so Pixmap / fl_display / fl_xid
+#       are declared in FLTK 1.4.5 Wayland+X11 hybrid builds (they no longer
+#       leak through transitive FLTK headers as they did in X11-only mode).
+perl -i -0pe 's{(#include <FL/Fl_Native_File_Chooser\.H>)(\r?\n)}{$1$2#include <FL/platform.H>$2}' \
+    "$SRC_DIR/src/main-window.h"
+grep -q "platform.H" "$SRC_DIR/src/main-window.h" \
+    || { echo "ERROR: patch 0001 failed (platform.H not found)" >&2; exit 1; }
+#
+# 0002: add <cstring> to preferences.cpp (strcpy/strcat not declared in
+#       GCC 15 without it after FLTK 1.4.5 removed the transitive include).
+perl -i -0pe 's{(#pragma warning\(push, 0\))(\r?\n)(#include <FL/Fl_Preferences\.H>)}{$1$2#include <cstring>$2$3}' \
+    "$SRC_DIR/src/preferences.cpp"
+grep -q "cstring" "$SRC_DIR/src/preferences.cpp" \
+    || { echo "ERROR: patch 0002 failed (cstring not found)" >&2; exit 1; }
+echo "  0001-platform-h-in-main-window — applied"
+echo "  0002-cstring-in-preferences — applied"
 
 echo "=== dpkg-buildpackage -us -uc -b ==="
 ( cd "$SRC_DIR" && dpkg-buildpackage -us -uc -b )
