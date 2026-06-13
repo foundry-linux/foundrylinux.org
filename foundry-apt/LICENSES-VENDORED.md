@@ -6,27 +6,27 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 
 | Package | Upstream | Licence | Where the text lives in the .deb |
 |---|---|---|---|
-| `asar-snes` | [RPGHacker/asar](https://github.com/RPGHacker/asar) | [LGPL-3.0+](https://github.com/RPGHacker/asar/blob/master/license-lgpl.txt) (DLL interface files separately under WTFPL) | `/usr/share/doc/asar-snes/copyright` |
-| `blender-asset-finder` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder/copyright` |
-| `blender-asset-finder-cli` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder-cli/copyright` |
-| `drmon` | [developer-resources-co/drdevtools](https://github.com/developer-resources-co/drdevtools) | [GPL-2.0](https://github.com/developer-resources-co/drdevtools/blob/main/COPYING) | `/usr/share/doc/drmon/copyright` |
-| `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | [GPL-2.0+](https://github.com/Arakula/f9dasm) | `/usr/share/doc/f9dasm/copyright` |
-| `ghidra` | [NSA / Ghidra](https://ghidra-sre.org/) | [Apache-2.0](https://github.com/NationalSecurityAgency/ghidra/blob/master/LICENSE) | `/usr/share/doc/ghidra/copyright` |
-| `ldtk` | [deepnight/ldtk](https://github.com/deepnight/ldtk) | [MIT](https://github.com/deepnight/ldtk/blob/master/LICENSE) | `/usr/share/doc/ldtk/copyright` |
-| `libvgm` | [ValleyBell/libvgm](https://github.com/ValleyBell/libvgm) | [GPL-2.0+](https://github.com/ValleyBell/libvgm/blob/master/LICENSE) (bundles BSD-3-Clause / LGPL-2.1+ components) | `/usr/share/doc/libvgm/copyright` |
-| `m8te` | [nesdoug/M8TE](https://github.com/nesdoug/M8TE) | [MIT](https://github.com/nesdoug/M8TE/blob/main/LICENSE) | `/usr/share/doc/m8te/copyright` |
-| `ppsspp` | [hrydgard/ppsspp](https://github.com/hrydgard/ppsspp) | [GPL-2.0+](https://github.com/hrydgard/ppsspp/blob/master/LICENSE.TXT) (bundles BSD-3-Clause components) | `/usr/share/doc/ppsspp/copyright` |
-| `pvsneslib` | [alekmaul/pvsneslib](https://github.com/alekmaul/pvsneslib) | [Zlib](https://github.com/alekmaul/pvsneslib/blob/master/LICENSE) (bundles a pinned [WLA DX](https://github.com/vhelin/wla-dx) under GPL-2.0+ in `devkitsnes/bin/`) | `/usr/share/doc/pvsneslib-core/copyright` |
-| `python3-glfw` | [FlorianRhiem/pyGLFW](https://github.com/FlorianRhiem/pyGLFW) | [MIT](https://github.com/FlorianRhiem/pyGLFW/blob/master/LICENSE) | `/usr/share/doc/python3-glfw/copyright` |
-| `python3-librosa` | [librosa/librosa](https://github.com/librosa/librosa) | [ISC](https://github.com/librosa/librosa/blob/main/LICENSE.md) | `/usr/share/doc/python3-librosa/copyright` |
-| `python3-mss` | [BoboTiG/python-mss](https://github.com/BoboTiG/python-mss) | [MIT](https://github.com/BoboTiG/python-mss/blob/master/LICENSE.txt) | `/usr/share/doc/python3-mss/copyright` |
-| `python3-pydub` | [jiaaro/pydub](https://github.com/jiaaro/pydub) | [MIT](https://github.com/jiaaro/pydub/blob/master/LICENSE) | `/usr/share/doc/python3-pydub/copyright` |
-| `ruff` | [astral-sh/ruff](https://github.com/astral-sh/ruff) | [MIT](https://github.com/astral-sh/ruff/blob/main/LICENSE) | `/usr/share/doc/ruff/copyright` |
-| `snes9x-gtk` | [snes9xgit/snes9x](https://github.com/snes9xgit/snes9x) | [Snes9x non-commercial](https://github.com/snes9xgit/snes9x/blob/master/LICENSE) ⚠️ (bundles GPL-3+ / LGPL-2.1+ components) | `/usr/share/doc/snes9x-gtk/copyright` |
-| `task` | [go-task/task](https://github.com/go-task/task) | [MIT](https://github.com/go-task/task/blob/main/LICENSE) | `/usr/share/doc/task/copyright` |
+| <span style="white-space:nowrap">`asar-snes`</span> | [RPGHacker/asar](https://github.com/RPGHacker/asar) | [LGPL-3.0+](https://github.com/RPGHacker/asar/blob/master/license-lgpl.txt) (DLL interface files separately under WTFPL) | `/usr/share/doc/asar-snes/copyright` |
+| <span style="white-space:nowrap">`blender-asset-finder`</span> | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder/copyright` |
+| <span style="white-space:nowrap">`blender-asset-finder-cli`</span> | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder-cli/copyright` |
+| <span style="white-space:nowrap">`drmon`</span> | [developer-resources-co/drdevtools](https://github.com/developer-resources-co/drdevtools) | [GPL-2.0](https://github.com/developer-resources-co/drdevtools/blob/main/COPYING) | `/usr/share/doc/drmon/copyright` |
+| <span style="white-space:nowrap">`f9dasm`</span> | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | [GPL-2.0+](https://github.com/Arakula/f9dasm) | `/usr/share/doc/f9dasm/copyright` |
+| <span style="white-space:nowrap">`ghidra`</span> | [NSA / Ghidra](https://ghidra-sre.org/) | [Apache-2.0](https://github.com/NationalSecurityAgency/ghidra/blob/master/LICENSE) | `/usr/share/doc/ghidra/copyright` |
+| <span style="white-space:nowrap">`ldtk`</span> | [deepnight/ldtk](https://github.com/deepnight/ldtk) | [MIT](https://github.com/deepnight/ldtk/blob/master/LICENSE) | `/usr/share/doc/ldtk/copyright` |
+| <span style="white-space:nowrap">`libvgm`</span> | [ValleyBell/libvgm](https://github.com/ValleyBell/libvgm) | [GPL-2.0+](https://github.com/ValleyBell/libvgm/blob/master/LICENSE) (bundles BSD-3-Clause / LGPL-2.1+ components) | `/usr/share/doc/libvgm/copyright` |
+| <span style="white-space:nowrap">`m8te`</span> | [nesdoug/M8TE](https://github.com/nesdoug/M8TE) | [MIT](https://github.com/nesdoug/M8TE/blob/main/LICENSE) | `/usr/share/doc/m8te/copyright` |
+| <span style="white-space:nowrap">`ppsspp`</span> | [hrydgard/ppsspp](https://github.com/hrydgard/ppsspp) | [GPL-2.0+](https://github.com/hrydgard/ppsspp/blob/master/LICENSE.TXT) (bundles BSD-3-Clause components) | `/usr/share/doc/ppsspp/copyright` |
+| <span style="white-space:nowrap">`pvsneslib`</span> | [alekmaul/pvsneslib](https://github.com/alekmaul/pvsneslib) | [Zlib](https://github.com/alekmaul/pvsneslib/blob/master/LICENSE) (bundles a pinned [WLA DX](https://github.com/vhelin/wla-dx) under GPL-2.0+ in `devkitsnes/bin/`) | `/usr/share/doc/pvsneslib-core/copyright` |
+| <span style="white-space:nowrap">`python3-glfw`</span> | [FlorianRhiem/pyGLFW](https://github.com/FlorianRhiem/pyGLFW) | [MIT](https://github.com/FlorianRhiem/pyGLFW/blob/master/LICENSE) | `/usr/share/doc/python3-glfw/copyright` |
+| <span style="white-space:nowrap">`python3-librosa`</span> | [librosa/librosa](https://github.com/librosa/librosa) | [ISC](https://github.com/librosa/librosa/blob/main/LICENSE.md) | `/usr/share/doc/python3-librosa/copyright` |
+| <span style="white-space:nowrap">`python3-mss`</span> | [BoboTiG/python-mss](https://github.com/BoboTiG/python-mss) | [MIT](https://github.com/BoboTiG/python-mss/blob/master/LICENSE.txt) | `/usr/share/doc/python3-mss/copyright` |
+| <span style="white-space:nowrap">`python3-pydub`</span> | [jiaaro/pydub](https://github.com/jiaaro/pydub) | [MIT](https://github.com/jiaaro/pydub/blob/master/LICENSE) | `/usr/share/doc/python3-pydub/copyright` |
+| <span style="white-space:nowrap">`ruff`</span> | [astral-sh/ruff](https://github.com/astral-sh/ruff) | [MIT](https://github.com/astral-sh/ruff/blob/main/LICENSE) | `/usr/share/doc/ruff/copyright` |
+| <span style="white-space:nowrap">`snes9x-gtk`</span> | [snes9xgit/snes9x](https://github.com/snes9xgit/snes9x) | [Snes9x non-commercial](https://github.com/snes9xgit/snes9x/blob/master/LICENSE) ⚠️ (bundles GPL-3+ / LGPL-2.1+ components) | `/usr/share/doc/snes9x-gtk/copyright` |
+| <span style="white-space:nowrap">`task`</span> | [go-task/task](https://github.com/go-task/task) | [MIT](https://github.com/go-task/task/blob/main/LICENSE) | `/usr/share/doc/task/copyright` |
 | <span style="white-space:nowrap">`tilemap-studio`</span> | [Rangi42/tilemap-studio](https://github.com/Rangi42/tilemap-studio) | [LGPL-3.0](https://github.com/Rangi42/tilemap-studio/blob/master/LICENSE) + [FLTK licence](https://www.fltk.org/doc-1.4/license.html) (statically linked) | `/usr/share/doc/tilemap-studio/copyright` |
-| `vgmstream` | [vgmstream/vgmstream](https://github.com/vgmstream/vgmstream) | [ISC](https://github.com/vgmstream/vgmstream/blob/master/COPYING) | `/usr/share/doc/vgmstream/copyright` |
-| `wla-dx` | [vhelin/wla-dx](https://github.com/vhelin/wla-dx) | [GPL-2.0+](https://github.com/vhelin/wla-dx/blob/master/COPYING) | `/usr/share/doc/wla-dx/copyright` |
+| <span style="white-space:nowrap">`vgmstream`</span> | [vgmstream/vgmstream](https://github.com/vgmstream/vgmstream) | [ISC](https://github.com/vgmstream/vgmstream/blob/master/COPYING) | `/usr/share/doc/vgmstream/copyright` |
+| <span style="white-space:nowrap">`wla-dx`</span> | [vhelin/wla-dx](https://github.com/vhelin/wla-dx) | [GPL-2.0+](https://github.com/vhelin/wla-dx/blob/master/COPYING) | `/usr/share/doc/wla-dx/copyright` |
 
 > ⚠️ **`snes9x-gtk` ships under the Snes9x licence, which forbids commercial redistribution.** The source may be freely distributed for non-commercial use; binaries are likewise non-commercial. It is fine for Foundry Linux's free, non-commercial apt repo, but it must never be bundled into a paid product. See the [upstream LICENSE](https://github.com/snes9xgit/snes9x/blob/master/LICENSE).
 
