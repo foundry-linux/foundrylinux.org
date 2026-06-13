@@ -73,12 +73,6 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 ### Packaging — dropped packages to investigate
 
 - [x] **Add 64tass to `foundry-retro-tools`** — added to Depends in 1.0.10; resolves from Ubuntu universe (1.60.3243-1 on Noble/Resolute).
-- [ ] **Package asar and wire into `foundry-retro-tools`** — GPL-3.0/LGPL-3.0 (core/library
-  split), cmake build, absent from Debian/Ubuntu (Arch AUR + SlackBuilds only). De facto SNES
-  ROM hacking standard (SMW Central); libasar embeddable form useful for tool integration.
-  Source: [RPGHacker/asar](https://github.com/RPGHacker/asar), v1.91, active (Sep 2025 commit).
-  Build a custom `.deb`, publish to foundry-apt, add to `foundry-retro-tools` Depends. See
-  [SNES toolchain survey](../drdevtools/docs/investigations/2026-06-11-snes-65816-toolchains.md).
 
 ### Deferred follow-ups (surfaced by the 2026-06-04 plan sweep)
 
@@ -98,6 +92,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 ## Done
 
+- 2026-06-13 — [package-asar-snes] packaged asar v1.91 as `asar-snes` (GPL-3.0, SNES 65816/SPC700/SuperFX cross-assembler); named to coexist with @electron/asar npm tool; wired into `foundry-retro-tools`.
 - 2026-06-13 — [package-tilemap-studio] packaged Tilemap Studio 4.0.1 (LGPL-3, retro tile/map editor) — hybrid Wayland/X11+GL, FLTK 1.4.5 static-linked; Perl-based patching (2 patches, both already in upstream master); wired into `foundry-retro-tools`. Published `foundry-apt` v1.5.25. See [plan](docs/plans/2026-06-10-package-tilemap-studio.md).
 - 2026-06-13 — [drmon-cppdap-fix] drmon cppdap/JsonCpp CMake fix landed upstream in drdevtools `d28c9d8`; upstream now at `6c51085` (multi-window, per-terminal sizes, keyword-shim cleanup).
 - 2026-06-11 — [package-wla-dx] packaged wla-dx 10.6-1foundry1 (16-CPU assembler suite: 6502/65816/SPC700/Z80/68000/…); lintian-clean; wired into foundry-retro-tools 1.0.11. See [plan](docs/plans/2026-06-11-package-wla-dx.md).
