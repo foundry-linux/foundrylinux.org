@@ -21,6 +21,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 - [x] Vendor `abfs.pdf` (Amiga Binary File Structure spec, 2005) to `foundry-apt/packages/wla-dx/docs/abfs.pdf`; original URL dead, sourced from Wayback Machine.
 - [x] Comment on [vhelin/wla-dx#589](https://github.com/vhelin/wla-dx/issues/589) with the Wayback Machine URL so the upstream issue has a working reference.
+- [ ] **PARKED — Amiga Hunk executable output for wlalink** ([plan](docs/plans/2026-06-13-wla-dx-amiga-hunk-output.md)). Feasibility study done + verified against wla-dx v10.6 source: add `-t AMIGAHUNK` output mode (new `OUTPUT_TYPE_AMIGA_HUNK`, mirror the C64-CRT path), land upstream as a PR. Minimal viable (single CODE hunk, `.ORG 0`) ≈1 day; multi-hunk reloc is the hard follow-up. Not started — revisit if we want Amiga-target support.
 
 ### Phase 1 — package the source-built retro tools — COMPLETE ✓
 
