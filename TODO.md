@@ -9,14 +9,6 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 - [ ] **De-vendor watch:** PVSnesLib bundles its own pinned WLA DX (`wla-65816`/`wla-spc700`/`wlalink`) and `816-tcc` under `devkitsnes/bin/` — intentional (self-contained, library `.obj`s assembled against the pinned WLA). No `/usr/bin` symlinks, so no conflict with the standalone `wla-dx` package. If upstream ever ships a source-buildable toolchain cleanly, revisit building from source for arch portability (currently amd64-only — the prebuilt zip is 64-bit Linux only).
 
-### Tilemap Studio — retro tile/map editor ([plan](docs/plans/2026-06-10-package-tilemap-studio.md))
-
-- [ ] **Recovered tUME source is vendored** at `vendor/tume/` (MPL-1.1, from Wayback) — parked as a possible future SDL/Qt port; not packaged. See [successor investigation](docs/investigations/2026-06-10-tume-map-editor-port-and-successors.md).
-
-### wla-dx — vendor ABFS spec PDF ([plan](docs/plans/2026-06-11-vendor-abfs-pdf-post-to-wla-dx-issue-589.md))
-
-- [ ] **PARKED — Amiga Hunk executable output for wlalink** ([plan](docs/plans/2026-06-13-wla-dx-amiga-hunk-output.md)). Feasibility study done + verified against wla-dx v10.6 source: add `-t AMIGAHUNK` output mode (new `OUTPUT_TYPE_AMIGA_HUNK`, mirror the C64-CRT path), land upstream as a PR. Minimal viable (single CODE hunk, `.ORG 0`) ≈1 day; multi-hunk reloc is the hard follow-up. Not started — revisit if we want Amiga-target support.
-
 ### apt-repo resilience — `task` vendored + source health-check
 
 - [ ] **Phase 2 (gated on the foundry-apt publish):** flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
@@ -39,15 +31,27 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 - [ ] **foundry-kde-theme — remaining theming layers** — Plasma Style SVG set (distinctive panel/widget shapes — partial: forge-palette colors done, Breeze-inherit done; custom SVGs pending), Aurorae window decoration, Kvantum Qt-app style. See [plan](docs/plans/2026-05-24-foundry-kde-theme.md).
 - [ ] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
 - [ ] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
-- [ ] **Upstream f9dasm to Debian (ITP)** — file the first Debian Intent-To-Package for `f9dasm`; deferred from the [packages-page plan](docs/plans/2026-05-21-packages-page.md) follow-ups. Low priority — we already vendor it in foundry-apt.
+- [ ] **File Debian ITPs for all vendored packages** — one ITP per package not already in Debian/Ubuntu universe; check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for existing RFP/ITP before filing. Candidates: `f9dasm`, `ghidra`, `libvgm`, `vgmstream`, `wla-dx`, `tilemap-studio`, `asar-snes`, `task` (go-task), `ldtk`, `m8te`, `blender-asset-finder{,-cli}`, `pvsneslib`, `ppsspp`, `snes9x-gtk`, `drmon`, `python3-{glfw,librosa,mss,pydub}`. Full list: [LICENSES-VENDORED.md](foundry-apt/LICENSES-VENDORED.md). New packages get individual TODO items via `/package` skill Step 6.
 
 ### Housekeeping
 - [ ] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
-- [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
 - [ ] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
+
+## Parked
+
+Items intentionally on hold — revisit if priorities shift, unpark to `## Open` when ready.
+
+### tUME map editor port ([investigation](docs/investigations/2026-06-10-tume-map-editor-port-and-successors.md))
+
+- Recovered tUME source vendored at `vendor/tume/` (MPL-1.1, from Wayback) — possible future SDL/Qt port; not packaged.
+
+### wla-dx — Amiga Hunk output ([plan](docs/plans/2026-06-13-wla-dx-amiga-hunk-output.md))
+
+- **Amiga Hunk executable output for wlalink** — feasibility study done against wla-dx v10.6 source: add `-t AMIGAHUNK` mode (`OUTPUT_TYPE_AMIGA_HUNK`, mirrors the C64-CRT path). Minimal viable ≈1 day; multi-hunk reloc is the hard follow-up. Revisit if Amiga-target support is wanted.
 
 ## Done
 
+- 2026-06-13 — [monorepo-public] foundry-linux/foundrylinux.org flipped to public (required for GH Actions CI to run on PRs). `gh repo view --json isPrivate` confirms `false`.
 - 2026-06-12 — [pvs-publish] PVSnesLib 4.5.0 live on apt.foundrylinux.org (pvsneslib-core amd64, pvsneslib-examples all, pvsneslib meta); wired into foundry-retro-tools 1.0.12 + foundry-game-frameworks 1.0.3. See [plan](docs/plans/2026-06-12-package-pvsneslib.md).
 - 2026-06-11 — [wla-dx-abfs-pdf] Vendored abfs.pdf (Amiga BFS spec, 2005) to wla-dx/docs/abfs.pdf; posted Wayback Machine URL on vhelin/wla-dx#589. See [plan](docs/plans/2026-06-11-vendor-abfs-pdf-post-to-wla-dx-issue-589.md).
 - 2026-06-11 — [add-64tass] 64tass (multi-pass 65816/65xx macro assembler) added to foundry-retro-tools 1.0.10 Depends; resolves from Ubuntu 26.04 universe (64tass 1.60.3243-1).
