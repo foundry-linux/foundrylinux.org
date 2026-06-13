@@ -68,7 +68,8 @@ docker run --rm \
     apt-get update -qq
     apt-get install -y --no-install-recommends \
       live-build curl gpg apt-utils ca-certificates \
-      xorriso genisoimage isolinux grub-efi-amd64-bin grub-pc-bin mtools dosfstools
+      xorriso genisoimage isolinux grub-efi-amd64-bin grub-pc-bin mtools dosfstools \
+      e2fsprogs
     cp /work/scripts/genisoimage-wrapper.sh /usr/local/bin/genisoimage
     chmod +x /usr/local/bin/genisoimage
     # Wipe sentinels + chroot so every run starts clean.  live-build sets chattr +i
@@ -156,14 +157,18 @@ docker run --rm \
       done
       unset _latest_deb _pub_ver _deb _pkg _ver _cur _pub _cp _l _idx _have_idx _a _always_local
     fi
-    # Patch bootstrap cache DNS before lb bootstrap runs.  Docker containers
-    # run in a separate network namespace where the host resolver (injected by
-    # Tailscale / systemd-resolved into the legacy resolv.conf) is unreachable.
-    # Ubuntu 26.04 debootstrap creates /etc/resolv.conf as a symlink to
-    # run/systemd/resolve/stub-resolv.conf; pre-seeding 8.8.8.8 there ensures
-    # the restored chroot can reach archive.ubuntu.com immediately.
-    mkdir -p cache/bootstrap/run/systemd/resolve
-    echo "nameserver 8.8.8.8" > cache/bootstrap/run/systemd/resolve/stub-resolv.conf
+    # Patch bootstrap cache DNS before lb bootstrap runs, but ONLY when the cache
+    # actually contains a real Ubuntu base system.  lb_bootstrap_cache restore checks
+    # `if [ -d cache/bootstrap ]` — if we unconditionally create that directory (even
+    # empty) before lb bootstrap, restore treats it as a cache hit, copies just our DNS
+    # stub into chroot/, marks bootstrap done, and exits without running debootstrap.
+    # Guard on cache/bootstrap/usr so a fresh or deleted cache does not trigger the bug.
+    # Docker containers run in a separate network namespace where the host resolver is
+    # unreachable; 8.8.8.8 ensures the restored chroot can reach archive.ubuntu.com.
+    if [ -d cache/bootstrap/usr ]; then
+      mkdir -p cache/bootstrap/run/systemd/resolve
+      echo "nameserver 8.8.8.8" > cache/bootstrap/run/systemd/resolve/stub-resolv.conf
+    fi
     # Stage 1: debootstrap only
     lb bootstrap
     # Fix DNS in the freshly created chroot before any apt calls.  lb bootstrap

@@ -418,8 +418,11 @@ tasks:
     dir: foundry-iso
     cmds:
       - |
-        docker run --rm -v "$(pwd):/work" -w /work/config ubuntu:26.04 \
-          bash -c 'apt-get install -y live-build -qq && lb clean --purge && rm -f /work/.lock'
+        # apt-get update is required — fresh ubuntu:26.04 containers have no package lists.
+        # Also strip immutable flags live-build sets on .build/ before lb clean runs,
+        # because the container may lack CAP_LINUX_IMMUTABLE and rm -rf would silently fail.
+        docker run --rm --privileged -v "$(pwd):/work" -w /work ubuntu:26.04 \
+          bash -c 'apt-get update -qq && apt-get install -y live-build -qq && chattr -R -i .build/ chroot/ 2>/dev/null || true && lb clean --purge && rm -f .lock'
         rm -rf dist/
 
   iso-smoke:
