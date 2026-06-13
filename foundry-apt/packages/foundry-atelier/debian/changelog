@@ -1,3 +1,11 @@
+foundry-atelier (0.9.5) resolute; urgency=medium
+
+  * Drop explicit openjdk-21-jre-headless dep — now provided by foundry-core
+    (1.0.6), which is already a transitive dep of foundry-atelier via
+    foundry-sprite → foundry-anvil → foundry-core.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 13 Jun 2026 00:00:00 +0000
+
 foundry-atelier (0.9.4) resolute; urgency=medium
 
   * Add openjdk-21-jre-headless to Depends — Java 21 LTS runtime for

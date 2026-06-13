@@ -1,3 +1,11 @@
+foundry-core (1.0.6) resolute; urgency=medium
+
+  * Add openjdk-21-jre-headless to Depends — both JRE 17 and JRE 21 now
+    ship in foundry-core so all tiers (anvil, sprite, atelier, devbox) get
+    both LTS runtimes. Removes the need for the explicit dep in foundry-atelier.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 13 Jun 2026 00:00:00 +0000
+
 foundry-core (1.0.5) resolute; urgency=medium
 
   * Add du-dust (dust — an intuitive du replacement, Rust) to Depends.

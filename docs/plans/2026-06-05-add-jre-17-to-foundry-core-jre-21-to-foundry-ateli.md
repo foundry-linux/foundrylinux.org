@@ -23,14 +23,14 @@ Size impact:
 
 ## Status: foundry-apt DONE — ISO build remaining
 
-All foundry-apt changes landed before 2026-06-13:
-- `foundry-core` 1.0.5 — `openjdk-17-jre-headless` in Depends ✓ (published foundry-apt v1.5.25)
-- `foundry-atelier` 0.9.4 — `openjdk-21-jre-headless` in Depends ✓ (published foundry-apt v1.5.25)
+Revised decision 2026-06-13: both JREs belong in `foundry-core` so all tiers
+(anvil, sprite, atelier, devbox) get both without special-casing. anvil ⊆ atelier,
+so the explicit `openjdk-21-jre-headless` dep in foundry-atelier is now redundant
+and removed.
 
-`openjdk-17-jre-headless` pulls into the ISO automatically via
-`foundry-anvil → foundry-core → openjdk-17-jre-headless` — no explicit entry needed
-in `foundry.list.chroot`. Hook 1010 continues to autoremove openjdk-21 on non-atelier
-builds (it marks `openjdk-21-*` auto and autoremoces; foundry-core only depends on 17).
+- `foundry-core` 1.0.6 — `openjdk-17-jre-headless` + `openjdk-21-jre-headless` in Depends ✓
+- `foundry-atelier` 0.9.5 — removed redundant `openjdk-21-jre-headless` dep ✓
+- Published: foundry-apt v1.5.26 (pending)
 
 ## Remaining: build and verify the ISO
 
