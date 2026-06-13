@@ -7,52 +7,20 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### PVSnesLib — SNES homebrew SDK ([plan](docs/plans/2026-06-12-package-pvsneslib.md))
 
-- [x] **Publish PVSnesLib 4.5.0** — live on apt.foundrylinux.org as `4.5.0-1foundry1` (3 binaries: `pvsneslib-core` amd64 / `pvsneslib-examples` all / `pvsneslib` meta), published in `foundry-apt` tag `v1.5.19`. Wired into `foundry-retro-tools` (1.0.12) + `foundry-game-frameworks` (1.0.3). All 7 verification steps PASS (lintian-clean, hello_world ROM build).
-- [x] **drmon: drop the carry-forward sed once upstream is fixed** — done: jsoncpp seds removed (drdevtools `29d6049`, foundry-apt v1.5.20), then went further and switched drmon to **system `libcppdap-dev`** via `find_package(cppdap)` (drdevtools `d28c9d8`, foundry-apt v1.5.21). drmon's build now clones/compiles nothing — links system cppdap (`cppdap::cppdap`, JsonCpp transitive); fully offline + reproducible via apt. `build.sh` is sed-free except the `libs/` path rewrite.
 - [ ] **De-vendor watch:** PVSnesLib bundles its own pinned WLA DX (`wla-65816`/`wla-spc700`/`wlalink`) and `816-tcc` under `devkitsnes/bin/` — intentional (self-contained, library `.obj`s assembled against the pinned WLA). No `/usr/bin` symlinks, so no conflict with the standalone `wla-dx` package. If upstream ever ships a source-buildable toolchain cleanly, revisit building from source for arch portability (currently amd64-only — the prebuilt zip is 64-bit Linux only).
 
 ### Tilemap Studio — retro tile/map editor ([plan](docs/plans/2026-06-10-package-tilemap-studio.md))
 
-- [x] **Package Tilemap Studio** — live on apt.foundrylinux.org as `4.0.1-3foundry1`; hybrid Wayland/X11+GL, FLTK 1.4.5 static-linked; wired into `foundry-retro-tools`; published in `foundry-apt` tag `v1.5.25`.
-- [x] **Upstream the two patches** — 0001 (FL/platform.H in main-window.h) already in upstream master as `ffcce44` (Sep 2025, #87); 0002 (cstring in preferences.cpp) already in master as `244378b` (#94). PR #95 closed with explanation. Patches annotated `Applied-Upstream:` and kept for the v4.0.1 tarball only.
 - [ ] **Recovered tUME source is vendored** at `vendor/tume/` (MPL-1.1, from Wayback) — parked as a possible future SDL/Qt port; not packaged. See [successor investigation](docs/investigations/2026-06-10-tume-map-editor-port-and-successors.md).
 
 ### wla-dx — vendor ABFS spec PDF ([plan](docs/plans/2026-06-11-vendor-abfs-pdf-post-to-wla-dx-issue-589.md))
 
-- [x] Vendor `abfs.pdf` (Amiga Binary File Structure spec, 2005) to `foundry-apt/packages/wla-dx/docs/abfs.pdf`; original URL dead, sourced from Wayback Machine.
-- [x] Comment on [vhelin/wla-dx#589](https://github.com/vhelin/wla-dx/issues/589) with the Wayback Machine URL so the upstream issue has a working reference.
 - [ ] **PARKED — Amiga Hunk executable output for wlalink** ([plan](docs/plans/2026-06-13-wla-dx-amiga-hunk-output.md)). Feasibility study done + verified against wla-dx v10.6 source: add `-t AMIGAHUNK` output mode (new `OUTPUT_TYPE_AMIGA_HUNK`, mirror the C64-CRT path), land upstream as a PR. Minimal viable (single CODE hunk, `.ORG 0`) ≈1 day; multi-hunk reloc is the hard follow-up. Not started — revisit if we want Amiga-target support.
-
-### Phase 1 — package the source-built retro tools — COMPLETE ✓
-
-All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are now `.deb` packages in the live repo. CI is green. Phase 1 is done.
-
-**Rule, learned the hard way (2026-05-18):** *before* packaging any source-built tool, run `apt-cache policy <pkg>` on a fresh `ubuntu:26.04`. If Ubuntu universe ships it, just add it to the Phase 0 apt-install list and the metapackage `Depends:` — don't duplicate.
-
-- [x] ~~**xa65**~~ — retired. Ubuntu 26.04 universe ships `xa65 2.4.1-0.1build1`. `packages/xa65/` deleted; Phase 0 retro-tools script apt-installs xa65; `foundry-retro-tools` `Depends: xa65` resolves to universe. See [`docs/plans/2026-05-18-retire-xa65.md`](docs/plans/2026-05-18-retire-xa65.md).
-- [x] **`/package` skill** ([plan](docs/plans/2026-05-18-package-skill.md)) — reusable Claude Code skill using `dh_make` + `debhelper` + `dpkg-buildpackage`. Iteratively refined through f9dasm, libvgm, and vgmstream packaging runs.
-- [x] **ghidra** — packaged and live; `foundry-retro-tools` 1.0.5 `Depends: ghidra`. See done entry below.
 
 ### apt-repo resilience — `task` vendored + source health-check
 
-- [x] **Vendor `task` (go-task) into foundry-apt** — `foundry-apt/packages/task/` builds `task 3.51.1-1foundry1` from the sha256-pinned upstream release binary, so `Depends: task` can resolve from apt.foundrylinux.org instead of go-task's Cloudsmith repo (which rotated `any-distro`→per-distro and silently 404'd old source lines). Built + verified locally. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
-- [x] **`task check-apt-repos`** (`scripts/check-apt-repos.sh`) — resolves every shipped apt source's `InRelease` and fails loudly on 404; catches upstream repo-layout rot before it breaks a build. Tested (pass + the dead-`any-distro` fail case).
 - [ ] **Phase 2 (gated on the foundry-apt publish):** flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
 - [ ] **Watch:** keep an eye on the go-task Cloudsmith repo — it already rotated layout once (`any-distro`→per-distro) and 404s read as intermittent (CloudFront caches the error). Run `task check-apt-repos` periodically (esp. before an ISO/devbox build or release); if the `ubuntu resolute` distribution breaks or lags behind upstream `task`, pull the trigger on Phase 2 (own `task` fully from foundry-apt). Current upstream: 3.51.1 (vendored); `ubuntu/resolute` served 3.51.1 as of 2026-05-31.
-
-### Site
-
-- [x] **Update `new-web-apt-repo` skill** — Repology badges, changelog tooltip, metapackage expansion, filter/search/copy already in gen-index.py; promoted packages.json + feed.xml + RSS auto-discovery link from "add this code" snippets to built-in; bumped to v1.1.0.
-- [x] **`packages.json` index on apt.foundrylinux.org** — generate alongside `index.html` from `generate-index.sh`; same data, JSON serialised. See [packages-page follow-ups](docs/plans/2026-05-21-packages-page.md#follow-ups-separate-plans).
-- [x] **OpenGraph meta tags on apt.foundrylinux.org** — already in `generate-index.sh` heredoc; verified 2026-05-29.
-- [x] **RSS/Atom feed on apt.foundrylinux.org** — `public/feed.xml` + RSS auto-discovery `<link>` in `<head>`; generated by `generate-index.sh`.
-- [x] **CVE tracker links on /packages** — shield icon on Ubuntu-origin package rows → ubuntu.com/security/cves; same icon in apt index for non-first-party packages.
-- [x] **CVE live-count badge** — build-time fetch of Ubuntu Security API (cves.json) per ubuntu-origin package; `cve_count` cached in `packages-data.json`; 42 active ⚠ + 90 clear ✓ badges on /packages. `SKIP_CVE=1` to bypass for fast local builds.
-- [x] **packages-page CI triggers** ([plan §6](docs/plans/2026-05-21-packages-page.md)) — `workflow_run` on foundry-apt publish + nightly cron fallback live. **`repository_dispatch` now wired both ends (2026-05-29):** `site-deploy.yml` listens for `repository_dispatch: apt-published`; `wbniv/worldfoundry.org` `apt-publish.yml` gained a `notify-foundrylinux` job that POSTs it after a tag publish (gracefully no-ops until the secret exists). **Remaining manual (Will):** (1) create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` with **Contents: Read and write** (NOT Actions — that mis-scope is the likely reason the first attempt was reverted); (2) `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; (3) push both repos — activates on the next `apt-v*` tag.
-
-### Phase 2 — Distrobox image — COMPLETE ✓
-
-- [x] Build `ghcr.io/foundry-linux/devbox:26.04` — single `apt install foundry-core` (the desktop-agnostic base of the nested hierarchy core ⊆ anvil ⊆ sprite ⊆ atelier; anvil adds `foundry-desktop`/KDE, which has no place in a container — and keeps the image + test harnesses lean and quick to build/boot). GHCR workflow for tag-driven publish. See [plan](docs/plans/2026-05-21-phase-2-devbox-image.md).
 
 ### Phase 3 — Foundry Linux ISO
 
@@ -64,15 +32,6 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 - [ ] **Kiosk mode (gamescope + wf-launcher)** — *deferred* from the [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md); no plan written yet. A locked-down session that boots straight into a game launcher. Future phase, not blocking v1.
 - [ ] **Reconsider `foundry-python-gamedev-extras` weight (554 MiB)** — `libvtk9.5` (276 MiB) + numba/llvmlite + scipy + librosa ride in via this metapackage. We chose to **keep** it in anvil (keep-the-most), but it's the next-fattest lever if anvil ever needs to shrink further; evaluate making `-extras` opt-in. See [USB-sizing plan §spin-offs](docs/plans/2026-06-04-usb-sized-iso-editions.md).
 
-### apt.worldfoundry.org
-
-- [x] **apt.worldfoundry.org Phase A** — `worldfoundry.org/apt/` infrastructure + gen-index site + `new-web-apt-repo` global skill. Verified 2026-05-22. See [plan](docs/plans/2026-05-18-worldfoundry-apt-repo.md).
-- [x] **apt.worldfoundry.org Phase B** — 9 WF CLIs + `worldfoundry-blender-editor-exporter` + 4 metapackages live on `apt.worldfoundry.org`; `blender-asset-finder{,-cli}` deliberately on `apt.foundrylinux.org`; no `worldfoundry-*` remain in `foundry-apt/`.
-
-### Packaging — dropped packages to investigate
-
-- [x] **Add 64tass to `foundry-retro-tools`** — added to Depends in 1.0.10; resolves from Ubuntu universe (1.60.3243-1 on Noble/Resolute).
-
 ### Deferred follow-ups (surfaced by the 2026-06-04 plan sweep)
 
 Sub-tasks that completed plans explicitly punted/deferred and that weren't tracked anywhere until now.
@@ -81,15 +40,22 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 - [ ] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
 - [ ] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
 - [ ] **Upstream f9dasm to Debian (ITP)** — file the first Debian Intent-To-Package for `f9dasm`; deferred from the [packages-page plan](docs/plans/2026-05-21-packages-page.md) follow-ups. Low priority — we already vendor it in foundry-apt.
-- [x] **audit-apt-repos — scheduled snapshots** — `.github/workflows/audit-apt-repos-snapshot.yml` wires a daily 04:00 UTC cron + `workflow_dispatch`; commits `docs/investigations/YYYY-MM-DD-package-inventory.md` to main; skips commit when unchanged. See [plan](docs/plans/2026-06-13-audit-apt-repos-scheduled-daily-snapshots.md).
 
 ### Housekeeping
-- [x] **Automate local-deb staging** — `task iso-stage-deb PACKAGE=<name>` copies latest `.deb` from `foundry-apt/dist/` to `foundry-iso/local-debs/`, replacing old version.
+- [ ] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
 - [ ] **Flip monorepo to public** once content is ready: `gh repo edit foundry-linux/foundrylinux.org --visibility public`.
 - [ ] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
 
 ## Done
 
+- 2026-06-12 — [pvs-publish] PVSnesLib 4.5.0 live on apt.foundrylinux.org (pvsneslib-core amd64, pvsneslib-examples all, pvsneslib meta); wired into foundry-retro-tools 1.0.12 + foundry-game-frameworks 1.0.3. See [plan](docs/plans/2026-06-12-package-pvsneslib.md).
+- 2026-06-11 — [wla-dx-abfs-pdf] Vendored abfs.pdf (Amiga BFS spec, 2005) to wla-dx/docs/abfs.pdf; posted Wayback Machine URL on vhelin/wla-dx#589. See [plan](docs/plans/2026-06-11-vendor-abfs-pdf-post-to-wla-dx-issue-589.md).
+- 2026-06-11 — [add-64tass] 64tass (multi-pass 65816/65xx macro assembler) added to foundry-retro-tools 1.0.10 Depends; resolves from Ubuntu 26.04 universe (64tass 1.60.3243-1).
+- 2026-06-04 — [local-deb-staging] task iso-stage-deb PACKAGE=<name> copies latest .deb from foundry-apt/dist/ to foundry-iso/local-debs/, replacing old version.
+- 2026-05-31 — [vendor-task] task 3.51.1-1foundry1 vendored into foundry-apt (Cloudsmith layout-rotation fix); scripts/check-apt-repos.sh + task check-apt-repos wired. See [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
+- 2026-05-29 — [packages-page-ci] packages-page CI triggers wired: workflow_run on foundry-apt publish + nightly cron + repository_dispatch both ends. Will to activate: create fine-grained PAT (foundry-linux/foundrylinux.org, Contents R/W) and gh secret set in wbniv/worldfoundry.org. See [plan §6](docs/plans/2026-05-21-packages-page.md).
+- 2026-05-18 — [package-skill] /package Claude Code skill created: dh_make + debhelper + dpkg-buildpackage; iteratively refined through f9dasm, libvgm, vgmstream packaging runs. See [plan](docs/plans/2026-05-18-package-skill.md).
+- 2026-05-18 — [retire-xa65] xa65 retired: Ubuntu 26.04 universe ships xa65 2.4.1-0.1build1; packages/xa65/ deleted; foundry-retro-tools Depends: xa65 resolves from universe. See [plan](docs/plans/2026-05-18-retire-xa65.md).
 - 2026-06-13 — [audit-apt-repos-snapshot] `.github/workflows/audit-apt-repos-snapshot.yml`: daily 04:00 UTC cron + `workflow_dispatch`; commits dated `docs/investigations/` snapshots to main; skips if unchanged. See [plan](docs/plans/2026-06-13-audit-apt-repos-scheduled-daily-snapshots.md).
 - 2026-06-13 — [iso-prune-local] `build-iso.sh` now prunes old `dist/` ISOs + sidecars (.sha256/.asc/.torrent) for the edition before each build; build logs preserved. Fixes 0.9.104 xorriso disk-full failure.
 - 2026-06-13 — [jre-both-in-core] foundry-core 1.0.6: both openjdk-17-jre-headless + openjdk-21-jre-headless in Depends; all tiers (anvil, sprite, atelier, devbox) get both LTS runtimes. foundry-atelier 0.9.5: dropped now-redundant openjdk-21 dep. Published foundry-apt v1.5.26; ISO rebuild in progress.

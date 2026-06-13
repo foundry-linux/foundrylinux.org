@@ -7,6 +7,10 @@
           {
             "type": "command",
             "command": "bash -c 'if echo \"${CLAUDE_TOOL_INPUT_FILE_PATH:-}\" | grep -qE \"foundry-apt/packages/.+/build\\.sh$\"; then bash foundry-apt/scripts/check-licenses-vendored.sh; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-todo-done.sh"
           }
         ]
       }
