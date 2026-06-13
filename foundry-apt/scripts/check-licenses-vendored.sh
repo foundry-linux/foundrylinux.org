@@ -29,7 +29,9 @@ for build_sh in "$PACKAGES_DIR"/*/build.sh; do
         [[ "$pkg" == "$authored" ]] && continue 2
     done
     # Check for a table row mentioning the package name.
-    if ! grep -qE "^\| \`${pkg}\`" "$LICENSES_FILE"; then
+    # Normalize U+2011 non-breaking hyphens to ASCII hyphens before matching
+    # (package names in the table may use U+2011 to prevent line-break wrapping).
+    if ! LC_ALL=C sed 's/\xe2\x80\x91/-/g' "$LICENSES_FILE" | grep -qE "^\| \`${pkg}\`"; then
         missing+=("$pkg")
     fi
 done
