@@ -13,8 +13,8 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### Tilemap Studio — retro tile/map editor ([plan](docs/plans/2026-06-10-package-tilemap-studio.md))
 
-- [ ] **Package Tilemap Studio** (v4.0.1, LGPL-3) into `foundry-apt/packages/tilemap-studio/`, wired into `foundry-retro-tools`. Static-links FLTK 1.4.5 X11-only (26.04 ships 1.4.4 Wayland-hybrid that won't compile it; system FLTK pkg would clash with the SONAME — see [linkage investigation](docs/investigations/2026-06-10-tilemap-studio-fltk-linkage.md)). debian/ tree + 2 quilt patches + build.sh authored; static build proven (PIE, 2.1 MB, no libfltk in ldd). Remaining: lintian-clean build via build.sh, wire into `foundry-retro-tools` Depends, dep-chain smoke test, commit + publish.
-- [ ] **Upstream the two patches** to `Rangi42/tilemap-studio` — `0001-x11-platform-includes` and `0002-cstring-in-preferences` are toolchain/portability fixes (GCC 15 / FLTK 1.4.5), not Debian glue. Open PRs, record URLs in each patch `Forwarded:` header + changelog, drop on next upstream release. (New mandatory Step 7 in the `/package` skill.)
+- [x] **Package Tilemap Studio** — live on apt.foundrylinux.org as `4.0.1-3foundry1`; hybrid Wayland/X11+GL, FLTK 1.4.5 static-linked; wired into `foundry-retro-tools`; published in `foundry-apt` tag `v1.5.25`.
+- [x] **Upstream the two patches** — 0001 (FL/platform.H in main-window.h) already in upstream master as `ffcce44` (Sep 2025, #87); 0002 (cstring in preferences.cpp) already in master as `244378b` (#94). PR #95 closed with explanation. Patches annotated `Applied-Upstream:` and kept for the v4.0.1 tarball only.
 - [ ] **Recovered tUME source is vendored** at `vendor/tume/` (MPL-1.1, from Wayback) — parked as a possible future SDL/Qt port; not packaged. See [successor investigation](docs/investigations/2026-06-10-tume-map-editor-port-and-successors.md).
 
 ### wla-dx — vendor ABFS spec PDF ([plan](docs/plans/2026-06-11-vendor-abfs-pdf-post-to-wla-dx-issue-589.md))
@@ -98,6 +98,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 ## Done
 
+- 2026-06-13 — [package-tilemap-studio] packaged Tilemap Studio 4.0.1 (LGPL-3, retro tile/map editor) — hybrid Wayland/X11+GL, FLTK 1.4.5 static-linked; Perl-based patching (2 patches, both already in upstream master); wired into `foundry-retro-tools`. Published `foundry-apt` v1.5.25. See [plan](docs/plans/2026-06-10-package-tilemap-studio.md).
 - 2026-06-13 — [drmon-cppdap-fix] drmon cppdap/JsonCpp CMake fix landed upstream in drdevtools `d28c9d8`; upstream now at `6c51085` (multi-window, per-terminal sizes, keyword-shim cleanup).
 - 2026-06-11 — [package-wla-dx] packaged wla-dx 10.6-1foundry1 (16-CPU assembler suite: 6502/65816/SPC700/Z80/68000/…); lintian-clean; wired into foundry-retro-tools 1.0.11. See [plan](docs/plans/2026-06-11-package-wla-dx.md).
 - 2026-06-11 — [foundry-kde-theme-consolidation] foundry-kde-theme 1.0.4/1.0.5: LAF built out (defaults+layout+splash fixed), Plasma Style (forge palette), panel favorites (Blender in, Kate out), app-menu Favorites (KAStats), dpkg-divert for avatar+kicker, all theming hooks/includes removed from foundry-iso. Pixel-verified on 0.9.110. See [plan](docs/plans/2026-06-10-foundry-laf-and-plasma-style.md).
