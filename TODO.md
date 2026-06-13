@@ -15,7 +15,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 - [ ] **[at v1.0.0] Migrate ISO hosting to Internet Archive** — add `scripts/upload-iso-ia.sh` (rclone → `s3.us.archive.org`), add Cloudflare Worker redirecting `iso.foundrylinux.org/*` → archive.org download URLs, update `publish.yml`. R2 stays for apt repos. See [investigation](docs/investigations/2026-05-22-iso-hosting.md).
 
 - [ ] **Kiosk mode (gamescope + wf-launcher)** — *deferred* from the [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md); no plan written yet. A locked-down session that boots straight into a game launcher. Future phase, not blocking v1.
-- [ ] **Reconsider `foundry-python-gamedev-extras` weight (554 MiB)** — `libvtk9.5` (276 MiB) + numba/llvmlite + scipy + librosa ride in via this metapackage. We chose to **keep** it in anvil (keep-the-most), but it's the next-fattest lever if anvil ever needs to shrink further; evaluate making `-extras` opt-in. See [USB-sizing plan §spin-offs](docs/plans/2026-06-04-usb-sized-iso-editions.md).
+
 
 ### Deferred follow-ups (surfaced by the 2026-06-04 plan sweep)
 
@@ -81,6 +81,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
+- 2026-06-13 — [python-gamedev-extras-weight] won't do — 4 GB target dropped; 8 GB stick is the floor; keep `foundry-python-gamedev-extras` in anvil as-is.
 - 2026-06-13 — [phase-3-iso-anvil] live-build Kubuntu 26.04 ISO pipeline done; anvil-1.0 builds clean at ~4.2 GB; autologin fixed (casper bake + sddm.conf); Calamares + branding wired. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
 - 2026-06-13 — [anvil-drop-games] stale pre-split 15 GB anvil-0.9.30 superseded; current builds shed ~9.9 GiB of games (moved to atelier in foundry-anvil 1.0.4).
 - 2026-06-13 — [monorepo-public] foundry-linux/foundrylinux.org flipped to public (required for GH Actions CI to run on PRs). `gh repo view --json isPrivate` confirms `false`.
