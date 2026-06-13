@@ -1,0 +1,32 @@
+name: Daily apt repo snapshot
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # 04:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate and commit snapshot
+        run: |
+          set -euo pipefail
+          OUT="docs/investigations/$(date -u +%F)-package-inventory.md"
+          bash scripts/audit-apt-repos.sh -o "$OUT"
+          git config user.name "foundry-bot"
+          git config user.email "packages@foundrylinux.org"
+          git add "$OUT"
+          if git diff --cached --quiet; then
+            echo "No changes — snapshot unchanged since last run"
+            exit 0
+          fi
+          git commit -m "chore(audit): daily apt repo snapshot $(date -u +%Y-%m-%d)"
+          git push

@@ -81,7 +81,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 - [ ] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
 - [ ] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
 - [ ] **Upstream f9dasm to Debian (ITP)** — file the first Debian Intent-To-Package for `f9dasm`; deferred from the [packages-page plan](docs/plans/2026-05-21-packages-page.md) follow-ups. Low priority — we already vendor it in foundry-apt.
-- [ ] **audit-apt-repos — scheduled snapshots** — wire a daily/weekly cron to capture package-inventory snapshots; deferred from the [audit-apt-repos plan](docs/plans/2026-05-22-audit-apt-repos-script.md). `scripts/audit-apt-repos.sh` + the `audit-apt-repos` task already exist; only the schedule is missing.
+- [x] **audit-apt-repos — scheduled snapshots** — `.github/workflows/audit-apt-repos-snapshot.yml` wires a daily 04:00 UTC cron + `workflow_dispatch`; commits `docs/investigations/YYYY-MM-DD-package-inventory.md` to main; skips commit when unchanged. See [plan](docs/plans/2026-06-13-audit-apt-repos-scheduled-daily-snapshots.md).
 
 ### Housekeeping
 - [x] **Automate local-deb staging** — `task iso-stage-deb PACKAGE=<name>` copies latest `.deb` from `foundry-apt/dist/` to `foundry-iso/local-debs/`, replacing old version.
@@ -90,6 +90,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 ## Done
 
+- 2026-06-13 — [audit-apt-repos-snapshot] `.github/workflows/audit-apt-repos-snapshot.yml`: daily 04:00 UTC cron + `workflow_dispatch`; commits dated `docs/investigations/` snapshots to main; skips if unchanged. See [plan](docs/plans/2026-06-13-audit-apt-repos-scheduled-daily-snapshots.md).
 - 2026-06-13 — [iso-prune-local] `build-iso.sh` now prunes old `dist/` ISOs + sidecars (.sha256/.asc/.torrent) for the edition before each build; build logs preserved. Fixes 0.9.104 xorriso disk-full failure.
 - 2026-06-13 — [jre-both-in-core] foundry-core 1.0.6: both openjdk-17-jre-headless + openjdk-21-jre-headless in Depends; all tiers (anvil, sprite, atelier, devbox) get both LTS runtimes. foundry-atelier 0.9.5: dropped now-redundant openjdk-21 dep. Published foundry-apt v1.5.26; ISO rebuild in progress.
 - 2026-06-13 — [package-asar-snes] packaged asar v1.91 as `asar-snes` (GPL-3.0, SNES 65816/SPC700/SuperFX cross-assembler); named to coexist with @electron/asar npm tool; wired into `foundry-retro-tools`.
