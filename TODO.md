@@ -81,7 +81,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
-- 2026-06-13 — [python-gamedev-extras-weight] won't do — 4 GB target dropped; 8 GB stick is the floor; keep `foundry-python-gamedev-extras` in anvil as-is.
+- 2026-06-13 — [python-gamedev-extras-weight] won't do — keeping `foundry-python-gamedev-extras` (554 MiB: `libvtk9.5` 276 MiB + numba/llvmlite + scipy + librosa) in anvil; 4 GB target dropped, 8 GB is the floor.
 - 2026-06-13 — [phase-3-iso-anvil] live-build Kubuntu 26.04 ISO pipeline done; anvil-1.0 builds clean at ~4.2 GB; autologin fixed (casper bake + sddm.conf); Calamares + branding wired. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
 - 2026-06-13 — [anvil-drop-games] stale pre-split 15 GB anvil-0.9.30 superseded; current builds shed ~9.9 GiB of games (moved to atelier in foundry-anvil 1.0.4).
 - 2026-06-13 — [monorepo-public] foundry-linux/foundrylinux.org flipped to public (required for GH Actions CI to run on PRs). `gh repo view --json isPrivate` confirms `false`.
