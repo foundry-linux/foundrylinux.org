@@ -22,6 +22,16 @@ DIST_DIR="$REPO_ROOT/dist"
 
 mkdir -p "$DIST_DIR"
 
+# Prune old local ISOs for this edition before building to prevent disk exhaustion.
+# Keeps build logs (tiny); removes ISO + sidecars (.sha256 .asc .torrent) only.
+echo "=== Pruning old dist/ ISOs for ${EDITION} ==="
+find "$DIST_DIR" -maxdepth 1 \( \
+    -name "foundry-${EDITION}-*-amd64.iso"            \
+    -o -name "foundry-${EDITION}-*-amd64.iso.sha256"  \
+    -o -name "foundry-${EDITION}-*-amd64.iso.asc"     \
+    -o -name "foundry-${EDITION}-*-amd64.iso.torrent" \
+\) -exec rm -f {} + && echo "  done"
+
 # lb build runs as root inside Docker on the bind-mounted tree (-v REPO_ROOT:/work)
 # and leaves root-owned files in config/ (and dist/). Chown them back to the invoking
 # user on exit -- success OR failure -- so later edits and git work without sudo. A
