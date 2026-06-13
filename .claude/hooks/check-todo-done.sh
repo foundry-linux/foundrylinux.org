@@ -7,7 +7,7 @@ fp="${CLAUDE_TOOL_INPUT_FILE_PATH:-}"
 [[ "$fp" == *TODO.md ]] || exit 0
 [[ -f "$fp" ]] || exit 0
 
-# Count [x] lines that appear in ## Open or ## Parked (before ## Done).
+# Count [x] lines that appear in ## Open, ## Watch, or ## Parked (before ## Done).
 violations=$(awk '/^## Done/{exit} /^- \[x\]/{n++} END{print n+0}' "$fp")
 
 if [[ "$violations" -gt 0 ]]; then

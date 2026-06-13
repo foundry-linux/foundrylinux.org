@@ -5,15 +5,9 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
-### PVSnesLib — SNES homebrew SDK ([plan](docs/plans/2026-06-12-package-pvsneslib.md))
-
-- [ ] **De-vendor watch:** PVSnesLib bundles its own pinned WLA DX (`wla-65816`/`wla-spc700`/`wlalink`) and `816-tcc` under `devkitsnes/bin/` — intentional (self-contained, library `.obj`s assembled against the pinned WLA). No `/usr/bin` symlinks, so no conflict with the standalone `wla-dx` package. If upstream ever ships a source-buildable toolchain cleanly, revisit building from source for arch portability (currently amd64-only — the prebuilt zip is 64-bit Linux only).
-
 ### apt-repo resilience — `task` vendored + source health-check
 
 - [ ] **Phase 2 (gated on the foundry-apt publish):** flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
-- [ ] **Watch:** keep an eye on the go-task Cloudsmith repo — it already rotated layout once (`any-distro`→per-distro) and 404s read as intermittent (CloudFront caches the error). Run `task check-apt-repos` periodically (esp. before an ISO/devbox build or release); if the `ubuntu resolute` distribution breaks or lags behind upstream `task`, pull the trigger on Phase 2 (own `task` fully from foundry-apt). Current upstream: 3.51.1 (vendored); `ubuntu/resolute` served 3.51.1 as of 2026-05-31.
-
 ### Phase 3 — Foundry Linux ISO
 
 - [ ] Kubuntu 26.04-based ISO via `live-build` (NOT `livecd-rootfs` — the proposal calls for live-build; per Ubuntu Studio precedent). Two ISOs at v1: `foundry-anvil-1.0-amd64.iso` (~3.5 GB) and `foundry-atelier-1.0-amd64.iso` (~10 GB), Sprite skipped. Calamares installer with branding shipped as `calamares-settings-foundry-linux` deb on apt.foundrylinux.org. Hosting: R2 (`iso.foundrylinux.org`) until v1.0.0, then migrate to Internet Archive (free, unlimited). Kiosk mode + VM artifacts deferred. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md). **In progress (2026-05-24, session 4):** Switched to casper (vs live-config). Root cause of autologin failure isolated: `casper-bottom/15autologin` writes `Session=` (blank) and `16foundry-autologin` wasn't correcting it (conditional guard failing). Two-pronged fix applied: bake `/etc/sddm.conf` into squashfs + `sed -i` in `16foundry-autologin`. Build in progress; boot verification pending (verify steps 11–14 in plan). anvil+atelier also need rebuild once autologin confirmed.
@@ -36,6 +30,18 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 ### Housekeeping
 - [ ] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
 - [ ] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
+
+## Watch
+
+Items to check periodically and act on only if something changes.
+
+### go-task Cloudsmith repo
+
+- Already rotated layout once (`any-distro`→per-distro); 404s read as intermittent (CloudFront caches the error). Run `task check-apt-repos` before any ISO/devbox build or release. If `ubuntu resolute` breaks or lags upstream `task`, pull the trigger on Phase 2 flip (own `task` fully from foundry-apt). Current upstream: 3.51.1 (vendored); `ubuntu/resolute` served 3.51.1 as of 2026-05-31.
+
+### PVSnesLib — bundled WLA DX toolchain ([plan](docs/plans/2026-06-12-package-pvsneslib.md))
+
+- Bundles its own pinned WLA DX (`wla-65816`/`wla-spc700`/`wlalink`) + `816-tcc` under `devkitsnes/bin/` — intentional (library `.obj`s are assembled against the pinned WLA). No `/usr/bin` conflict with the standalone `wla-dx` package. If upstream ships a source-buildable toolchain cleanly, revisit building from source for arch portability (currently amd64-only binary zip).
 
 ## Parked
 
