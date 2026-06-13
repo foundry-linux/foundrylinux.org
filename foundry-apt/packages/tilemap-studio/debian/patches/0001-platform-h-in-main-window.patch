@@ -7,7 +7,7 @@ Description: include FL/platform.H in main-window.h for FLTK 1.4.5 Wayland build
  when FLTK_USE_X11 is defined. Adding an explicit FL/platform.H include
  restores the declaration chain on all platforms and all FLTK 1.4.5 backends.
 Author: Foundry Linux <packages@foundrylinux.org>
-Forwarded: https://github.com/Rangi42/tilemap-studio/pull/95
+Applied-Upstream: https://github.com/Rangi42/tilemap-studio/commit/ffcce44, master
 Last-Update: 2026-06-13
 --- a/src/main-window.h
 +++ b/src/main-window.h

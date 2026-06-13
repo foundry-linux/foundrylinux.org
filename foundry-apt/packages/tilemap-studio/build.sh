@@ -13,7 +13,8 @@
 # Steps: fetch + verify both tarballs -> overlay debian/ -> apply Perl patches
 # (GNU patch 2.8 fails on CRLF upstream sources; perl -i -0pe handles CRLF
 # transparently) -> dpkg-buildpackage -> move the .deb into $REPO_ROOT/dist/.
-# Patches are documented in debian/patches/ for reference and upstream PR #95.
+# Patches are documented in debian/patches/. 0001 is already in upstream master
+# (commit ffcce44); only needed while packaging the v4.0.1 release tarball.
 #
 # To bump: change *_VERSION + *_SHA256 below, add a debian/changelog entry via
 #   dch -v <NEW>-1foundry1 -D resolute "..."
@@ -110,6 +111,7 @@ echo "=== Applying patches ==="
 # 0001: add FL/platform.H to main-window.h so Pixmap / fl_display / fl_xid
 #       are declared in FLTK 1.4.5 Wayland+X11 hybrid builds (they no longer
 #       leak through transitive FLTK headers as they did in X11-only mode).
+#       Already in upstream master (ffcce44); not yet in v4.0.1.
 perl -i -0pe 's{(#include <FL/Fl_Native_File_Chooser\.H>)(\r?\n)}{$1$2#include <FL/platform.H>$2}' \
     "$SRC_DIR/src/main-window.h"
 grep -q "platform.H" "$SRC_DIR/src/main-window.h" \
