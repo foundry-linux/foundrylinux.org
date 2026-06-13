@@ -16,13 +16,34 @@
 
 1. [x] Universe check — not in Ubuntu 26.04
 2. [x] Create `foundry-apt/packages/asar-snes/` with `build.sh` + `debian/` tree
-3. [ ] Docker build + lintian clean
-4. [ ] Smoke install + `asar-snes --version` runs
-5. [ ] Wire into `foundry-retro-tools` `Depends:`
-6. [ ] Commit + push + release tag
+3. [x] Docker build + lintian clean
+4. [x] Smoke install + `asar-snes --version` runs
+5. [x] Wire into `foundry-retro-tools` `Depends:` (→ 1.0.13)
+6. [x] Commit + push + release tag v1.5.23
 
 ## Verification
 
 1. `lintian dist/asar-snes_*.deb` returns clean (zero E:/W: lines)
-2. `docker run --rm ubuntu:26.04 ... asar-snes --version` prints `Asar v1.91`
+
+```
+=== lintian asar-snes ===
+(no output — clean)
+```
+PASS
+
+2. `docker run --rm ubuntu:26.04 ... asar-snes --version` prints `Asar 1.91`
+
+```
+/usr/bin/asar-snes: ELF 64-bit LSB pie executable, x86-64, stripped
+Asar 1.91, originally developed by Alcaro, maintained by Asar devs.
+Source code: https://github.com/RPGHacker/asar
+```
+PASS
+
 3. `foundry-retro-tools` apt-get install resolves with asar-snes in the dep tree
+
+```
+apt-cache depends foundry-retro-tools | grep asar
+  Depends: asar-snes
+```
+PASS
