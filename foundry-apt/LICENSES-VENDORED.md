@@ -6,7 +6,6 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 
 | Package | Upstream | Licence | Where the text lives in the .deb |
 |---|---|---|---|
-| `asar` | [electron/asar](https://github.com/electron/asar) | [MIT](https://github.com/electron/asar/blob/main/LICENSE) | `/usr/share/doc/asar/copyright` |
 | `asar-snes` | [RPGHacker/asar](https://github.com/RPGHacker/asar) | [LGPL-3.0+](https://github.com/RPGHacker/asar/blob/master/license-lgpl.txt) (DLL interface files separately under WTFPL) | `/usr/share/doc/asar-snes/copyright` |
 | `blender-asset-finder` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder/copyright` |
 | `blender-asset-finder-cli` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder-cli/copyright` |

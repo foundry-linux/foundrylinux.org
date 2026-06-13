@@ -1,9 +1,0 @@
-asar (4.2.0-1foundry1) resolute; urgency=medium
-
-  * Initial Foundry Linux packaging of @electron/asar 4.2.0.
-  * Pure-JavaScript npm package — bundles runtime deps (commander, glob,
-    minimatch) under /usr/lib/asar/node_modules/; requires nodejs >= 22
-    from Ubuntu 26.04 universe.
-  * Source: https://github.com/electron/asar
-
- -- Foundry Linux <packages@foundrylinux.org>  Thu, 11 Jun 2026 00:00:00 +0000
