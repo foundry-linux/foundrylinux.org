@@ -5,7 +5,7 @@ Description: add explicit X11/FLTK-platform includes for non-Windows builds
  FLTK 1.4.5's cleaned-up X11 headers. Add the includes to the shared
  utils.h so every translation unit that needs them gets them.
 Author: Foundry Linux <packages@foundrylinux.org>
-Forwarded: not-yet
+Forwarded: https://github.com/Rangi42/tilemap-studio/pull/95
 Last-Update: 2026-06-10
 --- a/src/utils.h
 +++ b/src/utils.h

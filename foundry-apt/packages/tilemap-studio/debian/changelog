@@ -1,3 +1,12 @@
+tilemap-studio (4.0.1-2foundry1) resolute; urgency=low
+
+  * 0001-x11-platform-includes.patch: sent upstream as PR #95
+    (https://github.com/Rangi42/tilemap-studio/pull/95).
+  * 0002-cstring-in-preferences.patch: already fixed in upstream master
+    (244378b); carried until next release.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Fri, 13 Jun 2026 00:00:00 +0700
+
 tilemap-studio (4.0.1-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of Tilemap Studio (v4.0.1).

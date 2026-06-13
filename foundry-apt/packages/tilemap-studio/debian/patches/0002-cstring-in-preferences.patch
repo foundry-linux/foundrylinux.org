@@ -3,7 +3,7 @@ Description: include <cstring> in preferences.cpp for GCC 15 / FLTK 1.4.5
  transitive include that FLTK 1.4.5's headers no longer provide, so the
  build fails with "was not declared in this scope" under GCC 15.
 Author: Foundry Linux <packages@foundrylinux.org>
-Forwarded: not-yet
+Forwarded: not-needed (fixed in upstream master 244378b)
 Last-Update: 2026-06-10
 --- a/src/preferences.cpp
 +++ b/src/preferences.cpp
