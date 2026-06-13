@@ -79,7 +79,6 @@ All five source-built tools from Phase 0's `install-foundry-retro-tools.sh` are 
 Sub-tasks that completed plans explicitly punted/deferred and that weren't tracked anywhere until now.
 
 - [ ] **foundry-kde-theme — remaining theming layers** — Plasma Style SVG set (distinctive panel/widget shapes — partial: forge-palette colors done, Breeze-inherit done; custom SVGs pending), Aurorae window decoration, Kvantum Qt-app style. See [plan](docs/plans/2026-05-24-foundry-kde-theme.md).
-- [ ] **Prune old ISOs in `dist/` on build** — builds do not clean old ~4 GB ISOs from `foundry-iso/dist/`, so the disk fills and `xorriso` fails ("Image size exceeds free space on media") — bit the 0.9.104 build. Add a cleanup step to `iso-build`/`build-iso.sh` (keep the latest N, delete older) so `dist/` does not refill ~4 GB per build.
 - [ ] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
 - [ ] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
 - [ ] **Upstream f9dasm to Debian (ITP)** — file the first Debian Intent-To-Package for `f9dasm`; deferred from the [packages-page plan](docs/plans/2026-05-21-packages-page.md) follow-ups. Low priority — we already vendor it in foundry-apt.
@@ -92,6 +91,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 ## Done
 
+- 2026-06-13 — [iso-prune-local] `build-iso.sh` now prunes old `dist/` ISOs + sidecars (.sha256/.asc/.torrent) for the edition before each build; build logs preserved. Fixes 0.9.104 xorriso disk-full failure.
 - 2026-06-13 — [package-asar-snes] packaged asar v1.91 as `asar-snes` (GPL-3.0, SNES 65816/SPC700/SuperFX cross-assembler); named to coexist with @electron/asar npm tool; wired into `foundry-retro-tools`.
 - 2026-06-13 — [package-tilemap-studio] packaged Tilemap Studio 4.0.1 (LGPL-3, retro tile/map editor) — hybrid Wayland/X11+GL, FLTK 1.4.5 static-linked; Perl-based patching (2 patches, both already in upstream master); wired into `foundry-retro-tools`. Published `foundry-apt` v1.5.25. See [plan](docs/plans/2026-06-10-package-tilemap-studio.md).
 - 2026-06-13 — [drmon-cppdap-fix] drmon cppdap/JsonCpp CMake fix landed upstream in drdevtools `d28c9d8`; upstream now at `6c51085` (multi-window, per-terminal sizes, keyword-shim cleanup).
