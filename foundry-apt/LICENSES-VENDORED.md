@@ -24,7 +24,7 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 | `ruff` | [astral-sh/ruff](https://github.com/astral-sh/ruff) | [MIT](https://github.com/astral-sh/ruff/blob/main/LICENSE) | `/usr/share/doc/ruff/copyright` |
 | `snes9x-gtk` | [snes9xgit/snes9x](https://github.com/snes9xgit/snes9x) | [Snes9x non-commercial](https://github.com/snes9xgit/snes9x/blob/master/LICENSE) ⚠️ (bundles GPL-3+ / LGPL-2.1+ components) | `/usr/share/doc/snes9x-gtk/copyright` |
 | `task` | [go-task/task](https://github.com/go-task/task) | [MIT](https://github.com/go-task/task/blob/main/LICENSE) | `/usr/share/doc/task/copyright` |
-| `tilemap-studio` | [Rangi42/tilemap-studio](https://github.com/Rangi42/tilemap-studio) | [LGPL-3.0](https://github.com/Rangi42/tilemap-studio/blob/master/LICENSE) (statically links FLTK under [FLTK licence](https://www.fltk.org/doc-1.4/license.html)) | `/usr/share/doc/tilemap-studio/copyright` |
+| `tilemap-studio` | [Rangi42/tilemap-studio](https://github.com/Rangi42/tilemap-studio) | [LGPL-3.0](https://github.com/Rangi42/tilemap-studio/blob/master/LICENSE) + [FLTK licence](https://www.fltk.org/doc-1.4/license.html) (statically linked) | `/usr/share/doc/tilemap-studio/copyright` |
 | `vgmstream` | [vgmstream/vgmstream](https://github.com/vgmstream/vgmstream) | [ISC](https://github.com/vgmstream/vgmstream/blob/master/COPYING) | `/usr/share/doc/vgmstream/copyright` |
 | `wla-dx` | [vhelin/wla-dx](https://github.com/vhelin/wla-dx) | [GPL-2.0+](https://github.com/vhelin/wla-dx/blob/master/COPYING) | `/usr/share/doc/wla-dx/copyright` |
 
