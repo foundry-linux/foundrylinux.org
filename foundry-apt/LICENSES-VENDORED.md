@@ -2,7 +2,7 @@
 
 Each `.deb` we repackage and redistribute via this repo keeps the upstream's licence. Below is the running summary. The full text of each licence ships inside the corresponding `.deb` under `/usr/share/doc/<package>/copyright`.
 
-**Maintenance rule: keep the table sorted alphabetically by package name.** When adding a new row, insert it in the correct sorted position — do not append to the bottom.
+**Maintenance rule: keep the table sorted alphabetically by package name.** When adding a new row, insert it in the correct sorted position — do not append to the bottom. Wrap the package name cell in `<span style="white-space:nowrap">` to prevent hyphenated names from breaking across lines.
 
 | Package | Upstream | Licence | Where the text lives in the .deb |
 |---|---|---|---|
