@@ -25,7 +25,31 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 - [ ] **foundry-kde-theme — remaining theming layers** — Plasma Style SVG set (distinctive panel/widget shapes — partial: forge-palette colors done, Breeze-inherit done; custom SVGs pending), Aurorae window decoration, Kvantum Qt-app style. See [plan](docs/plans/2026-05-24-foundry-kde-theme.md).
 - [ ] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
 - [ ] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
-- [ ] **File Debian ITPs for all vendored packages** — one ITP per package not already in Debian/Ubuntu universe; check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for existing RFP/ITP before filing. Candidates: `f9dasm`, `ghidra`, `libvgm`, `vgmstream`, `wla-dx`, `tilemap-studio`, `asar-snes`, `task` (go-task), `ldtk`, `m8te`, `blender-asset-finder{,-cli}`, `pvsneslib`, `ppsspp`, `snes9x-gtk`, `drmon`, `python3-{glfw,librosa,mss,pydub}`. Full list: [LICENSES-VENDORED.md](foundry-apt/LICENSES-VENDORED.md). New packages get individual TODO items via `/package` skill Step 6.
+### Debian ITP
+
+Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for existing RFP/ITP before filing each. New vendored packages get their own entry here via `/package` skill Step 6.
+
+- [ ] **ITP: `asar-snes`** — SNES 65816 cross-assembler (LGPL-3.0+)
+- [ ] **ITP: `blender-asset-finder`** — Blender asset search add-on (GPL-2.0+)
+- [ ] **ITP: `blender-asset-finder-cli`** — CLI for Blender asset finder (GPL-2.0+)
+- [ ] **ITP: `drmon`** — terminal system monitor (GPL-2.0)
+- [ ] **ITP: `f9dasm`** — MC6800/6809/68HC12 disassembler (GPL-2.0+)
+- [ ] **ITP: `ghidra`** — NSA reverse-engineering framework (Apache-2.0)
+- [ ] **ITP: `ldtk`** — level design toolkit (MIT)
+- [ ] **ITP: `libvgm`** — VGM chiptune audio library (GPL-2.0+)
+- [ ] **ITP: `m8te`** — SNES 8bpp tile/map editor, Mono runtime (MIT)
+- [ ] **ITP: `ppsspp`** — PSP emulator (GPL-2.0+)
+- [ ] **ITP: `pvsneslib`** — SNES homebrew SDK (Zlib)
+- [ ] **ITP: `python3-glfw`** — Python GLFW bindings (MIT)
+- [ ] **ITP: `python3-librosa`** — Python audio analysis library (ISC)
+- [ ] **ITP: `python3-mss`** — Python multi-platform screenshot library (MIT)
+- [ ] **ITP: `python3-pydub`** — Python audio manipulation library (MIT)
+- [ ] **ITP: `ruff`** — Python linter/formatter written in Rust (MIT)
+- [ ] **ITP: `snes9x-gtk`** — SNES emulator ⚠️ Snes9x non-commercial license; likely non-DFSG — research before filing
+- [ ] **ITP: `task`** — task runner / Makefile alternative (MIT)
+- [ ] **ITP: `tilemap-studio`** — retro tile/map editor (LGPL-3.0)
+- [ ] **ITP: `vgmstream`** — VGM stream decoder (ISC)
+- [ ] **ITP: `wla-dx`** — multi-CPU cross assembler (GPL-2.0+)
 
 ### Housekeeping
 - [ ] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
