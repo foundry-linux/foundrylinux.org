@@ -29,7 +29,8 @@ for build_sh in "$PACKAGES_DIR"/*/build.sh; do
         [[ "$pkg" == "$authored" ]] && continue 2
     done
     # Check for a table row mentioning the package name.
-    if ! grep -qE "^\| (\`|<[^>]+>\`?)${pkg}" "$LICENSES_FILE"; then
+    # Package cells may be plain `pkg` or <span...><code>pkg</code></span>.
+    if ! grep -qE "^\|[^|]*(\`|<code>)${pkg}(\`|</code>)" "$LICENSES_FILE"; then
         missing+=("$pkg")
     fi
 done
