@@ -19,7 +19,7 @@ Cloudflare never shows a token value after initial creation. To get the value of
 ## Cloudflare operator token
 - **Name:** `foundry-linux-operator`
 - **Permissions:** Account.API Tokens, Account.Cloudflare Pages +4
-- **Stored in:** r2://foundry-secrets/CF_API_TOKEN and /tmp/foundry-bootstrap.env (local cache)
+- **Stored in:** r2://foundry-linux-secrets/CF_API_TOKEN and .foundry/bootstrap.env (repo-local cache). The secrets bucket is **`foundry-linux-secrets`** (verified via live R2 API 2026-06-14) — NOT `foundry-secrets`; that wrong shorter name was a latent bug in backup-secret.sh + bootstrap-r2.sh (fixed). Bucket also holds GPG_PRIVATE_KEY, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, and (as of 2026-06-14) IA_S3_ACCESS_KEY + IA_S3_SECRET_KEY.
 - **To use:** Roll it → copy new value → paste into bootstrap script → cache + r2 auto-updated
 
 ## R2 CI tokens

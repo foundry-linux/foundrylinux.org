@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Back up a secret to the private foundry-secrets R2 bucket (disaster recovery),
+# Back up a secret to the private foundry-linux-secrets R2 bucket (disaster recovery),
 # and optionally mirror it to a GitHub Actions secret — the same dual-home
 # pattern bootstrap.sh uses for the GPG key and R2 tokens.
 #
@@ -22,7 +22,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-SECRETS_BUCKET="foundry-secrets"
+SECRETS_BUCKET="foundry-linux-secrets"
 BOOTSTRAP_CACHE="${REPO_ROOT}/.foundry/bootstrap.env"
 
 info() { echo "  [info]  $*"; }
@@ -112,4 +112,4 @@ if [[ -n "$GH_REPO" ]]; then
 fi
 
 unset VALUE
-ok "Done — ${NAME} is in foundry-secrets R2${GH_REPO:+ and set on ${GH_REPO}}."
+ok "Done — ${NAME} is in foundry-linux-secrets R2${GH_REPO:+ and set on ${GH_REPO}}."

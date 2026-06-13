@@ -252,7 +252,7 @@ Phase 3  iso-sync-local-debs copies foundry-apt/dist/*.deb → local-debs/ (newe
 
 ### Reproducibility audit
 
-**Strong overall.** `scripts/bootstrap.sh` is a single idempotent entry point that sets `{GPG_PRIVATE_KEY, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT}` on `foundry-apt`, mirrors each to a private `foundry-secrets` R2 bucket for DR, and `shred -u`s the local copies — matching the mandate verbatim. All four names match what `foundry-apt/publish.yml` and the WF `apt-publish.yml` consume.
+**Strong overall.** `scripts/bootstrap.sh` is a single idempotent entry point that sets `{GPG_PRIVATE_KEY, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT}` on `foundry-apt`, mirrors each to a private `foundry-linux-secrets` R2 bucket for DR, and `shred -u`s the local copies — matching the mandate verbatim. All four names match what `foundry-apt/publish.yml` and the WF `apt-publish.yml` consume.
 
 **🟡 Gap — `foundry-iso` CI secrets are not bootstrapped.** `foundry-iso/publish.yml` references **`R2_ACCOUNT_ID`** and **`GPG_PASSPHRASE`**, which **no script sets** (`bootstrap.sh` sets `R2_ENDPOINT`, never `GPG_PASSPHRASE`; `bootstrap-r2.sh` creates the bucket but `gh secret set`s nothing). Masked today because ISO CI is disabled and local builds read `.foundry/bootstrap.env` — but re‑enabling CI will fail on missing secrets, an un‑scripted manual step. Also: `infra-setup.md`'s status checklist is all‑unchecked despite Phase 1 being live (stale doc, not stale infra); the hook‑integrity wrapper is not wired here (`.claude/settings.json` is `{"hooks":{}}`), so the documented `task md` auto‑preview doesn't fire — run it manually.
 

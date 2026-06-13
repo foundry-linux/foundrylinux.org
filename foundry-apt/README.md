@@ -162,7 +162,7 @@ To release: `task bump` (auto-tags the next patch version) — the [publish work
 ## Hosting
 
 - **APT repo:** [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/) (10 GB free tier, zero egress) → `apt.foundrylinux.org`
-- **Signing key:** GPG key in GitHub Actions secrets (CI use), backed up to a private `foundry-secrets` R2 bucket for disaster recovery. No AWS account required.
+- **Signing key:** GPG key in GitHub Actions secrets (CI use), backed up to a private `foundry-linux-secrets` R2 bucket for disaster recovery. No AWS account required.
 
 Detailed setup in [`docs/infra-setup.md`](docs/infra-setup.md).
 

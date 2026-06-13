@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Restore GitHub Actions secrets for foundry-linux/foundrylinux.org from the
-# foundry-secrets R2 backup bucket.
+# foundry-linux-secrets R2 backup bucket.
 #
 # Run once after the monorepo migration — the original bootstrap set secrets
 # on foundry-linux/foundry-apt; this script migrates them to the monorepo.
@@ -14,7 +14,7 @@ CACHE_FILE="$REPO_ROOT/.foundry/bootstrap.env"
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     echo "Usage: restore-gh-secrets.sh"
-    echo "Reads GPG_PRIVATE_KEY + R2 creds from the foundry-secrets R2 bucket"
+    echo "Reads GPG_PRIVATE_KEY + R2 creds from the foundry-linux-secrets R2 bucket"
     echo "and sets them as GitHub Actions secrets on foundry-linux/foundrylinux.org."
     exit 0
 fi
@@ -36,7 +36,7 @@ r2_get_secret() {
         -H "Authorization: Bearer ${CF_API_TOKEN}"
 }
 
-echo "=== Fetching secrets from R2 foundry-secrets bucket ==="
+echo "=== Fetching secrets from R2 foundry-linux-secrets bucket ==="
 GPG_PRIVATE_KEY="$(r2_get_secret GPG_PRIVATE_KEY)"
 R2_ACCESS_KEY_ID="$(r2_get_secret R2_ACCESS_KEY_ID)"
 R2_SECRET_ACCESS_KEY="$(r2_get_secret R2_SECRET_ACCESS_KEY)"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One-time setup: create foundry-iso R2 bucket, attach iso.foundrylinux.org,
-# fetch the shared GPG signing key from foundry-secrets, and wire all
+# fetch the shared GPG signing key from foundry-linux-secrets, and wire all
 # GitHub Actions secrets on foundry-linux/foundry-iso.
 #
 # Usage:
@@ -17,7 +17,7 @@ BOOTSTRAP_CACHE="${REPO_ROOT}/.foundry/bootstrap.env"
 mkdir -p "${REPO_ROOT}/.foundry"
 GH_REPO="foundry-linux/foundry-iso"
 BUCKET="foundry-iso"
-SECRETS_BUCKET="foundry-secrets"
+SECRETS_BUCKET="foundry-linux-secrets"
 R2_TOKEN_NAME="foundry-iso-ci"
 CUSTOM_DOMAIN="iso.foundrylinux.org"
 DNS_CNAME="iso"
@@ -293,12 +293,12 @@ elif [[ -z "$GPG_PRIVATE_KEY" ]]; then
   info "[8] Trying r2://${SECRETS_BUCKET}/GPG_PRIVATE_KEY"
   GPG_PRIVATE_KEY=$(r2_get_secret "GPG_PRIVATE_KEY" 2>/dev/null || true)
   if [[ -z "$GPG_PRIVATE_KEY" ]]; then
-    info "[8] Not in r2://foundry-secrets — exporting from local GPG keyring"
+    info "[8] Not in r2://foundry-linux-secrets — exporting from local GPG keyring"
     GPG_PRIVATE_KEY=$(gpg --armor --export-secret-keys "$GPG_KEY_EMAIL" 2>/dev/null || true)
     [[ -n "$GPG_PRIVATE_KEY" ]] \
       || die "[8] GPG key for $GPG_KEY_EMAIL not in local keyring. Re-run bootstrap.sh."
     ok "[8] Exported from local keyring"
-    # Best-effort store to foundry-secrets (bucket may not exist yet — non-fatal)
+    # Best-effort store to foundry-linux-secrets (bucket may not exist yet — non-fatal)
     printf '%s' "$GPG_PRIVATE_KEY" | curl -sS -X PUT \
       "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${SECRETS_BUCKET}/objects/GPG_PRIVATE_KEY" \
       -H "Authorization: Bearer ${CF_API_TOKEN}" \

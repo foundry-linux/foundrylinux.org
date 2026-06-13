@@ -12,7 +12,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 - [ ] **Build `foundry-atelier-1.0-amd64.iso`** — `task iso-build EDITION=atelier`; verify ghidra + full atelier package set present; sign + upload to R2. Target ~10 GB. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
 - [verify] **Guarantee a full KDE config stack** — build-time assertion in `foundry-iso/scripts/build-iso.sh` (after `lb chroot`) checks the KDE config QML modules (`org.kde.kcmutils`, `org.kde.kquickcontrols`, `QtQuick/Dialogs`) are present in the chroot, so a future strip-list edit can't silently break plasmoid config dialogs. Guard comments added to hook 0020 + `strip.list.chroot.purge`; omit/ship rationale in [docs/investigations/2026-05-30-kde-app-kit.md](docs/investigations/2026-05-30-kde-app-kit.md). **Code landed 2026-06-04; verify steps 1–4 PENDING** (require a full `task iso-build`). See [plan](docs/plans/2026-05-30-full-kde-experience.md). _(Surfaced while testing the claude-usage KDE plasmoid live; that empty-config-dialog bug was a claude-usage bug, not a Foundry gap.)_
-- [ ] **[at v1.0.0] Migrate ISO hosting to Internet Archive** — add `scripts/upload-iso-ia.sh` (rclone → `s3.us.archive.org`), add Cloudflare Worker redirecting `iso.foundrylinux.org/*` → archive.org download URLs, update `publish.yml`. R2 stays for apt repos. See [investigation](docs/investigations/2026-05-22-iso-hosting.md).
+- [ ] **[at v1.0.0] Migrate ISO hosting to Internet Archive** — ~~provision IA S3 keys~~ ✅ done 2026-06-14 (`scripts/bootstrap-ia.sh` → `IA_S3_ACCESS_KEY`/`IA_S3_SECRET_KEY` in foundry-linux-secrets R2 + GH secrets). Remaining: add `scripts/upload-iso-ia.sh` (rclone → `s3.us.archive.org`), add Cloudflare Worker redirecting `iso.foundrylinux.org/*` → archive.org download URLs, update `publish.yml`. R2 stays for apt repos. See [investigation](docs/investigations/2026-05-22-iso-hosting.md).
 
 - [ ] **Kiosk mode (gamescope + wf-launcher)** — *deferred* from the [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md); no plan written yet. A locked-down session that boots straight into a game launcher. Future phase, not blocking v1.
 
@@ -81,6 +81,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
+- 2026-06-14 — [ia-keys] Provisioned IA S3 keys via `scripts/bootstrap-ia.sh` (liveness-checks against s3.us.archive.org, R2 backup + GH secrets); fixed `foundry-secrets`→`foundry-linux-secrets` bucket bug in backup-secret.sh + bootstrap-r2.sh. Prereq for the v1.0.0 IA migration.
 - 2026-06-13 — [python-gamedev-extras-weight] won't do — keeping `foundry-python-gamedev-extras` (554 MiB: `libvtk9.5` 276 MiB + numba/llvmlite + scipy + librosa) in anvil; 4 GB target dropped, 8 GB is the floor.
 - 2026-06-13 — [phase-3-iso-anvil] live-build Kubuntu 26.04 ISO pipeline done; anvil-1.0 builds clean at ~4.2 GB; autologin fixed (casper bake + sddm.conf); Calamares + branding wired. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
 - 2026-06-13 — [anvil-drop-games] stale pre-split 15 GB anvil-0.9.30 superseded; current builds shed ~9.9 GiB of games (moved to atelier in foundry-anvil 1.0.4).

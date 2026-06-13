@@ -90,7 +90,7 @@ cf_api() {
         "$@"
 }
 
-# Store a secret in the private foundry-secrets R2 bucket.
+# Store a secret in the private foundry-linux-secrets R2 bucket.
 # Usage: r2_put_secret <key-name> <value>
 r2_put_secret() {
     local name="$1" value="$2"
