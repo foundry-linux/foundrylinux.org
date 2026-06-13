@@ -21,66 +21,24 @@ Size impact:
 
 ---
 
-## Changes
+## Status: foundry-apt DONE — ISO build remaining
 
-### 1. `foundry-apt/packages/foundry-core/debian/control`
+All foundry-apt changes landed before 2026-06-13:
+- `foundry-core` 1.0.5 — `openjdk-17-jre-headless` in Depends ✓ (published foundry-apt v1.5.25)
+- `foundry-atelier` 0.9.4 — `openjdk-21-jre-headless` in Depends ✓ (published foundry-apt v1.5.25)
 
-Add to Depends (after `task,`):
-```
- openjdk-17-jre-headless,
-```
+`openjdk-17-jre-headless` pulls into the ISO automatically via
+`foundry-anvil → foundry-core → openjdk-17-jre-headless` — no explicit entry needed
+in `foundry.list.chroot`. Hook 1010 continues to autoremove openjdk-21 on non-atelier
+builds (it marks `openjdk-21-*` auto and autoremoces; foundry-core only depends on 17).
 
-Update the Description long-text to mention Java 17 runtime.
-
-### 2. `foundry-apt/packages/foundry-core/debian/changelog`
-
-New entry (1.0.3 → 1.0.4):
-```
-foundry-core (1.0.4) resolute; urgency=medium
-
-  * Add openjdk-17-jre-headless to Depends.
-    Java 17 LTS baseline for LibGDX, Gradle, and game-dev toolchains.
-```
-
-### 3. `foundry-apt/packages/foundry-atelier/debian/control`
-
-Add to Depends:
-```
- openjdk-21-jre-headless,
-```
-
-Update the Description to note JRE 21 is explicitly included.
-
-### 4. `foundry-apt/packages/foundry-atelier/debian/changelog`
-
-New entry bumping version (check current; likely 0.9.3 → 0.9.4).
-
-### 5. `foundry-iso/config/package-lists/foundry.list.chroot`
-
-Add `openjdk-17-jre-headless` as an explicit entry. This ensures it installs during
-the main live-build phase (apt runs from the host with working gpgv) rather than
-relying on hook 1000's in-chroot apt-get to pull in a brand-new package.
-
-### 6. `foundry-iso/config/hooks/1010-trim-atelier-only-pkgs.hook.chroot`
-
-**No changes needed.** The existing `apt-mark auto 'openjdk-21-*' && autoremove`
-continues to correctly remove openjdk-21-jdk (full JDK, only ghidra needed it)
-from non-atelier builds. openjdk-21-jre-headless is NOT in foundry-core's Depends,
-so it remains eligible for autoremoval on anvil/sprite — which is what we want.
-On atelier builds the `[[ "${EDITION}" != "atelier" ]]` guard skips the block
-entirely, so openjdk-21-jre-headless survives there as an explicit dep of foundry-atelier.
-
----
-
-## Build & verify
+## Remaining: build and verify the ISO
 
 ```bash
-task apt-build
-task iso-stage-deb PACKAGE=foundry-core
 task iso-build EDITION=anvil
 ```
 
-Verification:
+Verification (after build):
 ```bash
 sudo unsquashfs -cat foundry-iso/dist/foundry-anvil-*.iso \
   filesystem.squashfs var/lib/dpkg/status \
@@ -88,24 +46,6 @@ sudo unsquashfs -cat foundry-iso/dist/foundry-anvil-*.iso \
 ```
 Expected on anvil:
 - `openjdk-17-jre-headless` **present** ✓
-- `openjdk-21-jre-headless` **absent** (autoremoved by hook 1010 — not in foundry-core) ✓
+- `openjdk-21-jre-headless` **absent** (autoremoved by hook 1010) ✓
 - `openjdk-21-jdk` **absent** ✓
 - `ghidra` **absent** ✓
-
-After confirming the size, update `docs/plans/2026-06-04-usb-sized-iso-editions.md`:
-- Add a new row to the scenario table for the new build (e.g. `anvil 0.9.54 + JRE 17`)
-- Replace the now-stale intermediate rows (0.9.40 actual, 0.9.44–0.9.49) — keep only
-  the 0.9.53 actual and the new build's actual as the two concrete data points
-
----
-
-## Files to modify
-
-| File | Change |
-|---|---|
-| `foundry-apt/packages/foundry-core/debian/control` | add `openjdk-17-jre-headless` dep + update description |
-| `foundry-apt/packages/foundry-core/debian/changelog` | bump to 1.0.4 |
-| `foundry-apt/packages/foundry-atelier/debian/control` | add `openjdk-21-jre-headless` dep |
-| `foundry-apt/packages/foundry-atelier/debian/changelog` | bump version |
-| `foundry-iso/config/package-lists/foundry.list.chroot` | add `openjdk-17-jre-headless` |
-| `docs/plans/2026-06-04-usb-sized-iso-editions.md` | add new scenario row with actual ISO size; replace the stale 0.9.40 actual row |
