@@ -1,3 +1,10 @@
+foundry-emulators-consoles-heavy (1.0.5) resolute; urgency=medium
+
+  * Add bsnes-jg (2.1.0) — vendored from foundry-apt; cycle-accurate
+    Super Nintendo / Super Famicom emulator (jgemu bsnes fork).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 14 Jun 2026 06:40:00 +0700
+
 foundry-emulators-consoles-heavy (1.0.4) resolute; urgency=medium
 
   * Add mesen2 (2.1.1) — vendored from foundry-apt; high-accuracy
