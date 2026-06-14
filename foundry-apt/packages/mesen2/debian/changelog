@@ -1,3 +1,16 @@
+mesen2 (2.1.1-1foundry2) resolute; urgency=medium
+
+  * Fix: no window appears in VMs / environments without hardware OpenGL.
+    Mesen's Avalonia UI needs a GL context; when hardware GL init fails it
+    silently never maps a window. The /usr/bin/mesen2 wrapper now forces
+    Mesa's software rasteriser (LIBGL_ALWAYS_SOFTWARE=1) when running under a
+    VM/container (systemd-detect-virt), so the UI always opens; bare metal
+    still uses the GPU. Override with MESEN2_FORCE_SOFTWARE_GL=0/1.
+  * Add libgl1-mesa-dri to Depends so the llvmpipe software driver is
+    guaranteed present for the fallback.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 14 Jun 2026 12:30:00 +0700
+
 mesen2 (2.1.1-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of Mesen 2.1.1.

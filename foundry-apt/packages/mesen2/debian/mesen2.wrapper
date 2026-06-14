@@ -1,0 +1,35 @@
+#!/bin/sh
+# Launcher for Mesen (mesen2).
+#
+# Mesen's Avalonia user interface needs an OpenGL context to open its window.
+# Many virtual machines and containers have no working hardware GL, and in that
+# case the window silently never appears (the process keeps running with no
+# visible UI). Detect those environments and fall back to Mesa's software
+# rasteriser (llvmpipe) so the interface always opens. On bare metal the GPU is
+# left in charge for full-speed emulation.
+#
+# Override the auto-detection:
+#   MESEN2_FORCE_SOFTWARE_GL=1   always use software GL (e.g. a VM with broken
+#                                hardware GL that auto-detection didn't catch)
+#   MESEN2_FORCE_SOFTWARE_GL=0   never force it (use the GPU even in a VM with
+#                                working virgl/3D acceleration)
+set -eu
+
+case "${MESEN2_FORCE_SOFTWARE_GL:-auto}" in
+    1)
+        export LIBGL_ALWAYS_SOFTWARE=1
+        ;;
+    0)
+        : # honour the GPU
+        ;;
+    *)
+        # systemd-detect-virt exits 0 when running in a VM or container.
+        # Guarded with command -v so this is a harmless no-op where it is absent.
+        if command -v systemd-detect-virt >/dev/null 2>&1 \
+                && systemd-detect-virt --quiet; then
+            export LIBGL_ALWAYS_SOFTWARE=1
+        fi
+        ;;
+esac
+
+exec /usr/lib/mesen2/Mesen "$@"

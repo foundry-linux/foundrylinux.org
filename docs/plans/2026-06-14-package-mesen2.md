@@ -99,6 +99,31 @@ debian/mesen2.lintian-overrides  only for irreducible pre-built-ELF tags (static
 - Commit, `task bump`, watch publish workflow, verify live `apt install mesen2`.
 - **No Step 7** — upstream archived; record that in the changelog.
 
+## Post-release fix — no window in VMs (2.1.1-1foundry2)
+
+**Symptom (reported):** on Ubuntu 26.04 in a VM, `mesen2` "doesn't work — no window
+ever appears." The process runs but no window maps; no crash, no stderr.
+
+**Root cause:** Mesen's Avalonia UI requires an OpenGL context to open its window.
+In a VM without working hardware GL, GL init fails (`failed to load driver: radeonsi`,
+`glx: failed to create dri3 screen`) and Mesen never maps a window — it does **not**
+auto-fall-back to software rendering. Reproduced: GPU-less env → no window; forcing
+Mesa's software rasteriser (`LIBGL_ALWAYS_SOFTWARE=1`, llvmpipe) → window maps and the
+config wizard renders correctly (verified on a real display).
+
+**Fix:**
+- `/usr/bin/mesen2` is now a wrapper (`debian/mesen2.wrapper`) that forces
+  `LIBGL_ALWAYS_SOFTWARE=1` when `systemd-detect-virt` reports a VM/container, so the
+  UI always opens there; bare metal keeps the GPU for full-speed emulation. Override:
+  `MESEN2_FORCE_SOFTWARE_GL=1|0`.
+- `libgl1-mesa-dri` added to `Depends` so the llvmpipe driver is guaranteed present.
+
+**Validation note:** an X-forwarded `ubuntu:26.04` container is *not* a valid bench for
+the window check (a root-in-container can't map top-level windows onto the host
+XWayland — no Mesen window appears there even with hardware GL). The fix is proven by
+(1) software GL rendering a real Mesen window on a real display, and (2) the wrapper
+correctly selecting software GL under virtualization (`systemd-detect-virt => docker`).
+
 ## Follow-ups (not in this pass)
 
 - ARM64 build from `Mesen_2.1.1_Linux_ARM64.zip` (second `Architecture: arm64` artifact).

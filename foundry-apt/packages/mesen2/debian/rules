@@ -19,9 +19,8 @@ override_dh_auto_install:
 	install -d $(CURDIR)/debian/mesen2/usr/lib/mesen2
 	install -m 0755 $(CURDIR)/Mesen $(CURDIR)/debian/mesen2/usr/lib/mesen2/Mesen
 	install -d $(CURDIR)/debian/mesen2/usr/bin
-	printf '#!/bin/sh\nexec /usr/lib/mesen2/Mesen "$$@"\n' \
-	    > $(CURDIR)/debian/mesen2/usr/bin/mesen2
-	chmod 0755 $(CURDIR)/debian/mesen2/usr/bin/mesen2
+	install -m 0755 $(CURDIR)/debian/mesen2.wrapper \
+	    $(CURDIR)/debian/mesen2/usr/bin/mesen2
 	# Desktop entry + icon (vendored from upstream Linux/appimage/).
 	install -D -m 0644 $(CURDIR)/debian/mesen2.desktop \
 	    $(CURDIR)/debian/mesen2/usr/share/applications/mesen2.desktop
