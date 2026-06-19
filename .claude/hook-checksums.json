@@ -10,5 +10,6 @@
   "sleep-blocker.sh": "76fb8a5860a22325842d501cc69247ca77a051e84c6e8cd8ecf853c8e0d75470",
   "tf-blocker.sh": "8dda5bd7a4dc082c76b9b687f28c58db872f25eb1dcc6f4b90623fdeea847e75",
   "todo-reminder.sh": "988dda668dbec9a77f9b0a60bf35e04470acf8c1855b5052da6f7a22ed0ba3a3",
-  "transcript-logger.sh": "1f8e8c8de4fc2cd2d7e7d25a96acc0ee4ed5a23a9675723b99aa48867ef07e5d"
+  "transcript-logger.sh": "32c0b5eecb39569e48fec25440c76e7518579104404b3af5a499a97dcf72cbb9",
+  "transcript-stop.sh": "3452afac631e05c726eec9d520cddbd77ae71546c2b9657ba42b8a2c9267ee59"
 }
