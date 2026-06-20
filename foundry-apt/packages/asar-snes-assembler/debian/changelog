@@ -1,3 +1,12 @@
+asar-snes-assembler (1.91-1foundry2) resolute; urgency=medium
+
+  * Rename source + binary package asar-snes -> asar-snes-assembler to match the
+    Repology project, so the apt-index badge aligns with the package name.
+    Pre-1.0, no users, so no transitional package. The installed command stays
+    asar-snes (still avoids the /usr/bin/asar clash with @electron/asar).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 21 Jun 2026 00:00:00 +0000
+
 asar-snes (1.91-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of asar 1.91.

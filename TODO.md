@@ -33,7 +33,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for existing RFP/ITP before filing each. New vendored packages get their own entry here via `/package` skill Step 6.
 
-- [ ] **ITP: `asar-snes`** — SNES 65816 cross-assembler (LGPL-3.0+)
+- [ ] **ITP: `asar-snes-assembler`** — SNES 65816 cross-assembler (LGPL-3.0+)
 - [ ] **ITP: `blender-asset-finder`** — Blender asset search add-on (GPL-2.0+)
 - [ ] **ITP: `blender-asset-finder-cli`** — CLI for Blender asset finder (GPL-2.0+)
 - [ ] **ITP: `bsnes-jg`** — cycle-accurate SNES/Super Famicom emulator (GPL-3.0+)
@@ -64,7 +64,7 @@ Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) 
 - [ ] **VM distribution artifacts (qcow2 / OVA)** — build VirtualBox/VMware/QEMU images alongside ISOs (homepage VM rows are intentional, not placeholders); folds in GRUB-theme activation + OVMF custom-logo work (VM-only). **Start after Internet Archive migration.** See [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md), [boot-branding](docs/plans/2026-05-24-boot-branding.md).
 - [ ] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
 - [ ] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
-- [ ] **Repology badges: confirm opt-outs + extend to apt.worldfoundry.org** — foundry-apt is fully covered (`task audit-badges` → 21 badge / 6 `none` / 0 missing; Badge column now in the audit inventory). (1) Review the 6 `none` opt-outs (`asar-snes`, `blender-asset-finder{,-cli}`, `drmon`, `m8te`, `foundry-welcome`) — set a real `X-Repology-Project` for any that ARE tracked on Repology. (2) The audit flagged 10 WorldFoundry CLIs in `apt.worldfoundry.org` (`cdpack`, `iffcomp`, `iffdump`, `levcomp`, `lvldump`, `oaddump`, `oas2oad`, `prep`, `textile`, `worldfoundry-blender-editor-exporter`) lacking the field — backfill them (`none`; they're WF-authored, not on Repology) and wire `check-repology-badges.sh` into that repo. [plan](docs/plans/2026-06-21-repology-badge-audit-tooling.md).
+- [ ] **Repology badges: confirm opt-outs + extend to apt.worldfoundry.org** — foundry-apt is fully covered (`task audit-badges` → 22 badge / 5 `none` / 0 missing; Badge column now in the audit inventory). (1) Review the remaining 5 `none` opt-outs (`blender-asset-finder{,-cli}`, `drmon`, `m8te`, `foundry-welcome`) — set a real `X-Repology-Project` for any that ARE tracked on Repology (as done for asar-snes-assembler via `task set-badge`). (2) The audit flagged 10 WorldFoundry CLIs in `apt.worldfoundry.org` (`cdpack`, `iffcomp`, `iffdump`, `levcomp`, `lvldump`, `oaddump`, `oas2oad`, `prep`, `textile`, `worldfoundry-blender-editor-exporter`) lacking the field — backfill them (`none`; they're WF-authored, not on Repology) and wire `check-repology-badges.sh` into that repo. [plan](docs/plans/2026-06-21-repology-badge-audit-tooling.md).
 
 ## Watch
 

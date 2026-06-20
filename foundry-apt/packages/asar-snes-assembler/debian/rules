@@ -25,4 +25,4 @@ override_dh_auto_test:
 override_dh_auto_install:
 	dh_auto_install --buildsystem=cmake
 	# rename to avoid /usr/bin/asar conflict with @electron/asar
-	mv debian/asar-snes/usr/bin/asar debian/asar-snes/usr/bin/asar-snes
+	mv debian/asar-snes-assembler/usr/bin/asar debian/asar-snes-assembler/usr/bin/asar-snes

@@ -1,4 +1,4 @@
-Source: asar-snes
+Source: asar-snes-assembler
 Section: devel
 Priority: optional
 Maintainer: Foundry Linux <packages@foundrylinux.org>
@@ -8,7 +8,7 @@ Homepage: https://github.com/RPGHacker/asar
 X-Repology-Project: asar-snes-assembler
 Rules-Requires-Root: no
 
-Package: asar-snes
+Package: asar-snes-assembler
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: SNES 65816/SPC700/SuperFX cross-assembler

@@ -6,7 +6,7 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 
 | Package | Upstream | Licence | Where the text lives in the .deb |
 |---|---|---|---|
-| <span style="white-space:nowrap"><code>asar-snes</code></span> | [RPGHacker/asar](https://github.com/RPGHacker/asar) | [LGPL-3.0+](https://github.com/RPGHacker/asar/blob/master/license-lgpl.txt) (DLL interface files separately under WTFPL) | `/usr/share/doc/asar-snes/copyright` |
+| <span style="white-space:nowrap"><code>asar-snes-assembler</code></span> | [RPGHacker/asar](https://github.com/RPGHacker/asar) | [LGPL-3.0+](https://github.com/RPGHacker/asar/blob/master/license-lgpl.txt) (DLL interface files separately under WTFPL) | `/usr/share/doc/asar-snes-assembler/copyright` |
 | <span style="white-space:nowrap"><code>blender-asset-finder</code></span> | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder/copyright` |
 | <span style="white-space:nowrap"><code>blender-asset-finder-cli</code></span> | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | GPL-2.0-or-later | `/usr/share/doc/blender-asset-finder-cli/copyright` |
 | <span style="white-space:nowrap"><code>bsnes-jg</code></span> | [jgemu/bsnes](https://gitlab.com/jgemu/bsnes) | [GPL-3.0+](https://gitlab.com/jgemu/bsnes/-/blob/master/COPYING) (bundles SameBoy/Expat, libco/ISC, byuuML/Zlib, snes_spc/LGPL-2.1+) | `/usr/share/doc/bsnes-jg/copyright` |

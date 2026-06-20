@@ -23,7 +23,7 @@ https://repology.org/projects/?search=<term> (use the exact project slug, e.g.
 'python:picire' for PyPI packages). Use 'none' to opt out.
 
 Examples:
-  set-repology-badge.sh asar-snes asar
+  set-repology-badge.sh task go-task
   set-repology-badge.sh m8te none
 EOF
     [[ $# -lt 2 && "${1:-}" != "-h" && "${1:-}" != "--help" ]] && exit 2

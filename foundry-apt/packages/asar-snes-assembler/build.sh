@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Vendored-upstream Debian package build wrapper for asar-snes.
+# Vendored-upstream Debian package build wrapper for asar-snes-assembler.
 #
 # asar is a SNES 65816/SPC700/SuperFX cross-assembler by RPGHacker (Alcaro).
 # This script:
@@ -20,7 +20,7 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-Build asar-snes as a Debian .deb via dpkg-buildpackage.
+Build asar-snes-assembler as a Debian .deb via dpkg-buildpackage.
 
 Usage: build.sh [-h|--help]
 
@@ -28,7 +28,7 @@ Environment overrides:
   ASAR_SNES_VERSION  upstream version (default: 1.91)
   ASAR_SNES_SHA256   sha256 of the GitHub tarball (must match VERSION)
 
-Output: \$REPO_ROOT/dist/asar-snes_<DEB_VERSION>_<arch>.deb
+Output: \$REPO_ROOT/dist/asar-snes-assembler_<DEB_VERSION>_<arch>.deb
 EOF
             exit 0
             ;;
@@ -41,7 +41,7 @@ UPSTREAM_URL="https://api.github.com/repos/RPGHacker/asar/tarball/v${UPSTREAM_VE
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"
-NAME="asar-snes"
+NAME="asar-snes-assembler"
 REPO_ROOT="$(cd ../.. && pwd)"
 mkdir -p "$REPO_ROOT/dist"
 

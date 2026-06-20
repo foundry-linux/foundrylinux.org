@@ -29,7 +29,7 @@ Depends: ${misc:Depends},
  tilemap-studio,
  wla-dx,
  pvsneslib-core,
- asar-snes,
+ asar-snes-assembler,
  cvise,
  delta,
  halfempty,
@@ -48,8 +48,9 @@ Description: retro game reverse-engineering, porting and authoring toolchain
  tilemap-studio (Game Boy / GBC / GBA / NES / SNES tilemap editor),
  pvsneslib-core (PVSnesLib SNES homebrew SDK — 816-tcc C compiler, pinned
  WLA DX, and a C library, used via PVSNESLIB_HOME + make),
- asar-snes (SNES 65816/SPC700/SuperFX cross-assembler by RPGHacker/Alcaro;
- named asar-snes to coexist with the @electron/asar npm tool),
+ asar-snes-assembler (SNES 65816/SPC700/SuperFX cross-assembler by
+ RPGHacker/Alcaro; provides the asar-snes command, named so to coexist with the
+ @electron/asar npm tool),
  cvise (super-parallel C/C++ test-case reducer — shrink a compiler-crashing or
  miscompiling source file down to a minimal, filable repro), delta
  (singledelta / multidelta / topformflat — the original line-based
