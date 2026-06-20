@@ -27,7 +27,6 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 ### Packaging — new upstreams
 
 - [ ] **Package `bsnes-jg`** — the jgemu-framework bsnes fork (GPL-3.0), an accuracy-focused SNES emulator for `foundry-emulators-consoles-heavy`. Check Ubuntu 26.04 universe first per the always-check-universe rule; use the `/package` skill. (Companion `mesen2` shipped 2026-06-14 — see Done + [plan](docs/plans/2026-06-14-package-mesen2.md).) No plan yet.
-- [ ] **Test-case reduction toolchain — Tier 3 (shrinkray)** — Tiers 1+2 ✅ done 2026-06-20: `cvise`+`delta` → `foundry-retro-tools` (anvil, published v1.5.30); `creduce` → `foundry-atelier` (held, not published); vendored `halfempty` (Apache-2.0), `python3-inators`+`python3-picire` (BSD-3) → retro-tools 1.0.15. **Remaining:** `shrinkray` via `pipx` in `install-foundry-retro-tools.sh` (the `textual>=8` + `textual-plotext` cascade blocks a clean `.deb`; revisit a `.deb` once `textual≥8` lands in universe). [plan](docs/plans/2026-06-20-add-reducers-to-retro-tools.md).
 
 ### Debian ITP
 
@@ -74,6 +73,10 @@ Items to check periodically and act on only if something changes.
 
 - Already rotated layout once (`any-distro`→per-distro); 404s read as intermittent (CloudFront caches the error). Run `task check-apt-repos` before any ISO/devbox build or release. If `ubuntu resolute` breaks or lags upstream `task`, pull the trigger on Phase 2 flip (own `task` fully from foundry-apt). Current upstream: 3.51.1 (vendored); `ubuntu/resolute` served 3.51.1 as of 2026-05-31.
 
+### shrinkray `.deb` — blocked on `textual≥8` in universe ([plan](docs/plans/2026-06-20-add-reducers-to-retro-tools.md))
+
+- shrinkray ships via `pipx` (Tier 3, done 2026-06-21) because a clean `.deb` would need 4 new/upgraded packages, two of them large core libs: `python3-textual` (universe 2.1.2 → ≥8.0.0) + `python3-rich` (universe 13.9.4 → ≥14.2, *forced by textual 8*) + vendoring `python3-textual-plotext` + `python3-plotext`. Overriding universe's rich/textual risks breaking their other consumers. **Re-check `apt-cache policy python3-textual` on `ubuntu:26.04` periodically; once universe ships `textual≥8` (which pulls `rich≥14.2`), the cascade collapses — then `/package shrinkray` (+ `textual-plotext`/`plotext`) and add it to `foundry-retro-tools` `Depends:`** so it bakes into the ISO instead of pipx-on-install.
+
 ### PVSnesLib — bundled WLA DX toolchain ([plan](docs/plans/2026-06-12-package-pvsneslib.md))
 
 - Bundles its own pinned WLA DX (`wla-65816`/`wla-spc700`/`wlalink`) + `816-tcc` under `devkitsnes/bin/` — intentional (library `.obj`s are assembled against the pinned WLA). No `/usr/bin` conflict with the standalone `wla-dx` package. If upstream ships a source-buildable toolchain cleanly, revisit building from source for arch portability (currently amd64-only binary zip).
@@ -92,6 +95,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
+- 2026-06-21 — [reducers-tier3] shrinkray (MIT parallel reducer) wired via `pipx install` in `install-foundry-retro-tools.sh` (codemagic-cli-tools precedent) — completes the test-case-reduction toolchain. No clean `.deb` on 26.04: needs `textual≥8`/`rich≥14.2`/`textual-plotext`, none in universe, and overriding universe's rich/textual would break their other consumers. Cascade probed, pipx path smoke-tested (`shrinkray --help` → 0). See [plan](docs/plans/2026-06-20-add-reducers-to-retro-tools.md).
 - 2026-06-14 — [package-mesen2] packaged Mesen 2.1.1 as `mesen2` (GPL-3.0, NES/SNES/GB/GBA/PCE/SMS/WS) — pre-built .NET-AoT single-file repack (no-strip; bundle appended to ELF), SDL2+libicu78+X11 deps declared, lintian-clean, xvfb headless launch verified; wired into `foundry-emulators-consoles-heavy` 1.0.4 (→ atelier). See [plan](docs/plans/2026-06-14-package-mesen2.md).
 - 2026-06-14 — [ia-keys] Provisioned IA S3 keys via `scripts/bootstrap-ia.sh` (liveness-checks against s3.us.archive.org, R2 backup + GH secrets); fixed `foundry-secrets`→`foundry-linux-secrets` bucket bug in backup-secret.sh + bootstrap-r2.sh. Prereq for the v1.0.0 IA migration.
 - 2026-06-13 — [python-gamedev-extras-weight] won't do — keeping `foundry-python-gamedev-extras` (554 MiB: `libvtk9.5` 276 MiB + numba/llvmlite + scipy + librosa) in anvil; 4 GB target dropped, 8 GB is the floor.

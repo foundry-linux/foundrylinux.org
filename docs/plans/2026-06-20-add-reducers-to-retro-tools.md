@@ -243,6 +243,54 @@ Vendored all three via `/package`; built in `ubuntu:26.04`, all lintian-clean:
 Still deferred: **Tier 3 (shrinkray)** — `pipx` path; the `textual≥8` / `textual-plotext`
 `.deb` cascade remains.
 
+## Tier 3 — execution log (2026-06-21) ✅ done (pipx path)
+
+Probed the `.deb` cascade first (the plan gates `.deb` on "≤1–2 trivial pure-Python deps";
+STOP and report if `textual` pulls in >1 further new dep). Resolved `shrinkray 26.4.14.0`'s
+full tree with `pip install --dry-run --report` in a fresh `ubuntu:26.04` (Python 3.14.4),
+then classified every dist against 26.04 universe. **The `.deb` path needs 4 new/upgraded
+packages, two of them large core libraries — the STOP trigger fired exactly as predicted
+("newer `rich`"):**
+
+| Package | Universe | shrinkray/textual needs | Verdict |
+|---|---|---|---|
+| `python3-textual` | 2.1.2 | **≥8.0.0** (resolved 8.2.7) | below floor → major repackage |
+| `python3-rich` | 13.9.4 | **≥14.2.0** (resolved 15.0.0) | below floor — *forced by textual 8.2.7's `rich>=14.2.0`* |
+| `python3-textual-plotext` | missing | ≥0.2.0 (1.0.1) | new vendor |
+| `python3-plotext` | missing | (textual-plotext dep) 5.3.2 | new vendor |
+
+(Everything else shrinkray needs — `click`, `chardet`, `trio`, `humanize`, `libcst`,
+`binaryornot`, `markdown-it`+`linkify`, `pygments`, `platformdirs` — is already in universe
+at or above floor. `exceptiongroup` is a no-op on 3.14 and would be patched out.)
+
+Overriding universe's `rich`/`textual` with newer versions in our apt repo would also risk
+breaking every *other* universe package that depends on them. So the `.deb` path is both
+deep **and** invasive → **pipx primary path taken**, exactly as the plan designates.
+
+**Implementation** — `foundry-setup/install-foundry-retro-tools.sh` only (no `.deb`, no
+metapackage `Depends:` change, no changelog bump, no vendored-count/LICENSES change):
+- `apt-get install -y foundry-retro-tools pipx`, then `run pipx install shrinkray` as the
+  **calling user** (not `run_sudo`) so the venv lands in `$HOME/.local` — the exact
+  `codemagic-cli-tools` precedent in `install-foundry-ios-development.sh`.
+- Updated the `--help` block and the `Reduce:` summary line to name the full reducer set
+  (`cvise`, `delta`, `halfempty`, `picire` via apt; `shrinkray` via pipx).
+
+**Evidence:**
+- **pipx smoke test (the primary path actually works):** in a clean `ubuntu:26.04`,
+  `pipx install shrinkray` as a non-root user pulled `textual 8.2.7` / `rich 15.0.0` / the
+  whole tree into an isolated venv (zero universe conflict), installed console scripts
+  `shrinkray` + `shrinkray-worker`, and `shrinkray --help` exited 0.
+- **Step 9 (Phase 0 dry-run):** `install-foundry-retro-tools.sh --dry-run` exits 0; output
+  shows the `Installing shrinkray via pipx` step (`[dry-run] pipx install shrinkray`) and the
+  summary's `Reduce: … shrinkray (pipx)` line. PASS.
+- **shellcheck:** `shellcheck -x install-foundry-retro-tools.sh` → CLEAN (the bare-`shellcheck`
+  SC1091 "not following lib.sh" note is pre-existing on every `foundry-setup` script). `bash -n` OK.
+- **e2e harness untouched (correct):** `test-retro-tools-e2e-inner.sh` iterates the
+  metapackage's `Depends:` and looks each up in `TOOL_CHECKS`. shrinkray is pipx-only / not a
+  Depend, so it is *not* iterated — a `[shrinkray]` entry would be dead code. No change.
+
+`.deb` revisit recorded as a Watch item in `TODO.md` (gated on `textual≥8` reaching universe).
+
 ## Release
 
 `git add` touched `foundry-apt/packages/**`, `LICENSES-VENDORED.md`, `README.md`,
