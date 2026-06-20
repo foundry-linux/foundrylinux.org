@@ -109,6 +109,11 @@ tasks:
     cmds:
       - bash scripts/check-repology-badges.sh
 
+  check-publish-meta:
+    desc: "Verify publish-local.sh sets a clean Origin/Label (not aptly's '. <suite>' default)"
+    cmds:
+      - bash scripts/check-publish-metadata.sh
+
   audit-badges:
     desc: "Report Repology-badge coverage across all vendored packages (badge / opt-out / MISSING)"
     cmds:
