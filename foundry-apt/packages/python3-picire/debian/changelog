@@ -1,0 +1,11 @@
+python3-picire (21.8-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry packaging of picire 21.8 (BSD-3-Clause), the parallel
+    Delta Debugging test-case reducer. Wired into foundry-retro-tools.
+  * Patch importlib-metadata-version: read __version__ via importlib.metadata
+    instead of the deprecated pkg_resources, which setuptools >= 81 (Python
+    3.14 / Ubuntu 26.04) no longer ships — the CLI crashed on startup without
+    it. Offered upstream.
+  * See docs/plans/2026-06-20-add-reducers-to-retro-tools.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 20 Jun 2026 00:00:00 +0000

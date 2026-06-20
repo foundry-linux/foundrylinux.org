@@ -1,0 +1,32 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+# Pull dpkg's hardened CFLAGS/CPPFLAGS/LDFLAGS into make variables so we can
+# merge them with the flags upstream's Makefile needs.
+include /usr/share/dpkg/buildflags.mk
+
+GLIB_CFLAGS := $(shell pkg-config --cflags glib-2.0)
+LFS_CFLAGS := $(shell getconf LFS_CFLAGS)
+
+%:
+	dh $@
+
+# Upstream's Makefile hard-assigns CFLAGS (with -march=native, which would make
+# the published binary crash on older CPUs) and ignores dpkg-buildflags. Pass
+# our merged flags as make command-line variables (highest precedence) so the
+# binary is portable and fully hardened. LDLIBS (glib) is left to the Makefile.
+override_dh_auto_build:
+	dh_auto_build -- halfempty \
+	  CFLAGS="$(CFLAGS) -std=gnu99 -fPIC -Wno-format-zero-length -Wno-unused-parameter" \
+	  CPPFLAGS="$(CPPFLAGS) -UNDEBUG -UG_DISABLE_ASSERT -D_GNU_SOURCE $(LFS_CFLAGS) $(GLIB_CFLAGS)" \
+	  LDFLAGS="$(LDFLAGS)"
+
+override_dh_auto_test:
+	# upstream `make test` (make -C test) needs extra fixtures and fails in a
+	# clean build env; not required to ship the binary.
+
+override_dh_auto_clean:
+	rm -f *.o monitor.h halfempty
+
+# Upstream ships no `install` target — place the single binary by hand.
+override_dh_auto_install:
+	install -D -m 0755 halfempty $(CURDIR)/debian/halfempty/usr/bin/halfempty

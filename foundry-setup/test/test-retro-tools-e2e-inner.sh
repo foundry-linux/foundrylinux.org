@@ -57,6 +57,8 @@ declare -A TOOL_CHECKS=(
     # command — that's git-delta). Presence-check the three binaries rather
     # than invoking them, since they read stdin and would hang the harness.
     [delta]="command -v singledelta && command -v multidelta && command -v topformflat"
+    [halfempty]="halfempty --help"
+    [python3-picire]="picire --help"
 )
 
 # Extract Depends: from the metapackage control file. Strips ${shlibs:Depends}

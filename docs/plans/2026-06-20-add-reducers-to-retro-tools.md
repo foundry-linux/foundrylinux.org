@@ -217,6 +217,32 @@ Wired the universe tools (`cvise`+`delta` → retro-tools **1.0.14**; `creduce` 
 Deferred to Tier 2/3: vendored builds (halfempty/picire), real ISO size measurement (step 2),
 full e2e harness run (step 8 — needs 1.0.14 published to the live repo first).
 
+## Tier 2 — execution log (2026-06-20) ✅ done
+
+Vendored all three via `/package`; built in `ubuntu:26.04`, all lintian-clean:
+
+- **python3-inators 2.1.1** (BSD-3, pure-Python `src/` lib, no deps) — 9 KB, imports OK.
+  Needed `pybuild-plugin-pyproject` in Build-Depends (a `pyproject.toml [build-system]` makes
+  pybuild take the PEP517 path on 26.04) and `SETUPTOOLS_SCM_PRETEND_VERSION` (release sdist
+  has no git tags). *(Skill gap: the Python Build-Depends table should add the pyproject plugin.)*
+- **python3-picire 21.8** (BSD-3) — 20.8 KB, ships `picire(1)` (man page hand-written from the
+  real `--help`). Quilt patch `0001-use-importlib-metadata-for-version`: upstream read its own
+  version via `pkg_resources`, dropped from setuptools ≥81 on Python 3.14 → switched to
+  `importlib.metadata` (offered upstream). Smoke test reduced `a/KEEP/b` → `KEEP` (confirms the
+  inators-2.1.1 runtime integration — the old-pkg/new-dep risk).
+- **halfempty 0.40** (Apache-2.0, C) — 22.8 KB, ships `halfempty(1)`. `Build-Depends:
+  bsdextrautils` (hexdump). `override_dh_auto_build` drops upstream's `-march=native` (would
+  SIGILL on older CPUs) and routes dpkg-buildflags through the Makefile → PIE + full RELRO +
+  BIND_NOW + FORTIFY_SOURCE=3 + stack-protector (readelf-verified); `override_dh_auto_test`
+  skips the failing upstream test harness. Smoke test reduced 8 → 5 bytes (`KEEP\n`).
+- **Wiring:** `foundry-retro-tools` **1.0.15** `Depends: … halfempty, python3-picire`; local-repo
+  resolve pulls halfempty + python3-picire + python3-inators (transitive) + cvise/delta →
+  `RESOLVE_OK`. LICENSES-VENDORED + README vendored table + e2e `TOOL_CHECKS` + CLAUDE.md
+  count (→26) updated; `task check-licenses` PASS, `shellcheck` clean.
+
+Still deferred: **Tier 3 (shrinkray)** — `pipx` path; the `textual≥8` / `textual-plotext`
+`.deb` cascade remains.
+
 ## Release
 
 `git add` touched `foundry-apt/packages/**`, `LICENSES-VENDORED.md`, `README.md`,

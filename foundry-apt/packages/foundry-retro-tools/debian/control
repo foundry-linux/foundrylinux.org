@@ -31,7 +31,9 @@ Depends: ${misc:Depends},
  pvsneslib-core,
  asar-snes,
  cvise,
- delta
+ delta,
+ halfempty,
+ python3-picire
 Description: retro game reverse-engineering, porting and authoring toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine and
  authoring retro-console assets:
@@ -49,9 +51,12 @@ Description: retro game reverse-engineering, porting and authoring toolchain
  asar-snes (SNES 65816/SPC700/SuperFX cross-assembler by RPGHacker/Alcaro;
  named asar-snes to coexist with the @electron/asar npm tool),
  cvise (super-parallel C/C++ test-case reducer — shrink a compiler-crashing or
- miscompiling source file down to a minimal, filable repro) and delta
+ miscompiling source file down to a minimal, filable repro), delta
  (singledelta / multidelta / topformflat — the original line-based
- delta-debugging reducers).
+ delta-debugging reducers), halfempty (Google Project Zero's parallel,
+ language-agnostic file-bisection minimizer — reduces ROMs, binaries and crash
+ inputs, not just source) and python3-picire (parallel Delta Debugging for any
+ line- or char-delimited input).
  .
  creduce (the C-Reduce reference reducer that cvise supersedes) is not here —
  it lives in the atelier edition, since it duplicates cvise and pulls ~194 MiB

@@ -1,0 +1,114 @@
+.TH PICIRE 1 "2026-06-20" "picire 21.8" "User Commands"
+.SH NAME
+picire \- parallel Delta Debugging framework / automatic test-case reducer
+.SH SYNOPSIS
+.B picire
+.B \-i
+.I FILE
+.B \-\-test
+.I FILE
+.RI [ options ]
+.SH DESCRIPTION
+.B picire
+is a Python implementation of the (parallel) Delta Debugging algorithm. Given a
+failing input file and a test command that reports whether a candidate input is
+still "interesting" (for example, still triggers a crash), picire repeatedly
+removes parts of the input and keeps the smallest variant that remains
+interesting, yielding a minimal reproducer.
+.PP
+It is language-agnostic \(em it reduces any line- or character-delimited input
+\(em and complements the C/C++-aware reducers
+.BR cvise (1)
+and
+.BR creduce (1).
+.SH OPTIONS
+.TP
+.BR \-i ", " \-\-input " \fIFILE\fR"
+Test case to be reduced.
+.TP
+.BI \-\-test " FILE"
+Test command that decides the interestingness of an input.
+.TP
+.BR \-o ", " \-\-out " \fIDIR\fR"
+Working directory (default: input.timestamp).
+.TP
+.BI \-\-atom " NAME"
+Atom (granularity) of the input: char, line, or both (default: line).
+.TP
+.BI \-\-cache " NAME"
+Cache strategy: config, content, or none (default: config).
+.TP
+.BI \-\-split " NAME"
+Split algorithm: balanced or zeller (default: zeller).
+.TP
+.BI \-\-granularity " N"
+Initial granularity and split factor (integer or 'inf'; default: 2).
+.TP
+.BI \-\-encoding " NAME"
+Test-case encoding (default: autodetect).
+.TP
+.BR \-p ", " \-\-parallel
+Run Delta Debugging in parallel.
+.TP
+.BR \-c ", " \-\-combine\-loops
+Combine subset and complement check loops for more parallelization
+(parallel mode only).
+.TP
+.BR \-j ", " \-\-jobs " \fIN\fR"
+Maximum number of test commands to run in parallel (parallel mode only;
+default: number of CPUs).
+.TP
+.BR \-u ", " \-\-max\-utilization " \fIN\fR"
+Maximum CPU utilization allowed before starting new parallel jobs
+(parallel mode only; default: 100).
+.TP
+.B \-\-complement\-first
+Check complements before subsets.
+.TP
+.BI \-\-subset\-iterator " NAME"
+Subset ordering: backward, forward, random, or skip (default: forward).
+.TP
+.BI \-\-complement\-iterator " NAME"
+Complement ordering: backward, forward, random, or skip (default: forward).
+.TP
+.BR \-l ", " \-\-log\-level " \fILEVEL\fR"
+Diagnostic verbosity: TRACE, DEBUG, INFO, WARNING, ERROR, CRITICAL, or DISABLE
+(default: INFO).
+.TP
+.BR \-v ", " \-\-verbose
+Verbose mode (alias for \-\-log\-level DEBUG).
+.TP
+.BR \-q ", " \-\-quiet
+Quiet mode (alias for \-\-log\-level DISABLE).
+.TP
+.B \-\-no\-cleanup
+Keep generated temporary files.
+.TP
+.B \-\-version
+Show the program's version and exit.
+.TP
+.BR \-h ", " \-\-help
+Show the help message and exit.
+.SH EXAMPLE
+Reduce
+.I crash.c
+to the smallest file for which
+.I ./is\-interesting.sh
+still exits successfully, using all CPUs:
+.PP
+.RS
+.nf
+picire \-\-input crash.c \-\-test ./is\-interesting.sh \-\-parallel
+.fi
+.RE
+.SH SEE ALSO
+.BR cvise (1),
+.BR creduce (1),
+.BR halfempty (1)
+.SH AUTHORS
+picire is developed by Renata Hodovan and Akos Kiss
+.RB ( https://github.com/renatahodovan/picire ).
+This manual page was written for the Foundry Linux package.
+.SH COPYRIGHT
+Copyright \(co 2016\-2021 Renata Hodovan, Akos Kiss. Released under the
+BSD\-3\-Clause license.

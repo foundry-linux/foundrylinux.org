@@ -1,0 +1,30 @@
+Source: python3-picire
+Section: python
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               pybuild-plugin-pyproject,
+               python3-all,
+               python3-setuptools,
+               python3-setuptools-scm
+Standards-Version: 4.7.0
+Homepage: https://github.com/renatahodovan/picire
+Rules-Requires-Root: no
+
+Package: python3-picire
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+         python3-chardet,
+         python3-inators,
+         python3-psutil
+Description: parallel Delta Debugging framework — automatic test-case reducer
+ picire is a Python implementation of the (parallel) Delta Debugging
+ algorithm. Given a failing input and a test command that decides whether a
+ candidate is still "interesting" (e.g. still triggers a crash), picire
+ repeatedly removes chunks and keeps the smallest variant that still fails —
+ producing a minimal reproducer. Invaluable when filing compiler, interpreter
+ or tooling bug reports.
+ .
+ Unlike cvise/creduce (which are C/C++-aware), picire is language-agnostic and
+ reduces any line- or character-delimited input. Ships the picire(1) CLI.

@@ -70,6 +70,7 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 |---|---|---|
 | `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | Motorola 6800/6809/6309 family disassembler. `any`. |
 | `ghidra` | [ghidra-sre.org](https://ghidra-sre.org/) (NSA) | Software reverse-engineering framework. `amd64`. |
+| `halfempty` | [googleprojectzero/halfempty](https://github.com/googleprojectzero/halfempty) | Parallel, language-agnostic file-bisection test-case minimizer. `any`. |
 | `libvgm` | [ValleyBell/libvgm](https://github.com/ValleyBell/libvgm) | Chip-register VGM playback library + player utilities. `any`. |
 | `vgmstream` | [vgmstream.org](https://vgmstream.org/) | Video-game audio decoder (CLI). `any`. |
 | `ppsspp` | [ppsspp.org](https://www.ppsspp.org) | Fast, portable PSP emulator. `any`. |
@@ -80,6 +81,8 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 | `python3-librosa` | [librosa.org](https://librosa.org) | Audio and music analysis library for Python. `all`. |
 | `python3-mss` | [BoboTiG/python-mss](https://github.com/BoboTiG/python-mss) | Ultra-fast cross-platform screenshot library for Python. `all`. |
 | `python3-pydub` | [pydub.com](http://pydub.com) | High-level audio manipulation library for Python. `all`. |
+| `python3-inators` | [renatahodovan/inators](https://github.com/renatahodovan/inators) | Utility helpers for picire (test-case reduction). `all`. |
+| `python3-picire` | [renatahodovan/picire](https://github.com/renatahodovan/picire) | Parallel Delta Debugging test-case reducer (CLI). `all`. |
 | `blender-asset-finder` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | Blender add-on: search/download 3D assets from online repos. `all`. |
 | `blender-asset-finder-cli` | [wbniv/WorldFoundry](https://github.com/wbniv/WorldFoundry) | CLI companion to the `blender-asset-finder` add-on. `all`. |
 

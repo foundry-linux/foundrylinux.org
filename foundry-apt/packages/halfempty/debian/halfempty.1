@@ -1,0 +1,67 @@
+.TH HALFEMPTY 1 "2026-06-20" "halfempty 0.40" "User Commands"
+.SH NAME
+halfempty \- fast, parallel file bisection / test-case minimizer
+.SH SYNOPSIS
+.B halfempty
+.RI [ OPTION ...]
+.I SCRIPT INPUTFILE
+.SH DESCRIPTION
+.B halfempty
+reduces a large input file to a minimal one that still satisfies a test, by
+running a lazy, parallel bisection.
+.I SCRIPT
+is an executable that reads a candidate input and exits successfully while the
+input is still "interesting" (for example, still reproduces a bug);
+.I INPUTFILE
+is the file to minimize.
+.PP
+Unlike source-aware reducers such as
+.BR cvise (1)
+and
+.BR creduce (1),
+halfempty treats the input as an opaque byte stream, so it can minimize any
+file \(em source, binary blobs, ROMs, crash inputs, fuzzer output \(em and
+parallelizes aggressively for speed.
+.SH OPTIONS
+.TP
+.BR \-o ", " \-\-output =\fIFILENAME\fR
+Location to store the minimized output (default: halfempty.out).
+.TP
+.B \-\-stable
+Re-run strategies until the result is stable.
+.TP
+.B \-\-continue
+Do not exit; keep trying until interrupted.
+.TP
+.B \-\-noverify
+Do not verify that the original input is interesting (not recommended).
+.TP
+.B \-\-monitor
+Monitor progress in a web browser.
+.TP
+.B \-\-gen\-intermediate
+Generate intermediate (reduced) files while processing.
+.TP
+.B \-\-line\-buffered
+Ensure standard output is only line buffered.
+.TP
+.BR \-q ", " \-\-quiet
+Minimize all messages; print only errors.
+.TP
+.BR \-h ", " \-\-help
+Show help options.
+.PP
+Further option groups are available via
+.BR \-\-help\-all ", " \-\-help\-threads ", " \-\-help\-process ", " \-\-help\-bisect ", "
+and
+.BR \-\-help\-zero .
+.SH SEE ALSO
+.BR cvise (1),
+.BR creduce (1),
+.BR picire (1)
+.SH AUTHORS
+halfempty was written by Tavis Ormandy at Google Project Zero
+.RB ( https://github.com/googleprojectzero/halfempty ).
+This manual page was written for the Foundry Linux package.
+.SH COPYRIGHT
+Copyright \(co 2018 Google LLC. Released under the Apache\-2.0 license.

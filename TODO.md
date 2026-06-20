@@ -27,7 +27,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 ### Packaging — new upstreams
 
 - [ ] **Package `bsnes-jg`** — the jgemu-framework bsnes fork (GPL-3.0), an accuracy-focused SNES emulator for `foundry-emulators-consoles-heavy`. Check Ubuntu 26.04 universe first per the always-check-universe rule; use the `/package` skill. (Companion `mesen2` shipped 2026-06-14 — see Done + [plan](docs/plans/2026-06-14-package-mesen2.md).) No plan yet.
-- [ ] **Test-case reduction toolchain** — Tier 1 ✅ done 2026-06-20 (`cvise`+`delta` → `foundry-retro-tools` 1.0.14 (anvil); `creduce` → `foundry-atelier` 0.9.6, atelier-only since it's redundant with cvise + ~194 MiB LLVM). **Tier 2 pending:** vendor `halfempty` (C/Apache-2.0), `python3-inators` + `python3-picire` (BSD-3) via `/package`. **Tier 3 pending:** `shrinkray` via `pipx` (deep `textual>=8` cascade blocks a clean `.deb`). [plan](docs/plans/2026-06-20-add-reducers-to-retro-tools.md).
+- [ ] **Test-case reduction toolchain — Tier 3 (shrinkray)** — Tiers 1+2 ✅ done 2026-06-20: `cvise`+`delta` → `foundry-retro-tools` (anvil, published v1.5.30); `creduce` → `foundry-atelier` (held, not published); vendored `halfempty` (Apache-2.0), `python3-inators`+`python3-picire` (BSD-3) → retro-tools 1.0.15. **Remaining:** `shrinkray` via `pipx` in `install-foundry-retro-tools.sh` (the `textual>=8` + `textual-plotext` cascade blocks a clean `.deb`; revisit a `.deb` once `textual≥8` lands in universe). [plan](docs/plans/2026-06-20-add-reducers-to-retro-tools.md).
 
 ### Debian ITP
 
@@ -40,6 +40,7 @@ Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) 
 - [ ] **ITP: `drmon`** — terminal system monitor (GPL-2.0)
 - [ ] **ITP: `f9dasm`** — MC6800/6809/68HC12 disassembler (GPL-2.0+)
 - [ ] **ITP: `ghidra`** — NSA reverse-engineering framework (Apache-2.0)
+- [ ] **ITP: `halfempty`** — parallel file-bisection test-case minimizer (Apache-2.0)
 - [ ] **ITP: `ldtk`** — level design toolkit (MIT)
 - [ ] **ITP: `libvgm`** — VGM chiptune audio library (GPL-2.0+)
 - [ ] **ITP: `m8te`** — SNES 8bpp tile/map editor, Mono runtime (MIT)
@@ -47,8 +48,10 @@ Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) 
 - [ ] **ITP: `ppsspp`** — PSP emulator (GPL-2.0+)
 - [ ] **ITP: `pvsneslib`** — SNES homebrew SDK (Zlib)
 - [ ] **ITP: `python3-glfw`** — Python GLFW bindings (MIT)
+- [ ] **ITP: `python3-inators`** — utility helpers for picire (BSD-3-Clause)
 - [ ] **ITP: `python3-librosa`** — Python audio analysis library (ISC)
 - [ ] **ITP: `python3-mss`** — Python multi-platform screenshot library (MIT)
+- [ ] **ITP: `python3-picire`** — parallel Delta Debugging reducer (BSD-3-Clause)
 - [ ] **ITP: `python3-pydub`** — Python audio manipulation library (MIT)
 - [ ] **ITP: `ruff`** — Python linter/formatter written in Rust (MIT)
 - [ ] **ITP: `snes9x-gtk`** — SNES emulator ⚠️ Snes9x non-commercial license; likely non-DFSG — research before filing

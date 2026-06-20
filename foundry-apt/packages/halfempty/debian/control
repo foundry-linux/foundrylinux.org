@@ -1,0 +1,25 @@
+Source: halfempty
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               pkg-config,
+               libglib2.0-dev,
+               bsdextrautils
+Standards-Version: 4.7.0
+Homepage: https://github.com/googleprojectzero/halfempty
+Rules-Requires-Root: no
+
+Package: halfempty
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: fast, parallel file bisection / test-case minimizer
+ halfempty (by Tavis Ormandy / Google Project Zero) reduces a large input file
+ to a minimal one that still satisfies a test, using a lazy, parallel bisection
+ algorithm. You supply a script that exits successfully while the input is still
+ "interesting" (e.g. still triggers a crash) and the file to minimize.
+ .
+ Unlike source-aware reducers such as cvise and creduce, halfempty treats the
+ input as an opaque byte stream, so it can minimize any file — source, binary
+ blobs, ROMs, crash inputs, fuzzer output — and parallelizes aggressively for
+ speed.

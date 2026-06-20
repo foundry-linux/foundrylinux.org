@@ -1,0 +1,31 @@
+Description: read __version__ via importlib.metadata instead of pkg_resources
+ picire/cli.py obtained its own version via
+ pkg_resources.get_distribution(__package__).version, but pkg_resources is
+ deprecated and no longer shipped by setuptools >= 81 — the default on
+ Python 3.12+ and Ubuntu 26.04's Python 3.14 — so the CLI aborted at import
+ time with "ModuleNotFoundError: No module named 'pkg_resources'".
+ importlib.metadata (stdlib since 3.8) is the modern, dependency-free
+ equivalent and drops the pkg_resources requirement entirely.
+Author: Foundry Linux <packages@foundrylinux.org>
+Forwarded: not-yet
+Last-Update: 2026-06-20
+--- a/picire/cli.py
++++ b/picire/cli.py
+@@ -16,7 +16,7 @@
+ 
+ import chardet
+ import inators
+-import pkg_resources
++from importlib.metadata import version
+ 
+ from inators import log as logging
+ 
+@@ -29,7 +29,7 @@
+ from .subprocess_test import ConcatTestBuilder, SubprocessTest
+ 
+ logger = logging.getLogger('picire')
+-__version__ = pkg_resources.get_distribution(__package__).version
++__version__ = version(__package__)
+ 
+ 
+ def create_parser():

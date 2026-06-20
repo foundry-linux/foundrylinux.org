@@ -1,0 +1,12 @@
+halfempty (0.40-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry packaging of halfempty 0.40 (Apache-2.0), the parallel
+    file-bisection test-case minimizer from Google Project Zero. Wired into
+    foundry-retro-tools.
+  * Build portably: drop upstream's -march=native (would SIGILL on older CPUs)
+    and route dpkg-buildflags through the Makefile so the binary is fully
+    hardened (PIE, full RELRO, BIND_NOW, FORTIFY_SOURCE, stack-protector).
+  * Build-Depend on bsdextrautils for hexdump (used to embed monitor.tpl).
+  * See docs/plans/2026-06-20-add-reducers-to-retro-tools.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 20 Jun 2026 00:00:00 +0000

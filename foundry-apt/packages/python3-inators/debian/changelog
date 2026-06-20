@@ -1,0 +1,7 @@
+python3-inators (2.1.1-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry packaging of inators 2.1.1 (BSD-3-Clause) — the pure-Python
+    utility library required by python3-picire. See
+    docs/plans/2026-06-20-add-reducers-to-retro-tools.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 20 Jun 2026 00:00:00 +0000

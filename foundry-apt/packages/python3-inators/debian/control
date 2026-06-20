@@ -1,0 +1,25 @@
+Source: python3-inators
+Section: python
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               pybuild-plugin-pyproject,
+               python3-all,
+               python3-setuptools,
+               python3-setuptools-scm
+Standards-Version: 4.7.0
+Homepage: https://github.com/renatahodovan/inators
+Rules-Requires-Root: no
+
+Package: python3-inators
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: small utility helpers for the inators test-case-reduction tools
+ inators is a tiny pure-Python utility library (argument-parsing helpers,
+ logging shims, import utilities) shared by Renata Hodovan and Akos Kiss's
+ test-case-reduction tooling — most notably picire, the parallel Delta
+ Debugging framework.
+ .
+ Packaged here as a runtime dependency of python3-picire. BSD-3-Clause;
+ no runtime dependencies of its own.

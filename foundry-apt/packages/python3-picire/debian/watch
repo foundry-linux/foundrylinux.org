@@ -1,0 +1,2 @@
+version=4
+https://github.com/renatahodovan/picire/tags .*/archive/refs/tags/v?@ANY_VERSION@\.tar\.gz
