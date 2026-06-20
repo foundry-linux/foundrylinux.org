@@ -40,7 +40,7 @@ The nesting is `foundry-core ⊆ foundry-anvil ⊆ foundry-sprite ⊆ foundry-at
 
 | Package | Pulls in |
 |---|---|
-| `foundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm) — **ghidra moved to `foundry-atelier`** (1.0.7, 2026-06-04: its ~860 MiB of jars kept anvil off a 4 GB USB stick) |
+| `foundry-retro-tools` | [mame](https://www.mamedev.org/), [dasm](https://dasm-assembler.github.io/), [cc65](https://cc65.github.io/), z80*, [radare2](https://www.radare.org/), [binwalk](https://github.com/ReFirmLabs/binwalk), [sox](http://sox.sourceforge.net/), m68k binutils, [xa65](https://www.floodgap.com/retrotech/xa/), [f9dasm](https://github.com/Arakula/f9dasm), [vgmstream](https://vgmstream.org/), [libvgm](https://github.com/ValleyBell/libvgm), [cvise](https://github.com/marxin/cvise) + delta (C/C++ test-case reducers; 1.0.14) — **ghidra moved to `foundry-atelier`** (1.0.7, 2026-06-04: its ~860 MiB of jars kept anvil off a 4 GB USB stick) |
 | `foundry-game-frameworks` | 2D/3D game‑dev frameworks, headers, and shader tools |
 | `foundry-image-cli` | command‑line image manipulation utilities |
 | `foundry-python-gamedev` / `-extras` | Python game‑dev base + extras stack |

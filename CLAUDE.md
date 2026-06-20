@@ -49,7 +49,7 @@ foundry-setup/
   setup-worldfoundry-apt-source.sh             wire apt.worldfoundry.org (key + sources.list.d)
   install-foundry-engine-build-deps.sh   build-essential, cmake, libx11-dev, libgl/glu dev, gdb, xxd, python3, pkg-config, git, curl, wget, unzip (Ubuntu universe)
   install-foundry-blender.sh             apt install worldfoundry-blender-addons (apt.worldfoundry.org → Blender + worldfoundry-blender-editor-exporter + blender-asset-finder)
-  install-foundry-retro-tools.sh         apt install foundry-retro-tools (apt.foundrylinux.org → mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream; ghidra is atelier-only since 2026-06-04 so anvil fits a 4 GB stick)
+  install-foundry-retro-tools.sh         apt install foundry-retro-tools (apt.foundrylinux.org → mame, cc65, dasm, z80*, radare2, binwalk, sox, m68k binutils, xa65, f9dasm, libvgm, vgmstream, cvise + delta test-case reducers; ghidra + creduce are atelier-only so anvil fits a 4 GB stick)
   install-foundry-android-development.sh apt install foundry-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c; enables Ubuntu multiverse)
   install-foundry-ios-development.sh     apt install foundry-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx install codemagic-cli-tools
   install-task.sh                              go-task (Cloudsmith)

@@ -27,6 +27,7 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 ### Packaging — new upstreams
 
 - [ ] **Package `bsnes-jg`** — the jgemu-framework bsnes fork (GPL-3.0), an accuracy-focused SNES emulator for `foundry-emulators-consoles-heavy`. Check Ubuntu 26.04 universe first per the always-check-universe rule; use the `/package` skill. (Companion `mesen2` shipped 2026-06-14 — see Done + [plan](docs/plans/2026-06-14-package-mesen2.md).) No plan yet.
+- [ ] **Test-case reduction toolchain** — Tier 1 ✅ done 2026-06-20 (`cvise`+`delta` → `foundry-retro-tools` 1.0.14 (anvil); `creduce` → `foundry-atelier` 0.9.6, atelier-only since it's redundant with cvise + ~194 MiB LLVM). **Tier 2 pending:** vendor `halfempty` (C/Apache-2.0), `python3-inators` + `python3-picire` (BSD-3) via `/package`. **Tier 3 pending:** `shrinkray` via `pipx` (deep `textual>=8` cascade blocks a clean `.deb`). [plan](docs/plans/2026-06-20-add-reducers-to-retro-tools.md).
 
 ### Debian ITP
 

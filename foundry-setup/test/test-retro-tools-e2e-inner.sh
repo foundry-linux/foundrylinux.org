@@ -52,6 +52,11 @@ declare -A TOOL_CHECKS=(
     [libvgm]="vgm-player --help && vgm2wav --help"
     [vgmstream]="vgmstream-cli"
     [ghidra]="command -v ghidra && ghidra-headless"
+    [cvise]="cvise --help"
+    # delta ships singledelta/multidelta/topformflat (there is no 'delta'
+    # command — that's git-delta). Presence-check the three binaries rather
+    # than invoking them, since they read stdin and would hang the harness.
+    [delta]="command -v singledelta && command -v multidelta && command -v topformflat"
 )
 
 # Extract Depends: from the metapackage control file. Strips ${shlibs:Depends}

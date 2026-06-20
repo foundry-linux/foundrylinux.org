@@ -5,7 +5,7 @@
 #
 #   apt (from foundry-apt/packages/foundry-retro-tools/debian/control Depends):
 #     mame mame-tools dasm cc65 z80dasm z80asm radare2 binwalk sox
-#     binutils-m68k-linux-gnu xa65 f9dasm libvgm vgmstream ghidra
+#     binutils-m68k-linux-gnu xa65 f9dasm libvgm vgmstream cvise delta
 #
 # What you get for the 6502 specifically:
 #   sim65   (from cc65)     — 6502 instruction-set simulator / unit-test runner
@@ -27,7 +27,7 @@ Phase 0 installer for foundry-retro-tools
 Installs the arcade reverse-engineering / 6502 / Z80 / 68k / 6809 porting
 toolchain via apt.foundrylinux.org:
   MAME, dasm, cc65 (sim65 + da65), z80dasm, z80asm, radare2, binwalk, sox,
-  xa65, f9dasm, libvgm (vgm2wav + vgm-player), vgmstream-cli, ghidra.
+  xa65, f9dasm, libvgm (vgm2wav + vgm-player), vgmstream-cli, cvise, delta.
 
 Usage: $(basename "$0") [--dry-run|-n] [-h|--help]
 
@@ -78,5 +78,6 @@ step "foundry-retro-tools install complete"
 ok "6502: sim65, da65, mame, radare2, xa65"
 ok "Z80:  z80dasm, z80asm, mame, radare2"
 ok "68k:  m68k-linux-gnu-objdump, mame, radare2"
-ok "6809: ghidra (apt), f9dasm (apt), mame"
+ok "6809: f9dasm (apt), mame"
 ok "Audio: sox, vgmstream-cli (apt), libvgm (apt), mame -wavwrite"
+ok "Reduce: cvise (C/C++ test-case minimiser), delta (singledelta/multidelta/topformflat)"

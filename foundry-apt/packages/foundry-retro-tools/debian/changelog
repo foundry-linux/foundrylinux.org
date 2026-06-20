@@ -1,3 +1,12 @@
+foundry-retro-tools (1.0.14) resolute; urgency=medium
+
+  * Add cvise (super-parallel C/C++ test-case reducer) and delta
+    (singledelta/multidelta/topformflat line-based reducers), both from Ubuntu
+    universe. creduce is atelier-only (redundant with cvise, ~194 MiB LLVM).
+    See docs/plans/2026-06-20-add-reducers-to-retro-tools.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 20 Jun 2026 00:00:00 +0000
+
 foundry-retro-tools (1.0.13) resolute; urgency=medium
 
   * Add asar-snes 1.91 (SNES 65816/SPC700/SuperFX cross-assembler by

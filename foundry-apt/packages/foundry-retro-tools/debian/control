@@ -29,7 +29,9 @@ Depends: ${misc:Depends},
  tilemap-studio,
  wla-dx,
  pvsneslib-core,
- asar-snes
+ asar-snes,
+ cvise,
+ delta
 Description: retro game reverse-engineering, porting and authoring toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine and
  authoring retro-console assets:
@@ -45,7 +47,13 @@ Description: retro game reverse-engineering, porting and authoring toolchain
  pvsneslib-core (PVSnesLib SNES homebrew SDK — 816-tcc C compiler, pinned
  WLA DX, and a C library, used via PVSNESLIB_HOME + make),
  asar-snes (SNES 65816/SPC700/SuperFX cross-assembler by RPGHacker/Alcaro;
- named asar-snes to coexist with the @electron/asar npm tool).
+ named asar-snes to coexist with the @electron/asar npm tool),
+ cvise (super-parallel C/C++ test-case reducer — shrink a compiler-crashing or
+ miscompiling source file down to a minimal, filable repro) and delta
+ (singledelta / multidelta / topformflat — the original line-based
+ delta-debugging reducers).
  .
- ghidra (the NSA SRE framework, ~860 MiB) is not here — it lives in the
+ creduce (the C-Reduce reference reducer that cvise supersedes) is not here —
+ it lives in the atelier edition, since it duplicates cvise and pulls ~194 MiB
+ of LLVM. ghidra (the NSA SRE framework, ~860 MiB) is not here — it lives in the
  atelier edition, to keep core/anvil small enough for a 4 GB USB stick.
