@@ -1,5 +1,7 @@
 # Plan: add cvise + the test-case-reduction toolchain to foundry-retro-tools
 
+> **STATUS — ✅ COMPLETE (all 3 tiers), shipped 2026-06-21.** Tier 1 (`cvise`+`delta`→retro-tools, `creduce`→atelier) and Tier 2 (vendored `halfempty`, `python3-inators`, `python3-picire`) landed 2026-06-20; **Tier 3 (`shrinkray` via `pipx`)** landed 2026-06-21. On `main`, pushed to `origin`: `3cba5b8` (shrinkray Phase 0) + `856e596` (ci: `actions/cache`→v5). No `v*` tag pushed — `foundry-retro-tools` is not yet re-published to the live apt repo (publish on Will's go-ahead). Per-tier execution logs at the bottom.
+
 ## Revisions from review (2026-06-20, max-effort critique)
 
 Findings that changed the first draft (all verified in a fresh `ubuntu:26.04`):
