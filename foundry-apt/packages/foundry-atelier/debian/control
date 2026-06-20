@@ -19,7 +19,8 @@ Depends: ${misc:Depends},
  foundry-ios-development,
  worldfoundry-development,
  ghidra,
- foundry-cv
+ foundry-cv,
+ creduce
 Description: Foundry Linux complete edition — everything
  foundry-sprite plus every optional Foundry metapackage and cross-repo
  development tooling — the "give me the lot" install, around 10 GB on
@@ -27,7 +28,8 @@ Description: Foundry Linux complete edition — everything
  .
    * foundry-sprite                       anvil + heavy graphics + audio
    * foundry-emulators-vintage            VICE, Atari800, FBZX (multiverse)
-   * foundry-emulators-consoles-heavy     Dolphin, PCSX2, Yuzu, RetroArch, ppsspp, snes9x-gtk
+   * foundry-emulators-consoles-heavy     Dolphin, PCSX2, Yuzu, RetroArch,
+                                          ppsspp, snes9x-gtk
    * foundry-game-reimplementations       VCMI, OpenRCT2, Fheroes2, Exult
    * foundry-free-games                   0 A.D., SuperTuxKart, FlightGear, …
    * foundry-android-development          OpenJDK 17, adb, NDK r26c
@@ -38,6 +40,9 @@ Description: Foundry Linux complete edition — everything
                                           4 GB USB stick)
    * foundry-cv                           OpenCV + libvtk9.5 + tesseract-ocr +
                                           libvips-tools + gstreamer1.0-opencv
+   * creduce                              C-Reduce — reference reducer cvise
+                                          supersedes (~194 MiB LLVM; atelier-
+                                          only, redundant with cvise in anvil)
    * Java 17 + 21 LTS runtimes            via foundry-core
  .
  Requires multiverse for the vintage emulators and game

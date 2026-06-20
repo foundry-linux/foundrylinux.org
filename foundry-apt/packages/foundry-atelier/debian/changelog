@@ -1,3 +1,13 @@
+foundry-atelier (0.9.6) resolute; urgency=medium
+
+  * Add creduce to Depends - the C-Reduce reference test-case reducer that
+    cvise supersedes. Atelier-only: redundant with cvise (now in
+    foundry-retro-tools) and pulls ~194 MiB of LLVM, kept off the anvil ISO.
+    See docs/plans/2026-06-20-add-reducers-to-retro-tools.md.
+  * Wrap an over-long extended-description line (lintian).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 20 Jun 2026 00:00:00 +0000
+
 foundry-atelier (0.9.5) resolute; urgency=medium
 
   * Drop explicit openjdk-21-jre-headless dep — now provided by foundry-core
