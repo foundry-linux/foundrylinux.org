@@ -84,6 +84,13 @@ if command -v apt-get >/dev/null; then
 fi
 
 echo "=== dpkg-buildpackage -us -uc -b ==="
+# Emit the source package (.dsc + tarballs) -> dist/ for the apt Sources index
+# (best-effort; never blocks the binary build below). See scripts/lib-source-build.sh.
+if [[ -f "$REPO_ROOT/scripts/lib-source-build.sh" ]]; then
+    # shellcheck source=/dev/null
+    source "$REPO_ROOT/scripts/lib-source-build.sh"
+    emit_source_package "$SRC_DIR" "$WORKDIR" "$REPO_ROOT" || true
+fi
 ( cd "$SRC_DIR" && dpkg-buildpackage -us -uc -b )
 
 ARCH=$(dpkg --print-architecture)

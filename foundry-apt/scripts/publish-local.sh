@@ -53,7 +53,7 @@ aptly -config="$APTLY_CONFIG" publish repo \
     "${gpg_args[@]}" \
     -origin="Foundry Linux" \
     -label="Foundry Linux" \
-    -architectures=amd64,arm64,all \
+    -architectures=amd64,arm64,all,source \
     -distribution="$SUITE" \
     foundry filesystem:public:
 

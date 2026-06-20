@@ -116,6 +116,13 @@ echo "=== Overlaying debian/ ==="
 cp -a "$PKG_DIR/debian" "$SRC_DIR/"
 
 echo "=== dpkg-buildpackage -us -uc -b -d ==="
+# Emit the source package (.dsc + tarballs) -> dist/ for the apt Sources index
+# (best-effort; never blocks the binary build below). See lib-source-build.sh.
+if [[ -f "$APT_ROOT/scripts/lib-source-build.sh" ]]; then
+    # shellcheck source=/dev/null
+    source "$APT_ROOT/scripts/lib-source-build.sh"
+    emit_source_package "$SRC_DIR" "$WORKDIR" "$APT_ROOT" || true
+fi
 ( cd "$SRC_DIR" && dpkg-buildpackage -us -uc -b -d --no-sign )
 
 ARCH=$(dpkg --print-architecture)

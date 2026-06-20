@@ -44,12 +44,14 @@ build_canonical() {
         return 1
     fi
 
-    # Skip if a .deb for this exact version already exists in dist/.
-    local existing
+    # Skip only if BOTH the .deb AND the source .dsc for this version are present
+    # (we publish a Sources index too — a .deb without a .dsc must be rebuilt).
+    local existing existing_dsc=""
     # shellcheck disable=SC2012  # dist/ filenames are controlled (name_version_arch.deb); ls is safe
     existing=$(ls "${REPO_ROOT}/dist/${name}_${ver}_"*.deb 2>/dev/null | head -1 || true)
-    if [[ -n "$existing" ]]; then
-        echo "SKIP $name (dist/$(basename "$existing") already current)"
+    [[ -f "${REPO_ROOT}/dist/${name}_${ver}.dsc" ]] && existing_dsc=1
+    if [[ -n "$existing" && -n "$existing_dsc" ]]; then
+        echo "SKIP $name (dist/$(basename "$existing") + .dsc already current)"
         return 0
     fi
 
@@ -73,6 +75,17 @@ build_canonical() {
         mv "$deb" "${REPO_ROOT}/dist/"
         echo "OK   dist/$(basename "$deb")  ($(stat -c%s "${REPO_ROOT}/dist/$(basename "$deb")") bytes)"
     done
+
+    # Source package → dist/ so the repo publishes a Sources index (apt-get source +
+    # Repology DebianSourcesParser). Canonical-layout packages are all 3.0 (native),
+    # so the source pass needs no orig tarball — it tars the whole tree.
+    if ( cd "${builddir}/${name}-${ver}" && dpkg-buildpackage -us -uc -S -d ) >/dev/null 2>&1; then
+        for src in "${builddir}/${name}_${ver}.dsc" "${builddir}/${name}_${ver}.tar."*; do
+            [[ -f "$src" ]] && mv "$src" "${REPO_ROOT}/dist/" && echo "OK   dist/$(basename "$src")"
+        done
+    else
+        echo "WARN $name: source package build failed (binary .deb still produced)" >&2
+    fi
 }
 
 fail=0

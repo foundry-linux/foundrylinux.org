@@ -72,6 +72,58 @@ for deb in "${debs[@]}"; do
     fi
 done
 
+# Pass 3: source packages (.dsc + tarballs) — the repo now publishes a Sources index,
+# so superseded/orphaned source artifacts must be pruned the same way as .debs, or
+# they'd linger and the Sources index would list stale versions. Prune by SOURCE name
+# (differs from binary names for multi-binary sources like pvsneslib); a tarball is
+# kept iff a surviving .dsc still references it (orig tarballs are shared across
+# revisions of the same upstream version, so never prune by version alone).
+src_orphans=0
+src_pruned=0
+dscs=("$DIST"/*.dsc)
+if (( ${#dscs[@]} > 0 )); then
+    declare -A valid_src
+    while read -r s; do [[ -n "$s" ]] && valid_src["$s"]=1; done \
+        < <(grep -rh '^Source:' "$PACKAGES_DIR"/*/debian/control 2>/dev/null | awk '{print $2}' | sort -u)
+
+    declare -A best_dsc_ver best_dsc_file
+    for dsc in "${dscs[@]}"; do
+        s="$(awk '/^Source:/{print $2; exit}' "$dsc")"
+        v="$(awk '/^Version:/{print $2; exit}' "$dsc")"
+        [[ -n "${valid_src[$s]:-}" ]] || continue
+        if [[ -z "${best_dsc_ver[$s]:-}" ]] || dpkg --compare-versions "$v" gt "${best_dsc_ver[$s]}"; then
+            best_dsc_ver[$s]="$v"; best_dsc_file[$s]="$dsc"
+        fi
+    done
+
+    # Files referenced by every surviving .dsc (the .dsc itself + its tarballs).
+    declare -A keep_file
+    for s in "${!best_dsc_file[@]}"; do
+        d="${best_dsc_file[$s]}"
+        keep_file["$(basename "$d")"]=1
+        while read -r fn; do [[ -n "$fn" ]] && keep_file["$fn"]=1; done \
+            < <(awk '/^(Files|Checksums-Sha256|Checksums-Sha1):/{f=1;next} /^[^ ]/{f=0} f{print $NF}' "$d")
+    done
+
+    for dsc in "${dscs[@]}"; do
+        s="$(awk '/^Source:/{print $2; exit}' "$dsc")"
+        if [[ -z "${valid_src[$s]:-}" ]]; then
+            echo "drop  $(basename "$dsc")  (renamed/removed — no current source for '$s')"
+            $DRY_RUN || rm -f "$dsc"; src_orphans=$((src_orphans + 1))
+        elif [[ "$dsc" != "${best_dsc_file[$s]}" ]]; then
+            echo "prune $(basename "$dsc")  (superseded by ${s} ${best_dsc_ver[$s]})"
+            $DRY_RUN || rm -f "$dsc"; src_pruned=$((src_pruned + 1))
+        fi
+    done
+
+    for tarball in "$DIST"/*.tar.*; do
+        [[ -f "$tarball" ]] || continue
+        [[ -n "${keep_file["$(basename "$tarball")"]:-}" ]] && continue
+        echo "prune $(basename "$tarball")  (source tarball no longer referenced by a kept .dsc)"
+        $DRY_RUN || rm -f "$tarball"; src_pruned=$((src_pruned + 1))
+    done
+fi
+
 suffix=""
 $DRY_RUN && suffix=" (dry-run; nothing removed)"
-echo "prune-dist: kept ${#best_ver[@]} package(s); removed ${orphans} orphan(s) + ${pruned} superseded .deb(s)${suffix}"
+echo "prune-dist: kept ${#best_ver[@]} package(s); removed ${orphans} orphan(s) + ${pruned} superseded .deb(s), ${src_orphans} orphan + ${src_pruned} superseded source artifact(s)${suffix}"

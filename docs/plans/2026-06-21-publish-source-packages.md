@@ -140,12 +140,38 @@ pattern during rollout.
   (`{{ORIGIN_LABEL}}` placeholder, wired into the SKILL.md table + sed block); `build-all.sh`
   template builds source packages (best-effort) into `dist/`. New repos are correct by default.
 
-### Phase 2 — foundry-apt rollout — **NOT YET DONE** (next)
+### Phase 2 — foundry-apt rollout (2026-06-21) ✅ done
 
-`build-all.sh` still builds `-b` only, so the live repo has no `Sources` index yet. Remaining:
-wire the source pass into `build-all.sh` + each vendored `build.sh`, land `.dsc`/tarballs in
-`dist/`, confirm `publish-local.sh`/aptly emits `main/source/Sources.gz`, and verify end to end
-(steps 2–6). This is the "eventually all of them" step.
+All 53 packages now build a source package; the live repo will publish a `Sources` index on
+the next publish. Implementation:
+
+- **`build-all.sh`** canonical path → `dpkg-buildpackage -S` for the 28 native packages
+  (no orig tarball needed); skip-logic now requires both `.deb` **and** `.dsc` so a binary-only
+  cache entry rebuilds to get its source.
+- **`scripts/lib-source-build.sh`** (new) — `emit_source_package`, sourced by every vendored
+  `build.sh`. Reuses the pristine orig tarball `build.sh` staged when its name matches, else
+  **synthesises** one from the staged tree (handles the ~half that don't, incl. vgmstream's
+  `r`-prefix). Best-effort: a source-build hiccup `WARN`s but never blocks the binary.
+- **27 `build.sh` retrofitted** — 24 via a uniform anchor replacement, `ldtk` (`$SRC`) +
+  `build-rust-tool.sh` (covers both blender packages) by hand.
+- **`publish-local.sh`** — `-architectures=…,source` (the missing piece: aptly suppresses the
+  `Sources` index unless `source` is in the arch list).
+- **`prune-dist.sh`** — new pass prunes orphaned/superseded `.dsc` + tarballs (keeps only files
+  a surviving `.dsc` references), so the Sources index can't accrete stale versions.
+
+**Verification (steps 1–6):** all PASS in `ubuntu:26.04`.
+- Native (`foundry-retro-tools`) + quilt (`halfempty`) both emit `.dsc` + tarballs (step 1/4).
+- `publish-local.sh` publishes `main/source/Sources` listing both; `Release` advertises it;
+  `Origin/Label: Foundry Linux` (steps 2/5).
+- `apt-get source halfempty` round-trips from the published repo (step 3).
+- `lib-source-build.sh` synthesise path independently round-trips (the ~half without a
+  matching staged orig).
+- `prune-dist --dry-run` correctly drops an orphan `.dsc` + its tarball.
+- **shellcheck CI gate clean** (`scripts/*.sh` + all `build.sh`), all 27 `build.sh` `bash -n`.
+
+Not exhaustively built: the 25 vendored binaries (each compiles upstream — slow); the uniform
+helper + graceful `WARN` fallback means any package whose source build trips still ships its
+binary, visibly. The next full CI publish is the final proof.
 
 ## Decision log
 
