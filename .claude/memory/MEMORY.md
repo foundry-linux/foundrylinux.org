@@ -24,6 +24,7 @@
 - [Calamares 3.3 partitionLayout + bootloader.conf](feedback_calamares_partition_layout.md) — `name:` mandatory in partitionLayout entries; bootloader.conf must set efiBootLoader=grub; without these no root partition and no bootloader.
 - [Calamares 3.3 mount.conf schema rules](feedback_calamares_mount_conf.md) — options MUST be YAML arrays `["bind"]` not scalars; no `extraMountsEfi:` key (use `efi: true` on entry); violations silently skip all bind mounts → grub-install error code 1.
 - [Kick off ISO build the instant any ISO-affecting change lands](feedback_start_build_immediately.md) — ANY foundry-apt package or foundry-iso/config change; abort+restart in-flight builds on newer changes; don't gate on RAM/VM contention.
+- [Hold foundry-atelier publish](feedback_hold_atelier_publish.md) — never tag/task-bump/CI-publish foundry-atelier to the live apt repo until Will explicitly directs (set 2026-06-20); overrides start-build-immediately for atelier.
 - [iso-bump does a greedy git commit](feedback_iso_bump_greedy_commit.md) — `task iso-build`→iso-bump's bare `git commit` sweeps ALL staged changes into the bump commit; don't leave staged work (esp. git mv) before building.
 - [Installed-system assets must ship from a survives-install package](project_installed_assets_surviving_package.md) — desktop wallpaper, SDDM greeter, lock screen: never from calamares-settings-* (purged with calamares on install); use foundry-kde-theme.
 - [Test installed systems via will:foundry SSH](feedback_test_account_ssh.md) — Will sets account will/pw foundry per-install for SSH debug (port 2222); NEVER bake a credential into the image (the root:foundry-on-install backdoor was reverted in calamares-settings 1.0.30).
@@ -34,6 +35,10 @@
 
 - [user_profile.md](user_profile.md) — Will's role, setup, and desktop/dev preferences
 - [user_mammouth_subscription.md](user_mammouth_subscription.md) — €20/mo Mammouth.ai Standard: multi-model API (GPT-4o, Claude, Gemini, Mistral, Llama) at api.mammouth.ai/v1
+
+## Project (inherited from ~)
+
+- [home_src_layout.md](home_src_layout.md) — Projects moved ~/SRC/<name> → ~/<name> post-reformat; projects.json + hook-runner still assume ~/SRC (hook-runner patched via symlink)
 
 ## Feedback (inherited from ~)
 
@@ -47,7 +52,6 @@
 - [feedback_use_task_tracking.md](feedback_use_task_tracking.md) — Reach for TaskCreate/TaskUpdate proactively on multi-step work; don't wait for the auto-reminder
 - [feedback_commit_scope.md](feedback_commit_scope.md) — "Commit the others" means the files just enumerated, not everything git status shows; auto-mode doesn't expand scope
 - [feedback_md_renderer_no_autolinks.md](feedback_md_renderer_no_autolinks.md) — md-to-pdf.sh silently drops `<url>` autolinks; always use `[url](url)` form
-- [feedback_trip_rerender_preview.md](feedback_trip_rerender_preview.md) — In ~/SRC/trip, re-render `task md -- out/currently.md` after every change to the itinerary output
 - [feedback_seed_dont_clone.md](feedback_seed_dont_clone.md) — Seeding a new site from an existing one + swapping wordmark/color isn't enough — the source's visual fingerprint carries through. Ship distinctive elements with the seed, not after.
 - [feedback_prefer_proper_fix.md](feedback_prefer_proper_fix.md) — When offering fix-scope options, default to the proper/architectural one. Don't lead with the minimal fix as "recommended."
 - [feedback_public_vs_internal_surfaces.md](feedback_public_vs_internal_surfaces.md) — Public marketing pages (colophon, homepage) describe visible craft — never internal infra (repo URLs, predecessor projects, deploy pipeline, IaC paths).
