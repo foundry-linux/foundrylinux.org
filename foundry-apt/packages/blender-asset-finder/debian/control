@@ -5,6 +5,7 @@ Maintainer: WorldFoundry Packages <packages@worldfoundry.org>
 Build-Depends: debhelper-compat (= 13), zip
 Standards-Version: 4.7.0
 Homepage: https://github.com/wbniv/WorldFoundry
+# not on Repology: WorldFoundry-authored Blender add-on, not in any distro (verified 2026-06-21)
 X-Repology-Project: none
 Rules-Requires-Root: no
 

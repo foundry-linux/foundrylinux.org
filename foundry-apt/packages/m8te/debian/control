@@ -5,6 +5,7 @@ Maintainer: Foundry Linux <packages@foundrylinux.org>
 Build-Depends: debhelper-compat (= 13), icoutils
 Standards-Version: 4.7.0
 Homepage: https://github.com/nesdoug/M8TE
+# not on Repology: niche GitHub-only tool (nesdoug/M8TE), not in any distro Repology scans (verified 2026-06-21)
 X-Repology-Project: none
 Rules-Requires-Root: no
 

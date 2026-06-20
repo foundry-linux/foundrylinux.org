@@ -6,6 +6,7 @@ Build-Depends: debhelper-compat (= 13), cmake, ninja-build, libncurses-dev,
  libcppdap-dev, libjsoncpp-dev
 Standards-Version: 4.7.2
 Homepage: https://github.com/developer-resources-co/drdevtools
+# not on Repology: niche third-party tool (developer-resources-co/drdevtools), not in any distro (verified 2026-06-21)
 X-Repology-Project: none
 Rules-Requires-Root: no
 

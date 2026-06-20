@@ -41,6 +41,8 @@ def parse_control(path):
                 cur[field] = "\n".join(val_lines).rstrip()
         for line in f:
             line = line.rstrip("\n")
+            if line.startswith("#"):
+                continue  # deb822 comment line (permitted in debian/control)
             if line == "":
                 flush()
                 if cur:
