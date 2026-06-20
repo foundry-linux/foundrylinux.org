@@ -328,6 +328,39 @@ def read_local_changelog_top(packages_dir: Path | None, pkg: str) -> str:
     return cl.read_text().splitlines()[0] if cl.read_text() else ""
 
 
+def badge_status(packages_dir: Path | None, pkg: str) -> str:
+    """Repology-badge status for a published binary package, keyed on the
+    package's own vendored source tree (a build.sh wrapper + X-Repology-Project
+    in debian/control). Mirrors scripts/check-repology-badges.sh so the
+    inventory and the commit-time guard agree on what 'has a badge' means.
+
+      `proj`       vendored upstream with a real Repology project (badge shown)
+      ➖ none      vendored upstream, deliberate opt-out (Foundry-authored / not on Repology)
+      ⚠️ MISSING   vendored upstream with no field — a gap to fix
+      —            metapackage / canonical / sub-package / not in this tree (no badge)
+    """
+    if packages_dir is None:
+        return "—"
+    pdir = packages_dir / pkg
+    if not (pdir / "build.sh").exists():
+        return "—"
+    ctl = pdir / "debian" / "control"
+    if not ctl.exists():
+        return "⚠️ MISSING"
+    # X-Repology-Project lives in the Source stanza; read it directly (the
+    # parse_packages() helper drops Source-only stanzas, keeping Package: ones).
+    val = ""
+    for line in ctl.read_text().splitlines():
+        if line.startswith("X-Repology-Project:"):
+            val = line.split(":", 1)[1].strip()
+            break
+    if not val:
+        return "⚠️ MISSING"
+    if val.lower() == "none":
+        return "➖ none"
+    return f"`{val}`"
+
+
 # ─── per-repo fetch + organise ──────────────────────────────────────────
 
 def collect_repo(repo: dict) -> dict:
@@ -415,7 +448,7 @@ def render_metapackage_row(pkg: dict, notes: dict) -> str:
     )
 
 
-def render_binary_row(pkg: dict, notes: dict) -> str:
+def render_binary_row(pkg: dict, notes: dict, packages_dir: "Path | None") -> str:
     pkg_notes = notes.get(pkg["Package"], {})
     desc_first_line = pkg.get("Description", "").splitlines()[0] if pkg.get("Description") else ""
     what = pkg_notes.get("what_it_does", desc_first_line)
@@ -426,9 +459,10 @@ def render_binary_row(pkg: dict, notes: dict) -> str:
         extra.append(f"Upstream: `{pkg_notes['upstream_url']}`")
     annot = _annotations(pkg_notes)
     extra_text = (" — " + " · ".join(extra)) if extra else ""
+    badge = badge_status(packages_dir, pkg["Package"])
     return (
         f"| `{pkg['Package']}` | {pkg.get('Version','')} | {pkg.get('Architecture','')} | "
-        f"{pkg.get('Section','')} | {md_escape(what + extra_text)}{annot} |"
+        f"{pkg.get('Section','')} | {badge} | {md_escape(what + extra_text)}{annot} |"
     )
 
 
@@ -542,10 +576,13 @@ def render_repo_section(state: dict, notes: dict) -> str:
             out.append("")
     if binaries:
         out.append(f"### Binary packages ({len(binaries)})\n")
-        out.append("| Package | Version | Arch | Section | What it does |")
-        out.append("|---|---|---|---|---|")
+        out.append("Badge = apt-index Repology badge (`X-Repology-Project`): "
+                   "`proj` shown · `➖ none` deliberate opt-out · "
+                   "`⚠️ MISSING` vendored upstream lacking the field · `—` n/a.\n")
+        out.append("| Package | Version | Arch | Section | Badge | What it does |")
+        out.append("|---|---|---|---|---|---|")
         for p in binaries:
-            out.append(render_binary_row(p, notes))
+            out.append(render_binary_row(p, notes, state.get("local_packages_dir")))
         out.append("")
     return "\n".join(out)
 

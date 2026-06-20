@@ -108,3 +108,8 @@ tasks:
     desc: "Verify every packages/*/build.sh declares X-Repology-Project (apt-index Repology badge)"
     cmds:
       - bash scripts/check-repology-badges.sh
+
+  audit-badges:
+    desc: "Report Repology-badge coverage across all vendored packages (badge / opt-out / MISSING)"
+    cmds:
+      - bash scripts/check-repology-badges.sh --report

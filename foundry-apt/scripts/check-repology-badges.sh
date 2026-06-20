@@ -1,40 +1,75 @@
 #!/usr/bin/env bash
-# check-repology-badges.sh — verify every packages/*/build.sh (vendored upstream)
-# declares X-Repology-Project in its debian/control Source stanza, so the apt
-# index renders the Repology version badge for the tools we package.
+# check-repology-badges.sh — verify (or report) X-Repology-Project coverage
+# across vendored packages (everything with a packages/*/build.sh wrapper).
 #
-# Use `X-Repology-Project: none` for Foundry-authored or not-on-Repology
-# packages — generate-index.sh skips the badge for `none`, but the field must
-# still be present so the choice is deliberate (and new packages can't silently
-# ship without a badge).
+# Modes:
+#   (default)   GUARD  — exit non-zero if any vendored package lacks the field.
+#               Wired as a git pre-commit hook + Claude Code PostToolUse hook.
+#   --report    AUDIT  — print every vendored package + its badge status; exit 0.
+#               Surfaced as `task audit-badges`.
 #
-# Exits non-zero and lists offenders if any. Run manually or via
-# `task check-badges`. Also wired as a git pre-commit hook and a Claude Code
-# PostToolUse hook (fires when a packages/*/build.sh is edited).
+# The apt index (generate-index.sh) renders a Repology version badge for any
+# package whose debian/control Source stanza declares X-Repology-Project. Use
+# `X-Repology-Project: none` to opt out (Foundry-authored / not-on-Repology):
+# the field is still required (so the choice is deliberate) but generate-index
+# skips the badge.
 set -euo pipefail
 
-if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-    echo "Usage: check-repology-badges.sh"
-    echo "Checks every packages/*/build.sh has X-Repology-Project in debian/control."
-    echo "Use 'X-Repology-Project: none' to opt a package out of the Repology badge."
-    exit 0
-fi
+REPORT=false
+case "${1:-}" in
+    -h|--help)
+        echo "Usage: check-repology-badges.sh [--report]"
+        echo "  (default)  guard: fail if any packages/*/build.sh lacks X-Repology-Project"
+        echo "  --report   audit: list every vendored package + its badge status, exit 0"
+        echo "Use 'X-Repology-Project: none' to opt a package out of the Repology badge."
+        exit 0
+        ;;
+    --report|-r) REPORT=true ;;
+    "") ;;
+    *) echo "ERROR: unknown arg: $1 (try --help)" >&2; exit 2 ;;
+esac
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PACKAGES_DIR="$REPO_ROOT/packages"
 
 missing=()
+have=0
+optout=0
+report_rows=()
 for build_sh in "$PACKAGES_DIR"/*/build.sh; do
     pkg="$(basename "$(dirname "$build_sh")")"
     ctrl="$(dirname "$build_sh")/debian/control"
-    if [[ ! -f "$ctrl" ]] || ! grep -qE "^X-Repology-Project:[[:space:]]*\S" "$ctrl"; then
+    val=""
+    if [[ -f "$ctrl" ]]; then
+        val="$(grep -m1 '^X-Repology-Project:' "$ctrl" | sed 's/^X-Repology-Project:[[:space:]]*//' || true)"
+    fi
+    if [[ -z "$val" ]]; then
         missing+=("$pkg")
+        report_rows+=("⚠️ MISSING|$pkg|—")
+    elif [[ "${val,,}" == "none" ]]; then
+        optout=$((optout + 1))
+        report_rows+=("➖ opt-out|$pkg|none")
+    else
+        have=$((have + 1))
+        report_rows+=("✅ badge  |$pkg|$val")
     fi
 done
 
+if $REPORT; then
+    printf '%-12s  %-28s  %s\n' "STATUS" "PACKAGE" "REPOLOGY-PROJECT"
+    printf '%-12s  %-28s  %s\n' "------" "-------" "----------------"
+    for row in "${report_rows[@]}"; do
+        IFS='|' read -r st pk vl <<<"$row"
+        printf '%-12s  %-28s  %s\n' "$st" "$pk" "$vl"
+    done
+    echo "---"
+    echo "badge: ${have}   opt-out(none): ${optout}   MISSING: ${#missing[@]}   total: ${#report_rows[@]}"
+    exit 0
+fi
+
 if (( ${#missing[@]} == 0 )); then
-    echo "PASS: all vendored packages declare X-Repology-Project"
+    echo "PASS: all vendored packages declare X-Repology-Project (${have} badged, ${optout} opt-out)"
     exit 0
 fi
 
@@ -45,5 +80,5 @@ done
 echo "" >&2
 echo "Add 'X-Repology-Project: <repology-project>' to each Source stanza so the apt index" >&2
 echo "shows the Repology badge. Use 'X-Repology-Project: none' for Foundry-authored or" >&2
-echo "not-on-Repology packages (the badge is then skipped)." >&2
+echo "not-on-Repology packages (the badge is then skipped). Run 'task audit-badges' to review." >&2
 exit 1
