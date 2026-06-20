@@ -5,7 +5,7 @@ Maintainer: Foundry Linux <packages@foundrylinux.org>
 Build-Depends: debhelper-compat (= 13), cmake
 Standards-Version: 4.7.0
 Homepage: https://github.com/RPGHacker/asar
-X-Repology-Project: none
+X-Repology-Project: asar-snes-assembler
 Rules-Requires-Root: no
 
 Package: asar-snes

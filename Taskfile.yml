@@ -369,6 +369,14 @@ tasks:
     cmds:
       - bash scripts/check-repology-badges.sh --report
 
+  set-badge:
+    desc: "Opt a vendored package into the Repology badge — task set-badge PKG=<pkg> PROJECT=<repology-project|none>"
+    dir: foundry-apt
+    requires:
+      vars: [PKG, PROJECT]
+    cmds:
+      - bash scripts/set-repology-badge.sh {{.PKG}} {{.PROJECT}}
+
   iso-sync-local-debs:
     desc: "Sync every .deb in foundry-apt/dist/ into foundry-iso/local-debs/ so local builds always shadow the published apt repo (runs automatically before iso-build)"
     dir: "{{.ROOT_DIR}}"

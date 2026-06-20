@@ -113,3 +113,10 @@ tasks:
     desc: "Report Repology-badge coverage across all vendored packages (badge / opt-out / MISSING)"
     cmds:
       - bash scripts/check-repology-badges.sh --report
+
+  set-badge:
+    desc: "Opt a vendored package into the Repology badge — task set-badge PKG=<pkg> PROJECT=<repology-project|none>"
+    requires:
+      vars: [PKG, PROJECT]
+    cmds:
+      - bash scripts/set-repology-badge.sh {{.PKG}} {{.PROJECT}}
