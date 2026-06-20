@@ -8,6 +8,7 @@ Build-Depends: debhelper-compat (= 13),
                bsdextrautils
 Standards-Version: 4.7.0
 Homepage: https://github.com/googleprojectzero/halfempty
+X-Repology-Project: halfempty
 Rules-Requires-Root: no
 
 Package: halfempty
