@@ -110,6 +110,43 @@ Phase 3 (skills) → global skill edits (outside the repo). Per
 `feedback_start_build_immediately`, an ISO build is **not** triggered — this changes the apt
 repo's source index, not any `.deb` shipped onto the ISO.
 
+## Execution log
+
+### Phase 1 — proof on `halfempty` (2026-06-21) ✅
+
+Source build works and is **nearly free** — `packages/halfempty/build.sh` already stages the
+upstream tarball as `halfempty_0.40.orig.tar.gz` in the parent dir (line 57), exactly what
+`dpkg-source` wants for `3.0 (quilt)`. In `ubuntu:26.04`:
+
+- `dpkg-buildpackage -S -us -uc -d` → `halfempty_0.40-1foundry1.dsc` +
+  `…debian.tar.xz` (orig tarball reused). **PASS.**
+- `dpkg-source -x …dsc` round-trips cleanly. **PASS.**
+- `lintian …dsc`: **zero `E:`**; one `W: build-depends-on-obsolete-package: pkg-config =>
+  pkgconf`. Pre-existing, surfaced only now because source-build runs source-level lint that
+  binary-only (`-b`) skips — a real bonus of this change (catch it across packages). Not a
+  blocker; fix opportunistically.
+
+Implication for Phase 2: the vendored `build.sh` files that name the orig tarball correctly
+(the established pattern) need only `-b` → build-source-too; no per-package orig-tarball
+plumbing. Native metapackages are trivial. Verify each `build.sh` follows the orig-naming
+pattern during rollout.
+
+### Phase 3 — skills (2026-06-21) ✅ (global, outside this repo)
+
+- **`/package` skill** — Step 4 now builds the source package (`-S` pass; quilt orig-tarball
+  note + the `pkg-config → pkgconf` source-lint finding); Step 6 has a repo-publish-conventions
+  callout (Origin/Label + publish-source-packages).
+- **`new-web-apt-repo` skill** — `publish-local.sh` template gains `-origin`/`-label`
+  (`{{ORIGIN_LABEL}}` placeholder, wired into the SKILL.md table + sed block); `build-all.sh`
+  template builds source packages (best-effort) into `dist/`. New repos are correct by default.
+
+### Phase 2 — foundry-apt rollout — **NOT YET DONE** (next)
+
+`build-all.sh` still builds `-b` only, so the live repo has no `Sources` index yet. Remaining:
+wire the source pass into `build-all.sh` + each vendored `build.sh`, land `.dsc`/tarballs in
+`dist/`, confirm `publish-local.sh`/aptly emits `main/source/Sources.gz`, and verify end to end
+(steps 2–6). This is the "eventually all of them" step.
+
 ## Decision log
 
 - **2026-06-21 — pursue source publishing** (Will), off the back of the Repology
