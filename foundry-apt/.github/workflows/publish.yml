@@ -38,6 +38,20 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y aptly gnupg rclone
 
+      - name: Restore built .deb cache (incremental builds)
+        # build-all.sh skips any package whose dist/<name>_<ver>_*.deb already
+        # exists. Restoring the previous run's dist/ makes that skip-logic work
+        # in CI too, so only version-bumped/new packages rebuild instead of all
+        # ~27 from source every publish. restore-keys falls back to the most
+        # recent prior cache; the unique per-SHA key always saves a fresh
+        # snapshot at job end. prune-dist.sh (below) keeps it to current versions.
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: foundry-apt-dist-${{ github.sha }}
+          restore-keys: |
+            foundry-apt-dist-
+
       - name: Build all .debs in ubuntu:26.04 (our distribution base)
         # All .debs MUST be built inside ubuntu:26.04 so that ${shlibs:Depends}
         # resolves to 26.04's library sonames (libavcodec62, etc.). Building on
@@ -59,6 +73,10 @@ jobs:
                 zip python3 \
                 cmake qt6-base-dev qt6-declarative-dev
               bash scripts/build-all.sh
+              # Drop superseded versions a restored cache may carry, so aptly
+              # never republishes a stale .deb. Runs in-container (root) so it
+              # can prune the root-owned dist/ the build just wrote.
+              bash scripts/prune-dist.sh
             '
 
       - name: Initialise aptly repo
