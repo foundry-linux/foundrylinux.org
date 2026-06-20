@@ -19,6 +19,7 @@ Build-Depends: debhelper-compat (= 13),
  libminizip-dev
 Standards-Version: 4.7.2
 Homepage: https://www.snes9x.com
+X-Repology-Project: snes9x
 Rules-Requires-Root: no
 
 Package: snes9x-gtk

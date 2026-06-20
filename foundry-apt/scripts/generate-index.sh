@@ -63,6 +63,8 @@ for i, fname in enumerate(sorted(os.listdir(meta_dir))):
     inst_kb    = p.get("installed_size_kb")
     changelog  = p.get("changelog_latest", "")
     repology   = p.get("repology_project", "")
+    if repology.strip().lower() == "none":   # explicit opt-out (our-own / not on Repology)
+        repology = ""
 
     # Name cell — bold plain text only; meta badge goes on the version line
     section    = p.get("section", "")

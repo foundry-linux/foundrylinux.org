@@ -5,6 +5,7 @@ Maintainer: Foundry Linux <packages@foundrylinux.org>
 Build-Depends: debhelper-compat (= 13), unzip
 Standards-Version: 4.7.0
 Homepage: https://docs.astral.sh/ruff
+X-Repology-Project: ruff
 Rules-Requires-Root: no
 
 Package: ruff

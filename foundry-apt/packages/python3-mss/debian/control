@@ -9,6 +9,7 @@ Build-Depends: debhelper-compat (= 13),
                python3-hatchling
 Standards-Version: 4.7.0
 Homepage: https://github.com/BoboTiG/python-mss
+X-Repology-Project: python:mss
 Rules-Requires-Root: no
 
 Package: python3-mss

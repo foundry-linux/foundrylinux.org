@@ -103,3 +103,8 @@ tasks:
     desc: "Verify every packages/*/build.sh has an entry in LICENSES-VENDORED.md"
     cmds:
       - bash scripts/check-licenses-vendored.sh
+
+  check-badges:
+    desc: "Verify every packages/*/build.sh declares X-Repology-Project (apt-index Repology badge)"
+    cmds:
+      - bash scripts/check-repology-badges.sh

@@ -8,6 +8,7 @@ Build-Depends: debhelper-compat (= 13),
                python3-setuptools
 Standards-Version: 4.7.0
 Homepage: https://librosa.org
+X-Repology-Project: python:librosa
 Rules-Requires-Root: no
 
 Package: python3-librosa
