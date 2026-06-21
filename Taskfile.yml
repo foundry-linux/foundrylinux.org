@@ -369,6 +369,12 @@ tasks:
     cmds:
       - bash scripts/check-publish-metadata.sh
 
+  gen-repology-ruleset:
+    desc: "Regenerate foundry-apt/repology/foundry-linux.yaml (repology-rules) from X-Repology-Project fields"
+    dir: foundry-apt
+    cmds:
+      - bash scripts/generate-repology-ruleset.sh -o repology/foundry-linux.yaml
+
   audit-badges:
     desc: "Report foundry-apt Repology-badge coverage (badge / opt-out / MISSING)"
     dir: foundry-apt
