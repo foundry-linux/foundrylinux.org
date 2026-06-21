@@ -126,6 +126,15 @@ grep -q "cstring" "$SRC_DIR/src/preferences.cpp" \
 echo "  0001-platform-h-in-main-window — applied"
 echo "  0002-cstring-in-preferences — applied"
 
+# Source package: the patches above are now baked into the working tree (applied via perl,
+# because dpkg-source's GNU patch fuzzes on the CRLF upstream — see the note above). Drop the
+# pristine orig + empty the staged series so emit_source_package synthesises a self-contained
+# orig from the patched tree and dpkg-source -b doesn't try (and fail) to re-apply the CRLF
+# patches. The binary build below is unaffected: its dpkg-source --before-build then applies
+# nothing, and the tree is already patched.
+rm -f "$WORKDIR/${NAME}_${UPSTREAM_VERSION}.orig.tar."*
+: > "$SRC_DIR/debian/patches/series"
+
 echo "=== dpkg-buildpackage -us -uc -b ==="
 # Emit the source package (.dsc + tarballs) -> dist/ for the apt Sources index
 # (best-effort; never blocks the binary build below). See scripts/lib-source-build.sh.
