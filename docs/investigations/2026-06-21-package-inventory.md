@@ -23,7 +23,7 @@ Plus **Phase 0** bash installer scripts in `foundry-setup/` that bridge stock Ub
 | **Suite / Codename** | `stable` / `stable` |
 | **Components** | `main` |
 | **Architectures** | `all amd64 arm64` |
-| **Signing key** | `0xA51CECB8676E2158` — fingerprint `F19FF3274278148D5EE57FB3A51CECB8676E2158` (rsa4096, 2026-05-19, expires 2028-05-18) |
+| **Signing key** | `0xA51CECB8676E2158` — fingerprint `F19FF3274278148D5EE57FB3A51CECB8676E2158` (rsa4096, 2026-05-18, expires 2028-05-17) |
 | **Maintainer** | `WorldFoundry Packages <packages@worldfoundry.org>` |
 | **Release date (snapshot)** | Thu, 21 May 2026 18:22:54 UTC |
 | **Hosting** | Cloudflare R2 |
@@ -211,16 +211,16 @@ Badge = apt-index Repology badge (`X-Repology-Project`): `proj` shown · `➖ no
 
 | Package | Version | Arch | Section | Badge | What it does |
 |---|---|---|---|---|---|
-| `cdpack` | 0.1.0+git0a19d26c-1foundry2 | amd64 | utils | ⚠️ MISSING | World Foundry CD master image packer |
-| `iffcomp` | 0.1.0+git0a19d26c-1foundry2 | amd64 | devel | ⚠️ MISSING | World Foundry IFF text-DSL compiler |
-| `iffdump` | 0.1.0+git0a19d26c-1foundry2 | amd64 | utils | ⚠️ MISSING | World Foundry IFF binary inspector |
-| `levcomp` | 0.1.0+git0a19d26c-1foundry2 | amd64 | devel | ⚠️ MISSING | World Foundry .lev level compiler (iff2lvl successor) |
-| `lvldump` | 0.1.0+git0a19d26c-1foundry2 | amd64 | utils | ⚠️ MISSING | World Foundry .lvl level-file inspector |
-| `oaddump` | 0.1.0+git0a19d26c-1foundry2 | amd64 | utils | ⚠️ MISSING | World Foundry .oad attribute-blob inspector |
-| `oas2oad` | 0.1.0+git0a19d26c-1foundry2 | amd64 | devel | ⚠️ MISSING | World Foundry OAS-to-OAD compiler (Linux successor to pigtool) |
-| `prep` | 0.103+git0a19d26c-1foundry2 | amd64 | devel | ⚠️ MISSING | WorldFoundry macro preprocessor (Kevin T. Seghetti) |
-| `textile` | 0.1.0+git0a19d26c-1foundry2 | amd64 | graphics | ⚠️ MISSING | World Foundry texture-atlas packer (TGA/BMP/PNG) |
-| `worldfoundry-blender-editor-exporter` | 0.2.1+git3fa94cbe-2foundry2 | amd64 | graphics | ⚠️ MISSING | World Foundry Blender add-on — dynamic OAD property panel, validation, .lev text-IFF level export. Ships extension zip + wf-blender-install wrapper. Bundles the native wf_core Rust extension (pyo3 abi3). **Renamed from wf-blender (2026-05-21).** |
+| `cdpack` | 0.1.0+git0a19d26c-1foundry2 | amd64 | utils | — | World Foundry CD master image packer |
+| `iffcomp` | 0.1.0+git0a19d26c-1foundry2 | amd64 | devel | — | World Foundry IFF text-DSL compiler |
+| `iffdump` | 0.1.0+git0a19d26c-1foundry2 | amd64 | utils | — | World Foundry IFF binary inspector |
+| `levcomp` | 0.1.0+git0a19d26c-1foundry2 | amd64 | devel | — | World Foundry .lev level compiler (iff2lvl successor) |
+| `lvldump` | 0.1.0+git0a19d26c-1foundry2 | amd64 | utils | — | World Foundry .lvl level-file inspector |
+| `oaddump` | 0.1.0+git0a19d26c-1foundry2 | amd64 | utils | — | World Foundry .oad attribute-blob inspector |
+| `oas2oad` | 0.1.0+git0a19d26c-1foundry2 | amd64 | devel | — | World Foundry OAS-to-OAD compiler (Linux successor to pigtool) |
+| `prep` | 0.103+git0a19d26c-1foundry2 | amd64 | devel | — | WorldFoundry macro preprocessor (Kevin T. Seghetti) |
+| `textile` | 0.1.0+git0a19d26c-1foundry2 | amd64 | graphics | — | World Foundry texture-atlas packer (TGA/BMP/PNG) |
+| `worldfoundry-blender-editor-exporter` | 0.2.1+git3fa94cbe-2foundry2 | amd64 | graphics | — | World Foundry Blender add-on — dynamic OAD property panel, validation, .lev text-IFF level export. Ships extension zip + wf-blender-install wrapper. Bundles the native wf_core Rust extension (pyo3 abi3). **Renamed from wf-blender (2026-05-21).** |
 
 ---
 
@@ -234,7 +234,7 @@ Badge = apt-index Repology badge (`X-Repology-Project`): `proj` shown · `➖ no
 | **Architectures** | `all amd64 arm64` |
 | **Signing key** | `0x1CFB48FC928F7B21` — fingerprint `47A48E026F7509560033A8691CFB48FC928F7B21` (rsa4096, 2026-05-17, expires 2028-05-16) |
 | **Maintainer** | `Foundry Linux Packages <packages@foundrylinux.org>` |
-| **Release date (snapshot)** | Sat, 20 Jun 2026 15:45:51 UTC |
+| **Release date (snapshot)** | Sun, 21 Jun 2026 08:15:06 UTC |
 | **Hosting** | Cloudflare R2 |
 
 Add it with deb822:
@@ -273,7 +273,7 @@ Architectures: amd64 arm64
 | `foundry-pixel-art` | 1.0.1 | all | mtpaint, grafx2, m8te |
 | `foundry-python-gamedev` | 1.0.0 | all | python3-numpy, python3-scipy, python3-cffi, python3-pil, python3-imageio, python3-pygame, python3-pyglet, python3-opengl, python3-glfw, python3-sounddevice, python3-soundfile, python3-pydub, python3-yaml, python3-tomli, python3-tomli-w, python3-msgpack, python3-lz4, python3-websockets, python3-aiohttp, python3-zmq, python3-aiosqlite, python3-click, python3-rich, python3-tqdm, python3-pytest, python3-mypy, python3-loguru, python3-psutil, cython3, python3-numba, python3-shapely, ruff |
 | `foundry-python-gamedev-extras` | 1.0.1 | all | foundry-python-gamedev, python3-av, python3-imageio-ffmpeg, python3-moviepy, python3-librosa, python3-mss, python3-fonttools, python3-freetype, python3-pynput, python3-serial, python3-networkx, python3-sortedcontainers, python3-attr, python3-zstd, python3-cairocffi, libonnxruntime-dev |
-| `foundry-retro-tools` | 1.0.15 | all | mame, mame-tools, dasm, cc65, 64tass, z80dasm, z80asm, radare2, binwalk, sox, binutils-m68k-linux-gnu, xa65, f9dasm, libvgm, vgmstream, m8te, tilemap-studio, wla-dx, pvsneslib-core, asar-snes, cvise, delta, halfempty, python3-picire |
+| `foundry-retro-tools` | 1.0.16 | all | mame, mame-tools, dasm, cc65, 64tass, z80dasm, z80asm, radare2, binwalk, sox, binutils-m68k-linux-gnu, xa65, f9dasm, libvgm, vgmstream, m8te, tilemap-studio, wla-dx, pvsneslib-core, asar-snes-assembler, cvise, delta, halfempty, python3-picire |
 | `foundry-sprite` | 1.0.1 | all | foundry-anvil, foundry-pixel-art, foundry-art, foundry-trackers, foundry-daw, digikam, showfoto |
 | `foundry-trackers` | 1.0.0 | all | milkytracker, schism, furnace, openmpt123 |
 
@@ -1036,10 +1036,10 @@ Section: metapackages
 Installed-Size: 9
 Maintainer: World Foundry <packages@worldfoundry.org>
 Architecture: all
-Version: 1.0.15
-Depends: mame, mame-tools, dasm, cc65, 64tass, z80dasm, z80asm, radare2, binwalk, sox, binutils-m68k-linux-gnu, xa65, f9dasm, libvgm, vgmstream, m8te, tilemap-studio, wla-dx, pvsneslib-core, asar-snes, cvise, delta, halfempty, python3-picire
-Filename: pool/main/f/foundry-retro-tools/foundry-retro-tools_1.0.15_all.deb
-Size: 4310
+Version: 1.0.16
+Depends: mame, mame-tools, dasm, cc65, 64tass, z80dasm, z80asm, radare2, binwalk, sox, binutils-m68k-linux-gnu, xa65, f9dasm, libvgm, vgmstream, m8te, tilemap-studio, wla-dx, pvsneslib-core, asar-snes-assembler, cvise, delta, halfempty, python3-picire
+Filename: pool/main/f/foundry-retro-tools/foundry-retro-tools_1.0.16_all.deb
+Size: 4390
 Homepage: https://foundrylinux.org/
 ```
 
@@ -1059,8 +1059,9 @@ formats decoded to WAV), m8te (SNES 8bpp tile/tilemap/palette editor),
 tilemap-studio (Game Boy / GBC / GBA / NES / SNES tilemap editor),
 pvsneslib-core (PVSnesLib SNES homebrew SDK — 816-tcc C compiler, pinned
 WLA DX, and a C library, used via PVSNESLIB_HOME + make),
-asar-snes (SNES 65816/SPC700/SuperFX cross-assembler by RPGHacker/Alcaro;
-named asar-snes to coexist with the @electron/asar npm tool),
+asar-snes-assembler (SNES 65816/SPC700/SuperFX cross-assembler by
+RPGHacker/Alcaro; provides the asar-snes command, named so to coexist with the
+@electron/asar npm tool),
 cvise (super-parallel C/C++ test-case reducer — shrink a compiler-crashing or
 miscompiling source file down to a minimal, filable repro), delta
 (singledelta / multidelta / topformflat — the original line-based
@@ -1142,7 +1143,7 @@ Badge = apt-index Repology badge (`X-Repology-Project`): `proj` shown · `➖ no
 
 | Package | Version | Arch | Section | Badge | What it does |
 |---|---|---|---|---|---|
-| `asar-snes` | 1.91-1foundry1 | amd64 | devel | ➖ none | SNES 65816/SPC700/SuperFX cross-assembler |
+| `asar-snes-assembler` | 1.91-1foundry2 | amd64 | devel | `asar-snes-assembler` | SNES 65816/SPC700/SuperFX cross-assembler |
 | `blender-asset-finder` | 0.2.0+git0a19d26c-2foundry1 | all | graphics | ➖ none | search/download 3D assets from online repos, in Blender **Renamed from (moved from apt.worldfoundry.org per 2026-05-20 reorg).** |
 | `blender-asset-finder-cli` | 0.1.0+git0a19d26c-1foundry1 | all | utils | ➖ none | CLI companion to the blender-asset-finder Blender add-on **Renamed from wf-asset, moved + renamed per 2026-05-20 reorg.** |
 | `bsnes-jg` | 2.1.0-1foundry1 | amd64 | otherosfs | `bsnes-jg` | cycle-accurate Super Nintendo / Super Famicom emulator |
@@ -1187,7 +1188,7 @@ Bash installers that run on stock Ubuntu 26.04 — each is the apt-expansion of 
 | `install-foundry-dev.sh` | `apt-get install -y worldfoundry-cli`<br/>`apt-get install -y worldfoundry-development` | umbrella — overlaps with worldfoundry-development | ok |
 | `install-foundry-engine-build-deps.sh` | `apt-get install -y \` | overlaps with worldfoundry-development's engine deps | ok |
 | `install-foundry-ios-development.sh` | `apt-get install -y foundry-ios-development pipx` | foundry-ios-development (apt.foundrylinux.org) | ok |
-| `install-foundry-retro-tools.sh` | `apt-get install -y foundry-retro-tools` | foundry-retro-tools (apt.foundrylinux.org) | ok |
+| `install-foundry-retro-tools.sh` | `apt-get install -y foundry-retro-tools pipx` | foundry-retro-tools (apt.foundrylinux.org) | ok |
 | `install-task.sh` | `apt-get install -y task` | N/A — Cloudsmith / Ubuntu universe | ok |
 | `setup-foundry-apt-source.sh` | `apt-get install -y --no-install-recommends gnupg` | — (bootstrap) | ok |
 | `setup-worldfoundry-apt-source.sh` | `apt-get install -y --no-install-recommends gnupg` | — (bootstrap) | ok |
@@ -1571,7 +1572,7 @@ All declared relationships. **Bold** = package in our repos · plain = Ubuntu un
 | Depends | **`tilemap-studio`** |
 | Depends | **`wla-dx`** |
 | Depends | **`pvsneslib-core`** |
-| Depends | **`asar-snes`** |
+| Depends | **`asar-snes-assembler`** |
 | Depends | `cvise` |
 | Depends | `delta` |
 | Depends | **`halfempty`** |
