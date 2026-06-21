@@ -269,6 +269,10 @@ function Install() {
                     <code><span className="ember">sudo apt install</span> foundry-sprite <span className="cmt"># + heavy graphics + audio</span></code>
                     <code><span className="ember">sudo apt install</span> foundry-atelier <span className="cmt"># + everything (~15 GB)</span></code>
                   </div>
+                  <div className="code-alts">
+                    <code><span className="cmt"># source too — setup.sh adds deb-src:</span></code>
+                    <code><span className="ember">apt-get source</span> bsnes-jg</code>
+                  </div>
                 </div>
               </div>
             </div>

@@ -191,7 +191,7 @@
       "in_edition_tier": "anvil"
     }
   ],
-  "out_of_catalogue": ["foundry-cv"],
+  "out_of_catalogue": ["foundry-cv", "python3-inators"],
   "_forge_home_page_layout": {
     "_comment": "Six cards on the home page, in 3×2 grid. Each card resolves to a `category_slug` (above) at SSR time, pulling its install_command, package count, and headline size from packages-data.json. The card copy fields (title, role, icon) are duplicated from the category for clarity — if they diverge from the category, SSR uses the category as source of truth and warns.",
     "cards": [

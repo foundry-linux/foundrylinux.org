@@ -17,7 +17,13 @@ nowhere. Close that gap on the two surfaces where it belongs; leave the marketin
 2. **Phase 0** (`foundry-setup/setup-foundry-apt-source.sh`) — add an opt-in **`--with-source`**
    flag that also writes the `deb-src` line. Off by default (keeps installs lean / `apt update`
    faster).
-3. **Not** the marketing site (`site/*.jsx`) — wrong audience.
+3. **The marketing site** (`site/setup.sh` + `site/sections.jsx`) — *added 2026-06-21 after
+   Will pushed back on the original "leave the site" call.* The site is the path most people
+   actually use (`curl … setup.sh | bash`), so silence there was the real gap. **`setup.sh`
+   writes `deb-src` for foundry by default** (every package ships source) + a short
+   `apt-get source` note in the Install card. worldfoundry stays binary-only there (no source
+   packages published in that repo yet). Requires `task site-build` (regenerate `index.html`)
+   + a site deploy.
 
 ## Implementation
 
@@ -88,6 +94,22 @@ Both surfaces implemented; marketing site left alone (audience). Verified in `ub
   in a fresh `ubuntu:26.04` wrote both lines → `apt-get source bsnes-jg` unpacked end-to-end;
   re-run idempotent (one `deb-src` line). shellcheck: only the pre-existing `lib.sh` SC1091
   (info), same as every `foundry-setup` script.
+
+### Website (`site/setup.sh` + `sections.jsx`) — added 2026-06-21
+
+- **`site/setup.sh`** — the `curl … | bash` one-liner now writes both `deb` + `deb-src` for
+  foundry (worldfoundry stays binary — no source packages in that repo yet). shellcheck clean.
+- **`site/sections.jsx`** — the Install card's step ② gained an `apt-get source bsnes-jg` note;
+  `task site-build` re-renders `index.html`.
+- **Blocker hit + fixed (pre-existing):** the first `task site-build` failed — `packages-page`'s
+  catalogue audit (`scripts/build-packages-data.js`) flags `python3-inators` as "unowned" (it's a
+  transitive-only lib via `python3-picire`, never user-facing, vendored without an
+  `out_of_catalogue` entry). Added it to `data/categories.json` `out_of_catalogue` (next to
+  `foundry-cv`). The first post-Tier-2 site rebuild surfaced this latent gap.
+- **Deploy:** a plain push to `main` does **not** redeploy — `site-deploy.yml` fires on `v*`
+  tags, apt-publish completion (`workflow_run`), `repository_dispatch`, nightly, or manual. The
+  in-flight v1.5.37 apt-publish completion should trigger a rebuild+deploy; else
+  `gh workflow run site-deploy.yml`.
 
 ## Follow-up (note, not this change)
 
