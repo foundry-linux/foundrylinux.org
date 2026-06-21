@@ -13,10 +13,14 @@ for arg in "$@"; do
             cat <<EOF
 Configure apt.foundrylinux.org as an apt source.
 
-Usage: $(basename "$0") [-h|--help] [--dry-run|-n]
+Usage: $(basename "$0") [-h|--help] [--dry-run|-n] [--with-source]
 
 Idempotent — safe to re-run. Skips if the keyring + sources.list.d
 entry already exist.
+
+Options:
+  --with-source   also add a deb-src line so 'apt-get source <pkg>' works
+                  (off by default; appended to the list even on a re-run).
 EOF
             exit 0
             ;;
@@ -24,9 +28,11 @@ EOF
 done
 
 DRY_RUN=false
+WITH_SOURCE=false
 for arg in "$@"; do
     case "$arg" in
         -n|--dry-run) DRY_RUN=true ;;
+        --with-source) WITH_SOURCE=true ;;
         -h|--help) ;;
         *) echo "Unknown option: $arg (try --help)" >&2; exit 1 ;;
     esac
@@ -55,8 +61,13 @@ URL=https://apt.foundrylinux.org
 SUITE=resolute
 
 if [[ -f "$KEYRING" && -f "$LIST" ]]; then
-    info "Foundry apt source already configured at $LIST — skipping"
-    exit 0
+    # Already configured — skip, UNLESS --with-source was asked for and the list
+    # has no deb-src line yet, in which case fall through to (re)write it with one.
+    if ! $WITH_SOURCE || grep -q '^deb-src ' "$LIST" 2>/dev/null; then
+        info "Foundry apt source already configured at $LIST — skipping"
+        exit 0
+    fi
+    info "Adding deb-src line to existing $LIST (--with-source)"
 fi
 
 step "Configuring $URL as an apt source"
@@ -69,8 +80,23 @@ if ! command -v gpg >/dev/null 2>&1; then
     run_sudo apt-get install -y --no-install-recommends gnupg
 fi
 run_sudo install -d /etc/apt/keyrings
-run_sudo bash -c "curl -fsSL '$URL/key.gpg' | gpg --dearmor -o '$KEYRING'"
-echo "deb [signed-by=$KEYRING] $URL $SUITE main" \
-    | run_sudo tee "$LIST" > /dev/null
+[[ -f "$KEYRING" ]] || run_sudo bash -c "curl -fsSL '$URL/key.gpg' | gpg --dearmor -o '$KEYRING'"
+
+# Always the binary deb line; with --with-source also a deb-src line so
+# `apt-get source <pkg>` resolves (the repo publishes a Sources index).
+list_lines="deb [signed-by=$KEYRING] $URL $SUITE main"
+if $WITH_SOURCE; then
+    list_lines+=$'\n'"deb-src [signed-by=$KEYRING] $URL $SUITE main"
+fi
+if $DRY_RUN; then
+    printf '  [dry-run] write to %s:\n' "$LIST"
+    printf '%s\n' "$list_lines" | sed 's/^/    /'
+else
+    printf '%s\n' "$list_lines" | run_sudo tee "$LIST" > /dev/null
+fi
 apt_update
-ok "Foundry apt source live (key at $KEYRING, list at $LIST)"
+if $WITH_SOURCE; then
+    ok "Foundry apt source live with deb-src (key $KEYRING, list $LIST)"
+else
+    ok "Foundry apt source live (key $KEYRING, list $LIST)"
+fi

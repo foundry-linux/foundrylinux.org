@@ -496,6 +496,17 @@ sudo apt-get install foundry-retro-tools</pre>
   <p><a href="/key.gpg">↓ key.gpg</a> &mdash; verify before trusting:
      <code>gpg --show-keys /etc/apt/keyrings/foundry.gpg</code></p>
 
+  <h2>Source packages</h2>
+  <p>Every package is published with source. Add the deb-src line, then fetch &amp; unpack any
+     package's Debian source (<code>apt-get source &lt;pkg&gt;</code>):</p>
+  <div class="pre-wrap">
+  <button class="copy" type="button" data-copy="source-setup" title="Copy"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9"/><path d="M5 11 L2 11 L2 2 L11 2 L11 5"/></svg></button>
+  <pre id="source-setup">echo "deb-src [signed-by=/etc/apt/keyrings/foundry.gpg] ${SITE_URL} resolute main" \\
+  | sudo tee -a /etc/apt/sources.list.d/foundry.list
+sudo apt-get update
+apt-get source bsnes-jg</pre>
+  </div>
+
   <h2>Packages</h2>
   <div class="filter-bar">
     <label for="filter-q">Filter</label>
