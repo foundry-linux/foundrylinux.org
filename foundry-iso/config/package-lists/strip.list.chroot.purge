@@ -7,7 +7,7 @@
 libreoffice-*
 kontact kmail akonadi-*
 kdepim-* kaddressbook kalarm kjots knotes korganizer merkuro-calendar
-kde-games-* kalgebra kgeography kig kbruch
+kalgebra kgeography kbruch
 snapd snap-store
 # Stock Plasma extra-wallpapers collection (~217 MiB) — we ship our own via
 # foundry-kde-theme. Only Recommended by kubuntu-desktop, so the purge is clean.

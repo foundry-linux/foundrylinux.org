@@ -11,7 +11,12 @@ Package: foundry-anvil
 Architecture: all
 Depends: ${misc:Depends},
  foundry-core,
- foundry-desktop
+ foundry-desktop,
+ kdegames,
+ step,
+ kig,
+ stellarium,
+ simutrans
 Description: Foundry Linux ISO edition — developer toolkit + KDE desktop
  Umbrella metapackage for the Foundry Linux ISO (Kubuntu 26.04 base).
  Installs foundry-core (the full desktop-agnostic developer toolkit) and
