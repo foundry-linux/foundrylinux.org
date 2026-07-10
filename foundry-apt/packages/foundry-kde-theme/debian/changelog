@@ -1,3 +1,15 @@
+foundry-kde-theme (1.0.6) resolute; urgency=medium
+
+  * Default the touchpad to macOS-style natural scrolling. KDE stores scroll
+    direction per input device (keyed by vendor/product in kcminputrc), so a
+    static /etc/xdg default can't target unknown hardware; instead a per-user
+    autostart script (foundry-set-natural-scroll.sh) flips it once at first
+    login via KWin's D-Bus input interface, guarded by a sentinel so a later
+    user override sticks. Touchpad only -- attached mice keep the traditional
+    direction.
+
+ -- Will Norris <wbnorris@gmail.com>  Fri, 10 Jul 2026 09:00:00 -0600
+
 foundry-kde-theme (1.0.5) resolute; urgency=medium
 
   * Add the LAF contents/previews/preview.png so "Foundry Linux" shows a

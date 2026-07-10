@@ -19,4 +19,6 @@ data/xdg/ksplashrc  etc/xdg/
 data/xdg/kscreenlockerrc  etc/xdg/
 data/xdg/kicker-extra-favoritesrc  usr/share/foundry-kde-theme/
 data/autostart/foundry-wallpaper.desktop  etc/xdg/autostart/
+data/autostart/foundry-natural-scroll.desktop  etc/xdg/autostart/
 data/bin/foundry-set-wallpaper.sh  usr/lib/foundry-kde-theme/
+data/bin/foundry-set-natural-scroll.sh  usr/lib/foundry-kde-theme/

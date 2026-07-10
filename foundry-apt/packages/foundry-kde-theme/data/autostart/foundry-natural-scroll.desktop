@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Set Foundry Linux Touchpad Scrolling
+Exec=/usr/lib/foundry-kde-theme/foundry-set-natural-scroll.sh
+X-KDE-autostart-phase=2
