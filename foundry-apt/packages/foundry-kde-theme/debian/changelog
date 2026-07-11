@@ -1,3 +1,13 @@
+foundry-kde-theme (1.0.8) resolute; urgency=medium
+
+  * Fix the 24-hour clock default: 1.0.7 set use24hFormat=1, but Plasma 6
+    reordered that enum (0=12h, 1=region-default, 2=24h) versus Plasma 5, so 1
+    means "follow region defaults" -- which renders 12-hour under en_US. A VM
+    boot test caught the clock still showing "AM". Set use24hFormat=2 for a true
+    24-hour default.
+
+ -- Will Norris <wbnorris@gmail.com>  Fri, 10 Jul 2026 23:30:00 -0600
+
 foundry-kde-theme (1.0.7) resolute; urgency=medium
 
   * Default the panel digital clock to a 24-hour format. The clock previously
