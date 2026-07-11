@@ -35,6 +35,7 @@ panel.addWidget("org.kde.plasma.systemtray");
 const clock = panel.addWidget("org.kde.plasma.digitalclock");
 clock.currentConfigGroup = ["Appearance"];
 clock.writeConfig("showDate", "true");
+clock.writeConfig("use24hFormat", 1);   // 0=12h, 1=24h, 2=follow locale
 
 panel.addWidget("org.kde.plasma.showdesktop");
 

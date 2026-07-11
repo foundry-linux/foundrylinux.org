@@ -1,3 +1,11 @@
+foundry-kde-theme (1.0.7) resolute; urgency=medium
+
+  * Default the panel digital clock to a 24-hour format. The clock previously
+    followed the (unset) system locale and rendered 12-hour; set use24hFormat=1
+    in the first-login desktop-layout script so 24-hour is the shipped default.
+
+ -- Will Norris <wbnorris@gmail.com>  Fri, 10 Jul 2026 10:00:00 -0600
+
 foundry-kde-theme (1.0.6) resolute; urgency=medium
 
   * Default the touchpad to macOS-style natural scrolling. KDE stores scroll
