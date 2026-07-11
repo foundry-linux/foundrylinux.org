@@ -84,6 +84,19 @@ qemu-system-x86_64 -enable-kvm -m 6144 \
 - `use24hFormat=1` build → clock rendered `5:31 AM` (**bug**).
 - `use24hFormat=2` build → clock rendered `6:45`, no AM/PM (**fixed**).
 
+**Before** — `use24hFormat=1`, anvil 0.9.122 (12-hour, AM suffix):
+
+![Panel clock showing 5:31 AM](screenshots/2026-07-10-clock-before-12h.png)
+
+**After** — `use24hFormat=2`, anvil 0.9.124 (24-hour, no AM/PM):
+
+![Panel clock showing 6:45](screenshots/2026-07-10-clock-after-24h.png)
+
+Full desktop on first login (after the fix), showing the Foundry panel +
+ForgeHorizon wallpaper the layout script builds:
+
+![Foundry Linux live desktop with 24-hour clock](screenshots/2026-07-10-clock-after-desktop.png)
+
 Host deps: `task iso-deps` (installs `qemu-system-x86`, `ovmf`, `xorriso`).
 
 ## Notes / out of scope
