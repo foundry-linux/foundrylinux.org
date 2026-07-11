@@ -19,7 +19,8 @@ Depends: ${misc:Depends},
  foundry-ios-development,
  worldfoundry-development,
  ghidra,
- foundry-cv
+ foundry-cv,
+ stellarium
 Description: Foundry Linux complete edition — everything
  foundry-sprite plus every optional Foundry metapackage and cross-repo
  development tooling — the "give me the lot" install, around 10 GB on

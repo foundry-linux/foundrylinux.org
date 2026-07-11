@@ -1,3 +1,10 @@
+foundry-atelier (0.9.6) resolute; urgency=medium
+
+  * Add stellarium (moved here from foundry-anvil) so the ~352 MB planetarium
+    data set ships only in the complete edition.
+
+ -- Will Norris <wbnorris@gmail.com>  Sat, 11 Jul 2026 00:15:00 -0600
+
 foundry-atelier (0.9.5) resolute; urgency=medium
 
   * Drop explicit openjdk-21-jre-headless dep — now provided by foundry-core

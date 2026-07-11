@@ -1,3 +1,12 @@
+foundry-anvil (1.0.6) resolute; urgency=medium
+
+  * Move stellarium to foundry-atelier. The 3D planetarium's data set
+    (stellarium-data) is ~352 MB, disproportionate for the default ISO
+    edition; it now ships only in the complete (atelier) edition. step, kig,
+    kdegames, and simutrans stay in anvil.
+
+ -- Will Norris <wbnorris@gmail.com>  Sat, 11 Jul 2026 00:15:00 -0600
+
 foundry-anvil (1.0.5) resolute; urgency=medium
 
   * Add kdegames (38 KDE games), step (physics sim), kig (interactive

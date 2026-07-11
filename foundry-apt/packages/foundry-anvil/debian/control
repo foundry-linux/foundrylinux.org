@@ -15,7 +15,6 @@ Depends: ${misc:Depends},
  kdegames,
  step,
  kig,
- stellarium,
  simutrans
 Description: Foundry Linux ISO edition — developer toolkit + KDE desktop
  Umbrella metapackage for the Foundry Linux ISO (Kubuntu 26.04 base).
