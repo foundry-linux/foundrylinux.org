@@ -1,3 +1,13 @@
+# Rebuild locally with current apt packages
+
+From the repository root, rebuild all Foundry apt packages, stage them into the
+ISO, and produce fresh local ISOs for both editions (no sync, upload, or
+publish):
+
+```bash
+task --force iso-build EDITION=all
+```
+
 # foundry-iso
 
 `live-build` configuration that produces the Foundry Linux 26.04 bootable ISO.
