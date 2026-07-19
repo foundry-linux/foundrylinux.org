@@ -15,6 +15,20 @@ case "$EDITION" in
   *) echo "EDITION must be one of: anvil, atelier" >&2; exit 1 ;;
 esac
 
+# The Docker daemon socket needs the 'docker' group. `task dev-setup` runs
+# `usermod -aG docker`, but that does not affect an already-open login session,
+# so a fresh interactive shell may not have the group active yet. If the daemon
+# is unreachable but this user IS a recorded member, re-exec once under `sg` to
+# activate the group for this run -- no password (membership already exists), no
+# logout/newgrp. The sentinel prevents an infinite loop if the daemon is truly
+# down (member, but sg still can't reach it).
+if [[ -z "${_FOUNDRY_SG_REEXEC:-}" ]] \
+   && ! docker info >/dev/null 2>&1 \
+   && getent group docker | grep -qw "${USER:-$(id -un)}"; then
+  echo "=== docker group not active in this shell; activating via sg for this run ==="
+  exec sg docker -c "_FOUNDRY_SG_REEXEC=1 EDITION=$(printf %q "$EDITION") bash $(printf %q "$0")"
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"

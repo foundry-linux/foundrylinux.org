@@ -16,7 +16,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        APT_PKGS=(docker.io gh shellcheck aptly dpkg-dev debhelper jq distrobox python3 curl)
+        APT_PKGS=(docker.io gh shellcheck aptly dpkg-dev debhelper jq distrobox python3 curl nodejs npm)
         MISSING=()
         for pkg in "${APT_PKGS[@]}"; do
           dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q 'install ok installed' || MISSING+=("$pkg")
@@ -35,6 +35,14 @@ tasks:
         if [[ ! -d node_modules ]]; then
           echo "=== npm install ==="
           npm install
+        fi
+        # apt-build/iso-build talk to the Docker daemon without sudo, which
+        # requires membership in the 'docker' group. Add it here so it is not a
+        # manual step; it only takes effect in a new login session.
+        if ! id -nG "$USER" | tr ' ' '\n' | grep -qx docker; then
+          echo "=== docker: adding $USER to the docker group ==="
+          sudo usermod -aG docker "$USER"
+          echo "  NOTE: log out/in (or run 'newgrp docker') for group membership to take effect."
         fi
         echo "All done. Run 'task' to see available tasks."
 
@@ -346,10 +354,27 @@ tasks:
         fi
 
   apt-build:
-    desc: "Build all foundry-apt .debs into foundry-apt/dist/"
+    desc: "Build all foundry-apt .debs into foundry-apt/dist/ (inside ubuntu:26.04)"
     dir: foundry-apt
     cmds:
-      - bash scripts/build-all.sh
+      # The build runs in ubuntu:26.04 (soname/build-dep parity with CI). Talking
+      # to the Docker daemon needs the 'docker' group; `task dev-setup` adds you
+      # to it, but an already-open login shell won't have it active yet. If the
+      # daemon is unreachable but this user IS a recorded member, re-run the same
+      # command under `sg` to activate the group for this one run — no password
+      # (membership already exists), no logout, no `newgrp` needed.
+      - |
+        set -euo pipefail
+        if docker info >/dev/null 2>&1; then
+          bash scripts/build-all-in-docker.sh
+        elif getent group docker | grep -qw "${USER:-$(id -un)}"; then
+          echo "=== docker group not active in this shell; activating via sg for this run ==="
+          exec sg docker -c 'bash scripts/build-all-in-docker.sh'
+        else
+          echo "ERROR: cannot reach the Docker daemon and $USER is not in the docker group." >&2
+          echo "       Run 'task dev-setup' first, then retry." >&2
+          exit 1
+        fi
 
   check-licenses:
     desc: "Verify every foundry-apt vendored package has a LICENSES-VENDORED.md entry"
