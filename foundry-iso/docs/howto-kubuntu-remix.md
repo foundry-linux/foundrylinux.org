@@ -1176,7 +1176,7 @@ debian/
 
 ## Build Pipeline & Task Commands
 
-This section covers the full end-to-end build pipeline for the **Foundry Linux** ISO as wired in the top-level `Taskfile.yml`. All `task` commands are run from the repo root (`~/SRC/foundrylinux.org/`), not from inside `foundry-iso/`.
+This section covers the full end-to-end build pipeline for the **Foundry Linux** ISO as wired in the top-level `Taskfile.yml`. All `task` commands are run from the repo root (`~/foundrylinux.org/`), not from inside `foundry-iso/`.
 
 ---
 
