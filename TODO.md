@@ -7,23 +7,23 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### apt-repo resilience — `task` vendored + source health-check
 
-- [ ] **Phase 2 (gated on the foundry-apt publish):** flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
+- [T2] **Phase 2 (gated on the foundry-apt publish):** flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
 ### Phase 3 — Foundry Linux ISO
 
-- [ ] **Build `foundry-atelier-1.0-amd64.iso`** — `task iso-build EDITION=atelier`; verify ghidra + full atelier package set present; sign + upload to R2. Target ~10 GB. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
-- [verify] **Guarantee a full KDE config stack** — build-time assertion in `foundry-iso/scripts/build-iso.sh` (after `lb chroot`) checks the KDE config QML modules (`org.kde.kcmutils`, `org.kde.kquickcontrols`, `QtQuick/Dialogs`) are present in the chroot, so a future strip-list edit can't silently break plasmoid config dialogs. Guard comments added to hook 0020 + `strip.list.chroot.purge`; omit/ship rationale in [docs/investigations/2026-05-30-kde-app-kit.md](docs/investigations/2026-05-30-kde-app-kit.md). **Code landed 2026-06-04; verify steps 1–4 PENDING** (require a full `task iso-build`). See [plan](docs/plans/2026-05-30-full-kde-experience.md). _(Surfaced while testing the claude-usage KDE plasmoid live; that empty-config-dialog bug was a claude-usage bug, not a Foundry gap.)_
-- [ ] **[at v1.0.0] Migrate ISO hosting to Internet Archive** — ~~provision IA S3 keys~~ ✅ done 2026-06-14 (`scripts/bootstrap-ia.sh` → `IA_S3_ACCESS_KEY`/`IA_S3_SECRET_KEY` in foundry-linux-secrets R2 + GH secrets). Remaining: add `scripts/upload-iso-ia.sh` (rclone → `s3.us.archive.org`), add Cloudflare Worker redirecting `iso.foundrylinux.org/*` → archive.org download URLs, update `publish.yml`. R2 stays for apt repos. See [investigation](docs/investigations/2026-05-22-iso-hosting.md).
+- [T3] **Build `foundry-atelier-1.0-amd64.iso`** — `task iso-build EDITION=atelier`; verify ghidra + full atelier package set present; sign + upload to R2. Target ~10 GB. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
+- [verify T2] **Guarantee a full KDE config stack** — build-time assertion in `foundry-iso/scripts/build-iso.sh` (after `lb chroot`) checks the KDE config QML modules (`org.kde.kcmutils`, `org.kde.kquickcontrols`, `QtQuick/Dialogs`) are present in the chroot, so a future strip-list edit can't silently break plasmoid config dialogs. Guard comments added to hook 0020 + `strip.list.chroot.purge`; omit/ship rationale in [docs/investigations/2026-05-30-kde-app-kit.md](docs/investigations/2026-05-30-kde-app-kit.md). **Code landed 2026-06-04; verify steps 1–4 PENDING** (require a full `task iso-build`). See [plan](docs/plans/2026-05-30-full-kde-experience.md). _(Surfaced while testing the claude-usage KDE plasmoid live; that empty-config-dialog bug was a claude-usage bug, not a Foundry gap.)_
+- [T3] **[at v1.0.0] Migrate ISO hosting to Internet Archive** — ~~provision IA S3 keys~~ ✅ done 2026-06-14 (`scripts/bootstrap-ia.sh` → `IA_S3_ACCESS_KEY`/`IA_S3_SECRET_KEY` in foundry-linux-secrets R2 + GH secrets). Remaining: add `scripts/upload-iso-ia.sh` (rclone → `s3.us.archive.org`), add Cloudflare Worker redirecting `iso.foundrylinux.org/*` → archive.org download URLs, update `publish.yml`. R2 stays for apt repos. See [investigation](docs/investigations/2026-05-22-iso-hosting.md).
 
-- [ ] **Kiosk mode (gamescope + wf-launcher)** — *deferred* from the [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md); no plan written yet. A locked-down session that boots straight into a game launcher. Future phase, not blocking v1.
+- [T4] **Kiosk mode (gamescope + wf-launcher)** — *deferred* from the [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md); no plan written yet. A locked-down session that boots straight into a game launcher. Future phase, not blocking v1.
 
 
 ### Deferred follow-ups (surfaced by the 2026-06-04 plan sweep)
 
 Sub-tasks that completed plans explicitly punted/deferred and that weren't tracked anywhere until now.
 
-- [ ] **foundry-kde-theme — remaining theming layers** — Plasma Style SVG set (distinctive panel/widget shapes — partial: forge-palette colors done, Breeze-inherit done; custom SVGs pending), Aurorae window decoration, Kvantum Qt-app style. See [plan](docs/plans/2026-05-24-foundry-kde-theme.md).
-- [ ] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
-- [ ] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
+- [T3] **foundry-kde-theme — remaining theming layers** — Plasma Style SVG set (distinctive panel/widget shapes — partial: forge-palette colors done, Breeze-inherit done; custom SVGs pending), Aurorae window decoration, Kvantum Qt-app style. See [plan](docs/plans/2026-05-24-foundry-kde-theme.md).
+- [T4] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
+- [T4] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
 ### Packaging — new upstreams
 
 _None queued. New vendored upstreams land here; `/package <name>`, then move to Done + add an ITP line below._
@@ -32,38 +32,38 @@ _None queued. New vendored upstreams land here; `/package <name>`, then move to 
 
 Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for existing RFP/ITP before filing each. New vendored packages get their own entry here via `/package` skill Step 6.
 
-- [ ] **ITP: `asar-snes-assembler`** — SNES 65816 cross-assembler (LGPL-3.0+)
-- [ ] **ITP: `blender-asset-finder`** — Blender asset search add-on (GPL-2.0+)
-- [ ] **ITP: `blender-asset-finder-cli`** — CLI for Blender asset finder (GPL-2.0+)
-- [ ] **ITP: `bsnes-jg`** — cycle-accurate SNES/Super Famicom emulator (GPL-3.0+)
-- [ ] **ITP: `drmon`** — terminal system monitor (GPL-2.0)
-- [ ] **ITP: `f9dasm`** — MC6800/6809/68HC12 disassembler (GPL-2.0+)
-- [ ] **ITP: `ghidra`** — NSA reverse-engineering framework (Apache-2.0)
-- [ ] **ITP: `halfempty`** — parallel file-bisection test-case minimizer (Apache-2.0)
-- [ ] **ITP: `ldtk`** — level design toolkit (MIT)
-- [ ] **ITP: `libvgm`** — VGM chiptune audio library (GPL-2.0+)
-- [ ] **ITP: `m8te`** — SNES 8bpp tile/map editor, Mono runtime (MIT)
-- [ ] **ITP: `mesen2`** — multi-system retro emulator, NES/SNES/GB/GBA/PCE/SMS/WS (GPL-3.0)
-- [ ] **ITP: `ppsspp`** — PSP emulator (GPL-2.0+)
-- [ ] **ITP: `pvsneslib`** — SNES homebrew SDK (Zlib)
-- [ ] **ITP: `python3-glfw`** — Python GLFW bindings (MIT)
-- [ ] **ITP: `python3-inators`** — utility helpers for picire (BSD-3-Clause)
-- [ ] **ITP: `python3-librosa`** — Python audio analysis library (ISC)
-- [ ] **ITP: `python3-mss`** — Python multi-platform screenshot library (MIT)
-- [ ] **ITP: `python3-picire`** — parallel Delta Debugging reducer (BSD-3-Clause)
-- [ ] **ITP: `python3-pydub`** — Python audio manipulation library (MIT)
-- [ ] **ITP: `ruff`** — Python linter/formatter written in Rust (MIT)
-- [ ] **ITP: `snes9x-gtk`** — SNES emulator ⚠️ Snes9x non-commercial license; likely non-DFSG — research before filing
-- [ ] **ITP: `task`** — task runner / Makefile alternative (MIT)
-- [ ] **ITP: `tilemap-studio`** — retro tile/map editor (LGPL-3.0)
-- [ ] **ITP: `vgmstream`** — VGM stream decoder (ISC)
-- [ ] **ITP: `wla-dx`** — multi-CPU cross assembler (GPL-2.0+)
+- [T1] **ITP: `asar-snes-assembler`** — SNES 65816 cross-assembler (LGPL-3.0+)
+- [T1] **ITP: `blender-asset-finder`** — Blender asset search add-on (GPL-2.0+)
+- [T1] **ITP: `blender-asset-finder-cli`** — CLI for Blender asset finder (GPL-2.0+)
+- [T1] **ITP: `bsnes-jg`** — cycle-accurate SNES/Super Famicom emulator (GPL-3.0+)
+- [T1] **ITP: `drmon`** — terminal system monitor (GPL-2.0)
+- [T1] **ITP: `f9dasm`** — MC6800/6809/68HC12 disassembler (GPL-2.0+)
+- [T1] **ITP: `ghidra`** — NSA reverse-engineering framework (Apache-2.0)
+- [T1] **ITP: `halfempty`** — parallel file-bisection test-case minimizer (Apache-2.0)
+- [T1] **ITP: `ldtk`** — level design toolkit (MIT)
+- [T1] **ITP: `libvgm`** — VGM chiptune audio library (GPL-2.0+)
+- [T1] **ITP: `m8te`** — SNES 8bpp tile/map editor, Mono runtime (MIT)
+- [T1] **ITP: `mesen2`** — multi-system retro emulator, NES/SNES/GB/GBA/PCE/SMS/WS (GPL-3.0)
+- [T1] **ITP: `ppsspp`** — PSP emulator (GPL-2.0+)
+- [T1] **ITP: `pvsneslib`** — SNES homebrew SDK (Zlib)
+- [T1] **ITP: `python3-glfw`** — Python GLFW bindings (MIT)
+- [T1] **ITP: `python3-inators`** — utility helpers for picire (BSD-3-Clause)
+- [T1] **ITP: `python3-librosa`** — Python audio analysis library (ISC)
+- [T1] **ITP: `python3-mss`** — Python multi-platform screenshot library (MIT)
+- [T1] **ITP: `python3-picire`** — parallel Delta Debugging reducer (BSD-3-Clause)
+- [T1] **ITP: `python3-pydub`** — Python audio manipulation library (MIT)
+- [T1] **ITP: `ruff`** — Python linter/formatter written in Rust (MIT)
+- [T3] **ITP: `snes9x-gtk`** — SNES emulator ⚠️ Snes9x non-commercial license; likely non-DFSG — research before filing
+- [T1] **ITP: `task`** — task runner / Makefile alternative (MIT)
+- [T1] **ITP: `tilemap-studio`** — retro tile/map editor (LGPL-3.0)
+- [T1] **ITP: `vgmstream`** — VGM stream decoder (ISC)
+- [T1] **ITP: `wla-dx`** — multi-CPU cross assembler (GPL-2.0+)
 
 ### Housekeeping
-- [ ] **VM distribution artifacts (qcow2 / OVA)** — build VirtualBox/VMware/QEMU images alongside ISOs (homepage VM rows are intentional, not placeholders); folds in GRUB-theme activation + OVMF custom-logo work (VM-only). **Start after Internet Archive migration.** See [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md), [boot-branding](docs/plans/2026-05-24-boot-branding.md).
-- [ ] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
-- [ ] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
-- [ ] **Get `apt.foundrylinux.org` tracked by Repology (as a producer)** — we fit the BackBox add-on-derivative pattern (an Ubuntu derivative tracked at `minpackages: 10`), so size is not a blocker. Order: ~~(1) publish source packages → `main/source/Sources.gz`~~ + ~~(2) `Origin`/`Label` = `Foundry Linux`~~ — **both ✅ live as of v1.5.35 (2026-06-21)**; ~~(3) `scripts/generate-repology-ruleset.sh` emitting the `repology-rules` YAML~~ ✅ **done 2026-06-21** — `task gen-repology-ruleset` → `repology/foundry-linux.yaml` (9 `setname` remaps + 31 `remove`, all scoped `ruleset: foundry_linux`); **(4)** register on the [Debian Derivatives Census](https://wiki.debian.org/Derivatives/Census); **(5)** PR repo def → `repology-updater` (the `repos.d/deb/foundry-linux.yaml` from the investigation) + ruleset → `repology-rules`. Just (4)+(5) left — both are submissions to external repos. See [investigation](docs/investigations/2026-06-21-repology-tracking-foundry-apt.md).
+- [T3] **VM distribution artifacts (qcow2 / OVA)** — build VirtualBox/VMware/QEMU images alongside ISOs (homepage VM rows are intentional, not placeholders); folds in GRUB-theme activation + OVMF custom-logo work (VM-only). **Start after Internet Archive migration.** See [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md), [boot-branding](docs/plans/2026-05-24-boot-branding.md).
+- [T2] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
+- [T1] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
+- [T2] **Get `apt.foundrylinux.org` tracked by Repology (as a producer)** — we fit the BackBox add-on-derivative pattern (an Ubuntu derivative tracked at `minpackages: 10`), so size is not a blocker. Order: ~~(1) publish source packages → `main/source/Sources.gz`~~ + ~~(2) `Origin`/`Label` = `Foundry Linux`~~ — **both ✅ live as of v1.5.35 (2026-06-21)**; ~~(3) `scripts/generate-repology-ruleset.sh` emitting the `repology-rules` YAML~~ ✅ **done 2026-06-21** — `task gen-repology-ruleset` → `repology/foundry-linux.yaml` (9 `setname` remaps + 31 `remove`, all scoped `ruleset: foundry_linux`); **(4)** register on the [Debian Derivatives Census](https://wiki.debian.org/Derivatives/Census); **(5)** PR repo def → `repology-updater` (the `repos.d/deb/foundry-linux.yaml` from the investigation) + ruleset → `repology-rules`. Just (4)+(5) left — both are submissions to external repos. See [investigation](docs/investigations/2026-06-21-repology-tracking-foundry-apt.md).
 
 ## Watch
 
