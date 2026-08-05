@@ -156,11 +156,24 @@ apt.foundrylinux.org (skill Step 6) — that is a release action, tracked below.
 
 ## Follow-ups
 
+- [x] Ship `.desktop` files and icons for the seven GUI emulators. Done 2026-08-05: static
+      `debian/desktop/<binary>.desktop` per binary (validated with `desktop-file-validate`),
+      installed to `/usr/share/applications/`. Upstream ships one generic 48x48 XPM icon
+      (`build/xemu-48x48.xpm`, referenced by its own `build/xemu.desktop` template and
+      `build/deb-build-simple.sh`) — no per-machine artwork exists, so all seven entries share it,
+      vendored verbatim to `debian/icons/x-emulators.xpm` →
+      `/usr/share/icons/hicolor/48x48/apps/x-emulators.xpm`. Changelog bumped to
+      `-1foundry2`. See verification step 8 below.
 - [ ] Open the upstream PR for the `SOURCE_DATE_EPOCH` patch and record the URL in the patch's
-      `Forwarded:` header.
+      `Forwarded:` header. Draft staged (title, body, clean-apply check against current upstream
+      master) at
+      [upstream-pr-draft.md](2026-08-05-package-x-emulators/upstream-pr-draft.md) — **not opened**,
+      per instructions; the user sends it.
 - [ ] File a Debian ITP for `x-emulators` — GPL-2.0-or-later,
       [github.com/lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). Check
       [wnpp](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for an existing RFP/ITP first. Note
       the `xemu` name is effectively spoken for in Debian by the Xbox emulator, so the ITP should use
-      `x-emulators` or whatever upstream-facing name Debian prefers.
-- [ ] Consider shipping `.desktop` files and icons for the GUI emulators.
+      `x-emulators` or whatever upstream-facing name Debian prefers. Draft staged (wnpp search
+      result: no existing RFP/ITP under any related name; full bug text) at
+      [itp-draft.md](2026-08-05-package-x-emulators/itp-draft.md) — **not filed**, per instructions;
+      the user files it.

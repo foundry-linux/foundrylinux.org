@@ -1,3 +1,15 @@
+x-emulators (0~git20260129.40dfef0d-1foundry2) resolute; urgency=medium
+
+  * Add .desktop entries for all seven emulators so they appear in
+    application menus (Categories=Game;Emulator;), and vendor upstream's
+    single generic 48x48 XPM icon (build/xemu-48x48.xpm) to
+    /usr/share/icons/hicolor/48x48/apps/x-emulators.xpm. Upstream ships no
+    per-machine artwork, so all seven entries share the one icon, matching
+    upstream's own xemu.desktop template (%machine/%binary substitution) —
+    ours are static per-binary files under debian/desktop/ instead.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 14:40:00 +0700
+
 x-emulators (0~git20260129.40dfef0d-1foundry1) resolute; urgency=medium
 
   * Initial release. Packages LGB's Xemu ("X-Emulators") suite from

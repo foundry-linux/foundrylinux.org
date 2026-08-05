@@ -26,39 +26,41 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 - [T3] **foundry-kde-theme — remaining theming layers** — Plasma Style SVG set (distinctive panel/widget shapes — partial: forge-palette colors done, Breeze-inherit done; custom SVGs pending), Aurorae window decoration, Kvantum Qt-app style. See [plan](docs/plans/2026-05-24-foundry-kde-theme.md).
 - [T4] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
 - [T4] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
-- [T1] **File Debian ITP for `x-emulators`** — GPL-2.0-or-later, [github.com/lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). Check [wnpp](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for an existing RFP/ITP first. Note the bare name `xemu` is effectively taken in Debian by the unrelated original-Xbox emulator, so propose `x-emulators`. See [plan](docs/plans/2026-08-05-package-x-emulators.md).
-- [T1] **Upstream the `SOURCE_DATE_EPOCH` patch to lgblgblgb/xemu** — `foundry-apt/packages/x-emulators/debian/patches/0001-honour-SOURCE_DATE_EPOCH.patch` is a real reproducibility fix (the embedded build date falls back to `date` with no git), currently `Forwarded: not-yet`. Open the PR and record the URL in the patch header.
-- [T2] **x-emulators — ship `.desktop` files and icons** for the seven GUI emulators, so they appear in application menus. See [plan](docs/plans/2026-08-05-package-x-emulators.md).
+- [wip T1] **File Debian ITP for `x-emulators`** <!-- agent:aef4f6f22099fbf2d --> — GPL-2.0-or-later, [github.com/lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). Check [wnpp](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for an existing RFP/ITP first. Note the bare name `xemu` is effectively taken in Debian by the unrelated original-Xbox emulator, so propose `x-emulators`. See [plan](docs/plans/2026-08-05-package-x-emulators.md).
+- [wip T1] **Upstream the `SOURCE_DATE_EPOCH` patch to lgblgblgb/xemu** <!-- agent:aef4f6f22099fbf2d --> — `foundry-apt/packages/x-emulators/debian/patches/0001-honour-SOURCE_DATE_EPOCH.patch` is a real reproducibility fix (the embedded build date falls back to `date` with no git), currently `Forwarded: not-yet`. Open the PR and record the URL in the patch header.
+- [wip T2] **x-emulators — ship `.desktop` files and icons** <!-- agent:aef4f6f22099fbf2d --> for the seven GUI emulators, so they appear in application menus. See [plan](docs/plans/2026-08-05-package-x-emulators.md).
 ### Packaging — new upstreams
 
 _None queued. New vendored upstreams land here; `/package <name>`, then move to Done + add an ITP line below._
 
 ### Debian ITP
 
+Batch drafts prepared 2026-08-05 (prepare-only, nothing filed) in [docs/itp-drafts/](docs/itp-drafts/) — see its README for the wnpp/licence table. `python3-pydub` dropped: already in Debian (0.25.1-2).
+
+- [T4] **Rework prebuilt-binary vendored packages to build from source** — `ldtk`, `mesen2`, `pvsneslib` ship prebuilt upstream binaries and `m8te` may bundle a prebuilt CIL assembly (flagged in the ITP drafts); fine for our repo, disqualifying for Debian main. Per-package from-source build design; also a repo-quality win. See [docs/itp-drafts/README.md](docs/itp-drafts/README.md).
+
 Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for existing RFP/ITP before filing each. New vendored packages get their own entry here via `/package` skill Step 6.
 
 - [T1] **ITP: `asar-snes-assembler`** — SNES 65816 cross-assembler (LGPL-3.0+)
-- [T1] **ITP: `blender-asset-finder`** — Blender asset search add-on (GPL-2.0+)
-- [T1] **ITP: `blender-asset-finder-cli`** — CLI for Blender asset finder (GPL-2.0+)
+- [T1] **ITP: `blender-asset-finder`** — Blender asset search add-on (GPL-2.0+) — file as ONE ITP with two binary packages (folds in `-cli`; both drafts note the shared-library duplication)
 - [T1] **ITP: `bsnes-jg`** — cycle-accurate SNES/Super Famicom emulator (GPL-3.0+)
 - [T1] **ITP: `drmon`** — terminal system monitor (GPL-2.0)
 - [T1] **ITP: `f9dasm`** — MC6800/6809/68HC12 disassembler (GPL-2.0+)
-- [T1] **ITP: `ghidra`** — NSA reverse-engineering framework (Apache-2.0)
+- [T4] **ITP: `ghidra`** — Apache-2.0 ⚠️ two abandoned ITP→RFP cycles ([#923851](https://bugs.debian.org/923851), [#973309](https://bugs.debian.org/973309)); prebuilt jars + native decompiler disqualify for main as-is — needs a from-source packaging design first
 - [T1] **ITP: `halfempty`** — parallel file-bisection test-case minimizer (Apache-2.0)
 - [T1] **ITP: `ldtk`** — level design toolkit (MIT)
 - [T1] **ITP: `libvgm`** — VGM chiptune audio library (GPL-2.0+)
 - [T1] **ITP: `m8te`** — SNES 8bpp tile/map editor, Mono runtime (MIT)
 - [T1] **ITP: `mesen2`** — multi-system retro emulator, NES/SNES/GB/GBA/PCE/SMS/WS (GPL-3.0)
-- [T1] **ITP: `ppsspp`** — PSP emulator (GPL-2.0+)
+- [T3] **ITP: `ppsspp`** — PSP emulator (GPL-2.0+) ⚠️ stalled ITP [#697821](https://bugs.debian.org/697821) (2013) exists — decide adopt-vs-retitle before filing
 - [T1] **ITP: `pvsneslib`** — SNES homebrew SDK (Zlib)
-- [T1] **ITP: `python3-glfw`** — Python GLFW bindings (MIT)
+- [T2] **ITP: `python3-glfw`** — Python GLFW bindings (MIT) ⚠️ check overlap with Debian's existing `python3-pyglfw` (different upstream, same niche) before filing
 - [T1] **ITP: `python3-inators`** — utility helpers for picire (BSD-3-Clause)
-- [T1] **ITP: `python3-librosa`** — Python audio analysis library (ISC)
+- [T5] **ITP: `python3-librosa`** — ⚠️ two active 2026 ITPs ([#1130020](https://bugs.debian.org/1130020), [#1133705](https://bugs.debian.org/1133705), Debian Python Team) — do not file; decide whether to drop this line or track theirs
 - [T1] **ITP: `python3-mss`** — Python multi-platform screenshot library (MIT)
 - [T1] **ITP: `python3-picire`** — parallel Delta Debugging reducer (BSD-3-Clause)
-- [T1] **ITP: `python3-pydub`** — Python audio manipulation library (MIT)
-- [T1] **ITP: `ruff`** — Python linter/formatter written in Rust (MIT)
-- [T3] **ITP: `snes9x-gtk`** — SNES emulator ⚠️ Snes9x non-commercial license; likely non-DFSG — research before filing
+- [T5] **ITP: `ruff`** — ⚠️ active ITP [#1088706](https://bugs.debian.org/1088706) (python3-ruff, Debian Python Team) — do not file; decide drop-vs-track
+- [T5] **ITP: `snes9x-gtk`** — ❌ CONFIRMED non-DFSG 2026-08-05 ("non-commercial", "PERSONAL USE only" — DFSG §6); Debian removed its prior Snes9x package. Do not file; decide whether to drop this line. See [draft](docs/itp-drafts/snes9x-gtk.md)
 - [T1] **ITP: `tilemap-studio`** — retro tile/map editor (LGPL-3.0)
 - [T1] **ITP: `vgmstream`** — VGM stream decoder (ISC)
 - [T1] **ITP: `wla-dx`** — multi-CPU cross assembler (GPL-2.0+)
@@ -211,6 +213,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage each into M1/M2/etc. and delete it here — it will not come back._
 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
+- [ ] **(triage)** [x] Ship `.desktop` files and icons for the seven GUI emulators. Done 2026-08-05: static — _from [2026-08-05-package-x-emulators.md](docs/plans/2026-08-05-package-x-emulators.md)_  <!-- fp:1dba2e904be95b70 -->
 <!-- END auto-captured-deferrals -->
 <!-- triaged 2026-08-05: all four x-emulators deferrals cleared — the SOURCE_DATE_EPOCH PR and the Debian ITP are curated items under "Packaging — new upstreams"; the .desktop/icons item was added there too; and the [verify] row is closed because the plan now records PASS for all seven verification steps. -->
 <!-- triaged 2026-08-05: "Bumping task later, if ever re-vendored a third time" (2026-05-31-vendor-task-and-repo-health.md) dropped — task is currently un-vendored, not vendored, so there's nothing to bump; the plan's own "Out of scope" note covers the procedure if it's ever re-vendored a third time. -->
