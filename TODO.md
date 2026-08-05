@@ -76,13 +76,6 @@ Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) 
 - [T1] **ITP: `wla-dx`** — multi-CPU cross assembler (GPL-2.0+)
 
 ### Housekeeping
-- [wip T1] **`scripts/check-apt-repos.sh`: retry transient curl failures.** <!-- agent:adb1dd70d145d6916 -->
-  Observed 2026-08-05 during the xemu verification: a single curl timeout (exit 28, link saturated
-  by a concurrent 176 MB fetch) aborts the whole script via `set -e` with no retry and no stderr
-  context — the second invocation passed all 4 sources. Add per-source retries (e.g. `curl
-  --retry 3 --retry-delay 5 --retry-all-errors` or a bounded loop) so one transient failure
-  doesn't abort, while a genuinely down source still FAILs loudly with which source and why.
-  (T1: diagnosed fix, one file, known recipe.)
 - [T3] **VM distribution artifacts (qcow2 / OVA)** — build VirtualBox/VMware/QEMU images alongside ISOs (homepage VM rows are intentional, not placeholders); folds in GRUB-theme activation + OVMF custom-logo work (VM-only). **Start after Internet Archive migration.** See [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md), [boot-branding](docs/plans/2026-05-24-boot-branding.md).
 - [T2] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
 - [T1] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
@@ -118,6 +111,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
+- 2026-08-05 — [apt-check-retry] check-apt-repos.sh retries transient curl failures (bounded); real outages still fail loudly. Found during xemu verification.
 - 2026-06-21 — [apt-source-packages] apt.foundrylinux.org now publishes a complete **Sources index** (53/53) with `Origin/Label: Foundry Linux`. Phase 2 wired source-building into `build-all.sh` + `scripts/lib-source-build.sh` (synthesises/reuses the orig, best-effort) + all 27 `build.sh` + `prune-dist.sh`; `publish-local.sh` got `-architectures=…,source`. Published v1.5.35 (51/53) then fixed `mesen2` (`debian/source/include-binaries` for the icon) + `tilemap-studio` (CRLF in-tree patches → synthesise patched orig + empty series) → v1.5.36 (53/53; `apt-get source` round-trips live). Consumer instructions added: `deb-src`/`apt-get source` block on the apt index + a `--with-source` flag in `setup-foundry-apt-source.sh`. Plans [publish-source-packages](docs/plans/2026-06-21-publish-source-packages.md), [fix-mesen2-tilemap](docs/plans/2026-06-21-fix-mesen2-tilemap-source-builds.md), [source-instructions](docs/plans/2026-06-21-source-package-instructions.md).
 - 2026-06-21 — [repology-badges] Repology-badge coverage complete across both repos. foundry-apt: 5 `none` opt-outs verified genuinely untracked + annotated; `generate-meta.sh` parser hardened for deb822 `#` comments. apt.worldfoundry.org: 10 WF CLIs backfilled `X-Repology-Project: none` (verified — e.g. "textile" on Repology is markup tools, not ours) + `check-repology-badges.sh`/`set-repology-badge.sh` ported, wired into Taskfile + Claude hook + pre-commit (`task check-badges` → PASS). Plans [opt-outs](docs/plans/2026-06-21-confirm-repology-badge-opt-outs.md), [audit-tooling](docs/plans/2026-06-21-repology-badge-audit-tooling.md).
 - 2026-06-21 — [reducers-tier3] shrinkray (MIT parallel reducer) wired via `pipx install` in `install-foundry-retro-tools.sh` (codemagic-cli-tools precedent) — completes the test-case-reduction toolchain. No clean `.deb` on 26.04: needs `textual≥8`/`rich≥14.2`/`textual-plotext`, none in universe, and overriding universe's rich/textual would break their other consumers. Cascade probed, pipx path smoke-tested (`shrinkray --help` → 0). See [plan](docs/plans/2026-06-20-add-reducers-to-retro-tools.md).
