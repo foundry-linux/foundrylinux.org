@@ -1,3 +1,17 @@
+foundry-emulators-computers (1.0.2) resolute; urgency=medium
+
+  * Add x-emulators — LGB's Xemu suite, covering the Commodore 65 / C64DX
+    prototype, MEGA65, Commodore LCD prototype, VIC-20, Enterprise 64/128,
+    Primo and Videoton TV Computer. None of dosbox-x, hatari, fs-uae,
+    openmsx or mame emulate the C65 usefully (MAME's c65 driver is flagged
+    preliminary and leaves the $E000 ROM window unmapped), so this is the
+    only working coverage for that machine in the catalogue.
+  * No ROMs are bundled, so it meets this metapackage's redistribution
+    criterion. Reword the intro accordingly: the set is no longer
+    universe-only now that a Foundry-built package is listed.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 09:30:00 +0700
+
 foundry-emulators-computers (1.0.1) resolute; urgency=medium
 
   * Add mame, dual-listed with foundry-emulators-consoles (which keeps it

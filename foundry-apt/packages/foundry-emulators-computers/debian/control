@@ -15,10 +15,11 @@ Depends: ${misc:Depends},
  fs-uae,
  mame,
  openmsx,
- openmsx-data
+ openmsx-data,
+ x-emulators
 Description: vintage home-computer emulators (no bundled ROMs)
- Universe-only emulators that do not ship non-redistributable ROMs in
- the .deb. Suitable for inclusion in container images and ISOs without
+ Emulators that do not ship non-redistributable ROMs in the .deb.
+ Suitable for inclusion in container images and ISOs without
  redistribution concerns:
  .
    * dosbox-x        DOS / x86 PC emulator (16-bit + early 32-bit)
@@ -32,6 +33,7 @@ Description: vintage home-computer emulators (no bundled ROMs)
                      either metapackage alone brings it in
    * openmsx         MSX / MSX2 / MSX2+ / turboR
    * openmsx-data    OpenMSX system data files
+   * x-emulators     Commodore 65/MEGA65/VIC-20/LCD, Enterprise, Primo, TVC
  .
  Note: MAME's "lynx" driver is the Atari Lynx handheld (atari/lynx.cpp),
  emulated here by mednafen in foundry-emulators-consoles. The Camputers

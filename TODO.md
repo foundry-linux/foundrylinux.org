@@ -42,6 +42,8 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 - [T3] **foundry-kde-theme — remaining theming layers** — Plasma Style SVG set (distinctive panel/widget shapes — partial: forge-palette colors done, Breeze-inherit done; custom SVGs pending), Aurorae window decoration, Kvantum Qt-app style. See [plan](docs/plans/2026-05-24-foundry-kde-theme.md).
 - [T4] **Phase 2 devbox — per-game tooling** — `wf-game-create` + per-game Distrobox scaffolding + a `:26.04-maintainer` image tier; deferred from the [devbox execution plan](docs/plans/2026-05-21-phase-2-devbox-execution.md). Companion plan not yet written.
 - [T4] **Steam/Sniper release containers** — ship WF games through Steam's [Sniper runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools) (a reproducible release/runtime container), as floated in the original [2026-05-16 proposal](docs/investigations/2026-05-16-foundry-linux-distro-proposal.md). Still wanted — was never tracked anywhere until now; surfaced when the proposal's banner mis-labelled it "dropped" (2026-06-04). Future phase, not blocking v1; no plan written yet.
+- [ ] **File Debian ITP for `x-emulators`** — GPL-2.0-or-later, [github.com/lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). Check [wnpp](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for an existing RFP/ITP first. Note the bare name `xemu` is effectively taken in Debian by the unrelated original-Xbox emulator, so propose `x-emulators`. See [plan](docs/plans/2026-08-05-package-x-emulators.md).
+- [ ] **Upstream the `SOURCE_DATE_EPOCH` patch to lgblgblgb/xemu** — `foundry-apt/packages/x-emulators/debian/patches/0001-honour-SOURCE_DATE_EPOCH.patch` is a real reproducibility fix (the embedded build date falls back to `date` with no git), currently `Forwarded: not-yet`. Open the PR and record the URL in the patch header.
 ### Packaging — new upstreams
 
 _None queued. New vendored upstreams land here; `/package <name>`, then move to Done + add an ITP line below._
@@ -224,5 +226,9 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage each into M1/M2/etc. and delete it here — it will not come back._
 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
+- [ ] **(triage)** [ ] Open the upstream PR for the `SOURCE_DATE_EPOCH` patch and record the URL in the patch's — _from [2026-08-05-package-x-emulators.md](docs/plans/2026-08-05-package-x-emulators.md)_  <!-- fp:803eeea54f782327 -->
+- [ ] **(triage)** [ ] File a Debian ITP for `x-emulators` — GPL-2.0-or-later, — _from [2026-08-05-package-x-emulators.md](docs/plans/2026-08-05-package-x-emulators.md)_  <!-- fp:5bd9b361fd05fbe3 -->
+- [ ] **(triage)** [ ] Consider shipping `.desktop` files and icons for the GUI emulators. — _from [2026-08-05-package-x-emulators.md](docs/plans/2026-08-05-package-x-emulators.md)_  <!-- fp:51ef517fc5e2fa54 -->
+- [verify] **2026-08-05-package-x-emulators** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-05-package-x-emulators.md](docs/plans/2026-08-05-package-x-emulators.md)_  <!-- fp:f4da09d9139f82f1 -->
 <!-- END auto-captured-deferrals -->
 <!-- triaged 2026-08-05: "Bumping task later, if ever re-vendored a third time" (2026-05-31-vendor-task-and-repo-health.md) dropped — task is currently un-vendored, not vendored, so there's nothing to bump; the plan's own "Out of scope" note covers the procedure if it's ever re-vendored a third time. -->
