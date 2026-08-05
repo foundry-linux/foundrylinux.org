@@ -23,7 +23,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
   call strengthened), the missing `LICENSES-VENDORED.md` xemu row (fix left uncommitted in-tree,
   `task check-licenses` red→green), and a no-retry brittleness in `scripts/check-apt-repos.sh`
   (curl timeout aborts via `set -e`; worth a [T1]). The publish unblocks BOTH items below.
-- [T2] **Phase 2 (gated on the foundry-apt publish):** flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
+- [wip T2] **Phase 2 (GATE OPEN 2026-08-05 — xemu + task both live on foundry-apt):** <!-- agent:ab8a172291e0725ef --> flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
 ### Phase 3 — Foundry Linux ISO
 
 - [T3] **Build `foundry-atelier-1.0-amd64.iso`** — `task iso-build EDITION=atelier`; verify ghidra + full atelier package set present; sign + upload to R2. Target ~10 GB. See [plan](docs/plans/2026-05-22-phase-3-foundry-iso.md).
@@ -92,6 +92,10 @@ Items to check periodically and act on only if something changes.
 ### shrinkray `.deb` — blocked on `textual≥8` in universe ([plan](docs/plans/2026-06-20-add-reducers-to-retro-tools.md))
 
 - shrinkray ships via `pipx` (Tier 3, done 2026-06-21) because a clean `.deb` would need 4 new/upgraded packages, two of them large core libs: `python3-textual` (universe 2.1.2 → ≥8.0.0) + `python3-rich` (universe 13.9.4 → ≥14.2, *forced by textual 8*) + vendoring `python3-textual-plotext` + `python3-plotext`. Overriding universe's rich/textual risks breaking their other consumers. **Re-check `apt-cache policy python3-textual` on `ubuntu:26.04` periodically; once universe ships `textual≥8` (which pulls `rich≥14.2`), the cascade collapses — then `/package shrinkray` (+ `textual-plotext`/`plotext`) and add it to `foundry-retro-tools` `Depends:`** so it bakes into the ISO instead of pipx-on-install.
+- **Re-check log** (append one line per probe; `apt-cache policy` on a fresh `ubuntu:26.04`):
+  - 2026-08-05 — still blocked. `python3-textual` 2.1.2 (need ≥8), `python3-rich` 13.9.4
+    (need ≥14.2), `python3-textual-plotext` and `python3-plotext` both absent. Cascade
+    unchanged at 4 packages since 2026-06-21.
 
 ### PVSnesLib — bundled WLA DX toolchain ([plan](docs/plans/2026-06-12-package-pvsneslib.md))
 
