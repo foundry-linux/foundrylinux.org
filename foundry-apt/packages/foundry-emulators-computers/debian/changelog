@@ -1,3 +1,19 @@
+foundry-emulators-computers (1.0.1) resolute; urgency=medium
+
+  * Add mame, dual-listed with foundry-emulators-consoles (which keeps it
+    for arcade/console coverage). MAME is the only packaged emulator for
+    the home computers none of dosbox-x/hatari/fs-uae/openmsx cover —
+    notably the Camputers Lynx, drivers lynx48k, lynx96k and lynx128k,
+    all from camputers/camplynx.cpp, verified against mame 0.285+dfsg1-1
+    on ubuntu:26.04 via -listsource.
+  * Document the driver-name collision: MAME's "lynx" is the Atari Lynx
+    handheld (atari/lynx.cpp), not the Camputers machine. Atari Lynx
+    coverage in the catalogue comes from mednafen.
+  * No size or reach change: foundry-core pulls both emulator
+    metapackages, so mame was already installed everywhere this ships.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
+
 foundry-emulators-computers (1.0.0) resolute; urgency=medium
 
   * Initial release. Part of the Phase 2 nested-editions hierarchy
