@@ -64,7 +64,18 @@ index_url() {
     esac
 }
 
-http_code() { curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$1?cb=$(date +%s%N)"; }
+# Retry transient failures (timeouts, resets, 5xx) a bounded number of times
+# before giving up; --retry-all-errors keeps a flaky hop from aborting the
+# whole run via set -e, while a genuinely unreachable host still surfaces
+# below via its final HTTP code + curl error text.
+CURL_ERR_FILE="$(mktemp)"
+trap 'rm -f "$CURL_ERR_FILE"' EXIT
+
+http_code() {
+    curl -sS -o /dev/null -w '%{http_code}' \
+        --retry 3 --retry-delay 5 --retry-all-errors \
+        --max-time 15 "$1?cb=$(date +%s%N)" 2>"$CURL_ERR_FILE" || true
+}
 
 fail=0
 checked=0
@@ -86,7 +97,9 @@ for f in "${FILES[@]}"; do
             if [[ "$rcode" == "200" ]]; then
                 printf '  ✓ %s (Release; no InRelease)\n' "$rel"
             else
+                detail="$(tail -1 "$CURL_ERR_FILE" 2>/dev/null || true)"
                 printf '  ✗ %s → HTTP %s (Release: %s)   [%s]\n' "$idx" "$code" "$rcode" "$(basename "$f")" >&2
+                [[ -n "$detail" ]] && printf '      curl: %s\n' "$detail" >&2
                 fail=1
             fi
         fi
