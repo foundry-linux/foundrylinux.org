@@ -157,12 +157,15 @@ apt.foundrylinux.org (skill Step 6) — that is a release action, tracked below.
 ## Follow-ups
 
 - [x] Ship `.desktop` files and icons for the seven GUI emulators. Done 2026-08-05: static
-      `debian/desktop/<binary>.desktop` per binary (validated with `desktop-file-validate`),
+      `debian/<binary>.desktop` per binary (validated with `desktop-file-validate`),
       installed to `/usr/share/applications/`. Upstream ships one generic 48x48 XPM icon
       (`build/xemu-48x48.xpm`, referenced by its own `build/xemu.desktop` template and
       `build/deb-build-simple.sh`) — no per-machine artwork exists, so all seven entries share it,
-      vendored verbatim to `debian/icons/x-emulators.xpm` →
-      `/usr/share/icons/hicolor/48x48/apps/x-emulators.xpm`. Changelog bumped to
+      vendored verbatim to `debian/x-emulators.xpm` →
+      `/usr/share/icons/hicolor/48x48/apps/x-emulators.xpm`. Flat filenames under `debian/`
+      (not a subdirectory) match the existing `mesen2`/`tilemap-studio` convention and avoid the
+      repo's `packages/**/debian/*/` gitignore rule, which only excepts `man/`, `source/`,
+      `patches/`. Changelog bumped to
       `-1foundry2`. See verification step 8 below.
 - [ ] Open the upstream PR for the `SOURCE_DATE_EPOCH` patch and record the URL in the patch's
       `Forwarded:` header. Draft staged (title, body, clean-apply check against current upstream

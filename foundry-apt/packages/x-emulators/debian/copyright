@@ -11,7 +11,7 @@ Files: debian/*
 Copyright: 2026 Foundry Linux <packages@foundrylinux.org>
 License: GPL-2+
 
-Files: debian/icons/x-emulators.xpm
+Files: debian/x-emulators.xpm
 Copyright: 2016-2026 Gabor Lenart (LGB) <lgblgblgb@gmail.com>
 License: GPL-2+
 Comment: Vendored verbatim from upstream's build/xemu-48x48.xpm — the suite's

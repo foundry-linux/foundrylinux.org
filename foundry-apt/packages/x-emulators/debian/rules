@@ -48,16 +48,16 @@ override_dh_auto_install:
 	    install -D -m 0755 build/bin/$$b.native \
 	        $(CURDIR)/debian/x-emulators/usr/bin/$$b; \
 	done
-	# Desktop entries, one per emulated machine (debian/desktop/*.desktop are
+	# Desktop entries, one per emulated machine (debian/<binary>.desktop are
 	# ours, adapted from upstream's build/xemu.desktop %machine/%binary
 	# template). Icon is vendored verbatim from upstream's build/xemu-48x48.xpm
 	# — the suite's single generic icon, shared by all seven entries since
 	# upstream ships no per-machine artwork.
 	set -e; for b in $(BINARIES); do \
-	    install -D -m 0644 debian/desktop/$$b.desktop \
+	    install -D -m 0644 debian/$$b.desktop \
 	        $(CURDIR)/debian/x-emulators/usr/share/applications/$$b.desktop; \
 	done
-	install -D -m 0644 debian/icons/x-emulators.xpm \
+	install -D -m 0644 debian/x-emulators.xpm \
 	    $(CURDIR)/debian/x-emulators/usr/share/icons/hicolor/48x48/apps/x-emulators.xpm
 
 override_dh_auto_clean:

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Xemu TVC
+GenericName=Videoton TV Computer Emulator
+Comment=Emulates the Videoton TV Computer
+Exec=xtvc
+Icon=x-emulators
+Terminal=false
+Categories=Game;Emulator;
+Keywords=Videoton;TVC;emulator;retro;

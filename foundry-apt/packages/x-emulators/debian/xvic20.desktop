@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Xemu VIC-20
+GenericName=Commodore VIC-20 Emulator
+Comment=Emulates the Commodore VIC-20
+Exec=xvic20
+Icon=x-emulators
+Terminal=false
+Categories=Game;Emulator;
+Keywords=Commodore;VIC-20;emulator;retro;

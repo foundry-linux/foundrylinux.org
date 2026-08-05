@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Xemu C65
+GenericName=Commodore 65 Emulator
+Comment=Emulates the Commodore 65 (C65 / C64DX prototype)
+Exec=xc65
+Icon=x-emulators
+Terminal=false
+Categories=Game;Emulator;
+Keywords=Commodore;C65;C64DX;emulator;retro;

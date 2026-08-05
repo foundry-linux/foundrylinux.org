@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Xemu Enterprise 128
+GenericName=Enterprise 64/128 Emulator
+Comment=Emulates the Enterprise 64/128
+Exec=xep128
+Icon=x-emulators
+Terminal=false
+Categories=Game;Emulator;
+Keywords=Enterprise;EP128;emulator;retro;
