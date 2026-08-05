@@ -10,7 +10,13 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 - [wip T3] **Package xemu v0.8.136 into foundry-apt (light consoles bucket).**
   OWNED by the live Fable session `7caf9f8b` (the "/model fable session" of the dispatch note) —
   executing its own settled [plan](docs/plans/2026-08-05-package-xemu.md); deb built (lintian
-  clean, 4 h wall), deps being iterated; publish pending. A coordinator mis-dispatch 2026-08-05
+  clean, 4 h wall); **packaging complete and committed 2026-08-05 — only the publish remains.**
+  Final state: lintian clean on both `.deb` and `.dsc`, smoke install in a clean 26.04 container
+  runs `xemu -version` → 0.8.136, and `foundry-emulators-consoles` resolves `Inst xemu`. The
+  dependency iteration closed on a real pre-ship bug: xemu statically links its vendored SDL3,
+  which `dlopen`s its backends, so `dh_shlibdeps` saw no `libvulkan1` and the package would have
+  installed then failed at startup; the Vulkan/X11/EGL set is now explicit in `Depends`.
+  A coordinator mis-dispatch 2026-08-05
   was caught by concurrency evidence and stopped pre-publish/pre-commit; it contributed
   independent verification: second-fetch sha match, universe check, lintian 0 tags, hardening
   confirmed, **marginal closure re-measured at 0.31 MiB** (plan estimated ~8 MiB — light-bucket
@@ -202,3 +208,12 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 - 2026-05-17 — [upgrade-github-actions-node24] `actions/checkout@v6` + `actions/upload-artifact@v7`; `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` removed; shipped as v0.0.8.
 - 2026-05-17 — [foundry-phase1-bootstrap] `apt.foundrylinux.org` live on Cloudflare R2; GPG signing key in CI; publish-on-tag workflow operational.
 - 2026-05-18 — [repo: monorepo home] monorepo pushed to `foundry-linux/foundrylinux.org` (private); `task sync` mirrors `foundry-apt/` subdir to `foundry-linux/foundry-apt` as before.
+
+
+## Inbox — auto-captured plan deferrals
+
+_Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage each into M1/M2/etc. and delete it here — it will not come back._
+
+<!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
+- [verify] **2026-08-05-package-xemu** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-05-package-xemu.md](docs/plans/2026-08-05-package-xemu.md)_  <!-- fp:2cc1f51b43f66b62 -->
+<!-- END auto-captured-deferrals -->

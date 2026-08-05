@@ -18,7 +18,8 @@ Depends: ${misc:Depends},
  ppsspp,
  scummvm,
  snes9x-gtk,
- stella
+ stella,
+ xemu
 Description: light console and adventure-engine emulators
  Universe-only console/handheld emulators plus adventure-engine
  interpreters, and Foundry-packaged emulators for platforms not in
@@ -33,6 +34,10 @@ Description: light console and adventure-engine emulators
    * scummvm     classic adventure-game engine (Sierra/LucasArts/Westwood)
    * snes9x-gtk  Super Nintendo (Foundry apt)
    * stella      Atari 2600
+   * xemu        original Xbox (Foundry apt)
+ .
+ xemu needs an Xbox MCPX boot ROM, BIOS image, and hard-disk image, which
+ are copyrighted and not shipped — supply your own from hardware you own.
  .
  Heavier console emulators (Dolphin, PCSX2, Yuzu, RetroArch) live in
  foundry-emulators-consoles-heavy.

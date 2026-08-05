@@ -1,0 +1,6 @@
+# Upstream's VulkanMemoryAllocator subproject vendors a prebuilt Visual Studio
+# sample binary. It is inert on Linux, is never referenced by our build (we only
+# consume VMA's headers), and is not shipped in the binary package. Removing it
+# would require a +dfsg repack of a 185 MB upstream source archive for no
+# functional gain; kept under review at each version bump.
+xemu source: source-contains-prebuilt-windows-binary [subprojects/VulkanMemoryAllocator/bin/VmaSample_Release_vs2022.exe]

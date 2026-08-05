@@ -1,3 +1,15 @@
+foundry-emulators-consoles (1.0.3) resolute; urgency=medium
+
+  * Add xemu (Foundry apt), the original Xbox emulator. It is not in Ubuntu
+    26.04 universe, so it is packaged by Foundry.
+  * Placed here rather than in foundry-emulators-consoles-heavy: the heavy
+    bucket's criterion is installation footprint, and xemu measures ~8 MiB
+    of marginal dependency closure over the existing light console set
+    (libslirp0, libssl3t64, libusb-1.0-0, openssl-provider-legacy) plus a
+    ~16 MB binary. See docs/plans/2026-08-05-package-xemu.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
+
 foundry-emulators-consoles (1.0.2) resolute; urgency=medium
 
   * Add bsnes-jg (Foundry apt), the cycle-accurate SNES / Super Famicom emulator

@@ -1,0 +1,60 @@
+#!/usr/bin/make -f
+
+# xemu is a QEMU fork. Its supported Linux build path is upstream's ./build.sh,
+# which drives QEMU's configure with the Xbox target list and then runs its
+# package_linux step to stage dist/xemu. Driving configure/meson directly via
+# dh_auto_* would bypass the -DXBOX=1 flag and the i386-softmmu target list, so
+# every dh_auto_* stage is overridden and build.sh is invoked instead.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# Upstream's version script stamps XEMU_DATE from `date -u`. Honour
+# SOURCE_DATE_EPOCH so the build stays reproducible.
+export SOURCE_DATE_EPOCH ?= $(shell date -d "$$(dpkg-parsechangelog -SDate)" +%s)
+
+# Honour DEB_BUILD_OPTIONS=parallel=N rather than calling nproc ourselves
+# (lintian: debian-rules-calls-nproc). When unset, upstream's build.sh picks its
+# own default job count.
+NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+ifneq (,$(NUMJOBS))
+JOBFLAG = -j$(NUMJOBS)
+endif
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# configure runs inside build.sh, which passes the Xbox-specific flags.
+
+override_dh_auto_build:
+	./build.sh $(JOBFLAG) \
+	    || { echo '===== BUILD FAILED ====='; \
+	         cat build/meson-logs/meson-log.txt 2>/dev/null; exit 1; }
+
+override_dh_auto_test:
+	# Upstream ships no runnable test suite for the Xbox target; the QEMU
+	# tests it inherits need a full multi-target build we do not produce.
+
+override_dh_auto_clean:
+	rm -rf build dist build.log
+
+override_dh_auto_install:
+	install -DTm 0755 dist/xemu debian/xemu/usr/bin/xemu
+	install -DTm 0644 ui/xemu.desktop \
+	    debian/xemu/usr/share/applications/xemu.desktop
+	# AppStream requires the metainfo filename to match the component <id>
+	# (app.xemu.xemu); upstream's own filename does not, which fails
+	# `appstreamcli validate-tree`.
+	install -DTm 0644 xemu.metainfo.xml \
+	    debian/xemu/usr/share/metainfo/app.xemu.xemu.metainfo.xml
+	set -e; for r in 16 24 32 48 64 128 256 512; do \
+	    install -DTm 0644 ui/icons/xemu_$${r}x$${r}.png \
+	        debian/xemu/usr/share/icons/hicolor/$${r}x$${r}/apps/xemu.png; \
+	done
+	install -DTm 0644 ui/icons/xemu.svg \
+	    debian/xemu/usr/share/icons/hicolor/scalable/apps/xemu.svg
+	# dist/LICENSE.txt is the aggregated third-party license manifest that
+	# upstream generates for its binary distributions; ship it as upstream
+	# documentation alongside debian/copyright.
+	install -DTm 0644 dist/LICENSE.txt \
+	    debian/xemu/usr/share/doc/xemu/LICENSE.upstream.txt

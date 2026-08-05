@@ -1,0 +1,98 @@
+.TH XEMU 1 "2026-08-05" "xemu 0.8.136" "User Commands"
+.SH NAME
+xemu \- emulator for the original Xbox game console
+.SH SYNOPSIS
+.B xemu
+.RI [ OPTIONS ]
+.RI [ \-dvd_path
+.IR image.iso ]
+.SH DESCRIPTION
+.B xemu
+emulates the hardware of the original Microsoft Xbox (2001). It is a fork of
+QEMU that models the console's NV2A graphics processor, MCPX boot ROM, APU
+audio hardware, and IDE and USB peripherals, running the real Xbox kernel and
+title code rather than high-level-emulating individual games.
+.PP
+Rendering is performed through Vulkan; audio is output via SDL2 or PipeWire.
+Most configuration is done through the graphical settings dialog rather than on
+the command line, and settings persist to a configuration file between runs.
+.SS Required system files
+.B xemu
+cannot start without an Xbox MCPX boot ROM image, an Xbox BIOS image, and a
+formatted hard-disk image. These are copyrighted Microsoft material and are
+.B not
+distributed with this package; you must supply them yourself, dumped from
+hardware you own. Set their paths from the settings dialog on first launch, or
+in the configuration file.
+.SH OPTIONS
+Because
+.B xemu
+descends from QEMU, it accepts many of QEMU's system-emulation options in
+addition to those below. The options listed here are the ones specific to
+.B xemu
+or most commonly useful; see
+.UR https://xemu.app/docs/
+the upstream documentation
+.UE
+for the full set.
+.TP
+.BI \-dvd_path " path"
+Insert the disc image at
+.I path
+into the emulated DVD drive at startup. Overrides the disc path stored in the
+configuration file for this run only.
+.TP
+.BI \-config_path " path"
+Read and write settings from
+.I path
+instead of the default per-user configuration file. Useful for keeping separate
+profiles or for scripted, reproducible runs.
+.TP
+.B \-full\-screen
+Start with the emulator window in full-screen mode.
+.TP
+.B \-h ", " \-\-help
+Print a usage summary and exit.
+.TP
+.B \-version
+Print version information and exit.
+.SH FILES
+.TP
+.I ~/.local/share/xemu/xemu/xemu.toml
+Default per-user configuration file, holding the paths to the MCPX boot ROM,
+BIOS, and hard-disk images along with input, audio, and video settings. The
+exact location follows the XDG base-directory specification and can be
+overridden with
+.BR \-config_path .
+.SH EXAMPLES
+Launch the emulator and configure system images through the settings dialog:
+.PP
+.RS
+.B xemu
+.RE
+.PP
+Boot straight into a disc image, full screen:
+.PP
+.RS
+.B xemu \-full\-screen \-dvd_path ~/games/title.iso
+.RE
+.SH SEE ALSO
+.BR qemu\-system\-i386 (1)
+.PP
+Upstream documentation:
+.UR https://xemu.app/docs/
+.UE
+.SH AUTHORS
+.B xemu
+is developed by Matt Borgerson and the xemu contributors, building on QEMU by
+Fabrice Bellard and the QEMU team.
+.PP
+This manual page was written for the Foundry Linux package, because upstream
+does not ship one.
+.SH COPYRIGHT
+xemu is free software, distributed under the GNU General Public License version
+2. See
+.I /usr/share/doc/xemu/copyright
+for the full licensing breakdown, and
+.I /usr/share/doc/xemu/LICENSE.upstream.txt
+for upstream's aggregated third-party license manifest.
