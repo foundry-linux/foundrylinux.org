@@ -7,22 +7,6 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### apt-repo resilience — `task` vendored + source health-check
 
-- [wip T3] **Package xemu v0.8.136 into foundry-apt (light consoles bucket).**
-  OWNED by the live Fable session `7caf9f8b` (the "/model fable session" of the dispatch note) —
-  executing its own settled [plan](docs/plans/2026-08-05-package-xemu.md); deb built (lintian
-  clean, 4 h wall); **packaging complete and committed 2026-08-05 — only the publish remains.**
-  Final state: lintian clean on both `.deb` and `.dsc`, smoke install in a clean 26.04 container
-  runs `xemu -version` → 0.8.136, and `foundry-emulators-consoles` resolves `Inst xemu`. The
-  dependency iteration closed on a real pre-ship bug: xemu statically links its vendored SDL3,
-  which `dlopen`s its backends, so `dh_shlibdeps` saw no `libvulkan1` and the package would have
-  installed then failed at startup; the Vulkan/X11/EGL set is now explicit in `Depends`.
-  A coordinator mis-dispatch 2026-08-05
-  was caught by concurrency evidence and stopped pre-publish/pre-commit; it contributed
-  independent verification: second-fetch sha match, universe check, lintian 0 tags, hardening
-  confirmed, **marginal closure re-measured at 0.31 MiB** (plan estimated ~8 MiB — light-bucket
-  call strengthened), the missing `LICENSES-VENDORED.md` xemu row (fix left uncommitted in-tree,
-  `task check-licenses` red→green), and a no-retry brittleness in `scripts/check-apt-repos.sh`
-  (curl timeout aborts via `set -e`; worth a [T1]). The publish unblocks BOTH items below.
 - [T3] **Vendor and package Flycast (Dreamcast)** — the one remaining sixth-generation gap. Confirmed **not** in 26.04 universe (`flycast`, `reicast`, `redream`, `lxdream`, `libretro-flycast` all absent). Actively maintained upstream (CMake). Same shape as xemu — user-supplied BIOS, not shipped — reuse that plan's structure. Needs its own plan before dispatch.
 - [T3] **Vendor and package RPCS3 (PlayStation 3)** — not in universe, AppImage-only upstream, requires user-supplied PS3 firmware (same licensing shape as xemu's MCPX/BIOS). Large → `-heavy` only. **PS4/PS5 and Xbox 360/One/Series stay out of scope**: shadPS4 is pre-alpha, Xenia is Windows-only, nothing exists for PS5 or Xbox One/Series. Needs its own plan before dispatch.
 
