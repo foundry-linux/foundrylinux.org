@@ -31,30 +31,54 @@ defenses: **own the package** (vendor `task` into apt.foundrylinux.org) and
    non-200. `--host` also checks the running machine. **Verified:** passes the 4
    ISO sources; catches the dead `any-distro` line (exit 1); `-h` clean.
 
-## Follow-up (Phase 2 — gated on the foundry-apt publish; NOT done here)
+## ~~Follow-up (Phase 2 — gated on the foundry-apt publish)~~ — REVERSED 2026-08-05
 
-The consumer-flip must come **after** foundry-apt actually serves `task`, or a
-built image's `apt install foundry-anvil` (Depends: task) would have no source.
-Sequence:
+The consumer-flip was gated on foundry-apt actually serving `task` (confirmed
+live 2026-08-05 — `apt.foundrylinux.org`'s `Packages` index carried both
+`task` and `xemu`), and was implemented + verified per-consumer: `foundry-iso`
+(deleted `cloudsmith-task.list.chroot`/`.key`, dropped the two `fetch_key`/`cp`
+lines in `build-iso.sh`, wired `check-apt-repos` as an `iso-build` Task dep),
+`foundry-devbox` (dropped the `setup.deb.sh | bash` line, real `docker build`
+of the Dockerfile with `dl.cloudsmith.io` blackholed via `--add-host` still
+succeeded), `foundry-setup/install-task.sh` (now calls the same
+`setup-foundry-apt-source.sh` helper `install-foundry-android-development.sh`
+already used), `site/setup.sh` (block deleted).
 
-1. Publish foundry-apt (its apt-`v*` pipeline → R2) so `apt.foundrylinux.org`
-   serves `task 3.51.1-1foundry1`. Confirm live (`task check-apt-repos` already
-   covers apt.foundrylinux.org; also check the `task` Version in its Packages).
-2. Drop the Cloudsmith `task` source from the consumers:
-   - `foundry-iso/config/archives/cloudsmith-task.list.chroot` (delete) + the
-     `cloudsmith-task` key fetch/copy in `foundry-iso/scripts/build-iso.sh`.
-   - `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`,
-     `site/setup.sh` — remove the `setup.deb.sh | bash` lines; `task` now comes
-     from foundry-apt via `Depends:`.
-3. Wire `task check-apt-repos` into the ISO/release preflight (host-side, before
-   the container build) so a future upstream rotation fails fast, loudly.
+**Then reversed, pre-commit, on explicit direction: don't vendor `task`.**
+Everything above was `git restore`d back to Cloudsmith-wired before any commit
+landed — none of the four consumers changed. **Decision:** un-vendor `task`
+from foundry-apt instead (second retirement — see `LICENSES-VENDORED.md`'s
+Retired entries; it was first retired in favour of Cloudsmith, then
+re-vendored in commit `23809cc`, now retired again). Done in this session:
+
+1. Deleted `foundry-apt/packages/task/` (`build.sh` + `debian/`).
+2. Updated `foundry-apt/README.md` (dropped the `task` row from the vendored
+   table), `foundry-apt/LICENSES-VENDORED.md` (moved `task` from the vendored
+   table to Retired entries with a reason), and root `CLAUDE.md` (27→26
+   vendored upstreams). `task check-licenses` green.
+3. `foundry-core`'s `debian/control` keeps `Depends: task` unchanged — it
+   still resolves, just from Cloudsmith (which every consumer still wires),
+   not from this repo.
+
+**Still open — not released:** the source deletion is committed but
+`apt.foundrylinux.org` is still *serving* the orphaned `task 3.51.1-1foundry1`
+build from before this change, because nothing has re-triggered
+`foundry-apt`'s publish pipeline. `scripts/prune-dist.sh` already handles this
+case by design (drops any `dist/*.deb` whose package name has no matching
+`packages/*/debian/control`, exactly the scenario the `asar-snes` rename
+comment describes) and the R2 sync step is `rclone sync` (mirror semantics,
+not additive), so the **next** `foundry-apt` release tag will fully drop
+`task` from the live repo — pool object, `Packages`/`Release` entries, all of
+it. Triggering that release (`task sync-and-release TAG=…` from the monorepo
+root) pushes to the public `foundry-linux/foundry-apt` GitHub repo and
+signs+publishes to the live R2-backed `apt.foundrylinux.org` — real production
+impact on a repo other machines already depend on, so it was left for an
+explicit go-ahead rather than bundled into this pass.
 
 ## Out of scope / notes
-- Keeping the Cloudsmith source alongside foundry-apt is harmless in the interim
-  (apt dedupes by name+version); Phase 2 is cleanup + decoupling, not a fix.
-- Bumping task later: edit `packages/task/build.sh` (`UPSTREAM_VERSION` + the two
-  `SHA256_*` from the release `task_checksums.txt`) and add a `debian/changelog`
-  entry.
+- Bumping task later, if ever re-vendored a third time: edit
+  `packages/task/build.sh` (`UPSTREAM_VERSION` + the two `SHA256_*` from the
+  release `task_checksums.txt`) and add a `debian/changelog` entry.
 
 ## Verification (this change)
 1. `bash foundry-apt/packages/task/build.sh` → builds `task_3.51.1-1foundry1_amd64.deb`; `dpkg-deb -x` binary → `task --version` = 3.51.1.  **PASS**

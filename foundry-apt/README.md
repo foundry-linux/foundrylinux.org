@@ -76,7 +76,6 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 | `ppsspp` | [ppsspp.org](https://www.ppsspp.org) | Fast, portable PSP emulator. `any`. |
 | `snes9x-gtk` | [snes9x.com](https://www.snes9x.com) | Portable Super Nintendo (SNES) emulator. `any`. |
 | `xemu` | [xemu.app](https://xemu.app) | Original Microsoft Xbox emulator (QEMU fork). BIOS/MCPX/HDD images not shipped. `amd64`. |
-| `task` | [taskfile.dev](https://taskfile.dev) | Task runner / build tool written in Go. `amd64`. |
 | `ruff` | [astral.sh/ruff](https://docs.astral.sh/ruff) | Extremely fast Python linter and code formatter. `amd64`. |
 | `python3-glfw` | [FlorianRhiem/pyGLFW](https://github.com/FlorianRhiem/pyGLFW) | Python ctypes bindings for GLFW3. `all`. |
 | `python3-librosa` | [librosa.org](https://librosa.org) | Audio and music analysis library for Python. `all`. |

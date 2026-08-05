@@ -28,7 +28,6 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 | <span style="white-space:nowrap"><code>python3-pydub</code></span> | [jiaaro/pydub](https://github.com/jiaaro/pydub) | [MIT](https://github.com/jiaaro/pydub/blob/master/LICENSE) | `/usr/share/doc/python3-pydub/copyright` |
 | <span style="white-space:nowrap"><code>ruff</code></span> | [astral-sh/ruff](https://github.com/astral-sh/ruff) | [MIT](https://github.com/astral-sh/ruff/blob/main/LICENSE) | `/usr/share/doc/ruff/copyright` |
 | <span style="white-space:nowrap"><code>snes9x-gtk</code></span> | [snes9xgit/snes9x](https://github.com/snes9xgit/snes9x) | [Snes9x non-commercial](https://github.com/snes9xgit/snes9x/blob/master/LICENSE) ⚠️ (bundles GPL-3+ / LGPL-2.1+ components) | `/usr/share/doc/snes9x-gtk/copyright` |
-| <span style="white-space:nowrap"><code>task</code></span> | [go-task/task](https://github.com/go-task/task) | [MIT](https://github.com/go-task/task/blob/main/LICENSE) | `/usr/share/doc/task/copyright` |
 | <span style="white-space:nowrap"><code>tilemap-studio</code></span> | [Rangi42/tilemap-studio](https://github.com/Rangi42/tilemap-studio) | [LGPL-3.0](https://github.com/Rangi42/tilemap-studio/blob/master/LICENSE) + [FLTK licence](https://www.fltk.org/doc-1.4/license.html) (statically linked) | `/usr/share/doc/tilemap-studio/copyright` |
 | <span style="white-space:nowrap"><code>vgmstream</code></span> | [vgmstream/vgmstream](https://github.com/vgmstream/vgmstream) | [ISC](https://github.com/vgmstream/vgmstream/blob/master/COPYING) | `/usr/share/doc/vgmstream/copyright` |
 | <span style="white-space:nowrap"><code>wla-dx</code></span> | [vhelin/wla-dx](https://github.com/vhelin/wla-dx) | [GPL-2.0+](https://github.com/vhelin/wla-dx/blob/master/COPYING) | `/usr/share/doc/wla-dx/copyright` |
@@ -41,8 +40,7 @@ Each `.deb` we repackage and redistribute via this repo keeps the upstream's lic
 | Package | Reason |
 |---|---|
 | `xa65` | Ubuntu 26.04 universe ships it as `xa65 2.4.1-0.1build1` — same upstream code as we briefly vendored under `2.4.1-1foundry1`. Phase 0's `install-foundry-retro-tools.sh` now apt-installs `xa65` directly; `foundry-retro-tools` `Depends: xa65` resolves to the universe entry. Retirement plan: [`../docs/plans/2026-05-18-retire-xa65.md`](../../docs/plans/2026-05-18-retire-xa65.md). |
-
-> **Note on `task`:** earlier retired in favour of the official Cloudsmith apt repo, it was **re-vendored** into this repo (`debian/changelog`, commit `23809cc`) so the `apt.foundrylinux.org` repo is self-contained and `foundry-core` can `Depends: task` without wiring a third apt source.
+| `task` | Un-vendored 2026-08-05 — `foundry-core` still `Depends: task`, but it resolves from the official Cloudsmith apt repo (wired by every consumer: `foundry-iso`, `foundry-devbox`, `foundry-setup/install-task.sh`, `site/setup.sh`) rather than from `apt.foundrylinux.org`. Second retirement — it was previously re-vendored (`debian/changelog`, commit `23809cc`) to make this repo self-contained; that tradeoff was reversed. See [`../docs/plans/2026-05-31-vendor-task-and-repo-health.md`](../../docs/plans/2026-05-31-vendor-task-and-repo-health.md). |
 
 ## Foundry-authored content
 
