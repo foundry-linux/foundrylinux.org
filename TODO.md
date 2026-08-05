@@ -76,6 +76,13 @@ Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) 
 - [T1] **ITP: `wla-dx`** — multi-CPU cross assembler (GPL-2.0+)
 
 ### Housekeeping
+- [wip T1] **`scripts/check-apt-repos.sh`: retry transient curl failures.** <!-- agent:adb1dd70d145d6916 -->
+  Observed 2026-08-05 during the xemu verification: a single curl timeout (exit 28, link saturated
+  by a concurrent 176 MB fetch) aborts the whole script via `set -e` with no retry and no stderr
+  context — the second invocation passed all 4 sources. Add per-source retries (e.g. `curl
+  --retry 3 --retry-delay 5 --retry-all-errors` or a bounded loop) so one transient failure
+  doesn't abort, while a genuinely down source still FAILs loudly with which source and why.
+  (T1: diagnosed fix, one file, known recipe.)
 - [T3] **VM distribution artifacts (qcow2 / OVA)** — build VirtualBox/VMware/QEMU images alongside ISOs (homepage VM rows are intentional, not placeholders); folds in GRUB-theme activation + OVMF custom-logo work (VM-only). **Start after Internet Archive migration.** See [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md), [boot-branding](docs/plans/2026-05-24-boot-branding.md).
 - [T2] **Activate `repository_dispatch` from worldfoundry.org** — create a fine-grained PAT scoped to `foundry-linux/foundrylinux.org` (Contents: Read and write), then `gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org --body <PAT>`; activates site rebuild on the next `apt-v*` tag push. See [plan §6](docs/plans/2026-05-21-packages-page.md).
 - [T1] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
