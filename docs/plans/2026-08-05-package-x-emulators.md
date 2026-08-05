@@ -74,17 +74,85 @@ reproducibility fix, not Debian glue, so per the `/package` skill's Step 7 it be
 
 ## Verification
 
-1. Universe check — `xemu` and `x-emulators` are both absent from Ubuntu 26.04 universe (only the
-   unrelated `gxemul`).
-2. Build in a clean `ubuntu:26.04` container via `packages/x-emulators/build.sh`.
-3. `lintian` on both the `.deb` and the `.dsc` — **both clean**.
-4. Package contents: 7 binaries in `/usr/bin`, 7 man pages in `/usr/share/man/man1`, `${shlibs:Depends}`
-   resolved with version constraints, binaries stripped and PIE.
-5. Smoke install in a clean container and run. **Note:** upstream refuses to run as root
-   (`ERROR: Xemu must not be run as user root`), so the smoke test creates a normal user.
-6. End-to-end: run a bare-metal 65CE02 kernel on the *packaged* `xc65` and check the result against a
-   host oracle — `0xE0E8`, matching.
-7. Metapackage: `foundry-emulators-computers` 1.0.2 builds, lints clean, and pulls `x-emulators`.
+All steps run 2026-08-05 in a clean `ubuntu:26.04` container.
+
+1. **Universe check.**
+
+    ```
+    apt-cache policy x-emulators   -> (empty)
+    apt-cache policy xemu          -> (empty)
+    apt-cache search xemu          -> gxemul (unrelated MIPS/ARM emulator)
+    ```
+
+    **PASS** — neither name is in Ubuntu 26.04 universe.
+
+2. **Build** via `packages/x-emulators/build.sh`.
+
+    ```
+    === Built /repo/dist/x-emulators_0~git20260129.40dfef0d-1foundry1_amd64.deb ===
+    OK   dist/x-emulators_0~git20260129.40dfef0d-1foundry1.dsc
+    OK   dist/x-emulators_0~git20260129.40dfef0d-1foundry1.debian.tar.xz
+    OK   dist/x-emulators_0~git20260129.40dfef0d.orig.tar.gz
+    ```
+
+    **PASS** — binary and source packages both produced.
+
+3. **lintian, binary and source.**
+
+    ```
+    === LINTIAN .deb ===
+    === LINTIAN .dsc ===
+    === (both empty = CLEAN) ===
+    ```
+
+    **PASS** — zero E: and zero W: on both. (Two warnings were fixed rather than
+    overridden along the way: `old-fsf-address-in-copyright-file` and
+    `build-depends-on-obsolete-package pkg-config => pkgconf`.)
+
+4. **Contents and hardening.**
+
+    ```
+    /usr/bin/{xc65,xclcd,xep128,xmega65,xprimo,xtvc,xvic20}
+    /usr/share/man/man1/{xc65,xclcd,xep128,xmega65,xprimo,xtvc,xvic20}.1.gz
+    Depends: libc6 (>= 2.34), libglib2.0-0t64 (>= 2.12.0), libgtk-3-0t64 (>= 3.0.0),
+             libreadline8t64 (>= 6.0), libsdl2-2.0-0 (>= 2.0.12), ...
+    xc65: ELF 64-bit LSB pie executable, x86-64, dynamically linked
+    ```
+
+    **PASS** — 7 binaries, 7 man pages, versioned deps, PIE, stripped.
+
+5. **Smoke install + run.**
+
+    ```
+    VERSION: unknown_remote master 40dfef0d1d5f56be2469492715c12bdb32c75b67 20260805020000 custom-build
+    EMULATE: Commodore 65 (c65): xc65 ... for c65 on linux (native) using cc
+    ```
+
+    **PASS** — the real upstream commit is reported (not `unknown_commit_id`) and the
+    timestamp comes from `SOURCE_DATE_EPOCH`. Upstream refuses to run as root
+    (`ERROR: Xemu must not be run as user root`), so the test creates a normal user.
+
+6. **End-to-end 65CE02 execution** — a bare-metal ASR kernel run on the *packaged* `xc65`:
+
+    ```
+    flag=0x5a result=0xe0e8
+    ```
+
+    **PASS** — `0xE0E8` matches the host oracle, so the shipped binary reproduces the
+    llvm-mos #585 validation result.
+
+7. **Metapackage.**
+
+    ```
+    === lintian 1.0.2 ===
+    === (empty = clean) ===
+    Inst x-emulators (0~git20260129.40dfef0d-1foundry1 localhost [amd64])
+    ```
+
+    **PASS** — `foundry-emulators-computers` 1.0.2 lints clean and pulls `x-emulators`.
+
+**Not yet done:** publish to the live repo and verify `apt install x-emulators` against
+apt.foundrylinux.org (skill Step 6) — that is a release action, tracked below.
 
 ## Follow-ups
 

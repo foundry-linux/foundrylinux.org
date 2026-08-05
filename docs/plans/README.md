@@ -106,6 +106,7 @@ rows on commit.*
 | [Plan: document how to consume the source packages (deb-src / apt-get source)](2026-06-21-source-package-instructions.md) | Document `deb-src` on the apt index, setup script `--with-source` flag, and marketing site. | [`5d19ce1`](https://github.com/foundry-linux/foundrylinux.org/commit/5d19ce1), [`52d6613`](https://github.com/foundry-linux/foundrylinux.org/commit/52d6613) | Docs |
 | [Package xemu (original Xbox emulator) for apt.foundrylinux.org](2026-08-05-package-xemu.md) | Vendor xemu 0.8.136 as a .deb and add it to the light `foundry-emulators-consoles` bucket. | [`abcedd3`](https://github.com/foundry-linux/foundrylinux.org/commit/abcedd3) | Packaging |
 | [Package RPCS3 (PlayStation 3 emulator) for apt.foundrylinux.org](2026-08-05-package-rpcs3.md) | Blocked: upstream ships no submodule-bundling source archive; records the three candidate build approaches. | [`db3fdb6`](https://github.com/foundry-linux/foundrylinux.org/commit/db3fdb6) | Packaging |
+| [Package x-emulators (LGB's Xemu suite) for apt.foundrylinux.org](2026-08-05-package-x-emulators.md) | Vendor LGB's Commodore/Hungarian 8-bit emulator suite as a .deb — named x-emulators to avoid colliding with the unrelated Xbox `xemu` — and add it to `foundry-emulators-computers`. | [`60811e0`](https://github.com/foundry-linux/foundrylinux.org/commit/60811e0) | Packaging |
 
 ---
 
