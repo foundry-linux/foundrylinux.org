@@ -220,5 +220,5 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage each into M1/M2/etc. and delete it here — it will not come back._
 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
-- [ ] **(triage)** Bumping task later, if ever re-vendored a third time: edit — _from [2026-05-31-vendor-task-and-repo-health.md](docs/plans/2026-05-31-vendor-task-and-repo-health.md)_  <!-- fp:360ab9a5d4bc38e1 -->
 <!-- END auto-captured-deferrals -->
+<!-- triaged 2026-08-05: "Bumping task later, if ever re-vendored a third time" (2026-05-31-vendor-task-and-repo-health.md) dropped — task is currently un-vendored, not vendored, so there's nothing to bump; the plan's own "Out of scope" note covers the procedure if it's ever re-vendored a third time. -->
