@@ -7,6 +7,13 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### apt-repo resilience — `task` vendored + source health-check
 
+- [wip T3] **Package xemu v0.8.136 into foundry-apt (light consoles bucket).** <!-- agent:a0e69f063b66119dc -->
+  Executing the settled [plan](docs/plans/2026-08-05-package-xemu.md): vendor the release asset
+  (sha-pinned; the tag archive omits submodules), fresh `debian/`, wire into
+  `foundry-emulators-consoles` (measured 8 MiB marginal closure → light bucket, ships everywhere
+  via `foundry-core`), publish foundry-apt. The publish unblocks BOTH items below — Phase 2 and
+  the atelier ISO dispatch when it confirms. (T3: settled plan, multi-repo execution; ranked by
+  the Fable session it was blocked on.)
 - [T2] **Phase 2 (gated on the foundry-apt publish):** flip `task` consumers off Cloudsmith — delete `foundry-iso/config/archives/cloudsmith-task.list.chroot` + its key fetch/copy in `build-iso.sh`; drop the `setup.deb.sh | bash` lines from `foundry-devbox/Dockerfile`, `foundry-setup/install-task.sh`, `site/setup.sh`; wire `task check-apt-repos` into the ISO/release preflight. Must follow a foundry-apt publish that serves `task`. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
 ### Phase 3 — Foundry Linux ISO
 
