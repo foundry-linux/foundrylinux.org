@@ -1,3 +1,28 @@
+foundry-emulators-consoles (1.0.5) resolute; urgency=medium
+
+  * Take over mame from foundry-retro-tools. MAME is an emulator and belongs
+    in an emulator metapackage; it is also the only packaged coverage of
+    discrete-logic PONG, the Magnavox Odyssey, and the Philips Odyssey 2 /
+    Videopac G7000 (driver names pong, odyssey, odyssey2, videopac —
+    verified against mame 0.285+dfsg1-1 on ubuntu:26.04). Placed in the
+    light bucket rather than -heavy so reach and installed size are
+    unchanged: foundry-core already pulled mame transitively via
+    foundry-retro-tools. mame-tools (chdman, romcmp, unidasm, … — 18.5 MB)
+    stays in foundry-retro-tools, where the ROM reverse-engineering
+    workflow expects it.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
+
+foundry-emulators-consoles (1.0.4) resolute; urgency=medium
+
+  * Add ares, sameboy, and mgba-qt (Ubuntu universe). ares closes
+    ColecoVision, and also brings MSX/MSX2, SG-1000, Neo Geo Pocket,
+    WonderSwan, and Mega Drive/CD/32X. sameboy and mgba-qt add dedicated
+    Game Boy family emulators; Game Boy was previously only incidental
+    coverage via the multi-system mednafen and mesen2 cores.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
+
 foundry-emulators-consoles (1.0.3) resolute; urgency=medium
 
   * Add xemu (Foundry apt), the original Xbox emulator. It is not in Ubuntu

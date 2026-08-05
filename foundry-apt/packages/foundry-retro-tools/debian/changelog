@@ -1,3 +1,15 @@
+foundry-retro-tools (1.0.17) resolute; urgency=medium
+
+  * Drop mame; it moves to foundry-emulators-consoles, where an emulator
+    belongs. No reach or size change for any edition — foundry-core pulls
+    both metapackages, so mame (444 MB) is still installed everywhere it
+    was before.
+  * Keep mame-tools (18.5 MB): castool, chdman, floptool, imgtool, jedutil,
+    ldresample, ldverify, romcmp, unidasm are ROM/CHD reverse-engineering
+    utilities, not emulation, and belong with this toolchain.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
+
 foundry-retro-tools (1.0.16) resolute; urgency=medium
 
   * Rename Depends asar-snes -> asar-snes-assembler (package renamed to match its

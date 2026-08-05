@@ -10,12 +10,16 @@ Rules-Requires-Root: no
 Package: foundry-emulators-consoles
 Architecture: all
 Depends: ${misc:Depends},
+ ares,
  bsnes-jg,
  desmume,
  fceux,
  frotz,
+ mame,
  mednafen,
+ mgba-qt,
  ppsspp,
+ sameboy,
  scummvm,
  snes9x-gtk,
  stella,
@@ -25,12 +29,22 @@ Description: light console and adventure-engine emulators
  interpreters, and Foundry-packaged emulators for platforms not in
  Ubuntu universe:
  .
+   * ares        accurate multi-system: ColecoVision, MSX/MSX2, SG-1000,
+                 Neo Geo Pocket, WonderSwan, Mega Drive/CD/32X
    * bsnes-jg    cycle-accurate Super Nintendo / Super Famicom (Foundry apt)
    * desmume     Nintendo DS
    * fceux       NES / Famicom
    * frotz       Z-machine interpreter for Infocom-style text adventures
+   * mame        arcade + 49,600 systems, incl. the only packaged coverage
+                 of discrete-logic PONG (driver "pong"), the Magnavox
+                 Odyssey ("odyssey"), and the Philips Odyssey 2 /
+                 Videopac G7000 ("odyssey2", "videopac"); also ships the
+                 MAME debugger. ROM/CHD utilities are in mame-tools,
+                 which stays in foundry-retro-tools
    * mednafen    multi-platform (NES, SNES, GB/GBA, PC Engine, Lynx, etc.)
+   * mgba-qt     Game Boy Advance (also GB/GBC)
    * ppsspp      PlayStation Portable (Foundry apt)
+   * sameboy     Game Boy / Game Boy Color / Super Game Boy
    * scummvm     classic adventure-game engine (Sierra/LucasArts/Westwood)
    * snes9x-gtk  Super Nintendo (Foundry apt)
    * stella      Atari 2600

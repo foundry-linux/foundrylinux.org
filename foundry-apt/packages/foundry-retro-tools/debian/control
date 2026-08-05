@@ -10,7 +10,6 @@ Rules-Requires-Root: no
 Package: foundry-retro-tools
 Architecture: all
 Depends: ${misc:Depends},
- mame,
  mame-tools,
  dasm,
  cc65,
@@ -37,7 +36,9 @@ Depends: ${misc:Depends},
 Description: retro game reverse-engineering, porting and authoring toolchain
  Tooling for porting classic arcade ROMs to the World Foundry engine and
  authoring retro-console assets:
- MAME (debugger + tools), 6502/Z80/68k/6809 disassemblers and assemblers,
+ mame-tools (chdman, romcmp, unidasm — ROM/CHD utilities; the MAME emulator
+ and its debugger now come from foundry-emulators-consoles),
+ 6502/Z80/68k/6809 disassemblers and assemblers,
  64tass multi-pass 65816 macro assembler,
  wla-dx (16-CPU multi-platform cross-assembler suite:
  6502/65816/SPC700/Z80/68000/…),

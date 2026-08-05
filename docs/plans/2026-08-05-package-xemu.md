@@ -43,18 +43,33 @@ Audited 2026‑08‑05 against a fresh `ubuntu:26.04` container (`apt-cache poli
 
 | System | Emulator | In 26.04 universe? | Follow‑up |
 |---|---|---|---|
-| ColecoVision | `ares` | ✅ `147+dfsg-3` | Add to `foundry-emulators-consoles` — also brings MSX/MSX2, SG‑1000, Neo Geo Pocket, WonderSwan, Mega Drive/CD/32X |
-| Game Boy / GBC / GBA | `sameboy`, `mgba-qt` | ✅ `1.0.2+ds-2`, `0.10.5+dfsg-3build1` | Add both — dedicated emulators, versus today's incidental coverage |
-| PONG (1972, discrete logic) | `mame` | ✅ `0.285+dfsg1-1` | MAME is the only packaged path, but it ships in `foundry-retro-tools`, not either emulator bucket. ~444 MB installed → likely belongs in `-heavy` |
-| Magnavox / Philips Odyssey (1972) | `mame` | ✅ same | Same placement question as PONG |
-| Philips Odyssey² / Videopac (1978) | `mame` | ✅ same · ❌ standalone `o2em` absent | Same placement question as PONG |
+| ColecoVision | `ares` | ✅ `147+dfsg-3` | ~~Add to `foundry-emulators-consoles`~~ ✅ **done** — `1.0.4`; also brings MSX/MSX2, SG‑1000, Neo Geo Pocket, WonderSwan, Mega Drive/CD/32X |
+| Game Boy / GBC / GBA | `sameboy`, `mgba-qt` | ✅ `1.0.2+ds-2`, `0.10.5+dfsg-3build1` | ~~Add both~~ ✅ **done** — `1.0.4`; dedicated emulators, versus the previous incidental coverage |
+| PONG (1972, discrete logic) | `mame` driver `pong` | ✅ `0.285+dfsg1-1` | ~~Placement undecided~~ ✅ **done** — `mame` moved to `foundry-emulators-consoles` `1.0.5` |
+| Magnavox Odyssey (1972) | `mame` driver `odyssey` | ✅ same | ~~Same placement question~~ ✅ **done** — same move |
+| Philips Odyssey² / Videopac (1978) | `mame` drivers `odyssey2`, `videopac` | ✅ same · ❌ standalone `o2em` absent | ~~Same placement question~~ ✅ **done** — same move |
 | Atari Lynx | `mednafen` | ✅ already shipped | **Already covered** — the table row now names Lynx explicitly |
 | **Dreamcast** | Flycast | ❌ `flycast`, `reicast`, `redream`, `lxdream`, `libretro-flycast` all absent | **Vendor and package** — same shape as xemu (user‑supplied BIOS, not shipped) |
 | **PlayStation 3** | RPCS3 | ❌ AppImage‑only upstream | **Vendor and package** — needs user‑supplied PS3 firmware, same licensing shape as xemu's MCPX/BIOS. Large → `-heavy` |
 | PS4 / PS5 | shadPS4 / — | ❌ | Out of scope: PS4 emulation is pre‑alpha; nothing exists for PS5 |
 | Xbox 360 / One / Series | Xenia / — | ❌ | Out of scope: Xenia is Windows‑only (runs under Wine/Proton); nothing exists for One/Series |
 
-**Unverified:** the MAME driver names above (`pong`, `odyssey`, `odyssey2`, `coleco`, `lynx`, `gameboy`) are asserted from knowledge, not measured — a container `mame -listfull` probe returned zero lines, so only the *package's* presence at 0.285 is confirmed. Confirm the drivers before writing them into any package description.
+**MAME drivers — verified 2026‑08‑05.** The earlier probe returned zero lines because `mame` installs to `/usr/games/`, which was not on the container's `PATH`. Re-run against `mame 0.285+dfsg1-1` on `ubuntu:26.04` (49,617 systems listed), exact `-listfull` rows:
+
+```
+pong              "Pong (Rev E)"
+odyssey           "Odyssey"
+odyssey2          "Odyssey 2 (US)"
+videopac          "Videopac G7000 (Europe)"
+videopacp         "Videopac+ G7400 (Europe)"
+coleco            "ColecoVision (NTSC)"
+colecop           "ColecoVision (PAL)"
+gameboy           "Game Boy"
+gbcolor           "Game Boy Color"
+gba               "Game Boy Advance"
+```
+
+One trap worth recording: MAME also lists `lynx128k` "Lynx 128k", which is the **Camputers Lynx** home computer, not an Atari handheld. Atari Lynx coverage in the catalogue comes from `mednafen`; no Lynx claim is made for MAME in any package description.
 
 **RetroArch caveat:** `retroarch` is packaged, but the archive's cores are only `gambatte`, `sameboy`, `mgba`, `desmume`, `nestopia`, `snes9x`, `bsnes-mercury`, `genesisplusgx`, and `beetle-{pce-fast,psx,vb,wswan}`. There is no `o2em`, `bluemsx`, `handy`, or `flycast` core in universe, so RetroArch does **not** fill the ColecoVision / Odyssey² / Dreamcast gaps from packages alone — only via its runtime online core downloader.
 
