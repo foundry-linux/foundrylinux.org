@@ -9,6 +9,55 @@
 
 xemu is the only maintained emulator for the original Xbox (2001), and it is **not in Ubuntu 26.04 universe** (the universe check returns only the unrelated `gxemul`). Packaging it closes the last major sixth-generation console gap in the Foundry emulator catalogue.
 
+### Console emulator catalogue
+
+Every console/handheld emulator shipped by the two console metapackages, by hardware generation. Source column: **universe** = Ubuntu 26.04 universe, **Foundry** = built in `foundry-apt/packages/`.
+
+| Gen | Console(s) | Emulator | Metapackage | Source |
+|---|---|---|---|---|
+| 2 | Atari 2600 | `stella` | consoles | universe |
+| 3 | NES / Famicom | `fceux` | consoles | universe |
+| 3 | NES / Famicom | `nestopia` | consoles‑heavy | universe |
+| 3 | Sega Master System, Game Gear | `mesen2` | consoles‑heavy | Foundry |
+| 4 | Super Nintendo / Super Famicom | `snes9x-gtk` | consoles + heavy | Foundry |
+| 4 | Super Nintendo (cycle‑accurate) | `bsnes-jg` | consoles + heavy | Foundry |
+| 4 | **Atari Lynx**, PC Engine / TurboGrafx‑16, GB/GBA, … | `mednafen` | consoles | universe |
+| 4 | Game Boy / Game Boy Color (incidental — via the multi‑system cores above) | `mednafen`, `mesen2` | consoles + heavy | universe / Foundry |
+| 5 | PlayStation 1 | `pcsxr` | consoles‑heavy | universe |
+| 5 | Nintendo 64 | `mupen64plus-ui-console` | consoles‑heavy | universe |
+| 6 | PlayStation 2 | `pcsx2` | consoles‑heavy | universe |
+| 6 | GameCube (+ Wii, gen 7) | `dolphin-emu` | consoles‑heavy | universe |
+| 6 | **Original Xbox** | **`xemu`** | **consoles** | **Foundry (this plan)** |
+| 7 | Nintendo DS | `desmume` | consoles | universe |
+| 7 | PlayStation Portable | `ppsspp` | consoles + heavy | Foundry |
+| 8 | Nintendo Switch | `yuzu` | consoles‑heavy | universe |
+| — | libretro multi‑system frontend | `retroarch` | consoles‑heavy | universe |
+| — | Sierra/LucasArts/Westwood adventure engines | `scummvm` | consoles | universe |
+| — | Z‑machine (Infocom text adventures) | `frotz` | consoles | universe |
+
+Gen 6 had three principal consoles — PS2, GameCube, Xbox. The first two were already covered by universe packages; the **Dreamcast** (gen 6, 1998) is the one remaining gen‑6 gap and is tracked separately (see below). Home‑computer emulators (`dosbox-x`, `hatari`, `fs-uae`, `openmsx`, `vice`, `atari800`, `fbzx`) live in `foundry-emulators-computers` / `-vintage` and are out of scope for this table.
+
+### Coverage gaps and follow‑ups
+
+Audited 2026‑08‑05 against a fresh `ubuntu:26.04` container (`apt-cache policy`) plus `ares --help`'s own system list. None of these block this plan; each is tracked as its own `TODO.md` item.
+
+| System | Emulator | In 26.04 universe? | Follow‑up |
+|---|---|---|---|
+| ColecoVision | `ares` | ✅ `147+dfsg-3` | Add to `foundry-emulators-consoles` — also brings MSX/MSX2, SG‑1000, Neo Geo Pocket, WonderSwan, Mega Drive/CD/32X |
+| Game Boy / GBC / GBA | `sameboy`, `mgba-qt` | ✅ `1.0.2+ds-2`, `0.10.5+dfsg-3build1` | Add both — dedicated emulators, versus today's incidental coverage |
+| PONG (1972, discrete logic) | `mame` | ✅ `0.285+dfsg1-1` | MAME is the only packaged path, but it ships in `foundry-retro-tools`, not either emulator bucket. ~444 MB installed → likely belongs in `-heavy` |
+| Magnavox / Philips Odyssey (1972) | `mame` | ✅ same | Same placement question as PONG |
+| Philips Odyssey² / Videopac (1978) | `mame` | ✅ same · ❌ standalone `o2em` absent | Same placement question as PONG |
+| Atari Lynx | `mednafen` | ✅ already shipped | **Already covered** — the table row now names Lynx explicitly |
+| **Dreamcast** | Flycast | ❌ `flycast`, `reicast`, `redream`, `lxdream`, `libretro-flycast` all absent | **Vendor and package** — same shape as xemu (user‑supplied BIOS, not shipped) |
+| **PlayStation 3** | RPCS3 | ❌ AppImage‑only upstream | **Vendor and package** — needs user‑supplied PS3 firmware, same licensing shape as xemu's MCPX/BIOS. Large → `-heavy` |
+| PS4 / PS5 | shadPS4 / — | ❌ | Out of scope: PS4 emulation is pre‑alpha; nothing exists for PS5 |
+| Xbox 360 / One / Series | Xenia / — | ❌ | Out of scope: Xenia is Windows‑only (runs under Wine/Proton); nothing exists for One/Series |
+
+**Unverified:** the MAME driver names above (`pong`, `odyssey`, `odyssey2`, `coleco`, `lynx`, `gameboy`) are asserted from knowledge, not measured — a container `mame -listfull` probe returned zero lines, so only the *package's* presence at 0.285 is confirmed. Confirm the drivers before writing them into any package description.
+
+**RetroArch caveat:** `retroarch` is packaged, but the archive's cores are only `gambatte`, `sameboy`, `mgba`, `desmume`, `nestopia`, `snes9x`, `bsnes-mercury`, `genesisplusgx`, and `beetle-{pce-fast,psx,vb,wswan}`. There is no `o2em`, `bluemsx`, `handy`, or `flycast` core in universe, so RetroArch does **not** fill the ColecoVision / Odyssey² / Dreamcast gaps from packages alone — only via its runtime online core downloader.
+
 ## Placement decision — light, not heavy
 
 Initial instinct was `foundry-emulators-consoles-heavy`, since xemu's *peer group by console generation* is `pcsx2` / `dolphin-emu` / `yuzu`. That was wrong: the heavy bucket's own stated criterion is **installation footprint** ("larger installation footprints … left out of the base devbox image for size reasons"), not generation.
