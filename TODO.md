@@ -23,9 +23,6 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
   call strengthened), the missing `LICENSES-VENDORED.md` xemu row (fix left uncommitted in-tree,
   `task check-licenses` red→green), and a no-retry brittleness in `scripts/check-apt-repos.sh`
   (curl timeout aborts via `set -e`; worth a [T1]). The publish unblocks BOTH items below.
-- [T5] **Phase 2 REVERSED 2026-08-05 — decision made not to vendor `task` after all:** the consumer flip (dropping Cloudsmith for the newly-published vendored `task`) was implemented, verified per-consumer (shellcheck, a real `docker build` of `foundry-devbox` with Cloudsmith blackholed, dry-runs), then **fully reverted pre-commit** on explicit direction — Cloudsmith stays wired unchanged in all four consumers (`foundry-iso`, `foundry-devbox`, `foundry-setup/install-task.sh`, `site/setup.sh`). Instead `task` itself was **un-vendored**: `foundry-apt/packages/task/` deleted, `README.md`/`LICENSES-VENDORED.md` (moved to Retired entries)/root `CLAUDE.md` updated (27→26 vendored upstreams), `task check-licenses` green. **Still open:** this source removal is committed but not released — `apt.foundrylinux.org` keeps serving the now-orphaned `task 3.51.1-1foundry1` until the next `foundry-apt` release tag runs CI (`prune-dist.sh` already drops orphaned packages; `rclone sync` mirrors the removal to R2). Triggering that release (`task sync-and-release TAG=…` from the monorepo root, or the equivalent from a synced `foundry-apt` checkout) is a live public-repo action — needs explicit go-ahead, not bundled into this item. [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
-### Emulator catalogue gaps (surfaced 2026-08-05 by the xemu plan's coverage table)
-
 - [T3] **Vendor and package Flycast (Dreamcast)** — the one remaining sixth-generation gap. Confirmed **not** in 26.04 universe (`flycast`, `reicast`, `redream`, `lxdream`, `libretro-flycast` all absent). Actively maintained upstream (CMake). Same shape as xemu — user-supplied BIOS, not shipped — reuse that plan's structure. Needs its own plan before dispatch.
 - [T3] **Vendor and package RPCS3 (PlayStation 3)** — not in universe, AppImage-only upstream, requires user-supplied PS3 firmware (same licensing shape as xemu's MCPX/BIOS). Large → `-heavy` only. **PS4/PS5 and Xbox 360/One/Series stay out of scope**: shadPS4 is pre-alpha, Xenia is Windows-only, nothing exists for PS5 or Xbox One/Series. Needs its own plan before dispatch.
 
@@ -118,6 +115,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 - **Amiga Hunk executable output for wlalink** — feasibility study done against wla-dx v10.6 source: add `-t AMIGAHUNK` mode (`OUTPUT_TYPE_AMIGA_HUNK`, mirrors the C64-CRT path). Minimal viable ≈1 day; multi-hunk reloc is the hard follow-up. Revisit if Amiga-target support is wanted.
 
 ## Done
+- [x] 2026-08-05 — [task-unvendored] Vendoring REVERSED by decision: task un-vendored (c65809e), consumers stay on Cloudsmith (verified live, no rotation recurrence); release v1.5.40 CI success — live index now serves xemu, not task. See [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
 
 - 2026-08-05 — [emu-consoles-gaps] Added ares (ColecoVision), sameboy + mgba-qt (Game Boy family) to foundry-emulators-consoles 1.0.4. See [plan](docs/plans/2026-08-05-package-xemu.md).
 - 2026-08-05 — [mame-placement] Moved mame retro-tools→emulators-consoles 1.0.5 (PONG/Odyssey/Odyssey2 drivers verified); mame-tools stays. See [plan](docs/plans/2026-08-05-package-xemu.md).
