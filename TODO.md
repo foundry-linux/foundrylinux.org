@@ -214,6 +214,8 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage each into M1/M2/etc. and delete it here — it will not come back._
 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
+- [ ] **(triage)** `wbniv/wald3n.com/.github/workflows/deploy.yml` has its `push: tags:` trigger **commented out** — _from [2026-08-05-activate-wf-dispatch.md](docs/plans/2026-08-05-activate-wf-dispatch.md)_  <!-- fp:c7504e84fb650767 -->
+- [ ] **(triage)** `scripts/refresh-open-source-data.mjs` reads a **local sibling clone** (`../foundry-apt/packages`, — _from [2026-08-05-activate-wf-dispatch.md](docs/plans/2026-08-05-activate-wf-dispatch.md)_  <!-- fp:88a85b475d900faf -->
 <!-- END auto-captured-deferrals -->
 <!-- triaged 2026-08-05: the three audit-upstream-packaging deferrals dropped — both follow-ups (CI guard, x-emulators binary-name divergence) are already in that plan's own Follow-ups section, and the [verify] row is redundant with the curated "Audit the 30 vendored upstreams" item above: the plan's verification steps cannot run until that item builds the audit script, so tracking it twice adds nothing. -->
 <!-- triaged 2026-08-05: all four x-emulators deferrals cleared — the SOURCE_DATE_EPOCH PR and the Debian ITP are curated items under "Packaging — new upstreams"; the .desktop/icons item was added there too; and the [verify] row is closed because the plan now records PASS for all seven verification steps. -->
