@@ -62,7 +62,7 @@ jobs:
       - name: Hydrate durable dist mirror from Cloudflare R2
         env:
           TARGET_PACKAGES: ${{ inputs.packages }}
-          DIST_CACHE_HIT: ${{ steps.dist-cache.outputs.cache-hit }}
+          DIST_CACHE_KEY: ${{ steps.dist-cache.outputs.cache-matched-key }}
           RCLONE_CONFIG_R2_TYPE: s3
           RCLONE_CONFIG_R2_PROVIDER: Cloudflare
           RCLONE_CONFIG_R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -73,7 +73,7 @@ jobs:
           if rclone copy R2:foundry-apt-dist/ ./dist/ --checksum --progress --transfers=8; then
             exit 0
           fi
-          if [[ -n "$TARGET_PACKAGES" && "$DIST_CACHE_HIT" != "true" ]]; then
+          if [[ -n "$TARGET_PACKAGES" && -z "$DIST_CACHE_KEY" ]]; then
             echo "ERROR: R2 dist hydration failed during a targeted publish — refusing to continue." >&2
             exit 1
           fi
