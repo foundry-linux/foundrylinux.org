@@ -51,7 +51,7 @@ jobs:
       - name: Restore secondary GitHub Actions cache
         # R2 is authoritative. This cache is only a fast path and bootstraps the
         # first R2 mirror from the last pre-mirror publish while it is still warm.
-        uses: actions/cache@v5
+        uses: actions/cache/restore@v5
         with:
           path: dist
           key: foundry-apt-dist-${{ github.sha }}
@@ -78,6 +78,8 @@ jobs:
           echo "R2 dist mirror is not available yet; continuing only because this is a full bootstrap build."
 
       - name: Build all .debs in ubuntu:26.04 (our distribution base)
+        id: build
+        continue-on-error: true
         # All .debs MUST be built inside ubuntu:26.04 so that ${shlibs:Depends}
         # resolves to 26.04's library sonames (libavcodec62, etc.). Building on
         # the host (noble/24.04) silently pins to ffmpeg-6 sonames and ships an
@@ -107,6 +109,23 @@ jobs:
               # can prune the root-owned dist/ the build just wrote.
               bash scripts/prune-dist.sh
             '
+
+      - name: Save successful bootstrap outputs to the secondary cache
+        # A full bootstrap can have one late package failure after dozens of
+        # successful builds. Preserve those outputs so a retry does not repeat
+        # all of that work. R2 remains authoritative and is updated only after
+        # the completeness gate and publish both succeed.
+        if: ${{ always() }}
+        uses: actions/cache/save@v5
+        with:
+          path: dist
+          key: foundry-apt-dist-${{ github.sha }}-${{ github.run_id }}
+
+      - name: Require every requested build to succeed
+        if: ${{ steps.build.outcome != 'success' }}
+        run: |
+          echo "ERROR: one or more requested package builds failed; retained successful outputs only in the secondary cache." >&2
+          exit 1
 
       - name: Refuse to publish a truncated repository
         run: bash scripts/check-dist-complete.sh
