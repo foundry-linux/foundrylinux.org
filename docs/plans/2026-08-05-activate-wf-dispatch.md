@@ -138,8 +138,8 @@ the token value is scripted.
    - **Repository access:** Only select repositories → `foundry-linux/foundrylinux.org`
    - **Repository permissions → Contents: Read and write** (Metadata: Read is implicit).
      **Not** Actions — `POST /dispatches` is gated on Contents.
-   - **Expiration:** 1 year; record the date below so the next expiry is anticipated rather than
-     discovered mid-publish.
+   - **Expiration:** 1 year. Nothing needs recording by hand — see
+     [Not letting this recur](#not-letting-this-recur) — but "no expiration" is not the answer either.
 2. If the org requires approval for fine-grained PATs, approve it in the org's settings.
 3. Store it via the house credential path — **not** a bare `gh secret set`, and never by pasting the
    value into a chat transcript:
@@ -161,4 +161,39 @@ the token value is scripted.
    provisioning is repeated.
 4. Re-run verification steps 2–4.
 
-**PAT expiry:** _(record on re-mint)_
+---
+
+## Not letting this recur
+
+An earlier draft of this plan said *"record the expiry date below so the next expiry is anticipated
+rather than discovered mid-publish."* That was not a mechanism. It is a note in a document nobody
+opens in a year — it would have caught the 2026‑05‑30 expiry exactly as well as nothing did, which is
+to say not at all. A credential with a deadline and no detector is a time bomb regardless of what the
+plan says about it.
+
+Three options, and why the middle one:
+
+| Option | Verdict |
+|---|---|
+| PAT with **no expiration** | Removes the deadline by removing the security property. A token that never expires is one that never gets reviewed. No. |
+| **Detect expiry, don't remember it** | Cheap, works today, and fails loudly *before* the token dies. **Chosen.** |
+| **GitHub App** installation token | The real fix — tokens minted per run, nothing stored to expire. Costs a one-time App creation + `actions/create-github-app-token`. Worth doing; out of scope here. |
+
+Implemented as `wbniv/worldfoundry.org/.github/workflows/dispatch-token-health.yml`: a weekly cron
+that probes `GET /repos/foundry-linux/foundrylinux.org` with the PAT and reads the
+`github-authentication-token-expiration` response header that fine-grained PATs carry.
+
+The design point that makes it work: **an Actions warning notifies nobody — only a failed run sends
+mail.** So the job deliberately goes *red while the token still works*, 21 days before expiry, and
+says in the log that it is a renewal reminder rather than a breakage. A check that merely warns would
+reproduce the original failure with extra steps.
+
+It also hard-fails on 401 (dead token) and 403/404 (wrong resource owner, or revoked org approval),
+each with the exact remedy — `task setup -- --dispatch-pat-only` — in the error text.
+
+What it deliberately does not do: prove `Contents: write`. There is no non-mutating probe for that, and
+firing a real dispatch weekly would mean a weekly redundant site deploy. Full end-to-end proof stays
+the one-command `gh workflow run notify-foundrylinux.yml`.
+
+**Follow-up worth ranking:** migrate this leg to a GitHub App and delete both the PAT and this
+health check.
