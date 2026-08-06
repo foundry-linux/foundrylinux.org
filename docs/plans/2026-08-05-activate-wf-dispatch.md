@@ -122,6 +122,10 @@ token value is scripted.
 
 1. Create a fine-grained PAT at
    [https://github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new):
+   - **Token name:** `FOUNDRYLINUX_DISPATCH_PAT (wbniv/worldfoundry.org)` — cosmetic to the API, but
+     it is what the expiry-warning email shows. Naming it after the **secret + holding repo** makes
+     that email state its own remedy; naming it after the *target* (`foundrylinux.org dispatch`)
+     points at where the token aims rather than where you must go to replace it.
    - **Resource owner:** `foundry-linux` (the org — *not* `wbniv`)
    - **Repository access:** Only select repositories → `foundry-linux/foundrylinux.org`
    - **Repository permissions → Contents: Read and write** (Metadata: Read is implicit).
