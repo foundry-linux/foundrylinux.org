@@ -24,6 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Check known Build-Depends companion packages
+        run: bash scripts/check-build-dep-pairs.sh
+
       - name: Install runner-side deps (aptly, signing, R2 sync)
         # These run on the GitHub-hosted host — they only touch metadata that
         # already exists (aptly, gnupg) or move bytes around (rclone). They do

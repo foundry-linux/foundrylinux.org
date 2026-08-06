@@ -1,0 +1,60 @@
+Source: flycast
+Section: otherosfs
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13),
+ cmake,
+ pkgconf,
+ git,
+ libsdl2-dev,
+ libcurl4-gnutls-dev,
+ zlib1g-dev,
+ liblua5.4-dev,
+ libasound2-dev,
+ libao-dev,
+ libevdev-dev,
+ libudev-dev,
+ libpulse-dev,
+ libzip-dev,
+ libchdr-dev,
+ libminiupnpc-dev,
+ libgl-dev,
+ libvulkan-dev
+Standards-Version: 4.7.2
+Homepage: https://github.com/flyinghead/flycast
+X-Repology-Project: flycast
+Rules-Requires-Root: no
+
+Package: flycast
+Architecture: amd64
+# Flycast reaches Vulkan through vulkan.hpp's DYNAMIC dispatch loader: it vendors
+# Vulkan-Headers and never links the loader, resolving libvulkan.so.1 with dlopen
+# at startup instead. OpenGL is likewise resolved dynamically through SDL. Neither
+# is visible to dh_shlibdeps, so both are listed by hand — without libvulkan1 the
+# package installs cleanly and then fails to bring up a renderer.
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ libvulkan1,
+ libgl1
+# The Vulkan ICD is what actually hands a device to the libvulkan1 loader; users
+# on non-Mesa GPUs supply their own vendor driver, so this is a strong
+# recommendation rather than a hard dependency.
+Recommends: mesa-vulkan-drivers
+Description: Sega Dreamcast, NAOMI and Atomiswave emulator
+ Flycast is a multi-platform emulator for the Sega Dreamcast (1998) and for the
+ Sega arcade boards that share its architecture — NAOMI, NAOMI 2 and Atomiswave.
+ It emulates the console's SH-4 CPU with a dynamic recompiler and its PowerVR2
+ graphics through either Vulkan or OpenGL, with per-pixel order-independent
+ transparency for the effects the hardware rendered natively.
+ .
+ Disc images are read directly in GDI, CHD, CUE and CDI form. Save data is kept
+ in emulated VMU files, and the emulator also supports widescreen and upscaled
+ rendering, save states, network play, and RetroAchievements.
+ .
+ Flycast needs original console and arcade firmware to run. The Dreamcast BIOS
+ (dc_boot.bin and dc_flash.bin) is recommended, and the NAOMI and Atomiswave
+ BIOS files are required for those platforms. These are copyrighted Sega
+ material and are NOT shipped with this package — you must supply them
+ yourself, dumped from hardware you own, in ~/.local/share/flycast/data/.
+ .
+ This package ships the emulator as /usr/bin/flycast along with a desktop entry
+ and hicolor icons, so it appears in the applications menu.

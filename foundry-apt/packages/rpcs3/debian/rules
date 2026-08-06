@@ -1,0 +1,82 @@
+#!/usr/bin/make -f
+
+# optimize=-lto: Ubuntu 26.04 puts -flto in the default build flags, and RPCS3
+# refuses to configure at all when it sees one ("RPCS3 doesn't support building
+# with LTO"). Clear the distro feature so it is absent from compiler and linker
+# flags. DISABLE_LTO strips externally supplied flags, while USE_LTO=OFF stops
+# the rpcs3_emu target from enabling CMake IPO (which adds -flto=auto itself).
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=-lto
+
+# Upstream stamps build metadata from the environment; honour SOURCE_DATE_EPOCH
+# so repeated builds of the same source produce the same binary.
+export SOURCE_DATE_EPOCH ?= $(shell date -d "$$(dpkg-parsechangelog -SDate)" +%s)
+
+%:
+	dh $@ --buildsystem=cmake+ninja
+
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake+ninja -- \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DDISABLE_LTO=TRUE \
+	    -DUSE_LTO=OFF \
+	    -DUSE_NATIVE_INSTRUCTIONS=OFF \
+	    -DUSE_PRECOMPILED_HEADERS=OFF \
+	    -DBUILD_LLVM=OFF \
+	    -DSTATIC_LINK_LLVM=OFF \
+	    -DUSE_SYSTEM_FFMPEG=ON \
+	    -DUSE_SYSTEM_OPENCV=ON \
+	    -DUSE_SYSTEM_CURL=ON \
+	    -DUSE_SYSTEM_LIBPNG=ON \
+	    -DUSE_SYSTEM_LIBUSB=ON \
+	    -DUSE_SYSTEM_OPENAL=ON \
+	    -DUSE_SYSTEM_SDL=ON \
+	    -DUSE_SYSTEM_ZLIB=ON \
+	    -DUSE_SYSTEM_ZSTD=ON \
+	    -DUSE_DISCORD_RPC=OFF \
+	    -Dprotobuf_LOCAL_DEPENDENCIES_ONLY=ON \
+	    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+
+# USE_NATIVE_INSTRUCTIONS=OFF is not optional for a distributed package:
+# upstream defaults it ON, which adds -march=native and yields a binary that
+# SIGILLs on any host with a narrower instruction set than the build machine.
+#
+# CMAKE_POLICY_VERSION_MINIMUM=3.5 is needed because Ubuntu 26.04 ships CMake 4,
+# which refuses projects declaring cmake_minimum_required below 3.5 — several of
+# the vendored 3rdparty trees still do.
+#
+# protobuf_LOCAL_DEPENDENCIES_ONLY=ON is a policy guard. Modern protobuf no
+# longer carries abseil as a git submodule — it pulls it with FetchContent from
+# GitHub at configure time — so the recursive clone yields a protobuf with no
+# abseil source. We build against Ubuntu's libabsl-dev instead; this flag makes
+# protobuf fail loudly rather than silently attempt that download if the system
+# package is ever missing.
+#
+# The USE_SYSTEM_* set is deliberately the one Flathub uses and no wider: the
+# remaining submodules (protobuf, glslang, wolfssl, cubeb, hidapi, miniupnpc,
+# pugixml, rtmidi, FAudio, asmjit, 7zip, SoundTouch, stb, fusion,
+# VulkanMemoryAllocator, yaml-cpp) are either pinned to a commit RPCS3 depends on
+# or absent/too old in 26.04 — notably protobuf, where USE_SYSTEM_PROTOBUF needs
+# >= 33.0.0 against universe's 3.21.12.
+
+override_dh_auto_test:
+	# Upstream's test target (BUILD_RPCS3_TESTS) is off by default and its
+	# runnable tests need a PS3 firmware image, which is not shipped.
+
+override_dh_auto_install:
+	dh_auto_install --buildsystem=cmake+ninja
+	# AppStream requires the metainfo filename to match its component ID.
+	mv debian/rpcs3/usr/share/metainfo/rpcs3.metainfo.xml \
+	    debian/rpcs3/usr/share/metainfo/net.rpcs3.RPCS3.metainfo.xml
+	# Upstream installs its developer test corpus alongside application assets.
+	# These ELF/SELF fixtures are not needed to run RPCS3 and should not inflate
+	# the end-user package.
+	rm -rf debian/rpcs3/usr/share/rpcs3/test
+
+override_dh_dwz:
+	# dwz's whole-program debug-info pass exhausts memory on the RPCS3 binary.
+	# dh_strip still separates/strips debug data normally; skipping this optional
+	# cross-CU deduplication changes package size only, not runtime behaviour.
+
+override_dh_installchangelogs:
+	# Upstream ships no changelog file; the release notes live on GitHub.
+	dh_installchangelogs

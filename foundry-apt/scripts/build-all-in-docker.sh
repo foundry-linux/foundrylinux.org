@@ -9,10 +9,14 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."   # foundry-apt/
 
+# Optional single-package filter, matching build-all.sh.
+PKG_FILTER="${1:-}"
+
 docker run --rm \
   -v "$(pwd):/work" \
   -w /work \
   -e DEBIAN_FRONTEND=noninteractive \
+  -e PKG_FILTER="$PKG_FILTER" \
   ubuntu:26.04 \
   bash -c '
     set -euo pipefail
@@ -22,5 +26,5 @@ docker run --rm \
       curl ca-certificates pkg-config sudo \
       zip python3 \
       cmake qt6-base-dev qt6-declarative-dev
-    bash scripts/build-all.sh
+    bash scripts/build-all.sh "$PKG_FILTER"
   '

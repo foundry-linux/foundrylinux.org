@@ -1,0 +1,157 @@
+.TH RPCS3 1 "2026-08-05" "rpcs3 0.0.42" "User Commands"
+.SH NAME
+rpcs3 \- Sony PlayStation 3 emulator and debugger
+.SH SYNOPSIS
+.B rpcs3
+.RI [ options ]
+.RI [ path ]
+.RI [ \-\- " emulation-arguments" ]
+.SH DESCRIPTION
+.B rpcs3
+emulates the Sony PlayStation 3. It recompiles the Cell Broadband Engine's PPU
+and SPU code through LLVM and renders the RSX graphics processor through Vulkan
+or OpenGL, and it carries a debugger for both processors.
+.PP
+Given a
+.I path
+to a bootable executable (typically an
+.B EBOOT.BIN
+inside a dumped title), that title is booted directly; with no path the
+graphical interface starts.
+.PP
+Arguments following a bare
+.B \-\-
+are passed through to the emulated program rather than interpreted by
+.BR rpcs3 .
+.SS Firmware is not included
+.B rpcs3
+cannot boot anything without PlayStation 3 system firmware. That firmware,
+distributed by Sony as
+.BR PS3UPDAT.PUP ,
+is copyrighted and is
+.B not
+shipped with this package and not downloaded by it. Obtain it yourself from
+Sony and install it with
+.B \-\-installfw
+or through the emulator's
+.I File / Install Firmware
+dialog. The same applies to game software: only titles you have dumped from
+media you own are expected.
+.SH OPTIONS
+.TP
+.B \-\-headless
+Run without any window, for automated or remote use.
+.TP
+.B \-\-no\-gui
+Run without the graphical interface, booting the given title directly.
+.TP
+.B \-\-fullscreen
+Run games fullscreen. Only used together with
+.BR \-\-no\-gui .
+.TP
+.BI \-\-game\-screen " index"
+Place the game window on the numbered screen.
+.TP
+.BI \-\-hidpi " enabled"
+Enable Qt high-DPI scaling. Defaults to 1.
+.TP
+.BI \-\-dpi\-rounding " rounding"
+Set the Qt high-DPI scale-factor rounding policy, for zoom levels such as 150%.
+Defaults to 4.
+.TP
+.B \-\-styles
+List the available interface styles and exit.
+.TP
+.BI \-\-style " style"
+Load a named interface style.
+.TP
+.BI \-\-stylesheet " path"
+Load a custom stylesheet.
+.TP
+.BI \-\-config " path"
+Use this configuration file for the title booted from the command line.
+.TP
+.BI \-\-input\-config " name"
+Use this input configuration for the title booted from the command line.
+.TP
+.BI \-\-installfw " path"
+Install the given PlayStation 3 firmware file. See
+.B Firmware is not included
+above.
+.TP
+.BI \-\-installpkg " path"
+Install the given PKG file.
+.TP
+.BI \-\-decrypt " path"
+Decrypt the given PS3 binaries.
+.TP
+.BI \-\-user\-id " id"
+Start as this emulated user.
+.TP
+.BI \-\-savestate " path"
+Load a savestate directly.
+.TP
+.BI \-\-last\-savestate " title-id"
+Load the most recent savestate of a title, by title ID or path.
+.TP
+.BI \-\-rsx\-capture " path"
+Load an RSX capture directly.
+.TP
+.B \-\-qDebug
+Write Qt debug output to RPCS3.log.
+.TP
+.BI \-\-high\-res\-timer " enabled"
+Enable the high-resolution timer. Has an effect on Windows only; accepted here
+for command-line compatibility. Defaults to 1.
+.TP
+.B \-\-verbose\-curl
+Log libcurl activity verbosely.
+.TP
+.B \-\-allow\-any\-location
+Permit running from any directory. Upstream marks this dangerous.
+.TP
+.B \-\-codecs
+List the available ffmpeg codecs and exit.
+.TP
+.B \-\-error
+.TQ
+.B \-\-updating
+Reserved for internal use by the emulator's own relaunch and update paths.
+.TP
+.B \-h ", " \-\-help
+Show the built-in usage summary and exit.
+.TP
+.B \-v ", " \-\-version
+Show the version and exit.
+.SH FILES
+.TP
+.I ~/.config/rpcs3/
+Configuration, including per-title configuration files.
+.TP
+.I ~/.cache/rpcs3/
+Shader and PPU/SPU recompiler caches.
+.TP
+.I /usr/share/rpcs3/
+Icons and default GUI configurations shipped with the package.
+.SH NOTES
+This package is built against the distribution's LLVM, ffmpeg, OpenCV, SDL3,
+OpenAL, libcurl, libpng, libusb, zlib and zstd rather than the copies upstream
+vendors. It is also built without
+.BR \-march=native ,
+so it runs on any x86-64 host rather than only on the machine that built it.
+.SH SEE ALSO
+.BR pcsx2 (1),
+.BR ppsspp (1),
+.BR xemu (1)
+.PP
+Compatibility lists, configuration guides and the quick-start documentation are
+at
+.UR https://rpcs3.net
+.UE .
+.SH AUTHORS
+RPCS3 is developed by the RPCS3 Team and contributors.
+.PP
+This manual page was written for the Foundry Linux package; upstream ships
+none.
+.SH COPYRIGHT
+RPCS3 is distributed under the GNU General Public License version 2.

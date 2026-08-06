@@ -1,3 +1,22 @@
+foundry-emulators-consoles-heavy (1.0.7) resolute; urgency=medium
+
+  * Add rpcs3 (0.0.42+dfsg) — vendored from foundry-apt; Sony PlayStation 3
+    emulator and debugger. Closes the seventh-generation PlayStation gap.
+    PS3 firmware is copyrighted and is not shipped; the user installs it.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
+
+foundry-emulators-consoles-heavy (1.0.6) resolute; urgency=medium
+
+  * Add flycast (2.6) — vendored from foundry-apt; Sega Dreamcast, NAOMI and
+    Atomiswave emulator. Closes the last sixth-generation console gap.
+  * Drop the "all in Ubuntu universe (no licensing issues)" claim from the
+    description: it has been inaccurate since ppsspp, snes9x-gtk, mesen2 and
+    bsnes-jg were vendored, and snes9x-gtk in particular ships under a
+    non-commercial licence. Replaced with a note that firmware is not shipped.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
+
 foundry-emulators-consoles-heavy (1.0.5) resolute; urgency=medium
 
   * Add bsnes-jg (2.1.0) — vendored from foundry-apt; cycle-accurate

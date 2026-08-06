@@ -1,0 +1,24 @@
+Description: report the real version when built without a .git directory
+ Upstream derives the version suffix shown in the window title, the log header
+ and the About dialog by shelling out to git. When no .git directory is present
+ the values stay at their "local_build" defaults, which is what a source
+ package always sees — a Debian source package must not ship VCS metadata.
+ .
+ Substitute the packaged upstream tag and its superproject commit instead, so
+ the binary identifies itself accurately. The git probe is left in place for
+ anyone building from a real checkout.
+Author: Foundry Linux <packages@foundrylinux.org>
+Forwarded: not-needed
+Last-Update: 2026-08-05
+--- a/rpcs3/git-version.cmake
++++ b/rpcs3/git-version.cmake
+@@ -1,6 +1,6 @@
+-set(RPCS3_GIT_VERSION "local_build")
+-set(RPCS3_GIT_BRANCH "local_build")
+-set(RPCS3_GIT_FULL_BRANCH "local_build")
++set(RPCS3_GIT_VERSION "cd814f8c")
++set(RPCS3_GIT_BRANCH "v0.0.42")
++set(RPCS3_GIT_FULL_BRANCH "RPCS3/rpcs3/v0.0.42")
+
+ find_package(Git)
+ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git/")

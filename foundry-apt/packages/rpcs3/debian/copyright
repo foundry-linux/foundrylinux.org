@@ -1,0 +1,205 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: rpcs3
+Upstream-Contact: https://github.com/RPCS3/rpcs3/issues
+Source: https://github.com/RPCS3/rpcs3
+Comment:
+ RPCS3 itself is licensed GPL-2.0-only. It vendors a substantial set of third
+ party libraries as git submodules; the ones that survive our repack are
+ grouped below by license. Several further vendored libraries are compiled
+ against the distribution's copies instead of the vendored source (ffmpeg,
+ OpenCV, LLVM, SDL3, OpenAL, libcurl, libpng, libusb, zlib, zstd), so their
+ terms are those of the corresponding Debian packages.
+ .
+ The orig tarball for this package is synthesised by packages/rpcs3/build.sh
+ from a recursive clone at one pinned upstream commit, because upstream
+ publishes no source release asset and its git tag archive omits every
+ submodule. Files-Excluded below records what that synthesis strips.
+Files-Excluded:
+ 3rdparty/llvm/llvm
+ 3rdparty/ffmpeg
+ 3rdparty/opencv/opencv
+ 3rdparty/GPUOpen/VulkanMemoryAllocator/bin
+ 3rdparty/stblib/stb/tests/oversample
+ 3rdparty/SoundTouch/soundtouch/source/csharp-example
+ 3rdparty/SoundTouch/soundtouch/source/SoundTouchDLL/LazarusTest
+
+Files: *
+Copyright: 2011-2026 RPCS3 Team and contributors
+License: GPL-2
+
+Files: 3rdparty/wolfssl/*
+Copyright: 2006-2026 wolfSSL Inc.
+License: GPL-2
+
+Files: 3rdparty/libusb/*
+           3rdparty/SoundTouch/*
+           3rdparty/7zip/*
+Copyright: 2001-2026 the libusb contributors
+           2001-2026 Olli Parviainen
+           1999-2026 Igor Pavlov
+License: LGPL-2.1
+Comment:
+ 7-Zip's C SDK is dual-licensed; upstream distributes the copy vendored here
+ under the LGPL-2.1 option.
+
+Files: 3rdparty/asmjit/*
+           3rdparty/FAudio/*
+           3rdparty/libsdl-org/*
+           3rdparty/zlib/*
+Copyright: 2008-2026 Petr Kobalicek
+           2011-2026 Ethan Lee and the FAudio contributors
+           1997-2026 Sam Lantinga and the SDL contributors
+           1995-2026 Jean-loup Gailly and Mark Adler
+License: Zlib
+
+Files: 3rdparty/pugixml/*
+           3rdparty/yaml-cpp/*
+           3rdparty/fusion/*
+           3rdparty/rtmidi/*
+           3rdparty/stblib/*
+           3rdparty/GPUOpen/*
+           3rdparty/discord-rpc/*
+Copyright: 2006-2026 Arseny Kapoulkine
+           2008-2026 Jesse Beder
+           2021-2026 x-io Technologies
+           2003-2026 Gary P. Scavone
+           2017-2026 Sean Barrett and the stb contributors
+           2017-2026 Advanced Micro Devices, Inc.
+           2017-2026 Discord Inc.
+License: Expat
+
+Files: 3rdparty/glslang/*
+           3rdparty/protobuf/*
+           3rdparty/miniupnp/*
+           3rdparty/feralinteractive/*
+           3rdparty/zstd/*
+Copyright: 2002-2026 3Dlabs Inc. Ltd., NVIDIA Corporation, Google Inc. and the
+           Khronos Group Inc.
+           2008-2026 Google Inc.
+           2005-2026 Thomas Bernard
+           2017-2026 Feral Interactive Ltd.
+           2016-2026 Meta Platforms, Inc. and affiliates
+License: BSD-3-clause
+
+Files: 3rdparty/cubeb/*
+Copyright: 2011-2026 Mozilla Foundation
+License: ISC-cubeb
+
+Files: 3rdparty/hidapi/*
+Copyright: 2010-2026 Alan Ott, Signal 11 Software
+License: BSD-3-clause
+Comment:
+ hidapi is tri-licensed (GPL-3, BSD-3-clause, or its original HIDAPI terms);
+ the BSD-3-clause option is taken here.
+
+Files: debian/*
+Copyright: 2026 Foundry Linux <packages@foundrylinux.org>
+License: GPL-2
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License version 2 as published by
+ the Free Software Foundation.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ more details.
+ .
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, see <https://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 2 can be found in "/usr/share/common-licenses/GPL-2".
+
+License: LGPL-2.1
+ This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published by the
+ Free Software Foundation; either version 2.1 of the License, or (at your
+ option) any later version.
+ .
+ This library is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+ for more details.
+ .
+ On Debian systems, the complete text of the GNU Lesser General Public
+ License version 2.1 can be found in "/usr/share/common-licenses/LGPL-2.1".
+
+License: Zlib
+ This software is provided 'as-is', without any express or implied warranty.
+ In no event will the authors be held liable for any damages arising from the
+ use of this software.
+ .
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute it
+ freely, subject to the following restrictions:
+ .
+ 1. The origin of this software must not be misrepresented; you must not
+ claim that you wrote the original software. If you use this software in a
+ product, an acknowledgment in the product documentation would be
+ appreciated but is not required.
+ .
+ 2. Altered source versions must be plainly marked as such, and must not be
+ misrepresented as being the original software.
+ .
+ 3. This notice may not be removed or altered from any source distribution.
+
+License: Expat
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to
+ deal in the Software without restriction, including without limitation the
+ rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ sell copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ DEALINGS IN THE SOFTWARE.
+
+License: BSD-3-clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ .
+ 1. Redistributions of source code must retain the above copyright notice,
+ this list of conditions and the following disclaimer.
+ .
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ .
+ 3. Neither the name of the copyright holder nor the names of its
+ contributors may be used to endorse or promote products derived from this
+ software without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+
+License: ISC-cubeb
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+ OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

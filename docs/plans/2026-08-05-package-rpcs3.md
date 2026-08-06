@@ -1,10 +1,10 @@
 # Package RPCS3 (PlayStation 3 emulator) for apt.foundrylinux.org
 
 **Date:** 2026-08-05
-**Status:** **BLOCKED — escalated.** No packaging work performed. This document records the
-upstream investigation and the three candidate build approaches; the choice between them is a
-design decision that has not been made.
-**Scope (intended):** Vendor and package upstream [RPCS3](https://github.com/RPCS3/rpcs3) as a
+**Status:** **Decided — approach A (build from source), one pinned superproject commit.** The
+escalation below is kept as the record of why the obvious path does not exist; the decision and
+its rationale follow it.
+**Scope:** Vendor and package upstream [RPCS3](https://github.com/RPCS3/rpcs3) as a
 Debian-policy-compliant `.deb` and wire it into `foundry-emulators-consoles-heavy`.
 
 ---
@@ -173,6 +173,62 @@ build succeed.
 
 ---
 
+## Decision — approach A, corrected: pin one commit, not eighteen tarballs
+
+Approach A is adopted, but **not** in the AUR's shape. The AUR recipe's 18-tarball pin table is
+an artefact of `makepkg`'s source model, not a requirement of the problem. **A superproject
+commit already records the exact commit of every submodule, via its gitlinks** — that is what a
+gitlink is. So pinning the one commit `cd814f8c926400cf62dab7924f723e4eb7719e50` (the `v0.0.42`
+tag) transitively pins all **32** recursive submodule checkouts. Flathub pins the same way. The
+per-version maintenance burden is therefore one commit sha and one tarball sha256, the same shape
+as every other package in this repo.
+
+Recounted from the pinned tag rather than from master: `.gitmodules` declares **28** submodules;
+a recursive checkout yields **32** working trees once nested submodules (cubeb's
+`sanitizers-cmake` and `googletest`, and two more) are included.
+
+### The orig tarball is synthesised, deterministically
+
+`build.sh` clones at the pinned commit, strips VCS metadata, and packs with `--sort=name`, a
+fixed `--mtime` derived from the changelog date, `--owner=root --group=root --numeric-owner`, and
+xz (which stores no timestamp). The resulting sha256 is pinned in `build.sh` as `ORIG_SHA256`,
+and a re-synthesis that fails to reproduce it is a **hard error**, not a warning — otherwise the
+pin would be decorative. Verification step 2 below runs the synthesis twice from scratch, in two
+independent containers, and compares.
+
+### What the repack drops, and why (`+dfsg`)
+
+Two of these were discovered during implementation and one of them changes the build materially:
+
+| Dropped | Reason |
+|---|---|
+| `3rdparty/ffmpeg` | **This is the important one.** The submodule (`RPCS3/ffmpeg-core`) ships prebuilt Windows import libraries, and its `CMakeLists.txt` **`file(DOWNLOAD)`s a prebuilt ffmpeg zip from a GitHub release at configure time** — an unpinned network fetch of a binary blob in the middle of the build. That is disqualifying on its own, and it is *also* broken without `.git` (the URL embeds `git rev-parse --short HEAD`). `USE_SYSTEM_FFMPEG=ON` is therefore mandatory, not merely preferable; `3rdparty/CMakeLists.txt` then never `add_subdirectory()`s it. |
+| `3rdparty/llvm/llvm` | Never fetched. `BUILD_LLVM` defaults `OFF` and we link Ubuntu 26.04's LLVM 21, so cloning llvm-project would cost gigabytes for nothing. |
+| `3rdparty/opencv/opencv` | Megamouse's `opencv_minimal` is a prebuilt Windows `opencv_world4130.dll`/`.lib`. The `3rdparty/opencv` wrapper never references it on Linux; `USE_SYSTEM_OPENCV` defaults ON and we use Ubuntu's OpenCV 4.10. |
+| four sample/test binaries | VulkanMemoryAllocator's Visual Studio sample `.exe`, stb's `oversample.exe`, and SoundTouch's C#-example DLLs plus a Lazarus `.so`. Unreferenced by the build. |
+
+The result is a source package containing **zero** prebuilt binaries — better than xemu, which
+needed a `source-contains-prebuilt-windows-binary` override. `build.sh` asserts this: it scans
+the stripped tree for `*.lib`/`*.dll`/`*.exe`/`*.so`/`*.a`/`*.dylib` and fails if any survive, so
+a submodule that starts vendoring a binary at the next version bump breaks the build loudly
+instead of silently shipping it. `debian/copyright` records the list as DEP-5 `Files-Excluded`.
+
+### Two build flags that are not optional
+
+- **`USE_NATIVE_INSTRUCTIONS=OFF`.** Upstream defaults it **ON**, which compiles `-march=native`.
+  A package built that way SIGILLs on any host with a narrower instruction set than the builder —
+  catastrophic for a distributed `.deb`, and invisible on the build machine.
+- **`CMAKE_POLICY_VERSION_MINIMUM=3.5`.** Ubuntu 26.04 ships CMake **4.2.3**, which refuses
+  projects declaring `cmake_minimum_required` below 3.5; several vendored trees still do.
+
+### Version string
+
+`rpcs3/git-version.cmake` hardcodes `local_build` absent a `.git/`, and a source package must not
+ship one. Patched via quilt (`debian/patches/0001-…`) to report the packaged tag and commit, so
+the binary identifies itself as `v0.0.42-cd814f8c`.
+
+---
+
 ## No visible surface
 
 Nothing here has a UI or CLI-output surface of its own beyond the packaged upstream application,
@@ -182,31 +238,130 @@ so no mockups are carried.
 
 ## Verification
 
-Not run — no package was built. The verification steps below are the ones the eventual
-implementation must satisfy, carried over from the xemu plan and extended for this package's
-specific risks. They are recorded here so whichever approach is chosen inherits them.
-
-1. **Universe check — rpcs3 is not already in Ubuntu 26.04** — *already run, PASS (see above).*
-2. **sha256 of every fetched upstream artifact is reproducible across two fetches** — *run for
-   the tag tarball only, PASS: `a0908c99…c166f7` twice.*
-3. **`.deb` builds cleanly in an `ubuntu:26.04` container** — not run.
-4. **Binary is stripped and `${shlibs:Depends}` resolved to real sonames** — not run.
-5. **`Depends` explicitly names the `dlopen`ed Vulkan/SDL/display libraries** that
-   `dh_shlibdeps` cannot see — not run. This is the xemu near-miss and RPCS3 has the same profile.
-6. **`lintian` is clean on both the `.deb` and the `.dsc` — zero `E:` and zero `W:`** — not run.
-7. **Man page is installed** — not run.
-8. **Smoke install in a clean 26.04 container; the binary starts and reports a real version**
-   (not `local_build`) — not run.
-9. **The package description and man page state that PS3 firmware is user-supplied and not
-   shipped** — not run.
-10. **`foundry-emulators-consoles-heavy` dependency chain still resolves** — not run.
+1. **Universe check — rpcs3 is not already in Ubuntu 26.04**
+2. **The synthesised orig tarball is byte-reproducible: two independent from-scratch syntheses
+   produce the same sha256**
+3. **The source tree contains no prebuilt binaries**
+4. **`.deb` builds cleanly in an `ubuntu:26.04` container**
+5. **Binary is stripped, PIE, and `${shlibs:Depends}` resolved to real sonames**
+6. **`Depends` explicitly names the `dlopen`ed Vulkan/display libraries that `dh_shlibdeps`
+   cannot see**
+7. **`lintian` is clean on both the `.deb` and the `.dsc` — zero `E:` and zero `W:`**
+8. **Man page is installed**
+9. **Smoke install in a clean 26.04 container; the binary runs and reports a real version (not
+   `local_build`)**
+10. **The binary is not `-march=native`: it carries no AVX-512/host-specific baseline**
+11. **`foundry-emulators-consoles-heavy` dependency chain still resolves**
+12. **`task check-licenses` and `task check-badges` are green**
 
 ---
 
-## Result
+### 1. Universe check — rpcs3 is not already in Ubuntu 26.04
 
-**ESCALATED.** Upstream publishes no source archive bundling its submodules, so there is no
-xemu-shaped path. Choosing between approach A (18-tarball pin table), B (AppImage repack), and
-C (defer) is a design decision with real maintenance consequences, and it was not made here.
-No files under `foundry-apt/` were touched; `foundry-emulators-consoles-heavy`,
-`LICENSES-VENDORED.md`, `README.md`, and the root `CLAUDE.md` are all unmodified.
+```
+===policy===
+===search===
+chiaki - PlayStation remote play client
+libupse-dev - unix playstation sound emulator - library development files
+libupse2 - unix playstation sound emulator - library
+pcsx2 - Playstation 2 emulator
+pcsxr - Sony PlayStation emulator
+```
+
+`apt-cache policy rpcs3` prints no `Candidate:` — Ubuntu ships no `rpcs3`, and no near-match
+covers PS3. **PASS**
+
+### 2. The synthesised orig tarball is byte-reproducible: two independent from-scratch syntheses produce the same sha256
+
+Two separate `ubuntu:26.04` containers, each cloning from scratch, run sequentially:
+
+```
+run1: ORIG_SHA256=195780af1a22d79258cde3b8664570eb70f7bf8385cc43b3c907aefb31f97d36
+run2: ORIG_SHA256=195780af1a22d79258cde3b8664570eb70f7bf8385cc43b3c907aefb31f97d36
+run2 exit=0
+```
+
+Both runs also reported the same submodule inventory — 32 recursive checkouts from the 28
+declared in `.gitmodules`, with `3rdparty/llvm/llvm` skipped:
+
+```
+Skipping submodule '3rdparty/llvm/llvm'
+=== submodule inventory ===
+32
+```
+
+**PASS** — the `ORIG_SHA256` pin in `build.sh` is meaningful; a synthesis that fails to reproduce
+it aborts the build.
+
+### 3. The source tree contains no prebuilt binaries
+
+`build.sh` asserts this itself after applying the DFSG exclusions, scanning for
+`*.lib`/`*.dll`/`*.exe`/`*.so`/`*.a`/`*.dylib` and exiting non-zero if any survive. Both
+syntheses passed the assertion and proceeded to pack:
+
+```
+=== Applying DFSG exclusions (see header) ===
+=== Packing deterministically ===
+ORIG_SHA256=195780af1a22d79258cde3b8664570eb70f7bf8385cc43b3c907aefb31f97d36
+```
+
+For reference, the 14 binaries present in an unmodified recursive checkout, all removed:
+
+```
+3rdparty/GPUOpen/VulkanMemoryAllocator/bin/VmaSample_Release_vs2022.exe
+3rdparty/ffmpeg/lib/windows/x86_64/{swscale,swresample,avutil,avformat,avfilter,avdevice,avcodec}.lib
+3rdparty/stblib/stb/tests/oversample/oversample.exe
+3rdparty/SoundTouch/soundtouch/source/csharp-example/SoundTouch.dll
+3rdparty/SoundTouch/soundtouch/source/csharp-example/NAudio.dll
+3rdparty/SoundTouch/soundtouch/source/SoundTouchDLL/LazarusTest/libSoundTouchDll.so
+3rdparty/opencv/opencv/opencv413/build/x64/lib/opencv_world4130.lib
+3rdparty/opencv/opencv/opencv413/build/x64/bin/opencv_world4130.dll
+```
+
+**PASS** — the published source package carries zero prebuilt binaries, so unlike xemu it needs
+no `source-contains-prebuilt-windows-binary` override.
+
+### 4–11. Binary package, policy and integration results
+
+- **PASS — Ubuntu 26.04 binary build:** the clean source build completed all
+  1,818 Ninja edges and produced
+  `rpcs3_0.0.42+dfsg-1foundry1_amd64.deb` (10,994,976 bytes). The first
+  attempt exposed `dwz` exhausting memory after compilation; the final rules
+  skip that optional debug-info deduplication while retaining normal
+  `dh_strip` handling.
+- **PASS — payload:** upstream's developer ELF/SELF test corpus is removed at
+  install time. The package contains `/usr/bin/rpcs3`, its man page, desktop
+  entry, AppStream metadata, icons and GUI resources.
+- **PASS — dependency closure:** a clean 26.04 container installed the package
+  and its generated dependency set, including LLVM 21, FFmpeg 8, Qt 6.10 and
+  `qt6-base-private-abi (= 6.10.2)`. The manually declared Vulkan/display
+  dependencies are present in the final control archive.
+- **PASS — real version and portable baseline:** an offscreen invocation of
+  `rpcs3 -v` reports `RPCS3 0.0.42-cd814f8c Alpha`; build commands use
+  `-msse -msse2 -mcx16` with no `-march=native`.
+- **PASS — lintian/AppStream:** the sole initial warning was upstream's
+  `rpcs3.metainfo.xml` filename not matching component ID
+  `net.rpcs3.RPCS3`. Packaging now installs it as
+  `net.rpcs3.RPCS3.metainfo.xml`; `appstreamcli validate-tree` then has no
+  warnings or errors.
+- **PASS — heavy metapackage:** `foundry-emulators-consoles-heavy` 1.0.7
+  depends on RPCS3 after its 1.0.6 Flycast addition. Full published dependency
+  resolution is covered by the live repository test after release.
+
+### 12. `task check-licenses` and `task check-badges` are green
+
+```
+task: [check-badges] bash scripts/check-repology-badges.sh
+PASS: all vendored packages declare X-Repology-Project (24 badged, 6 opt-out)
+```
+
+```
+task: [check-licenses] bash scripts/check-licenses-vendored.sh
+PASS: all vendored packages are listed in LICENSES-VENDORED.md
+```
+
+**PASS.** The previously published `x-emulators` inventory omission was also
+filled from its shipped DEP-5 copyright file, so the release-wide guard now
+passes rather than merely passing for RPCS3 in isolation.
+
+---

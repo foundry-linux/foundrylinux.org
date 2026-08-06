@@ -1,0 +1,31 @@
+Description: allow packagers to override the git-derived version
+ CMakeLists.txt derives GIT_VERSION/GIT_HASH from `git describe`, guarded by
+ EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git", and otherwise falls back to the
+ literal "v0.0.0-0-g000000000". Distributions build from an exported source
+ tree with no .git directory, so every distro-built binary reports itself as
+ version 0.0.0 in the UI, in bug reports, and in --help output.
+ .
+ Honour GIT_VERSION and GIT_HASH when the caller has already set them (e.g.
+ -DGIT_VERSION=v2.6 -DGIT_HASH=392a429), and fall through to the existing
+ `git describe` path otherwise. No behaviour change for a git checkout.
+Author: Foundry Linux <packages@foundrylinux.org>
+Forwarded: not-yet
+Last-Update: 2026-08-05
+---
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -118,7 +118,13 @@
+ endif()
+ 
+ find_package(Git)
+-if(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
++if(GIT_VERSION AND GIT_HASH)
++	# Version supplied by the caller, e.g.
++	#   cmake -DGIT_VERSION=v2.6 -DGIT_HASH=392a429 ...
++	# Distributions build from an exported tree with no .git directory, where
++	# the fallback below would stamp the binary "v0.0.0-0-g000000000".
++	message(STATUS "Using caller-supplied version ${GIT_VERSION} (${GIT_HASH})")
++elseif(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+ 	execute_process(
+ 		COMMAND ${GIT_EXECUTABLE} describe --tags --always
+ 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

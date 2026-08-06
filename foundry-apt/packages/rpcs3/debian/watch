@@ -1,0 +1,8 @@
+version=4
+
+# Upstream tags releases as v<X.Y.Z>. Note that the plain tag archive tracked
+# here is watch-only: it is NOT buildable, because it omits the 28 git
+# submodules RPCS3 vendors. build.sh instead synthesises the orig tarball from a
+# recursive clone at the tag's pinned superproject commit — see build.sh.
+https://github.com/RPCS3/rpcs3/tags \
+  .*/archive/refs/tags/v@ANY_VERSION@\.tar\.gz

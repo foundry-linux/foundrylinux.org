@@ -7,9 +7,9 @@ tasks:
       - task --list
 
   build:
-    desc: "Build .debs into dist/ (PKG=name to build one; skips already-current packages)"
+    desc: "Build .debs in Ubuntu 26.04 into dist/ (PKG=name to build one; skips already-current packages)"
     cmds:
-      - bash scripts/build-all.sh {{.PKG}}
+      - bash scripts/build-all-in-docker.sh {{.PKG}}
 
   dist-prune:
     desc: "Remove old versions from dist/, keeping only the newest build per package"
@@ -108,6 +108,11 @@ tasks:
     desc: "Verify every packages/*/build.sh declares X-Repology-Project (apt-index Repology badge)"
     cmds:
       - bash scripts/check-repology-badges.sh
+
+  check-build-deps:
+    desc: "Catch known Debian/Ubuntu Build-Depends companion-package footguns"
+    cmds:
+      - bash scripts/check-build-dep-pairs.sh
 
   check-publish-meta:
     desc: "Verify publish-local.sh sets a clean Origin/Label (not aptly's '. <suite>' default)"

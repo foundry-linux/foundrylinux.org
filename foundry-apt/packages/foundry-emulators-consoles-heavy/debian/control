@@ -21,12 +21,13 @@ Depends: ${misc:Depends},
  ppsspp,
  snes9x-gtk,
  mesen2,
- bsnes-jg
+ bsnes-jg,
+ flycast,
+ rpcs3
 Description: heavy console and handheld emulators
  Console and handheld emulators with larger installation footprints
  (up to ~270 MB for the set including assets) — left out of the base
- devbox image for size reasons, all in Ubuntu universe (no licensing
- issues):
+ devbox image for size reasons:
  .
    * nestopia                NES (alternative to fceux)
    * pcsxr                   PlayStation 1
@@ -40,3 +41,9 @@ Description: heavy console and handheld emulators
    * snes9x-gtk              Super Nintendo
    * mesen2                  NES/SNES/GB/GBA/PCE/SMS/WS (high accuracy)
    * bsnes-jg                Super Nintendo (cycle-accurate, jgemu)
+   * flycast                 Sega Dreamcast, NAOMI, Atomiswave
+   * rpcs3                   Sony PlayStation 3
+ .
+ Emulators do not include game software, and some require console firmware
+ (a BIOS or boot ROM) that is copyrighted and therefore not shipped — see
+ each emulator's own documentation.

@@ -75,7 +75,10 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 | `vgmstream` | [vgmstream.org](https://vgmstream.org/) | Video-game audio decoder (CLI). `any`. |
 | `ppsspp` | [ppsspp.org](https://www.ppsspp.org) | Fast, portable PSP emulator. `any`. |
 | `snes9x-gtk` | [snes9x.com](https://www.snes9x.com) | Portable Super Nintendo (SNES) emulator. `any`. |
-| `xemu` | [xemu.app](https://xemu.app) | Original Microsoft Xbox emulator (QEMU fork). BIOS/MCPX/HDD images not shipped. `amd64`. |
+| `xemu` | [lgblgblgb/xemu](https://github.com/lgblgblgb/xemu) | Commodore and Hungarian 8-bit computer emulator suite; upstream has shipped its own .deb under this name since 2016. Distinct from `xemu-xbox` below. ROMs not shipped. `any`. |
+| `xemu-xbox` | [xemu.app](https://xemu.app) | Original Microsoft Xbox emulator (QEMU fork); qualified to disambiguate from `xemu` above, but still installs `/usr/bin/xemu`. BIOS/MCPX/HDD images not shipped. `amd64`. |
+| `flycast` | [flycast.org](https://flycast.org) | Sega Dreamcast, NAOMI and Atomiswave emulator. Console and arcade firmware not shipped. `amd64`. |
+| `rpcs3` | [rpcs3.net](https://rpcs3.net) | Sony PlayStation 3 emulator and debugger. PS3 firmware not shipped. Orig tarball synthesised from a pinned superproject commit — upstream publishes no source release. `amd64`. |
 | `ruff` | [astral.sh/ruff](https://docs.astral.sh/ruff) | Extremely fast Python linter and code formatter. `amd64`. |
 | `python3-glfw` | [FlorianRhiem/pyGLFW](https://github.com/FlorianRhiem/pyGLFW) | Python ctypes bindings for GLFW3. `all`. |
 | `python3-librosa` | [librosa.org](https://librosa.org) | Audio and music analysis library for Python. `all`. |

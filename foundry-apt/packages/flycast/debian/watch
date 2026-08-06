@@ -1,0 +1,7 @@
+version=4
+
+# Upstream tags releases as v<X.Y> (occasionally v<X.Y.Z>). Note that the tag
+# archive tracked here is watch-only: it omits the core/deps/ submodules and is
+# not what build.sh fetches — see build.sh for the pinned-clone rationale.
+https://github.com/flyinghead/flycast/tags \
+  .*/archive/refs/tags/v@ANY_VERSION@\.tar\.gz

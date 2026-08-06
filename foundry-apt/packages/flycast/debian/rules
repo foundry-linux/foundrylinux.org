@@ -1,0 +1,57 @@
+#!/usr/bin/make -f
+# Flycast builds with plain CMake and ships a working Linux install() target
+# (binary, man page, desktop entry, metainfo, pixmap, hicolor icons), so this
+# is close to stock dh. Only the configure flags and the version injection
+# need spelling out.
+#
+# Submodule note: the GitHub tag archive lacks the core/deps/ submodule content
+# and upstream publishes no source release asset. build.sh clones at the pinned
+# tag and initialises the Linux-relevant submodules before invoking
+# dpkg-buildpackage, so they are present in the tree at this point. See
+# build.sh for the integrity argument behind the pinned commit SHA.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# Upstream derives these from `git describe`; build.sh strips .git before
+# staging the source, so they are injected instead. See
+# debian/patches/0001-allow-packagers-to-override-the-git-derived-version.patch.
+# Keep in step with debian/changelog and build.sh's EXPECTED_COMMIT.
+UPSTREAM_TAG  = v2.6
+UPSTREAM_HASH = 392a429
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake -- \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DGIT_VERSION=$(UPSTREAM_TAG) \
+	    -DGIT_HASH=$(UPSTREAM_HASH) \
+	    -DUSE_HOST_SDL=ON \
+	    -DUSE_HOST_LIBZIP=ON \
+	    -DUSE_HOST_LIBCHDR=ON \
+	    -DUSE_VULKAN=ON \
+	    -DUSE_OPENGL=ON \
+	    -DUSE_BREAKPAD=OFF \
+	    -DUSE_DISCORD=OFF \
+	    -DENABLE_CTEST=OFF
+
+override_dh_auto_build:
+	dh_auto_build --buildsystem=cmake
+
+override_dh_auto_test:
+	# Upstream's test suite is gated behind ENABLE_CTEST, needs the googletest
+	# submodule we deliberately do not fetch, and several cases want real
+	# Dreamcast media we cannot ship.
+
+override_dh_auto_install:
+	dh_auto_install --buildsystem=cmake
+	# These are private vendored build inputs installed unconditionally by
+	# upstream's CMake.  The flycast runtime package neither exposes a stable
+	# development API nor ships shared libraries, so do not leak headers and
+	# static archives into the binary package.
+	rm -rf debian/flycast/usr/include debian/flycast/usr/lib
+	# CMake's configure_file writes core/version.h into the SOURCE tree rather
+	# than the build tree, which would otherwise be left behind as a stray
+	# modification of the upstream source.
+	rm -f core/version.h

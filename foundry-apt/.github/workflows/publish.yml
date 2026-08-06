@@ -20,6 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Check known Build-Depends companion packages
+        run: bash scripts/check-build-dep-pairs.sh
+
       - name: shellcheck scripts (same lint gate as the PR workflow)
         # A release must clear the same bar as a PR. Run BEFORE the ~25 min
         # build so a lint failure aborts the publish fast instead of shipping

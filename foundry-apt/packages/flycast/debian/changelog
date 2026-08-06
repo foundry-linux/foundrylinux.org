@@ -1,0 +1,24 @@
+flycast (2.6-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux package of Flycast, the Sega Dreamcast, NAOMI and
+    Atomiswave emulator. Closes the last sixth-generation console gap in the
+    Foundry emulator catalogue.
+  * Built from a git clone pinned to tag v2.6, commit
+    392a429e8b040b3e5bf6696cb4f984274fc44123. Upstream publishes no source
+    release asset, and the plain tag archive omits the 20 git submodules under
+    core/deps/, so neither of the usual tarball routes is available. The
+    superproject commit SHA transitively pins every submodule gitlink.
+  * Build against the system SDL2, libzip, libchdr, lua, curl and miniupnpc
+    rather than the vendored copies; disable breakpad (a crash-dump uploader
+    has no place in a distribution package) and Discord presence.
+  * USE_HOST_LIBCHDR=ON is required for correctness, not merely policy: the
+    libchdr submodule's vendored zstd-1.5.6 builds a libzstd.a missing its
+    common-module objects (xxhash.c, entropy_common.c), so the final link
+    fails on ZSTD_XXH64_*, FSE_readNCount and HUF_readStats.
+  * Add libvulkan1 and libgl1 to Depends by hand. Flycast uses vulkan.hpp's
+    dynamic dispatch loader and never links libvulkan, so dh_shlibdeps cannot
+    see it; without this the package installed but could not start a renderer.
+  * Add a patch letting the packager override the git-derived version, so the
+    binary reports 2.6 rather than upstream's no-.git fallback of 0.0.0.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000

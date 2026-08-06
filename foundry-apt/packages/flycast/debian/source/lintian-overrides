@@ -1,0 +1,6 @@
+# Upstream's VulkanMemoryAllocator submodule vendors a Visual Studio sample
+# executable. It is inert on Linux, VMA is used headers-only, and the file is
+# absent from the binary package — it exists only in the upstream source we
+# vendor verbatim. Same override as the xemu package, which vendors the same
+# subproject.
+flycast source: source-contains-prebuilt-windows-binary [core/deps/VulkanMemoryAllocator/bin/VmaSample_Release_vs2019.exe]

@@ -1,0 +1,29 @@
+rpcs3 (0.0.42+dfsg-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux package of RPCS3, the PlayStation 3 emulator.
+  * Built from a recursive clone at the v0.0.42 superproject commit
+    cd814f8c926400cf62dab7924f723e4eb7719e50. Upstream publishes no release
+    assets and its plain tag archive omits all 28 vendored submodules, so
+    build.sh synthesises the orig tarball itself; the superproject commit
+    pins every submodule transitively via its gitlinks, so one sha256 pin
+    covers the whole tree.
+  * Repack (+dfsg): drop the RPCS3/ffmpeg-core submodule, whose CMakeLists
+    downloads a prebuilt ffmpeg zip from a GitHub release at configure time
+    and which ships prebuilt Windows import libraries; build against Ubuntu's
+    ffmpeg instead (USE_SYSTEM_FFMPEG=ON). Also drop the prebuilt Windows
+    OpenCV submodule (unreferenced on Linux; USE_SYSTEM_OPENCV is on), the
+    llvm-project submodule (BUILD_LLVM=OFF, we link system LLVM 21), and four
+    sample/test binaries vendored by VulkanMemoryAllocator, stb and
+    SoundTouch. The published source package therefore contains no prebuilt
+    binaries at all.
+  * Build with USE_NATIVE_INSTRUCTIONS=OFF: upstream defaults it ON, which
+    compiles -march=native and would produce a binary that crashes on any
+    host older than the builder.
+  * Patch rpcs3/git-version.cmake so the binary reports its real version.
+    Upstream hardcodes "local_build" unless a .git directory is present, and
+    a source package must not ship one.
+  * Add a section-1 man page (Debian Policy 12.1); upstream ships none.
+  * PS3 firmware (PS3UPDAT.PUP) is copyrighted Sony material: it is not
+    shipped, not fetched, and not linked to. The user installs it themselves.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
