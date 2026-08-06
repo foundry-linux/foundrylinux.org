@@ -1,0 +1,7 @@
+version=4
+
+# Upstream tags releases as v<X.Y.Z>. Note that the buildable source archive is
+# the release asset xemu-<version>.tar.zst (it vendors the meson subprojects);
+# the plain tag archive tracked here is watch-only, not what build.sh fetches.
+https://github.com/xemu-project/xemu/tags \
+  .*/archive/refs/tags/v@ANY_VERSION@\.tar\.gz

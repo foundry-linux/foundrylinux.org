@@ -1,79 +1,44 @@
-Source: xemu
+Source: x-emulators
 Section: otherosfs
 Priority: optional
 Maintainer: Foundry Linux <packages@foundrylinux.org>
 Build-Depends: debhelper-compat (= 13),
- meson,
- ninja-build,
- cmake,
  pkgconf,
- python3:any,
- python3-venv,
- python3-tomli,
- python3-yaml,
- libepoxy-dev,
- libpixman-1-dev,
  libsdl2-dev,
- libsamplerate0-dev,
- libglib2.0-dev,
- zlib1g-dev,
- libssl-dev,
- libpcap-dev,
- libslirp-dev,
- libvulkan-dev,
- libusb-1.0-0-dev,
- libcurl4-gnutls-dev,
- libpipewire-0.3-dev
+ libgtk-3-dev,
+ libreadline-dev,
+ zlib1g-dev
 Standards-Version: 4.7.2
-Homepage: https://xemu.app
-X-Repology-Project: xemu
+Homepage: https://github.com/lgblgblgb/xemu
+X-Repology-Project: none
 Rules-Requires-Root: no
 
-Package: xemu
-Architecture: amd64
-# xemu statically links the SDL3 it vendors as a meson subproject, and that SDL3
-# dlopens its video/audio backends rather than linking them. dh_shlibdeps cannot
-# see a dlopen, so none of the following are picked up automatically and they
-# must be listed by hand. libvulkan1 is the important one: Vulkan is xemu's
-# renderer, so without it the package installs and then fails at startup.
-Depends: ${shlibs:Depends}, ${misc:Depends},
- libvulkan1,
- libx11-6,
- libx11-xcb1,
- libxcursor1,
- libxext6,
- libxfixes3,
- libxi6,
- libxrandr2,
- libxss1,
- libegl1,
- libgl1,
- libgbm1,
- libdrm2
-# The Vulkan ICD is what actually provides a device to the libvulkan1 loader; on
-# anything but a Mesa-driven GPU the user supplies their own vendor driver, so
-# this is a strong recommendation rather than a hard dependency. Audio and
-# Wayland decorations are likewise dlopened and individually optional.
-Recommends: mesa-vulkan-drivers,
- libasound2t64,
- libpulse0,
- libpipewire-0.3-0t64,
- libdecor-0-0,
- libdbus-1-3
-Description: original Xbox game console emulator
- xemu is an open-source emulator of the original Microsoft Xbox (2001), built
- as a fork of QEMU that models the console's NV2A GPU, MCPX boot ROM, APU audio
- hardware, and IDE/USB peripherals rather than high-level-emulating its titles.
+Package: x-emulators
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: emulators for Commodore and Hungarian 8-bit computers
+ Xemu ("X-Emulators") is LGB's suite of emulators for a set of mostly
+ Commodore and Hungarian 8-bit machines, built on a shared SDL2 core. It
+ is the reference emulator for several machines that are otherwise poorly
+ served, including the Commodore 65 prototype and the MEGA65.
  .
- Because it descends from QEMU's i386 system emulation, xemu runs the real Xbox
- kernel and title code, which makes it a preservation-grade reference as well
- as a practical way to run original-Xbox software. Rendering goes through
- Vulkan; audio through SDL2 or PipeWire.
+ This package ships seven emulators:
  .
- xemu requires an Xbox MCPX boot ROM and BIOS image plus a hard-disk image to
- run. These are copyrighted Microsoft material and are NOT shipped with this
- package — you must supply them yourself, from hardware you own. Configure
- their paths on first launch via the built-in settings dialog.
+   * xc65      Commodore 65 / C64DX prototype (CSG 4510 CPU)
+   * xmega65   MEGA65 (45GS02 CPU)
+   * xclcd     Commodore LCD prototype
+   * xvic20    Commodore VIC-20
+   * xep128    Enterprise 64/128
+   * xprimo    Primo
+   * xtvc      Videoton TV Computer
  .
- This package ships the emulator as /usr/bin/xemu along with a desktop entry
- and hicolor icons, so it appears in the applications menu.
+ No ROM images are bundled — supply your own, so the package carries no
+ redistribution concerns.
+ .
+ The C65 and MEGA65 emulators are of particular interest for 65CE02 and
+ 45GS02 toolchain work: xc65 loads any 128 KiB file as its system ROM
+ without validating it, so it doubles as a bare-metal execution
+ environment for compiler output.
+ .
+ Note this is not the unrelated "xemu" original Xbox emulator
+ (https://xemu.app), which is packaged separately as xemu.

@@ -1,0 +1,52 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: xemu
+Upstream-Contact: Matt Borgerson <contact@mborgerson.com>
+Source: https://github.com/xemu-project/xemu
+Comment:
+ xemu is a fork of QEMU specialised for emulating the original Microsoft Xbox.
+ It therefore carries QEMU's licensing: the project as a whole is distributed
+ under the GNU General Public License version 2, with a large number of
+ individual files under GPL-2+, LGPL-2.1+, BSD, or MIT terms. Upstream's
+ LICENSE file records GPL-2.0 as the license of the combined work.
+ .
+ This is a summary for the principal components. Upstream additionally
+ generates an aggregated third-party license manifest for its binary
+ distributions, which this package installs as
+ /usr/share/doc/xemu/LICENSE.upstream.txt.
+
+Files: *
+Copyright: 2020-2026 Matt Borgerson and the xemu contributors
+           2003-2026 Fabrice Bellard and the QEMU Project developers
+License: GPL-2
+
+Files: xemu.metainfo.xml
+Copyright: 2020-2026 Matt Borgerson and the xemu contributors
+License: CC0-1.0
+
+Files: debian/*
+Copyright: 2026 Foundry Linux <packages@foundrylinux.org>
+License: GPL-2
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License version 2 as published by
+ the Free Software Foundation.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ more details.
+ .
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, see <https://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 2 can be found in "/usr/share/common-licenses/GPL-2".
+
+License: CC0-1.0
+ To the extent possible under law, the author(s) have dedicated all copyright
+ and related and neighboring rights to this software to the public domain
+ worldwide. This software is distributed without any warranty.
+ .
+ On Debian systems, the complete text of the CC0 1.0 Universal license can be
+ found in "/usr/share/common-licenses/CC0-1.0".

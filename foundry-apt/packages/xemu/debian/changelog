@@ -1,21 +1,26 @@
-xemu (0.8.136-1foundry1) resolute; urgency=medium
+x-emulators (0~git20260129.40dfef0d-1foundry2) resolute; urgency=medium
 
-  * Initial Foundry Linux package of xemu, the original Xbox emulator.
-  * Built from the upstream v0.8.136 release source archive
-    (xemu-0.8.136.tar.zst), which vendors the meson subprojects that the
-    plain git tag archive omits.
-  * Packaging written from scratch rather than adopting upstream's in-tree
-    debian/ directory: that tree is inherited from Debian's QEMU packaging
-    and is stale (changelog frozen at 0.5.2/2021, debhelper compat 11,
-    Standards-Version 3.9.8, d/watch pointing at download.qemu.org, and a
-    d/copyright describing QEMU rather than xemu).
-  * Add a section-1 man page (Debian Policy 12.1); upstream ships none.
-  * Add the runtime libraries that the vendored SDL3 dlopens (libvulkan1, the
-    X11 client set, EGL/GL/GBM/DRM) to Depends, plus Vulkan ICD and audio
-    backends to Recommends. dh_shlibdeps cannot see a dlopen, so without this
-    the package installed but failed to start for lack of a Vulkan loader.
-  * Install the AppStream metainfo as app.xemu.xemu.metainfo.xml so the
-    filename matches the component id (appstreamcli validate-tree).
-  * Honour DEB_BUILD_OPTIONS=parallel=N instead of calling nproc.
+  * Add .desktop entries for all seven emulators so they appear in
+    application menus (Categories=Game;Emulator;), and vendor upstream's
+    single generic 48x48 XPM icon (build/xemu-48x48.xpm) to
+    /usr/share/icons/hicolor/48x48/apps/x-emulators.xpm. Upstream ships no
+    per-machine artwork, so all seven entries share the one icon, matching
+    upstream's own xemu.desktop template (%machine/%binary substitution) —
+    ours are static per-binary files under debian/ instead.
 
- -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 00:00:00 +0000
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 14:40:00 +0700
+
+x-emulators (0~git20260129.40dfef0d-1foundry1) resolute; urgency=medium
+
+  * Initial release. Packages LGB's Xemu ("X-Emulators") suite from
+    https://github.com/lgblgblgb/xemu at master commit 40dfef0d (upstream
+    publishes no tags or releases, hence the git-snapshot version).
+  * Ships seven emulators: xc65, xmega65, xclcd, xvic20, xep128, xprimo,
+    xtvc. No ROMs are bundled.
+  * Named x-emulators, not xemu: the name "xemu" is already taken in this
+    repo by the unrelated original Xbox emulator (https://xemu.app). This
+    follows the same precedent as asar -> asar-snes-assembler.
+  * Hardening flags are appended to the generated build config rather than
+    passed on the make command line, which would clobber upstream's CFLAGS.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 09:00:00 +0700

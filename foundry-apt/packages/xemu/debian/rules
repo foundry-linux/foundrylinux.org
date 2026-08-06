@@ -1,60 +1,72 @@
 #!/usr/bin/make -f
 
-# xemu is a QEMU fork. Its supported Linux build path is upstream's ./build.sh,
-# which drives QEMU's configure with the Xbox target list and then runs its
-# package_linux step to stage dist/xemu. Driving configure/meson directly via
-# dh_auto_* would bypass the -DXBOX=1 flag and the i386-softmmu target list, so
-# every dh_auto_* stage is overridden and build.sh is invoked instead.
+# Vendored-upstream Debian package build wrapper for x-emulators (LGB's Xemu).
+# Generated via the /package skill (~/.claude/skills/package/).
+#
+# Upstream has no `make install` target and no configure script in the autotools
+# sense: `build/configure/configure` generates build/configure/config-native.make,
+# which build/Makefile.common includes. Upstream's Makefile assigns CFLAGS with a
+# plain `=`, so passing CFLAGS on the make command line would clobber the flags
+# the build needs. Instead we run configure ourselves and *append* dpkg's
+# hardening flags to the generated config, which is included before CONFIG_CFLAGS
+# is used — so the flags land without displacing upstream's.
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
-# Upstream's version script stamps XEMU_DATE from `date -u`. Honour
-# SOURCE_DATE_EPOCH so the build stays reproducible.
-export SOURCE_DATE_EPOCH ?= $(shell date -d "$$(dpkg-parsechangelog -SDate)" +%s)
+# Upstream stamps the binary with `git describe`-style build info, which degrades
+# to "unknown_commit_id" when building from a tarball (no .git). build/show-git-info
+# honours TRAVIS_COMMIT/TRAVIS_BRANCH as overrides, so feed it the commit we pinned
+# — otherwise `xc65 -h` can't tell the user which revision they are running.
+# Keep in sync with UPSTREAM_COMMIT in ../build.sh.
+export TRAVIS_COMMIT = 40dfef0d1d5f56be2469492715c12bdb32c75b67
+export TRAVIS_BRANCH = master
 
-# Honour DEB_BUILD_OPTIONS=parallel=N rather than calling nproc ourselves
-# (lintian: debian-rules-calls-nproc). When unset, upstream's build.sh picks its
-# own default job count.
-NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
-ifneq (,$(NUMJOBS))
-JOBFLAG = -j$(NUMJOBS)
-endif
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+
+CONFIG = build/configure/config-native.make
+
+# The seven emulators upstream's default `all` target builds.
+BINARIES = xc65 xmega65 xclcd xvic20 xep128 xprimo xtvc
 
 %:
 	dh $@
 
 override_dh_auto_configure:
-	# configure runs inside build.sh, which passes the Xbox-specific flags.
+	bash build/configure/configure --arch=native
+	printf 'CONFIG_CFLAGS += %s %s\n'      '$(CFLAGS)' '$(CPPFLAGS)' >> $(CONFIG)
+	printf 'CONFIG_CFLAGS_LINK += %s %s\n' '$(LDFLAGS)' '$(CFLAGS)'  >> $(CONFIG)
 
 override_dh_auto_build:
-	./build.sh $(JOBFLAG) \
-	    || { echo '===== BUILD FAILED ====='; \
-	         cat build/meson-logs/meson-log.txt 2>/dev/null; exit 1; }
+	$(MAKE) ARCH=native
 
 override_dh_auto_test:
-	# Upstream ships no runnable test suite for the Xbox target; the QEMU
-	# tests it inherits need a full multi-target build we do not produce.
-
-override_dh_auto_clean:
-	rm -rf build dist build.log
+	# Upstream ships no test suite.
 
 override_dh_auto_install:
-	install -DTm 0755 dist/xemu debian/xemu/usr/bin/xemu
-	install -DTm 0644 ui/xemu.desktop \
-	    debian/xemu/usr/share/applications/xemu.desktop
-	# AppStream requires the metainfo filename to match the component <id>
-	# (app.xemu.xemu); upstream's own filename does not, which fails
-	# `appstreamcli validate-tree`.
-	install -DTm 0644 xemu.metainfo.xml \
-	    debian/xemu/usr/share/metainfo/app.xemu.xemu.metainfo.xml
-	set -e; for r in 16 24 32 48 64 128 256 512; do \
-	    install -DTm 0644 ui/icons/xemu_$${r}x$${r}.png \
-	        debian/xemu/usr/share/icons/hicolor/$${r}x$${r}/apps/xemu.png; \
+	set -e; for b in $(BINARIES); do \
+	    install -D -m 0755 build/bin/$$b.native \
+	        $(CURDIR)/debian/x-emulators/usr/bin/$$b; \
 	done
-	install -DTm 0644 ui/icons/xemu.svg \
-	    debian/xemu/usr/share/icons/hicolor/scalable/apps/xemu.svg
-	# dist/LICENSE.txt is the aggregated third-party license manifest that
-	# upstream generates for its binary distributions; ship it as upstream
-	# documentation alongside debian/copyright.
-	install -DTm 0644 dist/LICENSE.txt \
-	    debian/xemu/usr/share/doc/xemu/LICENSE.upstream.txt
+	# Desktop entries, one per emulated machine (debian/<binary>.desktop are
+	# ours, adapted from upstream's build/xemu.desktop %machine/%binary
+	# template). Icon is vendored verbatim from upstream's build/xemu-48x48.xpm
+	# — the suite's single generic icon, shared by all seven entries since
+	# upstream ships no per-machine artwork.
+	set -e; for b in $(BINARIES); do \
+	    install -D -m 0644 debian/$$b.desktop \
+	        $(CURDIR)/debian/x-emulators/usr/share/applications/$$b.desktop; \
+	done
+	install -D -m 0644 debian/x-emulators.xpm \
+	    $(CURDIR)/debian/x-emulators/usr/share/icons/hicolor/48x48/apps/x-emulators.xpm
+
+override_dh_auto_clean:
+	$(MAKE) clean ARCH=native || true
+	rm -f build/configure/config-native.make build/configure/config-native.h
+	# `make clean` leaves the configure probe's scratch files and the embedded
+	# build-date blob behind, which makes `dpkg-source -b` fail with
+	# "unrepresentable changes to source". Upstream tracks only .gitignore and
+	# README in build/objs, and .gitignore/Makefile/README/rom in build/bin —
+	# remove everything else so the source package builds from a clean tree.
+	find build/objs -mindepth 1 ! -name .gitignore ! -name README -delete
+	rm -f build/bin/*.native

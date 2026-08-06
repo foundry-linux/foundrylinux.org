@@ -1,4 +1,0 @@
-version=4
-# Upstream publishes no tags or releases; the packaged version is a git
-# snapshot of master. uscan cannot track this — bump by changing
-# UPSTREAM_COMMIT + SHA256 in build.sh and adding a changelog entry.

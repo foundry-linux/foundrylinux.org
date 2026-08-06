@@ -1,7 +1,4 @@
 version=4
-
-# Upstream tags releases as v<X.Y.Z>. Note that the buildable source archive is
-# the release asset xemu-<version>.tar.zst (it vendors the meson subprojects);
-# the plain tag archive tracked here is watch-only, not what build.sh fetches.
-https://github.com/xemu-project/xemu/tags \
-  .*/archive/refs/tags/v@ANY_VERSION@\.tar\.gz
+# Upstream publishes no tags or releases; the packaged version is a git
+# snapshot of master. uscan cannot track this — bump by changing
+# UPSTREAM_COMMIT + SHA256 in build.sh and adding a changelog entry.
