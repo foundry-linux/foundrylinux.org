@@ -62,7 +62,8 @@ if command -v apt-get >/dev/null; then
         cmake pkg-config zlib1g-dev libpng-dev libjpeg-dev libxpm-dev libx11-dev \
         libxft-dev libxinerama-dev libfontconfig1-dev libxext-dev libxrender-dev \
         libxfixes-dev libcairo2-dev libpango1.0-dev \
-        libwayland-dev wayland-protocols libxkbcommon-dev libxcursor-dev libdecor-0-dev \
+        libwayland-dev wayland-protocols libxkbcommon-dev libxkbcommon-x11-dev \
+        libxcursor-dev libdecor-0-dev \
         libwayland-egl-backend-dev libegl-dev libgl-dev libglu1-mesa-dev \
         libgtk-3-dev >/dev/null
 fi
