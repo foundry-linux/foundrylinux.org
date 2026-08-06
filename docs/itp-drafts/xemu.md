@@ -1,5 +1,13 @@
 # ITP draft: xemu
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **Positive:** upstream has no `debian/`,
+`PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR packaging reference, but does ship its own binary-package
+builder at `build/deb-build-simple.sh`. It names the package `xemu`; that naming fact and our resulting
+`xemu`/`xemu-xbox` allocation are recorded below.
+
 ## wnpp check
 
 Searched wnpp for "xemu", "x-emulators", and "lgblgblgb" (upstream

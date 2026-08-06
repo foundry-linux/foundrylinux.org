@@ -1,5 +1,12 @@
 # ITP draft: pvsneslib
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "pvsneslib" (SNES homebrew SDK, alekmaul). **No existing wnpp bug found** — search returned unrelated `snes9x` RFP/O bugs (relevant to the separate `snes9x-gtk` draft in this batch) and upstream GitHub/community links, nothing for pvsneslib itself.

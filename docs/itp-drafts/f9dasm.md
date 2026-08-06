@@ -1,5 +1,12 @@
 # ITP draft: f9dasm
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "f9dasm" (Motorola 6800/6809/6309 disassembler). **No existing wnpp bug found** — results returned other, unrelated disassembler ITPs (apngdis, edb-debugger, zydis, smali, libudis86) but nothing for f9dasm itself or its author (Hermann Seib / Arto Salmi).

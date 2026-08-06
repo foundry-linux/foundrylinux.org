@@ -1,5 +1,12 @@
 # ITP draft: ppsspp
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check — EXISTING ITP FOUND, do not file a new one
 
 **[Bug #697821](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=697821) — "ITP: ppsspp -- portable PSP emulator"**, filed by John Paul Adrian Glaubitz on 2013-01-10. Search results show it is tracked as blocked by a later **RFS** ([#801262](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=801262) — "RFS: ppsspp/1.2.2+dfsg1-1 [ITP]"), meaning packaging work was actually done (a `+dfsg1` repack, implying non-free content was stripped from a real Debian packaging attempt) but apparently never made it through sponsorship/upload. The current open/closed state as of 2026-08 wasn't confirmed by search alone (the bug tracker itself was unreachable from this environment) — **whoever picks this up must check [bugs.debian.org/697821](https://bugs.debian.org/697821) directly before doing anything else.**

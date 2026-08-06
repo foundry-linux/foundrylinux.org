@@ -1,5 +1,12 @@
 # ITP draft: halfempty
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "halfempty" (Google Project Zero test-case minimizer). **No existing wnpp bug found** — the one near-hit ("half" — a C++ half-precision float library, bug #1049960) is an unrelated package with a similar name.

@@ -1,5 +1,12 @@
 # ITP draft: wla-dx
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "wla-dx" / "wla dx" (multi-CPU cross assembler, vhelin). **No existing wnpp bug found** — search returned an unrelated 6502-family cross-assembler ITP (`acme`) and general WNPP process pages, nothing for wla-dx itself.

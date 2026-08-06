@@ -1,5 +1,12 @@
 # snes9x-gtk — licence research (NOT a routine ITP)
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 This item was flagged `[T3]` in `TODO.md`, not `[T1]`, specifically
 because the Snes9x licence is suspected non-commercial and likely
 non-DFSG. This draft is the research that flag called for — **the

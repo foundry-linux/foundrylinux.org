@@ -1,5 +1,12 @@
 # ITP draft: python3-inators
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "inators" (Renata Hodovan's utility library). **No existing wnpp bug found.**

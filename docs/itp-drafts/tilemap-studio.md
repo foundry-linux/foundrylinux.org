@@ -1,5 +1,12 @@
 # ITP draft: tilemap-studio
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "tilemap-studio" (Rangi42). **No existing wnpp bug found** — search returned the upstream GitHub repo and an unrelated ITP (tilemill, a different map-design tool), nothing on bugs.debian.org for tilemap-studio.

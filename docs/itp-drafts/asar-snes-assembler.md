@@ -1,5 +1,12 @@
 # ITP draft: asar-snes-assembler
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched [bugs.debian.org wnpp](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) (via web search, `site:bugs.debian.org` queries for "asar", "asar-snes-assembler", "SNES assembler"). **No existing wnpp bug found** — no ITP, RFP, O, or RFA for this package or upstream project (RPGHacker/asar).

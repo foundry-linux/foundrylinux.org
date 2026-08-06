@@ -1,5 +1,12 @@
 # ITP draft: vgmstream
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "vgmstream" (video-game audio decoder). **No existing wnpp bug found** — search returned unrelated audio-tool ITPs (ffmpeg, decibels, libaribcaption, audiotools, audio-recorder), nothing for vgmstream itself.

@@ -1,5 +1,12 @@
 # ITP draft: python3-picire
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "picire" (parallel Delta Debugging, Renata Hodovan / Akos Kiss). **No existing wnpp bug found** — search returned unrelated ITPs (deltachat-core, xdelta3-python, python-picologging) and a Wikipedia page on delta debugging generally, nothing for picire itself.

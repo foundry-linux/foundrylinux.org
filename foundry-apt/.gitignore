@@ -1,6 +1,7 @@
 /dist/
 /public/
 /.aptly/
+/.cache/upstream-packaging-audit/
 # dpkg-buildpackage artifacts that land outside dist/ when built locally
 packages/**/.debhelper/
 packages/**/debhelper-build-stamp

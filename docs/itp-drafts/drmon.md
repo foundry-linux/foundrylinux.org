@@ -1,5 +1,12 @@
 # ITP draft: drmon
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "drmon" (debugger) and "drdevtools". **No existing wnpp bug found.** This is an obscure upstream (`developer-resources-co/drdevtools`, a 1991-1994 DOS product ported to Linux) with essentially no public packaging footprint — no surprise there's no existing bug.

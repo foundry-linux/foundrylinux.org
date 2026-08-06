@@ -1,5 +1,12 @@
 # ITP draft: blender-asset-finder
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "blender-asset-finder" and "WorldFoundry" Blender add-on. **No existing wnpp bug found.** This is a WorldFoundry-authored project (`wbniv/WorldFoundry` on GitHub), not tracked by any other distro or packager (our own `debian/control` already notes "not on Repology... not in any distro, verified 2026-06-21").

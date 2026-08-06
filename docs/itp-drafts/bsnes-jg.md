@@ -1,5 +1,12 @@
 # ITP draft: bsnes-jg
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "bsnes-jg" / "bsnes jg" / "Jolly Good bsnes". **No existing wnpp bug found.** (General web results turned up the Jolly Good / libretro bsnes-jg project itself and Gentoo's `games-emulation/bsnes-jg` package, but nothing on bugs.debian.org.)

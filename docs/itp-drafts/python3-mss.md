@@ -1,5 +1,12 @@
 # ITP draft: python3-mss
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "python-mss" / "python3-mss" (BoboTiG's screenshot library). **No existing wnpp bug found** — search returned generic ITP examples and the PyPI page for `mss`, nothing on bugs.debian.org for this package specifically.

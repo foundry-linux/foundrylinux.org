@@ -114,6 +114,11 @@ tasks:
     cmds:
       - bash scripts/check-build-dep-pairs.sh
 
+  audit-upstream-packaging:
+    desc: "Audit pinned upstream payloads against the committed packaging-signal baseline"
+    cmds:
+      - bash scripts/audit-upstream-packaging.sh {{.CLI_ARGS}}
+
   check-publish-meta:
     desc: "Verify publish-local.sh sets a clean Origin/Label (not aptly's '. <suite>' default)"
     cmds:

@@ -72,8 +72,8 @@ can reuse that rather than reinvent it. Add `foundry-apt/scripts/audit-upstream-
    fetch to a cache dir, skipping anything already cached.
 2. Extract, then run the Step 2.5 signal set over the tree.
 3. Emit a table: package | upstream `debian/`? | own `.deb` script? | `PKGBUILD`/`.spec`? | distro refs.
-4. Exit non-zero if anything is found, so it can later run in CI as a regression guard when new packages
-   land.
+4. Compare findings with a committed baseline and exit non-zero on drift. `--strict` retains the original
+   "any signal fails" mode; `--inventory-only` cheaply catches package/baseline coverage gaps.
 
 Prebuilt-binary packages (`ghidra`, `ldtk`, `mesen2`, `pvsneslib`, `m8te`) are lower value — there is no
 upstream source tree to inspect in the same way — but should still be swept for packaging metadata inside
@@ -113,10 +113,31 @@ which is why we vendored them. The value is threefold and mostly not the hit rat
 3. Every package's ITP draft records the audit result, positive or negative.
 4. Any divergence found is recorded as a decision, not silently reconciled.
 
+## Audit result — 2026-08-05
+
+Ran the full sweep over all 30 `build.sh` entries (equivalent to the current `--strict` mode). Exit status
+was **1, as designed, because signals were found** (status 2 is reserved for audit/fetch errors). All
+pinned checksummed downloads verified. Those results are now the committed baseline, so the default mode
+returns 0 only when a later run matches them. `foundry-welcome` is the sole native package and therefore
+has no upstream payload to inspect.
+
+| Package(s) | Result |
+|---|---|
+| asar-snes-assembler, blender-asset-finder, blender-asset-finder-cli, bsnes-jg, drmon, f9dasm, flycast, ghidra, halfempty, ldtk, libvgm, m8te, mesen2, ppsspp, pvsneslib, python3-glfw, python3-inators, python3-librosa, python3-mss, python3-picire, python3-pydub, ruff, snes9x-gtk, tilemap-studio, vgmstream, wla-dx | **Negative:** no upstream `debian/`, own `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or packaging-service reference found. |
+| foundry-welcome | **N/A:** native Foundry package, not a vendored upstream. |
+| rpcs3 | **Dependency references only:** no upstream packaging files; `BUILDING.md` references Ubuntu toolchain and Vulkan SDK PPAs for build dependencies, not an RPCS3 packaging effort. |
+| xemu-xbox | **Positive:** upstream ships `debian/` and `debian/build_deb.sh`, naming its source and binary package `xemu`. The package plan had already inspected this stale QEMU-derived packaging and records why we replace it; its name independently supports our `xemu-xbox` disambiguation. |
+| xemu | **Positive:** no upstream `debian/`, but `build/deb-build-simple.sh` builds a binary package named `xemu`, reproducing the known ground truth that prompted this audit. |
+
+All 26 centralized ITP drafts now carry their individual positive or negative result. Flycast, RPCS3,
+and xemu-xbox were packaged after that draft batch and have no files under `docs/itp-drafts/`; their
+results are retained in this table (xemu-xbox's package plan also already contains the full analysis).
+
 ## Follow-ups
 
-- [ ] Consider wiring the audit into CI as a guard on new `packages/*/` additions, so a future package
-      cannot land without the check having run.
+Completed: the baseline-aware audit is wired into CI. Every run checks that all `build.sh` entries have
+exactly one baseline row, audits changed package pins, and rechecks `xemu` as the small known-positive
+control.
 - [ ] `x-emulators`: decide whether the binary-name divergence (`xc65` vs upstream `xemu-*`) is worth
       raising in the upstream heads-up. Current position is to keep bare names — they are what upstream's
       own build, docs and `-h` output use — but say so rather than let him notice.

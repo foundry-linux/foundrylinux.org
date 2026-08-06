@@ -6,6 +6,43 @@ on:
   pull_request:
 
 jobs:
+  audit-upstream-packaging:
+    name: Audit changed upstream packaging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install archive readers
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y unzip zstd
+
+      - name: Check baseline inventory and changed upstreams
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          set -euo pipefail
+          bash scripts/audit-upstream-packaging.sh --inventory-only
+
+          if [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]] || ! git cat-file -e "$BASE_SHA^{commit}"; then
+            BASE_SHA=$(git rev-parse HEAD^)
+          fi
+          mapfile -t packages < <(
+            git diff --name-only "$BASE_SHA" HEAD -- 'packages/*/build.sh' \
+              | sed -n 's#^packages/\([^/]*\)/build\.sh$#\1#p'
+          )
+          if git diff --name-only "$BASE_SHA" HEAD -- scripts/build-rust-tool.sh | grep -q .; then
+            packages+=(blender-asset-finder blender-asset-finder-cli)
+          fi
+
+          # xemu is the small positive control: every CI run proves that the
+          # scanner still detects the .deb builder which prompted this guard.
+          packages+=(xemu)
+          mapfile -t packages < <(printf '%s\n' "${packages[@]}" | sort -u)
+          bash scripts/audit-upstream-packaging.sh "${packages[@]}"
+
   build-debs:
     name: Build every metapackage with dpkg-deb
     runs-on: ubuntu-latest

@@ -24,6 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Check upstream-packaging baseline inventory
+        run: bash scripts/audit-upstream-packaging.sh --inventory-only
+
       - name: Check known Build-Depends companion packages
         run: bash scripts/check-build-dep-pairs.sh
 

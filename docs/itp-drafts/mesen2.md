@@ -1,5 +1,12 @@
 # ITP draft: mesen2
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "mesen2" / "mesen" (multi-system emulator, SourMesen). **No existing wnpp bug found** — results were all upstream GitHub/forum links (SourMesen/Mesen2, nesdev.org threads), nothing on bugs.debian.org.

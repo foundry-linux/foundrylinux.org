@@ -1,0 +1,31 @@
+# package	upstream debian/	own .deb/.dsc build	PKGBUILD/.spec	distro refs
+asar-snes-assembler	no	no	no	no
+blender-asset-finder-cli	no	no	no	no
+blender-asset-finder	no	no	no	no
+bsnes-jg	no	no	no	no
+drmon	no	no	no	no
+f9dasm	no	no	no	no
+flycast	no	no	no	no
+foundry-welcome	n/a (native package)	n/a	n/a	n/a
+ghidra	no	no	no	no
+halfempty	no	no	no	no
+ldtk	no	no	no	no
+libvgm	no	no	no	no
+m8te	no	no	no	no
+mesen2	no	no	no	no
+ppsspp	no	no	no	no
+pvsneslib	no	no	no	no
+python3-glfw	no	no	no	no
+python3-inators	no	no	no	no
+python3-librosa	no	no	no	no
+python3-mss	no	no	no	no
+python3-picire	no	no	no	no
+python3-pydub	no	no	no	no
+rpcs3	no	no	no	rpcs3-cd814f8c926400cf62dab7924f723e4eb7719e50/BUILDING.md
+ruff	no	no	no	no
+snes9x-gtk	no	no	no	no
+tilemap-studio	no	no	no	no
+vgmstream	no	no	no	no
+wla-dx	no	no	no	no
+xemu-xbox	xemu-0.8.136/debian	xemu-0.8.136/debian/build_deb.sh	no	no
+xemu	no	xemu-40dfef0d1d5f56be2469492715c12bdb32c75b67/build/deb-build-simple.sh	no	no

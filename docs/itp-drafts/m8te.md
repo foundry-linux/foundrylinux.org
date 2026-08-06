@@ -1,5 +1,12 @@
 # ITP draft: m8te
 
+## Upstream packaging audit
+
+Audited the pinned upstream payload on 2026-08-05 with
+`foundry-apt/scripts/audit-upstream-packaging.sh`. **No upstream packaging signals found:** no
+upstream-maintained `debian/`, `.deb`/`.dsc` builder, `PKGBUILD`/`.spec`, or PPA/Launchpad/OBS/COPR
+packaging reference.
+
 ## wnpp check
 
 Searched wnpp for "m8te" (SNES tile/map editor, nesdoug). **No existing wnpp bug found** — general search results returned the upstream GitHub repo and unrelated NES/SNES tile-editor forum threads, nothing on bugs.debian.org.
