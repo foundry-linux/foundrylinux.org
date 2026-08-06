@@ -198,6 +198,22 @@ All steps run 2026-08-05 in a clean `ubuntu:26.04` container.
     llvm-mos #585 validation result. This is the check that would catch a packaging change breaking
     the emulator itself, which a man-page/file-presence test cannot.
 
+10. **Public open-source inventory and publication guard.** Refreshed the checked-in inventory in
+    `wbniv/wald3n.com` from a clean clone, adding both `x-emulators` and the previously missing Xbox
+    `xemu` row and removing the unvendored `task` row. The full wald3n suite passed 67/67; commits
+    `b4c25c0` (inventory) and `cc14935` (release `v0.0.421`) were pushed and deployed. The live
+    [wald3n open-source page](https://wald3n.com/open-source) was then verified to contain both
+    `data-sort-name="x-emulators"` and `data-sort-name="xemu"`.
+
+    Commit `09c9b11` makes this mandatory for future package releases: a Claude
+    `PostToolUse[Bash]` hook marks `task bump`, `task release`, and `task sync-and-release` as pending;
+    the project Stop hook blocks completion until `task package-publish:complete` verifies the
+    refreshed wald3n snapshot and its live rows. The positive hook test detected the two missing rows,
+    blocked completion, and cleared its marker only after the production deployment passed.
+
+    **PASS** — both public surfaces are current, and future package publication cannot be reported
+    complete while the wald3n refresh remains outstanding.
+
 ## Follow-ups
 
 - [x] Ship `.desktop` files and icons for the seven GUI emulators. Done 2026-08-05: static

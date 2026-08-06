@@ -103,7 +103,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
-- 2026-08-05 — [package-x-emulators] `x-emulators 0~git20260129.40dfef0d-1foundry2` published in foundry-apt v1.5.42 and installed successfully from apt.foundrylinux.org in a fresh Ubuntu 26.04 container; all seven binary/man-page checks pass. The Debian ITP remains separately tracked above. See [plan](docs/plans/2026-08-05-package-x-emulators.md).
+- 2026-08-05 — [package-x-emulators] `x-emulators 0~git20260129.40dfef0d-1foundry2` published in foundry-apt v1.5.42, installed and functionally verified from apt.foundrylinux.org, then added to the live wald3n.com/open-source inventory in v0.0.421. A project hook now blocks future package-release completion until both public surfaces pass. The Debian ITP remains separately tracked above. See [plan](docs/plans/2026-08-05-package-x-emulators.md).
 - [x] 2026-08-05 — [task-unvendored] Vendoring REVERSED by decision: task un-vendored (c65809e), consumers stay on Cloudsmith (verified live, no rotation recurrence); release v1.5.40 CI success — live index now serves xemu, not task. See [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
 
 - 2026-08-05 — [emu-consoles-gaps] Added ares (ColecoVision), sameboy + mgba-qt (Game Boy family) to foundry-emulators-consoles 1.0.4. See [plan](docs/plans/2026-08-05-package-xemu.md).
