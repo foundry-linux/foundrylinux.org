@@ -95,14 +95,34 @@ cache_set() {
     chmod 600 "$BOOTSTRAP_CACHE"
 }
 
+# Cloudflare API wrapper. On success, the response body goes to stdout exactly
+# as before. On failure it reports the HTTP status and Cloudflare's own error
+# messages to stderr, rather than dying as a bare "curl: (22) ... error: 400"
+# with the diagnosis thrown away — the same swallowed-error-body problem the
+# cross-repo dispatch had. Callers that only want a boolean still use
+# `&>/dev/null`, which suppresses this too.
 cf_api() {
     local method="$1" path="$2"
     shift 2
-    curl -fsSL -X "$method" \
+    local response status body
+    response=$(curl -sS -w $'\n%{http_code}' -X "$method" \
         "https://api.cloudflare.com/client/v4${path}" \
         -H "Authorization: Bearer ${CF_API_TOKEN:-}" \
         -H "Content-Type: application/json" \
-        "$@"
+        "$@") || { err "cf_api: curl transport failure on ${method} ${path}"; return 1; }
+
+    status=${response##*$'\n'}
+    body=${response%$'\n'*}
+
+    if [[ "$status" != 2* ]]; then
+        err "Cloudflare API ${method} ${path} → HTTP ${status}"
+        printf '%s' "$body" \
+            | jq -r '.errors[]? | "  [\(.code)] \(.message)"' 2>/dev/null >&2 \
+            || printf '  %s\n' "$body" >&2
+        return 1
+    fi
+
+    printf '%s' "$body"
 }
 
 # Store a secret in the private foundry-linux-secrets R2 bucket.
@@ -151,6 +171,10 @@ command -v gh    &>/dev/null || die "gh CLI not found — https://cli.github.com
 if ! $DRY_RUN; then
     gh auth status &>/dev/null || die "gh not authenticated — run: gh auth login"
     if [[ -z "${CF_API_TOKEN:-}" ]]; then
+        echo "  ┌─────────────────────────────────────────────────────────────┐"
+        echo "  │  This prompt wants a CLOUDFLARE token — NOT a GitHub PAT.   │"
+        echo "  └─────────────────────────────────────────────────────────────┘"
+        echo ""
         echo "  Cloudflare operator token needed. Create '${CF_OPERATOR_TOKEN_NAME}' first:"
         echo ""
         echo "  https://dash.cloudflare.com/profile/api-tokens"
@@ -164,10 +188,37 @@ if ! $DRY_RUN; then
         echo "  Account Resources: Include → select your account"
         echo "  Zone Resources:    Include → Specific zone → ${CF_ZONE_NAME}"
         echo ""
-        until [[ -n "${CF_API_TOKEN:-}" ]]; do
-            read -rsp "  Paste token value (input hidden): " CF_API_TOKEN; echo
-            [[ -z "${CF_API_TOKEN:-}" ]] && echo "  (token cannot be blank — try again)"
+        # Validate BEFORE caching. Caching an unvalidated value is what let a
+        # GitHub PAT pasted at this prompt (2026-08-05) persist into
+        # .foundry/bootstrap.env and fail later with an opaque "curl: (22) 400",
+        # having already been transmitted to Cloudflare in an Authorization
+        # header. Reject the obvious wrong-token case by shape, then prove the
+        # token works against /user/tokens/verify before it is written anywhere.
+        while :; do
+            read -rsp "  Paste CLOUDFLARE token value (input hidden): " CF_API_TOKEN </dev/tty; echo
+
+            if [[ -z "${CF_API_TOKEN:-}" ]]; then
+                warn "Token cannot be blank — try again."
+                continue
+            fi
+            case "$CF_API_TOKEN" in
+                github_pat_*|ghp_*|gho_*|ghu_*|ghs_*)
+                    CF_API_TOKEN=""
+                    err "That is a GITHUB token. This prompt wants a Cloudflare token."
+                    err "Nothing was stored or sent. Try again with the '${CF_OPERATOR_TOKEN_NAME}' token."
+                    continue ;;
+            esac
+
+            info "Verifying token against Cloudflare..."
+            if cf_api GET "/user/tokens/verify" >/dev/null 2>&1; then
+                ok "Token verified."
+                break
+            fi
+            CF_API_TOKEN=""
+            err "Cloudflare rejected that token. Check you copied the '${CF_OPERATOR_TOKEN_NAME}'"
+            err "token from https://dash.cloudflare.com/profile/api-tokens — try again."
         done
+
         export CF_API_TOKEN
         cache_set CF_API_TOKEN "$CF_API_TOKEN"
     fi
