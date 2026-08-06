@@ -111,9 +111,11 @@ expected=$(mktemp)
 trap 'rm -f "$observed" "$expected"' EXIT
 emit_result() {
     local pkg=$1 debian=$2 debbuild=$3 distrofiles=$4 refs=$5
+    # shellcheck disable=SC2016 # Markdown backticks are literal, not shell syntax.
     printf '| `%s` | %s | %s | %s | %s |\n' "$pkg" "$debian" "$debbuild" "$distrofiles" "$refs"
     printf '%s\t%s\t%s\t%s\t%s\n' "$pkg" "$debian" "$debbuild" "$distrofiles" "$refs" >> "$observed"
 }
+# shellcheck disable=SC2016 # Markdown backticks are literal, not shell syntax.
 printf '| Package | upstream `debian/` | own `.deb`/`.dsc` build | `PKGBUILD`/`.spec` | distro refs |\n'
 printf '|---|---|---|---|---|\n'
 for pkg in "${packages[@]}"; do
