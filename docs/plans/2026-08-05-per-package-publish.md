@@ -112,6 +112,44 @@ No change to how releases happen: `task bump` still tags and publishes everythin
 | Warm cache, one package | ~10 min | ~3 min |
 | Cache evicted | full 27-package rebuild | download from R2 |
 
+## Implementation and production status (updated 2026-08-06)
+
+Phase 1 is implemented and synced to `foundry-linux/foundry-apt`, but the
+production proof is not complete yet. Do not treat the R2 mirror as operational
+until the bucket permission issue below is resolved and verification steps 2,
+3, 5, and 6 pass.
+
+- The cache-eviction hypothesis is confirmed: v1.5.39 run `31020896519`
+  restored no usable `dist/` cache, emitted zero `SKIP` lines, and rebuilt all
+  27 packages.
+- The multi-package selector and completeness gate pass focused local tests.
+  A deliberately truncated `dist/` is rejected before aptly publication.
+- Full bootstrap run `31071356548` failed safely while installing RPCS3 build
+  dependencies. The same control file subsequently solved in a clean Ubuntu
+  26.04 container, so no RPCS3 packaging change was made.
+- Bootstrap outputs now use explicit `actions/cache/restore` and
+  `actions/cache/save` steps. Successful packages therefore survive a later
+  package failure; the durable R2 mirror is still persisted only after a
+  successful publish.
+- Run `31074610445` exposed and stopped at a pre-existing ShellCheck regression
+  in `audit-upstream-packaging.sh`; that lint error is fixed and synced.
+- Full bootstrap run [`31076135187`](https://github.com/foundry-linux/foundry-apt/actions/runs/31076135187)
+  is currently in progress.
+
+### External blocker: R2 bucket access
+
+The repository's configured R2 credentials return `AccessDenied` when reading
+`R2:foundry-apt-dist/`. A full build may use the documented one-time bootstrap
+fallback, but a targeted build correctly fails closed when hydration fails.
+Before Phase 1 can be called proven, create/authorize the `foundry-apt-dist`
+bucket for the workflow token with read/write/list access. Phase 2 will likewise
+need `worldfoundry-apt-dist` authorized before its production proof.
+
+Phase 2 changes have been prepared and pass focused selector, completeness,
+ShellCheck, syntax, and diff checks locally. They remain uncommitted and
+unpublished, preserving the required sequencing: land Phase 2 only after the
+Phase 1 R2 round-trip and targeted production publish are proven.
+
 ## Phase 2 — the same change on `apt.worldfoundry.org`
 
 In scope, sequenced after foundry-apt is proven. The repos ship independently by design — separate workflows, separate R2 buckets, separate tag namespaces (`v*` vs `apt-v*`) — so this is a **pattern copied, not a dependency introduced**. Nothing here makes either repo's publish wait on the other.
@@ -148,9 +186,9 @@ This is CI and publishing infrastructure; there is no UI, rendered page, or CLI 
 ## Verification
 
 1. **PASS (2026-08-05): Confirm the cache-eviction hypothesis** — v1.5.39 run 31020896519 had **0 `SKIP` lines** and rebuilt all **27 packages**. (The downloaded GitHub job log contains each build marker twice, for 54 raw matches.) The cache was empty/evicted; xemu was not the sole cost.
-2. **Hydrate works from empty** — clear `dist/`, run the hydrate step, confirm the restored `.deb` count matches the live repo's published count.
-3. **Targeted build skips the rest** — `workflow_dispatch` with `packages: foundry-emulators-consoles`; confirm exactly one package builds and the others report `SKIP`.
-4. **The completeness gate fires** — with a deliberately truncated `dist/` (delete 5 `.deb`s), confirm `check-dist-complete.sh` exits non-zero and the publish aborts *before* the R2 sync.
+2. **BLOCKED — R2 authorization: Hydrate works from empty** — clear `dist/`, run the hydrate step, confirm the restored `.deb` count matches the live repo's published count. Current workflow credentials receive `AccessDenied` for `foundry-apt-dist`.
+3. **BLOCKED by step 2: Targeted build skips the rest** — `workflow_dispatch` with `packages: foundry-emulators-consoles`; confirm exactly one package builds and the others report `SKIP`.
+4. **PASS (focused test, 2026-08-05): The completeness gate fires** — a deliberately truncated synthetic `dist/` was rejected before publication; repeat in production after step 2.
 5. **No regression in the published repo** — after a targeted publish, the live `Packages.gz` count is unchanged (or +1), `apt-get update` succeeds in a clean `ubuntu:26.04`, and an unrelated package still installs.
 6. **Round-trip** — run a targeted publish twice; the second run rebuilds nothing and the published index is byte-identical apart from `Release` timestamps.
 
