@@ -82,6 +82,36 @@ findings that change what happens next for several packages.
 | [wla-dx](wla-dx.md) | GPL-2+ | none found | ready to file (file early — pvsneslib depends on it) |
 | [x-emulators](x-emulators.md) | GPL-2.0-or-later | none found | ready to file (send upstream a heads-up first — he ships his own `.deb` script, so check he isn't packaging it himself) |
 
+## Before filing any of these: give upstream a heads-up
+
+Applies to **every** draft here, not just the ones with a note. Upstream should
+hear "your software is being packaged for Debian" from us, rather than discover
+a wnpp bug carrying their project's name. It is courtesy and coordination, not
+permission — **send it, do not block on a reply.**
+
+The one thing worth checking before the message goes out is whether upstream is
+**already packaging for Debian themselves**. That is the real stepping-on-toes
+risk, and one message clears it. Signals to look for in the source tree:
+
+```bash
+ls -d <src>/debian 2>/dev/null                      # an upstream debian/ dir
+find <src> -iname '*deb*build*' -o -iname '*.dsc'   # their own .deb scripts
+grep -riE 'debian|apt|ppa' <src>/README* 2>/dev/null | head
+```
+
+This is not hypothetical: `x-emulators` upstream ships `build/deb-build-simple.sh`,
+his own binary `.deb` builder — found only because we went looking.
+
+While you have their attention: ask about **tagged releases** if they publish
+none (Debian dislikes snapshot versioning in main, and it is the single biggest
+improvement to a package's standing), and offer to list them as upstream contact
+with Debian bugs forwarded. Do **not** ask upstream to settle a Debian naming
+question — that is ftp-master's call, and asking invites a veto they were never
+entitled to while stalling on an answer that cannot bind anyone.
+
+Record the reply — or the absence of one — in the package's draft. Only a
+"please don't" or a "packaging is already under way" should stop a filing.
+
 ## Suggested filing order, if/when filing is authorized
 
 1. **Independent, ready-to-file, no blockers**: `wla-dx`,
