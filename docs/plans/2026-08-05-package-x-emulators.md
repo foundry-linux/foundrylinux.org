@@ -214,6 +214,29 @@ All steps run 2026-08-05 in a clean `ubuntu:26.04` container.
     **PASS** — both public surfaces are current, and future package publication cannot be reported
     complete while the wald3n refresh remains outstanding.
 
+## Retroactive Step 2.5 findings (upstream's own packaging)
+
+The `/package` skill gained a **Step 2.5 — check for upstream's own Debian packaging** *because of*
+this package: we picked the name `x-emulators` without knowing upstream ships his own `.deb` builder
+that calls it `xemu`. Running that check retroactively against the source turned up more:
+
+| Finding | Status |
+|---|---|
+| No upstream `debian/` dir; one script, `build/deb-build-simple.sh` | — |
+| Its declared deps (`libsdl2-2.0-0`, `libc6`, `libreadline*`, `libgtk-3-0`) | ✅ match what `${shlibs:Depends}` resolved for us — independent confirmation |
+| Upstream names its binaries **`xemu-*`** (`b="$BINDIR/xemu-$(basename $a .native)"`), we ship bare `xc65`, `xmega65`, … | ⚠️ deliberate divergence, see below |
+| Upstream installs a data dir `/usr/share/xemu` (with a `.placeholder`); we ship none | ⚠️ probably harmless — ROM paths are user-configured via `-rom`/config — but unverified |
+| Upstream **deliberately disabled** its ROM-download helper: *"it seems it's a legality problem to ship the package with a helper inside which downloads ROM images copyrighted by some angry companies"* | ✅ our package ships no ROMs and no fetcher — independently the same conclusion |
+
+That last row is the most useful: it is upstream's own considered legal position, and it means "add a
+convenience ROM downloader" is a **bad** future idea, not an obvious improvement. Recorded here so
+nobody re-litigates it.
+
+On binary naming: bare `xc65`/`xmega65` are the names upstream's *build* produces and its own docs and
+`-h` output use, and they are what the `.desktop` files and our man pages reference. Prefixing to
+`xemu-xc65` would also read oddly (double `x`). Keeping bare names, but this is now a recorded decision
+rather than an unexamined default — and it is worth mentioning in the upstream heads-up.
+
 ## Follow-ups
 
 - [x] Ship `.desktop` files and icons for the seven GUI emulators. Done 2026-08-05: static
