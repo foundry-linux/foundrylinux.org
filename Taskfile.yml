@@ -126,6 +126,14 @@ tasks:
     cmds:
       - gh secret list --repo {{.GH_REPO}}
 
+  secret-set:
+    desc: "Store a secret in the foundry-linux-secrets R2 bucket and mirror it to a GitHub repo. Args: NAME=FOO [REPO=owner/repo]. Value is read from a hidden prompt — never argv."
+    dir: "{{.ROOT_DIR}}"
+    requires:
+      vars: [NAME]
+    cmds:
+      - bash scripts/backup-secret.sh {{.NAME}} {{if .REPO}}--gh-repo {{.REPO}}{{end}}
+
   lh-report:
     desc: "Print Lighthouse score table. Default: /tmp/lh/latest/. Args: lh-report v0.0.29 | lh-report path/to/file.json"
     dir: "{{.ROOT_DIR}}"

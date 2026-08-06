@@ -4,6 +4,10 @@
 **Tier:** T2
 **Closes:** `TODO.md` — *Activate `repository_dispatch` from worldfoundry.org*
 **Follows:** [2026-05-21 packages page §6](2026-05-21-packages-page.md)
+**Status:** ⚠️ **BLOCKED** — code change landed and verified; the leg cannot fire until
+`FOUNDRYLINUX_DISPATCH_PAT` is re-minted (see [Remaining work](#remaining-work)). Until then the
+nightly 03:00 UTC cron remains the only thing refreshing the packages page after a WorldFoundry
+publish — a delay of up to 24 h, not an outage.
 
 ---
 
@@ -92,8 +96,9 @@ CI plumbing only. `foundrylinux.org/packages` is unchanged by this work — only
 
    **FAIL** — the 2026‑05‑30 `FOUNDRYLINUX_DISPATCH_PAT` is expired or revoked. Not a wiring fault:
    the request was well-formed and reached GitHub, which rejected the credential. Proceed to
-   Contingency. Note this is the first evidence the leg was *never* going to work — had it not been
-   made testable, this 401 would have surfaced mid-publish on the next `apt-v*` tag.
+   [Remaining work](#remaining-work). Note this is the first evidence the leg was *never* going to
+   work — had it not been made testable, this 401 would have surfaced mid-publish on the next
+   `apt-v*` tag.
 
 3. **The far end received it** — expect a `site-deploy` run with `event: repository_dispatch`.
 
@@ -103,7 +108,7 @@ CI plumbing only. `foundrylinux.org/packages` is unchanged by this work — only
    ```
 
    **FAIL (blocked by step 2)** — unchanged from the pre-test baseline, consistent with a 401: nothing
-   was dispatched. Re-run after Contingency.
+   was dispatched. Re-run after [Remaining work](#remaining-work).
 
 4. **The rebuild is a real rebuild, not a crash** — blocked by step 2. Expect `build-packages-page.sh`
    to run and report its cache hit (`no change in either apt repo since last generation — skipping`),
@@ -115,10 +120,13 @@ CI plumbing only. `foundrylinux.org/packages` is unchanged by this work — only
    and the resulting `site-deploy` run to regenerate rather than cache-skip, because
    `apt.worldfoundry.org`'s `Release` sha will have changed.
 
-### Contingency — re-mint the PAT (the one step with no CLI path)
+---
 
-GitHub exposes no API for creating PATs, so this is irreducibly manual — everything downstream of the
-token value is scripted.
+## Remaining work
+
+Re-mint the PAT. This was written as a contingency; verification step 2 turned it into the only thing
+left. GitHub exposes no API for creating PATs, so it is irreducibly manual — everything downstream of
+the token value is scripted.
 
 1. Create a fine-grained PAT at
    [https://github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new):
@@ -133,9 +141,23 @@ token value is scripted.
    - **Expiration:** 1 year; record the date below so the next expiry is anticipated rather than
      discovered mid-publish.
 2. If the org requires approval for fine-grained PATs, approve it in the org's settings.
-3. ```bash
-   gh secret set FOUNDRYLINUX_DISPATCH_PAT --repo wbniv/worldfoundry.org
+3. Store it with the project's own credential path — **not** a bare `gh secret set`, and never by
+   pasting the value into a chat transcript:
+
+   ```bash
+   task secret-set NAME=FOUNDRYLINUX_DISPATCH_PAT REPO=wbniv/worldfoundry.org
    ```
+
+   That wraps [`scripts/backup-secret.sh`](../../scripts/backup-secret.sh), which reads the value from
+   a hidden `/dev/tty` prompt (so it stays out of shell history, the process list, and any transcript),
+   PUTs it to the private `foundry-linux-secrets` R2 bucket, **reads it back and compares sha256**, then
+   mirrors it to the GitHub Actions secret via stdin rather than argv. A bare `gh secret set` would set
+   the secret but skip the disaster-recovery copy, leaving the token single-homed — the thing
+   [the infra mandate](../../CLAUDE.md) exists to prevent.
+
+   Prerequisite: `CF_API_TOKEN` + `CF_ACCOUNT_ID`, from the environment or `.foundry/bootstrap.env`.
+   That cache is absent on a fresh checkout (it is gitignored); `bash scripts/bootstrap.sh` is
+   idempotent and will re-populate it.
 4. Re-run verification steps 2–4.
 
 **PAT expiry:** _(record on re-mint)_
