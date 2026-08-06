@@ -49,6 +49,7 @@ jobs:
           sudo apt-get install -y aptly gnupg rclone
 
       - name: Restore secondary GitHub Actions cache
+        id: dist-cache
         # R2 is authoritative. This cache is only a fast path and bootstraps the
         # first R2 mirror from the last pre-mirror publish while it is still warm.
         uses: actions/cache/restore@v5
@@ -61,6 +62,7 @@ jobs:
       - name: Hydrate durable dist mirror from Cloudflare R2
         env:
           TARGET_PACKAGES: ${{ inputs.packages }}
+          DIST_CACHE_HIT: ${{ steps.dist-cache.outputs.cache-hit }}
           RCLONE_CONFIG_R2_TYPE: s3
           RCLONE_CONFIG_R2_PROVIDER: Cloudflare
           RCLONE_CONFIG_R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -71,9 +73,13 @@ jobs:
           if rclone copy R2:foundry-apt-dist/ ./dist/ --checksum --progress --transfers=8; then
             exit 0
           fi
-          if [[ -n "$TARGET_PACKAGES" ]]; then
+          if [[ -n "$TARGET_PACKAGES" && "$DIST_CACHE_HIT" != "true" ]]; then
             echo "ERROR: R2 dist hydration failed during a targeted publish — refusing to continue." >&2
             exit 1
+          fi
+          if [[ -n "$TARGET_PACKAGES" ]]; then
+            echo "R2 dist hydration failed, but a secondary dist cache was restored; the completeness gate will verify it before publication."
+            exit 0
           fi
           echo "R2 dist mirror is not available yet; continuing only because this is a full bootstrap build."
 
