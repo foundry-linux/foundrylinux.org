@@ -184,7 +184,9 @@ Debian currently has no package covering any of these seven machines.
   seven emulators appear in application menus.
 - We carry one patch, `debian/patches/0001-honour-SOURCE_DATE_EPOCH.patch`
   (a reproducible-builds fix for embedded build timestamps), already
-  forwarded upstream as
+  forwarded upstream as part of
   [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448) —
+  that PR now also offers the complete Debian source-package tree while
+  retaining Gabor Lenart as its package maintainer —
   worth mentioning in the ITP bug as evidence of active upstream
   engagement, not just a downstream carry-patch.

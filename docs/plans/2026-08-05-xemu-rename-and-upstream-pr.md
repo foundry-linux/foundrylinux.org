@@ -196,6 +196,10 @@ Status as of the first pass. Items 4–6 are gated on the in-flight rebuild and 
 ## Follow-ups
 
 Completed 2026-08-05: [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448) now combines the
-`SOURCE_DATE_EPOCH` fix with the Debian source-package tree at commit `66b1a36`.
+`SOURCE_DATE_EPOCH` fix with the Debian source-package tree; the current packaging head is `6c8ec13`.
+The upstream-facing metadata deliberately keeps Gabor Lenart as both `Maintainer` and the initial
+changelog identity because this extends the `.deb` packaging he already maintained; Foundry is a
+contributor, not the new package maintainer. At the user's direction, the proposed DEP-5 file has no
+separate `Files: debian/*` Foundry copyright stanza.
 - [ ] Investigate the 8 upstream targets not built by default (`xcx16`, `xzxspect`, `xrc2014`, `xc900`,
       `xpc`, `xrecpm`, …) — there may be more emulators available at no extra cost.

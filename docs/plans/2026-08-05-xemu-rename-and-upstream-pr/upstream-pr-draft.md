@@ -5,6 +5,8 @@
 > “build: add Debian source packaging and reproducible build dates”. The live PR keeps
 > `build/deb-build-simple.sh` alongside the new standard source-package path and is authoritative;
 > the text below is retained as drafting history.
+> Follow-up commit `b2682ee` keeps Gabor Lenart as the Debian `Maintainer` and changelog identity;
+> `6c8ec13` removes the separate `Files: debian/*` Foundry copyright stanza.
 >
 > Target: [lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). Posting is user-triggered, same rule as the
 > Debian ITP and the llvm-mos review comment.

@@ -257,7 +257,9 @@ rather than an unexamined default — and it is worth mentioning in the upstream
       `-1foundry2`. See verification step 8 below.
 - [x] Open the upstream PR for the `SOURCE_DATE_EPOCH` patch and record the URL in the patch's
       `Forwarded:` header. Opened as [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448)
-      on 2026-08-05. It is intentionally left untouched pending user review.
+      on 2026-08-05. The same PR now also carries the full Debian source-package tree. Its metadata keeps
+      Gabor Lenart as package maintainer and changelog identity, with no separate Foundry copyright stanza
+      for the contributed `debian/*` files.
 - [ ] File a Debian ITP for `x-emulators` — GPL-2.0-or-later,
       [github.com/lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). Check
       [wnpp](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for an existing RFP/ITP first. Note
