@@ -109,6 +109,7 @@ rows on commit.*
 | [Package Flycast (Dreamcast emulator) for apt.foundrylinux.org](2026-08-05-package-flycast.md) | Vendor Flycast 2.6 for Dreamcast, NAOMI and Atomiswave, closing the remaining sixth-generation emulator gap. | _PENDING_ | Packaging |
 | [Package x-emulators (LGB's Xemu suite) for apt.foundrylinux.org](2026-08-05-package-x-emulators.md) | Vendor LGB's Commodore/Hungarian 8-bit emulator suite as a .deb — named x-emulators to avoid colliding with the unrelated Xbox `xemu` — and add it to `foundry-emulators-computers`. | [`60811e0`](https://github.com/foundry-linux/foundrylinux.org/commit/60811e0) | Packaging |
 | [Audit vendored upstreams for their own Debian packaging](2026-08-05-audit-upstream-packaging.md) | Close the `/package` gap between "is it in Debian" and "does upstream package it", and re-check the 30 packages vendored before the fix. | _PENDING_ | Packaging |
+| [Rename: `xemu` → the Commodore suite, `xemu-xbox` → the Xbox emulator](2026-08-05-xemu-rename-and-upstream-pr.md) | Give the bare `xemu` name to the upstream that has shipped a `.deb` under it since 2016, qualify the Xbox emulator, and port upstream's `.desktop` generation. | [`78c4d9c`](https://github.com/foundry-linux/foundrylinux.org/commit/78c4d9c) | Packaging |
 
 ---
 
