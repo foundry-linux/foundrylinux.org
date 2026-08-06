@@ -1,5 +1,10 @@
 # Package x-emulators (LGB's Xemu suite) for apt.foundrylinux.org
 
+> **Renamed 2026-08-05.** This package shipped as `x-emulators`; it is now **`xemu`**, and the unrelated
+> original-Xbox emulator is `xemu-xbox`. See
+> [the rename plan](2026-08-05-xemu-rename-and-upstream-pr.md). Everything below is preserved as the
+> original packaging record and still refers to the old name.
+
 **Date:** 2026-08-05
 **Scope:** Vendor and package [LGB's Xemu](https://github.com/lgblgblgb/xemu) ("X-Emulators") as a
 Debian-policy-compliant `.deb` under the name **`x-emulators`**, and wire it into the

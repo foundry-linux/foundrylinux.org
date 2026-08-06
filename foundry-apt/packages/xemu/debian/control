@@ -1,4 +1,4 @@
-Source: x-emulators
+Source: xemu
 Section: otherosfs
 Priority: optional
 Maintainer: Foundry Linux <packages@foundrylinux.org>
@@ -13,7 +13,7 @@ Homepage: https://github.com/lgblgblgb/xemu
 X-Repology-Project: none
 Rules-Requires-Root: no
 
-Package: x-emulators
+Package: xemu
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: emulators for Commodore and Hungarian 8-bit computers
@@ -40,5 +40,7 @@ Description: emulators for Commodore and Hungarian 8-bit computers
  without validating it, so it doubles as a bare-metal execution
  environment for compiler output.
  .
- Note this is not the unrelated "xemu" original Xbox emulator
- (https://xemu.app), which is packaged separately as xemu.
+ Note that an unrelated original-Xbox emulator is also called "xemu"
+ (https://xemu.app). This package is LGB's 8-bit suite, which has shipped
+ its own .deb under the name "xemu" since 2016; the Xbox emulator is
+ packaged separately here as xemu-xbox.

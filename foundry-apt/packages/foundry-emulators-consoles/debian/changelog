@@ -1,3 +1,10 @@
+foundry-emulators-consoles (1.0.6) resolute; urgency=medium
+
+  * Follow the xemu -> xemu-xbox rename. The installed binary is still
+    /usr/bin/xemu; only the package name is qualified.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 20:00:00 +0700
+
 foundry-emulators-consoles (1.0.5) resolute; urgency=medium
 
   * Take over mame from foundry-retro-tools. MAME is an emulator and belongs

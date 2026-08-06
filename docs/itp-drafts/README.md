@@ -39,7 +39,7 @@ findings that change what happens next for several packages.
    taken in Debian yet (no `xemu` source or binary package as of
    2026-08-05, and no ITP for the Xbox one), so this is not a forced
    rename: we deliberately allocate `xemu` to the Xbox emulator (its own
-   name, the better-known project) and `x-emulators` to the suite
+   name, the better-known project) and `xemu` to the suite
    (upstream's own full project name), so each package is named after
    itself rather than after the conflict. Same spirit as
    `asar` → `asar-snes-assembler`, but proposed before either name is
@@ -49,7 +49,7 @@ findings that change what happens next for several packages.
    for Debian himself; also a good moment to ask about tagged releases,
    which would replace our git-snapshot version. Builds cleanly from
    source (no prebuilt-binary issue like `ghidra`/`ldtk`/`mesen2`/
-   `pvsneslib`). See [x-emulators.md](x-emulators.md).
+   `pvsneslib`). See [xemu.md](xemu.md).
 
 ## Full table
 
@@ -80,7 +80,7 @@ findings that change what happens next for several packages.
 | [tilemap-studio](tilemap-studio.md) | LGPL-3 (+ FLTK, statically linked) | none found | ready to file (review static-link justification) |
 | [vgmstream](vgmstream.md) | ISC-vgmstream | none found | ready to file |
 | [wla-dx](wla-dx.md) | GPL-2+ | none found | ready to file (file early — pvsneslib depends on it) |
-| [x-emulators](x-emulators.md) | GPL-2.0-or-later | none found | ready to file (send upstream a heads-up first — he ships his own `.deb` script, so check he isn't packaging it himself) |
+| [xemu](xemu.md) | GPL-2.0-or-later | none found | ready to file (send upstream a heads-up first — he ships his own `.deb` script, so check he isn't packaging it himself) |
 
 ## Before filing any of these: give upstream a heads-up
 
@@ -99,7 +99,7 @@ find <src> -iname '*deb*build*' -o -iname '*.dsc'   # their own .deb scripts
 grep -riE 'debian|apt|ppa' <src>/README* 2>/dev/null | head
 ```
 
-This is not hypothetical: `x-emulators` upstream ships `build/deb-build-simple.sh`,
+This is not hypothetical: `xemu` upstream ships `build/deb-build-simple.sh`,
 his own binary `.deb` builder — found only because we went looking.
 
 While you have their attention: ask about **tagged releases** if they publish
@@ -117,7 +117,7 @@ Record the reply — or the absence of one — in the package's draft. Only a
 1. **Independent, ready-to-file, no blockers**: `wla-dx`,
    `asar-snes-assembler`, `bsnes-jg`, `f9dasm`, `halfempty`, `libvgm`,
    `vgmstream`, `python3-mss`, `python3-inators` → `python3-picire`,
-   `tilemap-studio`, `x-emulators`.
+   `tilemap-studio`, `xemu`.
 2. **Resolve first, then file**: `python3-glfw` (duplication check),
    `blender-asset-finder`/`-cli` (combine-or-not decision), `drmon`,
    `m8te` (from-source verification).

@@ -1,3 +1,17 @@
+xemu-xbox (0.8.136-1foundry2) resolute; urgency=medium
+
+  * Rename xemu -> xemu-xbox. Two unrelated upstreams are both called "xemu";
+    LGB's 8-bit emulator suite has shipped its own .deb under that name since
+    2016, so the bare name goes to it and this package is qualified. Removes a
+    dpkg identity collision in which that upstream's self-built .deb would
+    silently replace this one.
+  * The installed binary is unchanged and remains /usr/bin/xemu — only the
+    package name is qualified, so there is no file conflict with xemu.
+  * No transitional package: there are no existing consumers, and the old
+    artifacts are dropped from the repository rather than superseded.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 20:00:00 +0700
+
 xemu (0.8.136-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux package of xemu, the original Xbox emulator.

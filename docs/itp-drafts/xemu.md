@@ -1,4 +1,4 @@
-# ITP draft: x-emulators
+# ITP draft: xemu
 
 ## wnpp check
 
@@ -13,54 +13,50 @@ under either name. This is a fresh filing, not an adoption.
 
 ## The naming question
 
-The bare upstream name is "Xemu" (project self-description:
-"X-Emulators"), and the binaries and this ITP's proposed source/binary
-package name are **`x-emulators`, not `xemu`**. That is deliberate, not
-a Debian-imposed rename:
+Two unrelated upstreams are both called "xemu":
 
-There are two unrelated upstreams both called "xemu":
-
-- `xemu-project/xemu`, the original **Xbox** emulator (xemu.app, linked
-  above). We already package this one under the name `xemu` in this
-  repo.
-- [`lgblgblgb/xemu`](https://github.com/lgblgblgb/xemu) — this package,
-  Gabor Lenart's suite of Commodore and Hungarian 8-bit emulators.
+- [`lgblgblgb/xemu`](https://github.com/lgblgblgb/xemu) — **this package**,
+  Gabor Lenart's suite of Commodore and Hungarian 8-bit emulators, whose
+  own `build/deb-build-simple.sh` has emitted `Package: xemu` since 2016.
+- `xemu-project/xemu`, the original **Xbox** emulator ([xemu.app](https://xemu.app)).
+  We package it separately as **`xemu-xbox`**.
 
 Neither name is currently taken in Debian — as of 2026-08-05 there is no
 `xemu` source or binary package in the archive (`sources.debian.org`
 returns no exact match; only the unrelated `gxemul`), and the Xbox
-emulator has no ITP either. So this is not a forced rename: it is a
-deliberate allocation of two names to two upstreams, and we would like
-Debian to adopt the same one:
+emulator has no ITP either. So nothing is being displaced. We propose
+that Debian adopt the same split we ship:
 
-- **`xemu` → the Xbox emulator.** That is the name the project uses for
-  itself and ships as its binary, it is how its users search for it, and
-  it is the larger and more widely known of the two.
-- **`x-emulators` → this suite.** Not an invented disambiguation:
-  "X-Emulators" is upstream's own full project name, so the package is
-  still named after itself rather than after the conflict.
+- **`xemu` → this suite.** Upstream has shipped its own Debian package
+  under exactly this name for nearly a decade. Naming it anything else
+  would mean Debian disagreeing with the software about what it is
+  called.
+- **`xemu-xbox` → the Xbox emulator.** Qualified, not renamed away: its
+  binary is still `xemu`, and the qualifier disambiguates only the
+  package.
 
-The alternative — giving `xemu` to whichever project files first and
-pushing the other to a qualified name — produces one package named after
-its upstream and one named after an accident. Allocating both up front
-means each name matches its own upstream's self-description. This
-mirrors how the `asar` collision was resolved here (see the
-`asar-snes-assembler` draft), with the difference that there we were
-disambiguating against a name already in use, and here we are proposing
-the split before either is claimed.
+We originally shipped this suite as `xemu` (upstream's full
+project name, "X-Emulators") and gave `xemu` to the Xbox emulator, on the
+reasoning that the Xbox project is the better known of the two. That was
+reversed on 2026-08-05, for a concrete reason rather than a preference:
+upstream's own `.deb` already claims `xemu`, so our old arrangement left
+a live collision — his self-built package and our `xemu` shared a dpkg
+identity while being unrelated software, and his `cdate` version
+(`20260129235930`) outranks `0.8.136`, so installing his would have
+silently replaced ours. Giving him the name removes the collision at its
+root. See [the rename plan](../plans/2026-08-05-xemu-rename-and-upstream-pr.md).
 
 That said, the name is ftp-master's call, not ours, and we would follow a
-maintainer's preference. If a different disambiguation is wanted, our
-order of preference is:
+maintainer's preference. If a different disambiguation is wanted for the
+*Xbox* package, `xemu-xbox` is already the qualified one; if Debian would
+rather qualify **this** package instead, our order of preference is:
 
 1. **`xemu-8bit`** — descriptive, accurate (every machine in the suite is
    an 8-bit design: 6502/65CE02/45GS02 and Z80), and it keeps the `xemu`
-   root so someone searching "xemu" still finds it. The one argument
-   against is that a shared prefix reads as kinship — `xemu-8bit` looks
-   like a variant or subset of `xemu`, when in fact the two share nothing
-   but a name collision and have no common code, authors or lineage.
-   `x-emulators` carries no such implication, which is why we prefer it.
-2. **`lgb-xemu`** — unambiguous, but names the package after the author's
+   root so someone searching "xemu" still finds it.
+2. **`x-emulators`** — upstream's full project name; what we shipped
+   until 2026-08-05.
+3. **`lgb-xemu`** — unambiguous, but names the package after the author's
    handle rather than the software, which Debian generally avoids.
 
 The ITP should put the reasoning above rather than treat the name as
@@ -108,7 +104,7 @@ Note anything he raises in this file. Only a "please don't" or a
 ## ITP draft
 
 ```
-Package name    : x-emulators
+Package name    : xemu
 Version         : 0~git20260129.40dfef0d (no tagged upstream release;
                   packaged from a pinned git commit)
 Upstream contact: Gabor Lenart (LGB) <lgblgblgb@gmail.com>
@@ -148,13 +144,13 @@ Debian currently has no package covering any of these seven machines.
   this batch flagged `ldtk`, `mesen2`, `pvsneslib`, and (pending
   verification) `m8te` as Debian-main-disqualifying because they ship
   prebuilt upstream binaries repacked into a `.deb` rather than being
-  compiled from source during the Debian build. `x-emulators` has no
+  compiled from source during the Debian build. `xemu` has no
   such issue — `dpkg-buildpackage` compiles all seven emulator binaries
   from the vendored C source via upstream's own build system, no
   prebuilt artifacts are copied in.
 - **No tagged upstream release** — like `libvgm` in this same batch,
-  x-emulators packages from a pinned git commit (see
-  `foundry-apt/packages/x-emulators/build.sh`), because upstream
+  xemu packages from a pinned git commit (see
+  `foundry-apt/packages/xemu/build.sh`), because upstream
   publishes no tags or GitHub releases; master is the only ref. The
   "Version" field above is therefore a snapshot version
   (`0~git20260129.40dfef0d`), not a stable upstream release number.
@@ -164,7 +160,7 @@ Debian currently has no package covering any of these seven machines.
 - Licence is uniformly GPL-2.0-or-later per `debian/copyright` (`Files:
   *` — no separately-licensed bundled components, unlike `bsnes-jg` or
   `libvgm` in this batch, which each carry several different bundled
-  licences). One vendored asset, `debian/x-emulators.xpm` (upstream's
+  licences). One vendored asset, `debian/xemu.xpm` (upstream's
   single generic 48x48 icon, reused across all seven `.desktop`
   entries since upstream ships no per-machine artwork), is also
   GPL-2.0-or-later, matching the rest of upstream's source.

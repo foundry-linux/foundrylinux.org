@@ -16,7 +16,7 @@ Depends: ${misc:Depends},
  mame,
  openmsx,
  openmsx-data,
- x-emulators
+ xemu
 Description: vintage home-computer emulators (no bundled ROMs)
  Emulators that do not ship non-redistributable ROMs in the .deb.
  Suitable for inclusion in container images and ISOs without
@@ -33,7 +33,7 @@ Description: vintage home-computer emulators (no bundled ROMs)
                      either metapackage alone brings it in
    * openmsx         MSX / MSX2 / MSX2+ / turboR
    * openmsx-data    OpenMSX system data files
-   * x-emulators     Commodore 65/MEGA65/VIC-20/LCD, Enterprise, Primo, TVC
+   * xemu            Commodore 65/MEGA65/VIC-20/LCD, Enterprise, Primo, TVC
  .
  Note: MAME's "lynx" driver is the Atari Lynx handheld (atari/lynx.cpp),
  emulated here by mednafen in foundry-emulators-consoles. The Camputers

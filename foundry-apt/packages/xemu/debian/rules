@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-# Vendored-upstream Debian package build wrapper for x-emulators (LGB's Xemu).
+# Vendored-upstream Debian package build wrapper for xemu (LGB's Xemu).
 # Generated via the /package skill (~/.claude/skills/package/).
 #
 # Upstream has no `make install` target and no configure script in the autotools
@@ -46,19 +46,34 @@ override_dh_auto_test:
 override_dh_auto_install:
 	set -e; for b in $(BINARIES); do \
 	    install -D -m 0755 build/bin/$$b.native \
-	        $(CURDIR)/debian/x-emulators/usr/bin/$$b; \
+	        $(CURDIR)/debian/xemu/usr/bin/$$b; \
 	done
-	# Desktop entries, one per emulated machine (debian/<binary>.desktop are
-	# ours, adapted from upstream's build/xemu.desktop %machine/%binary
-	# template). Icon is vendored verbatim from upstream's build/xemu-48x48.xpm
-	# — the suite's single generic icon, shared by all seven entries since
-	# upstream ships no per-machine artwork.
-	set -e; for b in $(BINARIES); do \
-	    install -D -m 0644 debian/$$b.desktop \
-	        $(CURDIR)/debian/x-emulators/usr/share/applications/$$b.desktop; \
+	# Desktop entries, GENERATED from upstream's own data rather than
+	# hand-written: build/xemu.desktop is upstream's template (%machine /
+	# %binary placeholders) and each targets/*/Makefile declares PRG_TARGET
+	# and EMU_DESCRIPTION. This mirrors what upstream's own
+	# build/deb-build-simple.sh does, and is the reason to do it that way:
+	# static per-binary .desktop files silently fail to cover a target
+	# upstream adds later, and their machine names drift from upstream's.
+	# Only emit entries for targets we actually ship (BINARIES).
+	install -d $(CURDIR)/debian/xemu/usr/share/applications
+	set -e; for m in targets/*/Makefile; do \
+	    [ -s "$$m" ] || continue; \
+	    t=$$(sed -n 's/^PRG_TARGET[\t ]*=[\t ]*//p' "$$m"); \
+	    d=$$(sed -n 's/^EMU_DESCRIPTION[\t ]*=[\t ]*//p' "$$m"); \
+	    [ -n "$$t" ] && [ -n "$$d" ] || continue; \
+	    case " $(BINARIES) " in *" $$t "*) ;; *) continue ;; esac; \
+	    sed "s/%machine/$$d/g; s/%binary/$$t/g" build/xemu.desktop \
+	        > $(CURDIR)/debian/xemu/usr/share/applications/$$t.desktop; \
+	    chmod 0644 $(CURDIR)/debian/xemu/usr/share/applications/$$t.desktop; \
 	done
-	install -D -m 0644 debian/x-emulators.xpm \
-	    $(CURDIR)/debian/x-emulators/usr/share/icons/hicolor/48x48/apps/x-emulators.xpm
+	# Upstream's template points Icon= at /usr/share/pixmaps; ship both that
+	# legacy path (some menus still read it, and it is what upstream's own
+	# .deb does) and the modern hicolor location.
+	install -D -m 0644 build/xemu-48x48.xpm \
+	    $(CURDIR)/debian/xemu/usr/share/pixmaps/xemu-48x48.xpm
+	install -D -m 0644 debian/xemu.xpm \
+	    $(CURDIR)/debian/xemu/usr/share/icons/hicolor/48x48/apps/xemu.xpm
 
 override_dh_auto_clean:
 	$(MAKE) clean ARCH=native || true

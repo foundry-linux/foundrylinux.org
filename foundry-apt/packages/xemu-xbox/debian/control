@@ -1,4 +1,4 @@
-Source: xemu
+Source: xemu-xbox
 Section: otherosfs
 Priority: optional
 Maintainer: Foundry Linux <packages@foundrylinux.org>
@@ -29,7 +29,7 @@ Homepage: https://xemu.app
 X-Repology-Project: xemu
 Rules-Requires-Root: no
 
-Package: xemu
+Package: xemu-xbox
 Architecture: amd64
 # xemu statically links the SDL3 it vendors as a meson subproject, and that SDL3
 # dlopens its video/audio backends rather than linking them. dh_shlibdeps cannot
@@ -61,6 +61,11 @@ Recommends: mesa-vulkan-drivers,
  libdecor-0-0,
  libdbus-1-3
 Description: original Xbox game console emulator
+ Note that an unrelated 8-bit computer emulator suite is also called
+ "xemu" (https://github.com/lgblgblgb/xemu) and has shipped its own .deb
+ under that name since 2016; it is packaged here as xemu. This package is
+ the original Xbox emulator from https://xemu.app, qualified as xemu-xbox
+ to disambiguate. The binary it installs is still /usr/bin/xemu.
  xemu is an open-source emulator of the original Microsoft Xbox (2001), built
  as a fork of QEMU that models the console's NV2A GPU, MCPX boot ROM, APU audio
  hardware, and IDE/USB peripherals rather than high-level-emulating its titles.

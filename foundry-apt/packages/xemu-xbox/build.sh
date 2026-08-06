@@ -51,7 +51,8 @@ UPSTREAM_URL="https://github.com/xemu-project/xemu/releases/download/v${UPSTREAM
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"
-NAME="xemu"
+NAME="xemu-xbox"
+UPSTREAM_NAME="xemu"          # upstream's own name; drives the tarball + top-level dir
 REPO_ROOT="$(cd ../.. && pwd)"
 mkdir -p "$REPO_ROOT/dist"
 
@@ -83,8 +84,14 @@ echo "=== Verifying sha256 ==="
 echo "$SHA256  $TARBALL" | sha256sum -c -
 
 echo "=== Extracting ==="
+# The tarball's top-level dir carries UPSTREAM's name (xemu-<ver>), which is not
+# our package name since the 2026-08-05 rename to xemu-xbox — LGB's unrelated
+# 8-bit emulator suite has shipped its own .deb named "xemu" since 2016 and
+# takes the bare name. Rename the extracted tree so dpkg-buildpackage sees
+# <source>-<version>, and keep UPSTREAM_NAME separate from NAME.
 tar --use-compress-program=unzstd -xf "$TARBALL" -C "$WORKDIR"
 SRC_DIR="$WORKDIR/${NAME}-${UPSTREAM_VERSION}"
+[[ -d "$SRC_DIR" ]] || mv "$WORKDIR/${UPSTREAM_NAME}-${UPSTREAM_VERSION}" "$SRC_DIR"
 [[ -f "$SRC_DIR/build.sh" ]] || {
     echo "ERROR: expected upstream build.sh in $SRC_DIR" >&2; ls -la "$WORKDIR"; exit 1; }
 

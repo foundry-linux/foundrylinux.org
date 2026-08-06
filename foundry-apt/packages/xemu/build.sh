@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Vendored-upstream Debian package build wrapper for x-emulators (LGB's Xemu).
+# Vendored-upstream Debian package build wrapper for xemu (LGB's Xemu).
 # Generated via the /package skill (~/.claude/skills/package/). Entry point that
 # foundry-apt's build-all.sh invokes:
 #
@@ -29,29 +29,29 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-Build x-emulators (LGB's Xemu suite) as a Debian .deb via dpkg-buildpackage.
+Build xemu (LGB's Xemu suite) as a Debian .deb via dpkg-buildpackage.
 
 Usage: build.sh [-h|--help]
 
 Environment overrides (rarely needed):
-  XEMU_LGB_COMMIT   upstream git commit (default: 40dfef0d1d5f56be2469492715c12bdb32c75b67)
-  XEMU_LGB_SHA256   sha256 of the upstream tarball (must match COMMIT)
+  XEMU_COMMIT   upstream git commit (default: 40dfef0d1d5f56be2469492715c12bdb32c75b67)
+  XEMU_SHA256   sha256 of the upstream tarball (must match COMMIT)
 
-Output: \$REPO_ROOT/dist/x-emulators_<DEB_VERSION>_<arch>.deb
+Output: \$REPO_ROOT/dist/xemu_<DEB_VERSION>_<arch>.deb
 EOF
             exit 0
             ;;
     esac
 done
 
-UPSTREAM_COMMIT="${XEMU_LGB_COMMIT:-40dfef0d1d5f56be2469492715c12bdb32c75b67}"
-SHA256="${XEMU_LGB_SHA256:-58549a7224b84be093336c471f45c5d483fb4b9a57ad27bb9ed1d10a5423cac9}"
+UPSTREAM_COMMIT="${XEMU_COMMIT:-40dfef0d1d5f56be2469492715c12bdb32c75b67}"
+SHA256="${XEMU_SHA256:-58549a7224b84be093336c471f45c5d483fb4b9a57ad27bb9ed1d10a5423cac9}"
 UPSTREAM_VERSION="0~git20260129.${UPSTREAM_COMMIT:0:8}"
 UPSTREAM_URL="https://github.com/lgblgblgb/xemu/archive/${UPSTREAM_COMMIT}.tar.gz"
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"
-NAME="x-emulators"
+NAME="xemu"
 REPO_ROOT="$(cd ../.. && pwd)"
 mkdir -p "$REPO_ROOT/dist"
 

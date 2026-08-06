@@ -1,5 +1,11 @@
 # Package xemu (original Xbox emulator) for apt.foundrylinux.org
 
+> **Renamed 2026-08-05.** This package shipped as `xemu`; it is now **`xemu-xbox`**, because LGB's
+> unrelated 8-bit emulator suite has shipped its own `.deb` named `xemu` since 2016 and takes the bare
+> name. The installed binary is still `/usr/bin/xemu`. See
+> [the rename plan](2026-08-05-xemu-rename-and-upstream-pr.md). Everything below is preserved as the
+> original packaging record and still refers to the old name.
+
 **Date:** 2026-08-05
 **Scope:** Vendor and package upstream [xemu](https://github.com/xemu-project/xemu) v0.8.136 as a Debian-policy-compliant `.deb`, and wire it into the `foundry-emulators-consoles` metapackage.
 

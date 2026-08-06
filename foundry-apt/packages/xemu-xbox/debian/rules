@@ -39,22 +39,22 @@ override_dh_auto_clean:
 	rm -rf build dist build.log
 
 override_dh_auto_install:
-	install -DTm 0755 dist/xemu debian/xemu/usr/bin/xemu
+	install -DTm 0755 dist/xemu debian/xemu-xbox/usr/bin/xemu
 	install -DTm 0644 ui/xemu.desktop \
-	    debian/xemu/usr/share/applications/xemu.desktop
+	    debian/xemu-xbox/usr/share/applications/xemu.desktop
 	# AppStream requires the metainfo filename to match the component <id>
 	# (app.xemu.xemu); upstream's own filename does not, which fails
 	# `appstreamcli validate-tree`.
 	install -DTm 0644 xemu.metainfo.xml \
-	    debian/xemu/usr/share/metainfo/app.xemu.xemu.metainfo.xml
+	    debian/xemu-xbox/usr/share/metainfo/app.xemu.xemu.metainfo.xml
 	set -e; for r in 16 24 32 48 64 128 256 512; do \
 	    install -DTm 0644 ui/icons/xemu_$${r}x$${r}.png \
-	        debian/xemu/usr/share/icons/hicolor/$${r}x$${r}/apps/xemu.png; \
+	        debian/xemu-xbox/usr/share/icons/hicolor/$${r}x$${r}/apps/xemu.png; \
 	done
 	install -DTm 0644 ui/icons/xemu.svg \
-	    debian/xemu/usr/share/icons/hicolor/scalable/apps/xemu.svg
+	    debian/xemu-xbox/usr/share/icons/hicolor/scalable/apps/xemu.svg
 	# dist/LICENSE.txt is the aggregated third-party license manifest that
 	# upstream generates for its binary distributions; ship it as upstream
 	# documentation alongside debian/copyright.
 	install -DTm 0644 dist/LICENSE.txt \
-	    debian/xemu/usr/share/doc/xemu/LICENSE.upstream.txt
+	    debian/xemu-xbox/usr/share/doc/xemu/LICENSE.upstream.txt

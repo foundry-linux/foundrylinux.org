@@ -1,3 +1,28 @@
+xemu (0~git20260129.40dfef0d-1foundry3) resolute; urgency=medium
+
+  * Rename x-emulators -> xemu. Upstream's own build/deb-build-simple.sh has
+    emitted "Package: xemu" since 2016, so the name belongs to this project;
+    the unrelated original-Xbox emulator of the same name is renamed to
+    xemu-xbox in the same release. This also removes a live collision: that
+    upstream script's .deb and our old xemu (Xbox) shared a dpkg identity
+    while being unrelated software, and its cdate version (20260129235930)
+    outranks 0.8.136, so a user building it would have silently replaced the
+    Xbox emulator.
+  * No transitional package and no Breaks/Replaces: there are no existing
+    consumers, and the old artifacts are dropped from the repository rather
+    than superseded.
+  * Generate .desktop entries from upstream's own build/xemu.desktop template
+    and the PRG_TARGET / EMU_DESCRIPTION fields in targets/*/Makefile, instead
+    of shipping seven hand-written files. Upstream ships 15 targets and the
+    default build produces 7, so static files silently miss any target added
+    later; the hand-written machine names had also already drifted from
+    upstream's ("Commodore LCD (prototype)" vs "Commodore LCD", "Enterprise
+    64/128" vs "Enterprise 128").
+  * Also ship the icon at the legacy /usr/share/pixmaps path that upstream's
+    template points Icon= at, alongside the hicolor one.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Wed, 05 Aug 2026 20:00:00 +0700
+
 x-emulators (0~git20260129.40dfef0d-1foundry2) resolute; urgency=medium
 
   * Add .desktop entries for all seven emulators so they appear in
