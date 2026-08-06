@@ -49,10 +49,22 @@ mirrors how the `asar` collision was resolved here (see the
 disambiguating against a name already in use, and here we are proposing
 the split before either is claimed.
 
-That said, the name is ftp-master's call, not ours. If a
-reviewer/mentor prefers a different disambiguation
-(e.g. `xemu-8bit`, `lgb-xemu`), we will follow it — but the ITP should
-put the reasoning above rather than treat the name as arbitrary.
+That said, the name is ftp-master's call, not ours, and we would follow a
+maintainer's preference. If a different disambiguation is wanted, our
+order of preference is:
+
+1. **`xemu-8bit`** — descriptive, accurate (every machine in the suite is
+   an 8-bit design: 6502/65CE02/45GS02 and Z80), and it keeps the `xemu`
+   root so someone searching "xemu" still finds it. The one argument
+   against is that a shared prefix reads as kinship — `xemu-8bit` looks
+   like a variant or subset of `xemu`, when in fact the two share nothing
+   but a name collision and have no common code, authors or lineage.
+   `x-emulators` carries no such implication, which is why we prefer it.
+2. **`lgb-xemu`** — unambiguous, but names the package after the author's
+   handle rather than the software, which Debian generally avoids.
+
+The ITP should put the reasoning above rather than treat the name as
+arbitrary.
 
 ## ITP draft
 
