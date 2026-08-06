@@ -4,10 +4,9 @@
 **Tier:** T2
 **Closes:** `TODO.md` — *Activate `repository_dispatch` from worldfoundry.org*
 **Follows:** [2026-05-21 packages page §6](2026-05-21-packages-page.md)
-**Status:** ⚠️ **BLOCKED** — code change landed and verified; the leg cannot fire until
-`FOUNDRYLINUX_DISPATCH_PAT` is re-minted (see [Remaining work](#remaining-work)). Until then the
-nightly 03:00 UTC cron remains the only thing refreshing the packages page after a WorldFoundry
-publish — a delay of up to 24 h, not an outage.
+**Status:** ✅ **DONE** (2026-08-06 02:27 UTC) — leg fired end-to-end; `site-deploy` logged its
+first-ever `repository_dispatch` run. Verification steps 1–4 PASS; step 5 pends the next real
+`apt-v*` publish.
 
 ---
 
@@ -100,6 +99,22 @@ CI plumbing only. `foundrylinux.org/packages` is unchanged by this work — only
    work — had it not been made testable, this 401 would have surfaced mid-publish on the next
    `apt-v*` tag.
 
+   **Re-run after the PAT was re-minted (2026‑08‑06 02:24 UTC):**
+
+   ```
+   $ gh secret list --repo wbniv/worldfoundry.org | grep FOUNDRYLINUX_DISPATCH_PAT
+   FOUNDRYLINUX_DISPATCH_PAT	2026-08-06T02:24:22Z
+
+   $ gh workflow run notify-foundrylinux.yml --repo wbniv/worldfoundry.org
+   $ gh run list --repo wbniv/worldfoundry.org --workflow notify-foundrylinux.yml --limit 1
+   31065538989 completed success
+
+   $ gh run view 31065538989 --log   # job output
+   Dispatched apt-published (ref=manual) → foundry-linux/foundrylinux.org
+   ```
+
+   **PASS.**
+
 3. **The far end received it** — expect a `site-deploy` run with `event: repository_dispatch`.
 
    ```
@@ -110,10 +125,39 @@ CI plumbing only. `foundrylinux.org/packages` is unchanged by this work — only
    **FAIL (blocked by step 2)** — unchanged from the pre-test baseline, consistent with a 401: nothing
    was dispatched. Re-run after [Remaining work](#remaining-work).
 
+   **Re-run after the PAT was re-minted:**
+
+   ```
+   $ gh run list --repo foundry-linux/foundrylinux.org --workflow site-deploy.yml --limit 3
+   2026-08-06T02:25:02Z repository_dispatch in_progress          31065544907
+   2026-08-05T05:33:49Z schedule            completed success
+   2026-08-04T05:35:20Z schedule            completed success
+   ```
+
+   **PASS** — the first `repository_dispatch` run in the workflow's history, against 25+ consecutive
+   `schedule` runs. This is the fact the whole task existed to establish.
+
 4. **The rebuild is a real rebuild, not a crash** — blocked by step 2. Expect `build-packages-page.sh`
    to run and report its cache hit (`no change in either apt repo since last generation — skipping`),
    since no publish preceded the test dispatch; that skip is correct and is itself evidence the chain
    executed. `wrangler pages deploy` then succeeds.
+
+   ```
+   $ gh run view 31065544907 --repo foundry-linux/foundrylinux.org
+   conclusion: success  event: repository_dispatch  02:25:02Z → 02:27:50Z
+
+   $ gh run view --log 31065544907   # job output
+   ✓ site/packages-data.json regenerated
+   ✨ Success! Uploaded 3 files (64 already uploaded) (1.54 sec)
+   🌎 Deploying...
+   ```
+
+   **PASS — but not as predicted.** The step expected a cache *skip*; it regenerated instead. The
+   prediction was wrong: `site/packages-data.json` in the checkout was stale against the live repos
+   (xemu shipped 2026‑08‑05 and the regenerated data was never committed back), so there was genuine
+   work to do. A regeneration is strictly stronger evidence than a skip would have been — it proves
+   the dispatch drove a real content change through to Cloudflare Pages, not merely that the workflow
+   started.
 
 5. **The production path still works** — pending the next real `apt-v*` publish (do not cut one solely
    for this). Expect `notify-foundrylinux` to appear as a nested reusable-workflow call and succeed,
@@ -194,6 +238,23 @@ each with the exact remedy — `task setup -- --dispatch-pat-only` — in the er
 What it deliberately does not do: prove `Contents: write`. There is no non-mutating probe for that, and
 firing a real dispatch weekly would mean a weekly redundant site deploy. Full end-to-end proof stays
 the one-command `gh workflow run notify-foundrylinux.yml`.
+
+### Verified in production, 2026-08-06
+
+The check was exercised immediately after the PAT landed, since it had never run either:
+
+```
+$ gh workflow run dispatch-token-health.yml --repo wbniv/worldfoundry.org
+Token is alive and can see foundry-linux/foundrylinux.org.
+Expires 2027-08-07 — 365 day(s) left.
+Comfortably in date (> 21 days).
+```
+
+This also settles an open uncertainty in the design: it was written defensively because the
+`github-authentication-token-expiration` header could not be confirmed locally (the available `gh`
+token is a classic one, which does not carry it). Fine-grained PATs **do** return it, so the check
+runs in its full form rather than degrading to a liveness-only probe. **The renewal reminder fires
+red on 2027‑07‑17.**
 
 **Follow-up worth ranking:** migrate this leg to a GitHub App and delete both the PAT and this
 health check.
