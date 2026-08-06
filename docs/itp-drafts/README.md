@@ -1,6 +1,6 @@
 # Debian ITP drafts — summary
 
-Prepare-only drafts for the 25 packages queued under `### Debian ITP` in
+Prepare-only drafts for the 26 packages queued under `### Debian ITP` in
 `TODO.md`. **Nothing has been filed with the Debian BTS.** Each
 package's own `<name>.md` has the full draft, wnpp research, and
 sourcing notes; this file is the roll-up table plus the headline
@@ -33,6 +33,14 @@ findings that change what happens next for several packages.
    probably be one ITP, not two** — they currently duplicate the same
    asset-provider library across two separate Debian source packages.
    See both drafts for the recommendation to combine before filing.
+9. **`x-emulators` collides on the bare name `xemu`** with the
+   unrelated original-Xbox emulator (`xemu-project/xemu`, already
+   packaged here as `xemu`) — we propose filing under upstream's own
+   full name `x-emulators` rather than `xemu`, following the same
+   precedent as `asar` → `asar-snes-assembler`, but present it as a
+   proposal for Debian to weigh in on, not a settled decision. Builds
+   cleanly from source (no prebuilt-binary issue like `ghidra`/`ldtk`/
+   `mesen2`/`pvsneslib`). See [x-emulators.md](x-emulators.md).
 
 ## Full table
 
@@ -63,13 +71,14 @@ findings that change what happens next for several packages.
 | [tilemap-studio](tilemap-studio.md) | LGPL-3 (+ FLTK, statically linked) | none found | ready to file (review static-link justification) |
 | [vgmstream](vgmstream.md) | ISC-vgmstream | none found | ready to file |
 | [wla-dx](wla-dx.md) | GPL-2+ | none found | ready to file (file early — pvsneslib depends on it) |
+| [x-emulators](x-emulators.md) | GPL-2.0-or-later | none found | ready to file (naming disambiguation vs. Xbox `xemu`, see note) |
 
 ## Suggested filing order, if/when filing is authorized
 
 1. **Independent, ready-to-file, no blockers**: `wla-dx`,
    `asar-snes-assembler`, `bsnes-jg`, `f9dasm`, `halfempty`, `libvgm`,
    `vgmstream`, `python3-mss`, `python3-inators` → `python3-picire`,
-   `tilemap-studio`.
+   `tilemap-studio`, `x-emulators`.
 2. **Resolve first, then file**: `python3-glfw` (duplication check),
    `blender-asset-finder`/`-cli` (combine-or-not decision), `drmon`,
    `m8te` (from-source verification).
