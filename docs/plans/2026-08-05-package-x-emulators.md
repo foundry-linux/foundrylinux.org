@@ -70,7 +70,7 @@ execution rather than inspection.
 `debian/patches/0001-honour-SOURCE_DATE_EPOCH.patch` — prefer `SOURCE_DATE_EPOCH` for the embedded build
 timestamp, keeping the git and `date` fallbacks for developer builds. This is a genuine portability /
 reproducibility fix, not Debian glue, so per the `/package` skill's Step 7 it belongs upstream.
-`Forwarded: not-yet` — **PR not yet opened; see "Follow-ups".**
+`Forwarded: https://github.com/lgblgblgb/xemu/pull/448` — opened upstream on 2026-08-05.
 
 ## Verification
 
@@ -151,8 +151,33 @@ All steps run 2026-08-05 in a clean `ubuntu:26.04` container.
 
     **PASS** — `foundry-emulators-computers` 1.0.2 lints clean and pulls `x-emulators`.
 
-**Not yet done:** publish to the live repo and verify `apt install x-emulators` against
-apt.foundrylinux.org (skill Step 6) — that is a release action, tracked below.
+8. **Live publication and install verification.**
+
+    Release [`v1.5.42`](https://github.com/foundry-linux/foundry-apt/tree/v1.5.42)
+    published `x-emulators 0~git20260129.40dfef0d-1foundry2` to
+    `apt.foundrylinux.org`. The
+    [publish workflow](https://github.com/foundry-linux/foundry-apt/actions/runs/31054323727)
+    built and signed the repository, synced it to Cloudflare R2, passed repository-consistency
+    verification, and passed its Ubuntu 26.04 indexing smoke test.
+
+    A separate `task live-test -- --package x-emulators` run then installed the exact live version
+    in a fresh Ubuntu 26.04 container. All seven installed binaries had clean corresponding man
+    pages:
+
+    ```text
+    ok /usr/share/man/man1/xc65.1.gz
+    ok /usr/share/man/man1/xclcd.1.gz
+    ok /usr/share/man/man1/xep128.1.gz
+    ok /usr/share/man/man1/xmega65.1.gz
+    ok /usr/share/man/man1/xprimo.1.gz
+    ok /usr/share/man/man1/xtvc.1.gz
+    ok /usr/share/man/man1/xvic20.1.gz
+    [PASS] x-emulators
+    Results: 1 passed, 0 failed
+    ```
+
+    **PASS** — the signed package is published, indexed, installable, and validated from the live
+    repository.
 
 ## Follow-ups
 
@@ -167,11 +192,9 @@ apt.foundrylinux.org (skill Step 6) — that is a release action, tracked below.
       repo's `packages/**/debian/*/` gitignore rule, which only excepts `man/`, `source/`,
       `patches/`. Changelog bumped to
       `-1foundry2`. See verification step 8 below.
-- [ ] Open the upstream PR for the `SOURCE_DATE_EPOCH` patch and record the URL in the patch's
-      `Forwarded:` header. Draft staged (title, body, clean-apply check against current upstream
-      master) at
-      [upstream-pr-draft.md](2026-08-05-package-x-emulators/upstream-pr-draft.md) — **not opened**,
-      per instructions; the user sends it.
+- [x] Open the upstream PR for the `SOURCE_DATE_EPOCH` patch and record the URL in the patch's
+      `Forwarded:` header. Opened as [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448)
+      on 2026-08-05. It is intentionally left untouched pending user review.
 - [ ] File a Debian ITP for `x-emulators` — GPL-2.0-or-later,
       [github.com/lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). Check
       [wnpp](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) for an existing RFP/ITP first. Note

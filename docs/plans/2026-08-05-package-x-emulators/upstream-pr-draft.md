@@ -1,8 +1,7 @@
 # Upstream PR draft — `SOURCE_DATE_EPOCH` reproducibility fix
 
-**Status: STAGED, NOT OPENED.** No fork was created, no branch was pushed, no PR was opened
-against [lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). This is the title/body for the user
-to use when they choose to send it.
+**Status: OPENED as [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448) on
+2026-08-05.** The PR is intentionally left untouched pending user review.
 
 ## Apply check against current upstream master (2026-08-05)
 
@@ -26,11 +25,10 @@ reconcile before opening the PR. (`git am` itself errored only on the sandbox's 
 `user.name`/`user.email` git config, not on the patch content — `git apply --check` is the
 authoritative "does this still apply" signal here and it passed.)
 
-## Do NOT touch `debian/patches/0001-honour-SOURCE_DATE_EPOCH.patch`'s `Forwarded:` header
+## Debian patch metadata
 
-It currently reads `Forwarded: not-yet`. Per instructions, this stays as-is until a real PR URL
-exists — once the user opens the PR, update it to `Forwarded:` followed by the PR's own
-github.com/lgblgblgb/xemu pull-request URL (whatever number GitHub assigns once opened).
+`debian/patches/0001-honour-SOURCE_DATE_EPOCH.patch` now records
+`Forwarded: https://github.com/lgblgblgb/xemu/pull/448`.
 
 ---
 

@@ -9,7 +9,7 @@ Description: honour SOURCE_DATE_EPOCH for the embedded build date
  https://reproducible-builds.org/specs/source-date-epoch/), keeping the
  existing git and date fallbacks untouched for normal developer builds.
 Author: Foundry Linux <packages@foundrylinux.org>
-Forwarded: not-yet
+Forwarded: https://github.com/lgblgblgb/xemu/pull/448
 Last-Update: 2026-08-05
 ---
 --- a/build/Makefile.common
