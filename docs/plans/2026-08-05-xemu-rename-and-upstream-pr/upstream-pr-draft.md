@@ -1,6 +1,10 @@
-# DRAFT upstream PR — replace `build/deb-build-simple.sh` with a Debian source package
+# Historical draft — Debian source packaging merged into upstream PR #448
 
-> ## ⛔ DO NOT POST — user approval required
+> **Posted 2026-08-05:** this draft was adapted and merged into
+> [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448), whose title is now
+> “build: add Debian source packaging and reproducible build dates”. The live PR keeps
+> `build/deb-build-simple.sh` alongside the new standard source-package path and is authoritative;
+> the text below is retained as drafting history.
 >
 > Target: [lgblgblgb/xemu](https://github.com/lgblgblgb/xemu). Posting is user-triggered, same rule as the
 > Debian ITP and the llvm-mos review comment.
@@ -9,7 +13,7 @@
 > [`docs/itp-drafts/xemu.md`](../../itp-drafts/xemu.md) → "Before filing: give upstream a heads-up"). This
 > PR lands better as a follow-up to a conversation than as a surprise 20-file diff.
 >
-> **Command, once approved:**
+> **Original proposed command (already superseded):**
 >
 > ```bash
 > gh repo fork lgblgblgb/xemu --clone --remote

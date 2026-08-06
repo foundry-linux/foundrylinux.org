@@ -2,7 +2,8 @@
 
 **Date:** 2026-08-05
 **Scope:** Swap two published package names in `foundry-apt`, drop the old ones from the live repo, port
-upstream's `.desktop` generation, and prepare (not open) an upstream PR replacing LGB's own `.deb` script.
+upstream's `.desktop` generation, and contribute the Debian source packaging through the existing
+upstream reproducibility PR.
 
 **No visible surface** beyond application-menu entries, which are covered by porting upstream's own
 `.desktop` template rather than inventing one — so no mockup bundle.
@@ -194,6 +195,7 @@ Status as of the first pass. Items 4–6 are gated on the in-flight rebuild and 
 
 ## Follow-ups
 
-- [ ] Open the upstream PR once approved; record the URL here.
+Completed 2026-08-05: [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448) now combines the
+`SOURCE_DATE_EPOCH` fix with the Debian source-package tree at commit `66b1a36`.
 - [ ] Investigate the 8 upstream targets not built by default (`xcx16`, `xzxspect`, `xrc2014`, `xc900`,
       `xpc`, `xrecpm`, …) — there may be more emulators available at no extra cost.
