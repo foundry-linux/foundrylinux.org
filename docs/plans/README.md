@@ -107,6 +107,7 @@ rows on commit.*
 | [Package xemu (original Xbox emulator) for apt.foundrylinux.org](2026-08-05-package-xemu.md) | Vendor xemu 0.8.136 as a .deb and add it to the light `foundry-emulators-consoles` bucket. | [`abcedd3`](https://github.com/foundry-linux/foundrylinux.org/commit/abcedd3) | Packaging |
 | [Package RPCS3 (PlayStation 3 emulator) for apt.foundrylinux.org](2026-08-05-package-rpcs3.md) | Blocked: upstream ships no submodule-bundling source archive; records the three candidate build approaches. | [`db3fdb6`](https://github.com/foundry-linux/foundrylinux.org/commit/db3fdb6) | Packaging |
 | [Package x-emulators (LGB's Xemu suite) for apt.foundrylinux.org](2026-08-05-package-x-emulators.md) | Vendor LGB's Commodore/Hungarian 8-bit emulator suite as a .deb — named x-emulators to avoid colliding with the unrelated Xbox `xemu` — and add it to `foundry-emulators-computers`. | [`60811e0`](https://github.com/foundry-linux/foundrylinux.org/commit/60811e0) | Packaging |
+| [Audit vendored upstreams for their own Debian packaging](2026-08-05-audit-upstream-packaging.md) | Close the `/package` gap between "is it in Debian" and "does upstream package it", and re-check the 30 packages vendored before the fix. | _PENDING_ | Packaging |
 
 ---
 
