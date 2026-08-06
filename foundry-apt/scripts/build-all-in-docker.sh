@@ -9,14 +9,15 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."   # foundry-apt/
 
-# Optional single-package filter, matching build-all.sh.
-PKG_FILTER="${1:-}"
+# Optional package filters, matching build-all.sh. Package names cannot contain
+# whitespace, so a space-separated environment value is safe to split below.
+PKG_FILTERS="$*"
 
 docker run --rm \
   -v "$(pwd):/work" \
   -w /work \
   -e DEBIAN_FRONTEND=noninteractive \
-  -e PKG_FILTER="$PKG_FILTER" \
+  -e PKG_FILTERS="$PKG_FILTERS" \
   ubuntu:26.04 \
   bash -c '
     set -euo pipefail
@@ -26,5 +27,6 @@ docker run --rm \
       curl ca-certificates pkg-config sudo \
       zip python3 \
       cmake qt6-base-dev qt6-declarative-dev
-    bash scripts/build-all.sh "$PKG_FILTER"
+    read -r -a filters <<< "$PKG_FILTERS"
+    bash scripts/build-all.sh "${filters[@]}"
   '

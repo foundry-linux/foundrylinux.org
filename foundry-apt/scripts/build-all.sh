@@ -4,6 +4,7 @@
 # Usage:
 #   bash scripts/build-all.sh            # build all packages (skip already-current .debs)
 #   bash scripts/build-all.sh foundry-welcome   # build one package by name
+#   bash scripts/build-all.sh xemu rpcs3 # build several packages by name
 #
 # Two layouts supported:
 #
@@ -26,8 +27,18 @@ cd "$(dirname "$0")/.."
 REPO_ROOT="$(pwd)"
 mkdir -p dist
 
-# Optional single-package filter (first positional arg).
-PKG_FILTER="${1:-}"
+# Optional package filters. No arguments preserves the all-package release path.
+PKG_FILTERS=("$@")
+
+package_selected() {
+    local candidate="$1" filter
+
+    (( ${#PKG_FILTERS[@]} == 0 )) && return 0
+    for filter in "${PKG_FILTERS[@]}"; do
+        [[ "$candidate" == "$filter" ]] && return 0
+    done
+    return 1
+}
 
 build_canonical() {
     local pkgdir="$1" name="$2"
@@ -92,8 +103,8 @@ fail=0
 for pkgdir in packages/*/; do
     name=$(basename "$pkgdir")
 
-    # Single-package filter.
-    if [[ -n "$PKG_FILTER" && "$name" != "$PKG_FILTER" ]]; then
+    # Optional one-or-more-package filter.
+    if ! package_selected "$name"; then
         continue
     fi
 

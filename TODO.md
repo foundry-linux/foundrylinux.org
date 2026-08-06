@@ -7,6 +7,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### apt-repo resilience — `task` vendored + source health-check
 
+- [T3] **Port per-package publishing to `apt.worldfoundry.org` after the foundry-apt path is proven** — add its missing `dist/` skip/filter logic, an R2-backed `worldfoundry-apt-dist` mirror, targeted dispatch input, and the same fail-closed completeness gate. See Phase 2 of the [plan](docs/plans/2026-08-05-per-package-publish.md).
 - [T3] **Vendor and package Flycast (Dreamcast)** — the one remaining sixth-generation gap. Confirmed **not** in 26.04 universe (`flycast`, `reicast`, `redream`, `lxdream`, `libretro-flycast` all absent). Actively maintained upstream (CMake). Same shape as xemu — user-supplied BIOS, not shipped — reuse that plan's structure. Needs its own plan before dispatch.
 - [T3] **Vendor and package RPCS3 (PlayStation 3)** — not in universe, AppImage-only upstream, requires user-supplied PS3 firmware (same licensing shape as xemu's MCPX/BIOS). Large → `-heavy` only. **PS4/PS5 and Xbox 360/One/Series stay out of scope**: shadPS4 is pre-alpha, Xenia is Windows-only, nothing exists for PS5 or Xbox One/Series. Needs its own plan before dispatch.
 
@@ -104,6 +105,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
+- [x] 2026-08-05 — [per-package-publish phase 1] Replaced foundry-apt's evictable GitHub Actions build cache with an authoritative R2-backed `dist/` mirror, added multi-package targeted dispatches, and put a fail-closed live-index completeness gate before aptly publication. See [plan](docs/plans/2026-08-05-per-package-publish.md).
 - [x] 2026-08-05 — [wf-dispatch] Cross-repo `apt-published` dispatch extracted to a `workflow_dispatch`-able workflow and fired end-to-end: `site-deploy` logged its first-ever `repository_dispatch` run. PAT re-minted (the old one was dead); weekly health check now fails red 21 days before expiry. See [plan](docs/plans/2026-08-05-activate-wf-dispatch.md).
 - 2026-08-05 — [package-x-emulators] `x-emulators 0~git20260129.40dfef0d-1foundry2` published in foundry-apt v1.5.42, installed and functionally verified from apt.foundrylinux.org, then added to the live wald3n.com/open-source inventory in v0.0.421. A project hook now blocks future package-release completion until both public surfaces pass. The Debian ITP remains separately tracked above. See [plan](docs/plans/2026-08-05-package-x-emulators.md).
 - [x] 2026-08-05 — [task-unvendored] Vendoring REVERSED by decision: task un-vendored (c65809e), consumers stay on Cloudsmith (verified live, no rotation recurrence); release v1.5.40 CI success — live index now serves xemu, not task. See [plan](docs/plans/2026-05-31-vendor-task-and-repo-health.md).
@@ -217,6 +219,8 @@ _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
 - [ ] **(triage)** `wbniv/wald3n.com/.github/workflows/deploy.yml` has its `push: tags:` trigger **commented out** — _from [2026-08-05-activate-wf-dispatch.md](docs/plans/2026-08-05-activate-wf-dispatch.md)_  <!-- fp:c7504e84fb650767 -->
 - [ ] **(triage)** `scripts/refresh-open-source-data.mjs` reads a **local sibling clone** (`../foundry-apt/packages`, — _from [2026-08-05-activate-wf-dispatch.md](docs/plans/2026-08-05-activate-wf-dispatch.md)_  <!-- fp:88a85b475d900faf -->
+- [ ] **(triage)** Changing the apt repo format, suite, or signing model. — _from [2026-08-05-per-package-publish.md](docs/plans/2026-08-05-per-package-publish.md)_  <!-- fp:0fb716d5d7d6c219 -->
+- [ ] **(triage)** Per-package *signing*. The `Release` file is one signed manifest for the suite; that is apt's design and is not something to work around. — _from [2026-08-05-per-package-publish.md](docs/plans/2026-08-05-per-package-publish.md)_  <!-- fp:fe23c8e4990b5f6f -->
 <!-- END auto-captured-deferrals -->
 <!-- triaged 2026-08-05: the two xemu-rename deferrals dropped — the upstream PR is drafted and held for approval (tracked in that plan and in the draft itself), and the "8 unbuilt targets" follow-up is now a curated item under "Packaging — new upstreams". -->
 <!-- triaged 2026-08-05: the three audit-upstream-packaging deferrals dropped — both follow-ups (CI guard, x-emulators binary-name divergence) are already in that plan's own Follow-ups section, and the [verify] row is redundant with the curated "Audit the 30 vendored upstreams" item above: the plan's verification steps cannot run until that item builds the audit script, so tracking it twice adds nothing. -->
