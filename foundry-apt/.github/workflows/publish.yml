@@ -45,15 +45,34 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y aptly gnupg rclone
 
+      - name: Restore secondary GitHub Actions cache
+        # R2 is authoritative. This cache is only a fast path and bootstraps the
+        # first R2 mirror from the last pre-mirror publish while it is still warm.
+        uses: actions/cache@v5
+        with:
+          path: dist
+          key: foundry-apt-dist-${{ github.sha }}
+          restore-keys: |
+            foundry-apt-dist-
+
       - name: Hydrate durable dist mirror from Cloudflare R2
         env:
+          TARGET_PACKAGES: ${{ inputs.packages }}
           RCLONE_CONFIG_R2_TYPE: s3
           RCLONE_CONFIG_R2_PROVIDER: Cloudflare
           RCLONE_CONFIG_R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
           RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           RCLONE_CONFIG_R2_ENDPOINT:          ${{ secrets.R2_ENDPOINT }}
           RCLONE_CONFIG_R2_REGION: auto
-        run: rclone copy R2:foundry-apt-dist/ ./dist/ --checksum --progress --transfers=8
+        run: |
+          if rclone copy R2:foundry-apt-dist/ ./dist/ --checksum --progress --transfers=8; then
+            exit 0
+          fi
+          if [[ -n "$TARGET_PACKAGES" ]]; then
+            echo "ERROR: R2 dist hydration failed during a targeted publish — refusing to continue." >&2
+            exit 1
+          fi
+          echo "R2 dist mirror is not available yet; continuing only because this is a full bootstrap build."
 
       - name: Build all .debs in ubuntu:26.04 (our distribution base)
         # All .debs MUST be built inside ubuntu:26.04 so that ${shlibs:Depends}
