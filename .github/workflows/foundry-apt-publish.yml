@@ -104,6 +104,7 @@ jobs:
           # sees a Release with hashes that don't match the cached old Packages.
           rclone sync ./public/ R2:foundry-apt/ \
             --progress --transfers=8 --checksum \
+            --exclude '.dist-cache/**' \
             --exclude 'Release' --exclude 'Release.gpg' --exclude 'InRelease' \
             --header-upload "Cache-Control:no-store"
 

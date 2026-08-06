@@ -70,7 +70,7 @@ jobs:
           RCLONE_CONFIG_R2_ENDPOINT:          ${{ secrets.R2_ENDPOINT }}
           RCLONE_CONFIG_R2_REGION: auto
         run: |
-          if rclone copy R2:foundry-apt-dist/ ./dist/ --checksum --progress --transfers=8; then
+          if rclone copy R2:foundry-apt/.dist-cache/ ./dist/ --checksum --progress --transfers=8; then
             exit 0
           fi
           if [[ -n "$TARGET_PACKAGES" && -z "$DIST_CACHE_KEY" ]]; then
@@ -182,6 +182,7 @@ jobs:
           # sees a Release with hashes that don't match the cached old Packages.
           rclone sync ./public/ R2:foundry-apt/ \
             --progress --transfers=8 --checksum \
+            --exclude '.dist-cache/**' \
             --exclude 'Release' --exclude 'Release.gpg' --exclude 'InRelease' \
             --header-upload "Cache-Control:no-store"
 
@@ -220,7 +221,7 @@ jobs:
           RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           RCLONE_CONFIG_R2_ENDPOINT:          ${{ secrets.R2_ENDPOINT }}
           RCLONE_CONFIG_R2_REGION: auto
-        run: rclone sync ./dist/ R2:foundry-apt-dist/ --checksum --progress --transfers=8
+        run: rclone sync ./dist/ R2:foundry-apt/.dist-cache/ --checksum --progress --transfers=8
 
       - name: Upload artifacts (always, for audit)
         uses: actions/upload-artifact@v7

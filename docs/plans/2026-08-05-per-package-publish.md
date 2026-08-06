@@ -53,10 +53,11 @@ We rebuild from source what we are already paying to store.
 
 ### 1. Replace the cache with an R2 `dist/` mirror
 
-Keep a flat mirror of `dist/` at `R2:foundry-apt-dist/` — the exact shape `build-all.sh` and `init-repo.sh` expect, so no flattening logic is needed on restore.
+Keep a flat mirror of `dist/` at `R2:foundry-apt/.dist-cache/` — the exact shape `build-all.sh` and `init-repo.sh` expect, so no flattening logic is needed on restore. The workflow credentials are scoped to the existing `foundry-apt` bucket, so the mirror is an excluded internal prefix rather than a separate bucket.
 
-- **Hydrate** at job start, before the build: `rclone copy R2:foundry-apt-dist/ ./dist/ --checksum`
-- **Persist** at job end, after a successful publish: `rclone sync ./dist/ R2:foundry-apt-dist/ --checksum`
+- **Hydrate** at job start, before the build: `rclone copy R2:foundry-apt/.dist-cache/ ./dist/ --checksum`
+- **Persist** at job end, after a successful publish: `rclone sync ./dist/ R2:foundry-apt/.dist-cache/ --checksum`
+- **Protect** the mirror during public repo sync: `--exclude '.dist-cache/**'`.
 
 Durable, no eviction, no size cap that matters, and it costs one extra R2 prefix. Cheaper than the compute it removes.
 
@@ -136,14 +137,14 @@ until the bucket permission issue below is resolved and verification steps 2,
 - Full bootstrap run [`31076135187`](https://github.com/foundry-linux/foundry-apt/actions/runs/31076135187)
   is currently in progress.
 
-### External blocker: R2 bucket access
+### R2 mirror location
 
-The repository's configured R2 credentials return `AccessDenied` when reading
-`R2:foundry-apt-dist/`. A full build may use the documented one-time bootstrap
-fallback, but a targeted build correctly fails closed when hydration fails.
-Before Phase 1 can be called proven, create/authorize the `foundry-apt-dist`
-bucket for the workflow token with read/write/list access. Phase 2 will likewise
-need `worldfoundry-apt-dist` authorized before its production proof.
+The first production attempt proved that the repository credentials cannot list
+a separate `foundry-apt-dist` bucket (`AccessDenied`). The signed public repo was
+already published successfully, but the final mirror-persist step failed. The
+mirror therefore lives under the authorized `foundry-apt` bucket at the excluded
+`.dist-cache/` prefix. Both publishing workflows exclude that prefix so a public
+repo sync cannot delete it.
 
 Phase 2 changes have been prepared and pass focused selector, completeness,
 ShellCheck, syntax, and diff checks locally. They remain uncommitted and
@@ -186,8 +187,8 @@ This is CI and publishing infrastructure; there is no UI, rendered page, or CLI 
 ## Verification
 
 1. **PASS (2026-08-05): Confirm the cache-eviction hypothesis** — v1.5.39 run 31020896519 had **0 `SKIP` lines** and rebuilt all **27 packages**. (The downloaded GitHub job log contains each build marker twice, for 54 raw matches.) The cache was empty/evicted; xemu was not the sole cost.
-2. **BLOCKED — R2 authorization: Hydrate works from empty** — clear `dist/`, run the hydrate step, confirm the restored `.deb` count matches the live repo's published count. Current workflow credentials receive `AccessDenied` for `foundry-apt-dist`.
-3. **BLOCKED by step 2: Targeted build skips the rest** — `workflow_dispatch` with `packages: foundry-emulators-consoles`; confirm exactly one package builds and the others report `SKIP`.
+2. **IN PROGRESS: Hydrate works from empty** — the mirror moved to the authorized `R2:foundry-apt/.dist-cache/` prefix after the separate bucket returned `AccessDenied`; rerun production to populate it, then confirm a second run hydrates it.
+3. **PARTIAL PASS (2026-08-06): Targeted build publishes one package** — `packages: rpcs3` built and published RPCS3 while retaining the complete live index. Repeat after step 2 to prove a mirror-backed targeted run.
 4. **PASS (focused test, 2026-08-05): The completeness gate fires** — a deliberately truncated synthetic `dist/` was rejected before publication; repeat in production after step 2.
 5. **No regression in the published repo** — after a targeted publish, the live `Packages.gz` count is unchanged (or +1), `apt-get update` succeeds in a clean `ubuntu:26.04`, and an unrelated package still installs.
 6. **Round-trip** — run a targeted publish twice; the second run rebuilds nothing and the published index is byte-identical apart from `Release` timestamps.
