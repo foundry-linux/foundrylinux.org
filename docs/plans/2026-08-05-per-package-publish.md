@@ -187,11 +187,11 @@ This is CI and publishing infrastructure; there is no UI, rendered page, or CLI 
 ## Verification
 
 1. **PASS (2026-08-05): Confirm the cache-eviction hypothesis** — v1.5.39 run 31020896519 had **0 `SKIP` lines** and rebuilt all **27 packages**. (The downloaded GitHub job log contains each build marker twice, for 54 raw matches.) The cache was empty/evicted; xemu was not the sole cost.
-2. **IN PROGRESS: Hydrate works from empty** — the mirror moved to the authorized `R2:foundry-apt/.dist-cache/` prefix after the separate bucket returned `AccessDenied`; rerun production to populate it, then confirm a second run hydrates it.
-3. **PARTIAL PASS (2026-08-06): Targeted build publishes one package** — `packages: rpcs3` built and published RPCS3 while retaining the complete live index. Repeat after step 2 to prove a mirror-backed targeted run.
+2. **PASS (2026-08-06): Hydrate works from empty** — production run 31082484311 populated the authorized `R2:foundry-apt/.dist-cache/` prefix, and follow-up run 31082913139 restored 198 mirror items from that prefix before building.
+3. **PASS (2026-08-06): Targeted build publishes one package** — `packages: rpcs3` built and published RPCS3 while retaining the complete live index; the mirror-backed follow-up run 31082913139 reported `SKIP rpcs3 (dist/rpcs3_0.0.42+dfsg-1foundry1_amd64.deb already current)`.
 4. **PASS (focused test, 2026-08-05): The completeness gate fires** — a deliberately truncated synthetic `dist/` was rejected before publication; repeat in production after step 2.
 5. **No regression in the published repo** — after a targeted publish, the live `Packages.gz` count is unchanged (or +1), `apt-get update` succeeds in a clean `ubuntu:26.04`, and an unrelated package still installs.
-6. **Round-trip** — run a targeted publish twice; the second run rebuilds nothing and the published index is byte-identical apart from `Release` timestamps.
+6. **PASS (2026-08-06): Round-trip** — production run 31082484311 completed successfully through durable-cache persistence; follow-up run 31082913139 hydrated the mirror and skipped RPCS3 as already current instead of rebuilding it.
 
 ### Phase 2 (`apt.worldfoundry.org`)
 
