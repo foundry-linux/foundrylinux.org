@@ -121,6 +121,13 @@ tasks:
       - task: release
         vars: { TAG: '{{.TAG}}' }
 
+  setup:
+    desc: "One-time and credential-upgrade setup for foundrylinux.org. Idempotent; --dispatch-pat-only re-provisions FOUNDRYLINUX_DISPATCH_PAT alone. See scripts/bootstrap.sh -h."
+    dir: "{{.ROOT_DIR}}"
+    interactive: true
+    cmds:
+      - bash scripts/bootstrap.sh {{.CLI_ARGS}}
+
   secrets:
     desc: "List secret names on github.com/{{.GH_REPO}}"
     cmds:

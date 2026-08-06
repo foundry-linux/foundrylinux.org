@@ -4,7 +4,14 @@
 # Steps 1b–9 — run once from the foundrylinux.org repo root.
 #
 # Usage:
-#   bash scripts/bootstrap.sh [--dry-run] [-h]
+#   task setup                              # preferred — wraps this script
+#   task setup -- --dispatch-pat-only       # re-provision one credential
+#   bash scripts/bootstrap.sh [--dry-run] [--dispatch-pat-only] [-h]
+#
+# --dispatch-pat-only is a *credential upgrade* on an already-bootstrapped repo:
+# it prompts for FOUNDRYLINUX_DISPATCH_PAT, stores it in the private R2 secrets
+# bucket, mirrors it to the wbniv/worldfoundry.org Actions secret, then exits
+# without touching Steps 1c-9. Same shape as wald3n.com's --trello-only.
 #
 # Step 1b requires a Cloudflare operator token. If CF_API_TOKEN is not already
 # exported, the script shows instructions to create it and prompts for the value.
@@ -46,6 +53,12 @@ CF_OPERATOR_TOKEN_NAME="foundry-operator"
 CF_ZONE_NAME="foundrylinux.org"
 
 DRY_RUN=false
+DISPATCH_PAT_ONLY=false
+
+# The cross-repo dispatch PAT: apt.worldfoundry.org's publish uses it to ping
+# foundrylinux.org so the packages page (which renders BOTH apt repos) rebuilds.
+DISPATCH_PAT_NAME="FOUNDRYLINUX_DISPATCH_PAT"
+DISPATCH_PAT_REPO="wbniv/worldfoundry.org"
 
 # Temp paths — all cleaned up on exit
 WORK_DIR=""
@@ -60,7 +73,9 @@ err()  { echo "  [error] $*" >&2; }
 die()  { err "$*"; exit 1; }
 
 usage() {
-    sed -n '2,14p' "$0" | sed 's/^# //'
+    # Strip "# " from text lines and bare "#" from blank separator lines —
+    # 's/^# //' alone leaves a stray '#' on every blank comment line.
+    sed -n '2,21p' "$0" | sed 's/^#\( \|$\)//'
     exit 0
 }
 
@@ -110,9 +125,10 @@ r2_put_secret() {
 
 for arg in "$@"; do
     case "$arg" in
-        -h|--help)  usage ;;
-        --dry-run)  DRY_RUN=true ;;
-        *)          die "Unknown argument: $arg" ;;
+        -h|--help)             usage ;;
+        --dry-run)             DRY_RUN=true ;;
+        --dispatch-pat-only)   DISPATCH_PAT_ONLY=true ;;
+        *)                     die "Unknown argument: $arg" ;;
     esac
 done
 
@@ -162,7 +178,11 @@ R2_SECRET_ACCESS_KEY="${R2_SECRET_ACCESS_KEY:-}"
 R2_DEV_HOSTNAME=""
 
 echo ""
-info "Bootstrap: Steps 1b–9 for ${GH_REPO}"
+if $DISPATCH_PAT_ONLY; then
+    info "Credential upgrade only — Steps 1c–9 will be skipped"
+else
+    info "Bootstrap: Steps 1b–9 for ${GH_REPO}"
+fi
 echo ""
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -216,6 +236,53 @@ else
 fi
 
 R2_ENDPOINT="https://${CF_ACCOUNT_ID:-DRY_RUN}.r2.cloudflarestorage.com"
+
+# ════════════════════════════════════════════════════════════════════════════
+# Credential upgrade — --dispatch-pat-only exits here
+# ════════════════════════════════════════════════════════════════════════════
+# Placed after 1b because backup-secret.sh needs a resolved CF_ACCOUNT_ID, and
+# before 1c because everything from there on is first-run provisioning that an
+# already-bootstrapped repo must not repeat.
+
+if $DISPATCH_PAT_ONLY; then
+    echo ""
+    info "Credential upgrade: ${DISPATCH_PAT_NAME} → ${DISPATCH_PAT_REPO}"
+    echo ""
+    echo "  Create a fine-grained PAT at:"
+    echo "  https://github.com/settings/personal-access-tokens/new"
+    echo ""
+    echo "    Token name:      ${DISPATCH_PAT_NAME} (${DISPATCH_PAT_REPO})"
+    echo "                     — this is what the expiry-warning email shows, so name it"
+    echo "                       after the secret and the repo that HOLDS it, not the target."
+    echo "    Resource owner:  ${GH_ORG}          (the org — NOT wbniv)"
+    echo "    Repository:      Only select repositories → ${GH_ORG}/foundrylinux.org"
+    echo "    Permissions:     Contents: Read and write   (Metadata: Read is implicit)"
+    echo "                     — NOT Actions; POST /dispatches is gated on Contents."
+    echo "    Expiration:      1 year"
+    echo ""
+
+    if $DRY_RUN; then
+        echo "  [dry-run] bash scripts/backup-secret.sh ${DISPATCH_PAT_NAME} --gh-repo ${DISPATCH_PAT_REPO}"
+        exit 0
+    fi
+
+    # Delegate to backup-secret.sh rather than re-implementing: it reads the
+    # value from /dev/tty (never argv, never shell history), PUTs it to the
+    # private secrets bucket, reads it back and compares sha256, then mirrors it
+    # to the Actions secret via stdin.
+    CF_API_TOKEN="$CF_API_TOKEN" CF_ACCOUNT_ID="$CF_ACCOUNT_ID" \
+        bash "${REPO_ROOT}/scripts/backup-secret.sh" \
+            "${DISPATCH_PAT_NAME}" --gh-repo "${DISPATCH_PAT_REPO}" \
+        || die "Failed to store ${DISPATCH_PAT_NAME}"
+
+    echo ""
+    ok "Done. Verify the leg fires:"
+    echo "    gh workflow run notify-foundrylinux.yml --repo ${DISPATCH_PAT_REPO}"
+    echo "    gh run list --repo ${DISPATCH_PAT_REPO} --workflow notify-foundrylinux.yml --limit 1"
+    echo "    gh run list --repo ${GH_ORG}/foundrylinux.org --workflow site-deploy.yml --limit 1"
+    echo "      → expect a run with event 'repository_dispatch'"
+    exit 0
+fi
 
 # ════════════════════════════════════════════════════════════════════════════
 # Step 1c — Create private secrets bucket and store operator token

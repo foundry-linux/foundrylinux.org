@@ -141,23 +141,24 @@ the token value is scripted.
    - **Expiration:** 1 year; record the date below so the next expiry is anticipated rather than
      discovered mid-publish.
 2. If the org requires approval for fine-grained PATs, approve it in the org's settings.
-3. Store it with the project's own credential path — **not** a bare `gh secret set`, and never by
-   pasting the value into a chat transcript:
+3. Store it via the house credential path — **not** a bare `gh secret set`, and never by pasting the
+   value into a chat transcript:
 
    ```bash
-   task secret-set NAME=FOUNDRYLINUX_DISPATCH_PAT REPO=wbniv/worldfoundry.org
+   task setup -- --dispatch-pat-only
    ```
 
-   That wraps [`scripts/backup-secret.sh`](../../scripts/backup-secret.sh), which reads the value from
-   a hidden `/dev/tty` prompt (so it stays out of shell history, the process list, and any transcript),
-   PUTs it to the private `foundry-linux-secrets` R2 bucket, **reads it back and compares sha256**, then
-   mirrors it to the GitHub Actions secret via stdin rather than argv. A bare `gh secret set` would set
-   the secret but skip the disaster-recovery copy, leaving the token single-homed — the thing
+   This prints the exact PAT fields above, then delegates to
+   [`scripts/backup-secret.sh`](../../scripts/backup-secret.sh), which reads the value from a hidden
+   `/dev/tty` prompt (keeping it out of shell history, the process list, and any transcript), PUTs it
+   to the private `foundry-linux-secrets` R2 bucket, **reads it back and compares sha256**, then
+   mirrors it to the Actions secret via stdin rather than argv. A bare `gh secret set` would set the
+   secret but skip the disaster-recovery copy, leaving the token single-homed — exactly what
    [the infra mandate](../../CLAUDE.md) exists to prevent.
 
-   Prerequisite: `CF_API_TOKEN` + `CF_ACCOUNT_ID`, from the environment or `.foundry/bootstrap.env`.
-   That cache is absent on a fresh checkout (it is gitignored); `bash scripts/bootstrap.sh` is
-   idempotent and will re-populate it.
+   It re-prompts for the Cloudflare operator token if `.foundry/bootstrap.env` is absent (it is
+   gitignored, so a fresh checkout has none), and exits before Step 1c — nothing from the first-run
+   provisioning is repeated.
 4. Re-run verification steps 2–4.
 
 **PAT expiry:** _(record on re-mint)_
