@@ -26,16 +26,33 @@ There are two unrelated upstreams both called "xemu":
 - [`lgblgblgb/xemu`](https://github.com/lgblgblgb/xemu) — this package,
   Gabor Lenart's suite of Commodore and Hungarian 8-bit emulators.
 
-Since the bare name is unavailable to us, we ship LGB's suite under its
-own full project name, `x-emulators`, mirroring how we resolved the
-identical collision between `asar` (SNES assembler) and the existing
-`asar` name — see the `asar-snes-assembler` draft. We flag rather than
-assume this is what Debian will want: Debian may already have a view on
-`xemu` (the Xbox one isn't in Debian either, at last check), and a
-Debian ITP reviewer/mentor may propose a different disambiguation
-(e.g. `xemu-8bit`, `lgb-xemu`). The ITP bug should present the reasoning
-above and let ftp-master/mentors weigh in, rather than presenting
-`x-emulators` as already settled.
+Neither name is currently taken in Debian — as of 2026-08-05 there is no
+`xemu` source or binary package in the archive (`sources.debian.org`
+returns no exact match; only the unrelated `gxemul`), and the Xbox
+emulator has no ITP either. So this is not a forced rename: it is a
+deliberate allocation of two names to two upstreams, and we would like
+Debian to adopt the same one:
+
+- **`xemu` → the Xbox emulator.** That is the name the project uses for
+  itself and ships as its binary, it is how its users search for it, and
+  it is the larger and more widely known of the two.
+- **`x-emulators` → this suite.** Not an invented disambiguation:
+  "X-Emulators" is upstream's own full project name, so the package is
+  still named after itself rather than after the conflict.
+
+The alternative — giving `xemu` to whichever project files first and
+pushing the other to a qualified name — produces one package named after
+its upstream and one named after an accident. Allocating both up front
+means each name matches its own upstream's self-description. This
+mirrors how the `asar` collision was resolved here (see the
+`asar-snes-assembler` draft), with the difference that there we were
+disambiguating against a name already in use, and here we are proposing
+the split before either is claimed.
+
+That said, the name is ftp-master's call, not ours. If a
+reviewer/mentor prefers a different disambiguation
+(e.g. `xemu-8bit`, `lgb-xemu`), we will follow it — but the ITP should
+put the reasoning above rather than treat the name as arbitrary.
 
 ## ITP draft
 

@@ -33,14 +33,19 @@ findings that change what happens next for several packages.
    probably be one ITP, not two** — they currently duplicate the same
    asset-provider library across two separate Debian source packages.
    See both drafts for the recommendation to combine before filing.
-9. **`x-emulators` collides on the bare name `xemu`** with the
-   unrelated original-Xbox emulator (`xemu-project/xemu`, already
-   packaged here as `xemu`) — we propose filing under upstream's own
-   full name `x-emulators` rather than `xemu`, following the same
-   precedent as `asar` → `asar-snes-assembler`, but present it as a
-   proposal for Debian to weigh in on, not a settled decision. Builds
-   cleanly from source (no prebuilt-binary issue like `ghidra`/`ldtk`/
-   `mesen2`/`pvsneslib`). See [x-emulators.md](x-emulators.md).
+9. **Two unrelated upstreams are both called "xemu"** — the original-Xbox
+   emulator (`xemu-project/xemu`, packaged here as `xemu`) and LGB's
+   Commodore/Hungarian 8-bit suite (`lgblgblgb/xemu`). Neither name is
+   taken in Debian yet (no `xemu` source or binary package as of
+   2026-08-05, and no ITP for the Xbox one), so this is not a forced
+   rename: we deliberately allocate `xemu` to the Xbox emulator (its own
+   name, the better-known project) and `x-emulators` to the suite
+   (upstream's own full project name), so each package is named after
+   itself rather than after the conflict. Same spirit as
+   `asar` → `asar-snes-assembler`, but proposed before either name is
+   claimed. Final call is ftp-master's. Builds cleanly from source (no
+   prebuilt-binary issue like `ghidra`/`ldtk`/`mesen2`/`pvsneslib`).
+   See [x-emulators.md](x-emulators.md).
 
 ## Full table
 
@@ -71,7 +76,7 @@ findings that change what happens next for several packages.
 | [tilemap-studio](tilemap-studio.md) | LGPL-3 (+ FLTK, statically linked) | none found | ready to file (review static-link justification) |
 | [vgmstream](vgmstream.md) | ISC-vgmstream | none found | ready to file |
 | [wla-dx](wla-dx.md) | GPL-2+ | none found | ready to file (file early — pvsneslib depends on it) |
-| [x-emulators](x-emulators.md) | GPL-2.0-or-later | none found | ready to file (naming disambiguation vs. Xbox `xemu`, see note) |
+| [x-emulators](x-emulators.md) | GPL-2.0-or-later | none found | ready to file (name deliberately split from the Xbox `xemu`; neither taken in Debian — see note) |
 
 ## Suggested filing order, if/when filing is authorized
 
