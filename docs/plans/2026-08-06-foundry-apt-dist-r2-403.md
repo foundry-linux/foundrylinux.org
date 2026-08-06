@@ -71,17 +71,33 @@ For each run, record:
 - signed live `InRelease`/`Packages` consistency result; and
 - confirmation that `.dist-cache/` is absent from all generated APT indexes.
 
+### Result — PASS (2026-08-06)
+
+Implementation commit: `a00480d` (`fix(foundry-apt): persist dist cache in authorized bucket`).
+
+Two targeted no-change publishes of `xemu` completed green:
+
+| proof | run | result |
+|---|---:|---|
+| bootstrap/persist | `31083910889` | **PASS** — 198 durable artifacts checked, current `xemu` skipped, 58 local `.deb`s matched 58 live packages, repository signed/synced/verified, and all 198 artifacts persisted without `403` |
+| hydrate round-trip | `31084186722` | **PASS** — hydrated and checked all 198 artifacts from `R2:foundry-apt/.dist-cache/`, skipped current `xemu`, passed 58/58 completeness, and persisted all 198 artifacts again; workflow conclusion `success` |
+
+The live index still contains `xemu`, `xemu-xbox`, and the unrelated control package
+`asar-snes-assembler`; it contains neither an `x-emulators` stanza nor a `.dist-cache/` filename. A
+clean Ubuntu 26.04 container accepted the signed repository and resolved candidates
+`xemu 0~git20260129.40dfef0d-1foundry3` and `xemu-xbox 0.8.136-1foundry2`.
+
 ## Verification
 
-- [ ] ShellCheck passes for the modified workflow scripts.
-- [ ] Public sync excludes `.dist-cache/**`.
-- [ ] Bootstrap targeted publish persists the complete flat mirror successfully.
-- [ ] Second targeted publish hydrates from the durable mirror and skips current artifacts.
-- [ ] Both workflow runs conclude green.
-- [ ] Live `Packages` still contains `xemu`, `xemu-xbox`, and an unrelated control package.
-- [ ] Live `Packages` contains no `x-emulators` stanza and no `.dist-cache/` filename.
-- [ ] Clean Ubuntu 26.04 `apt-get update` succeeds against the signed repository.
-- [ ] No R2 access key, secret, endpoint, or probe payload is written to logs or commits.
+- [x] ShellCheck passes for the modified workflow scripts.
+- [x] Public sync excludes `.dist-cache/**`.
+- [x] Bootstrap targeted publish persists the complete flat mirror successfully.
+- [x] Second targeted publish hydrates from the durable mirror and skips current artifacts.
+- [x] Both workflow runs conclude green.
+- [x] Live `Packages` still contains `xemu`, `xemu-xbox`, and an unrelated control package.
+- [x] Live `Packages` contains no `x-emulators` stanza and no `.dist-cache/` filename.
+- [x] Clean Ubuntu 26.04 `apt-get update` succeeds against the signed repository.
+- [x] No R2 access key, secret, endpoint, or probe payload is written to logs or commits.
 
 ## Rollback
 
