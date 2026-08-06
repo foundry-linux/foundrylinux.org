@@ -66,38 +66,44 @@ order of preference is:
 The ITP should put the reasoning above rather than treat the name as
 arbitrary.
 
-## Before filing: contact upstream
+## Before filing: give upstream a heads-up
 
-**Do this before the ITP goes to the BTS.** The Developer's Reference
-recommends making upstream aware of Debian packaging in general, but here
-there are three specific reasons, one of which is close to blocking:
+Courtesy and coordination, not permission. The Developer's Reference
+recommends making upstream aware of Debian packaging, and it is simply
+better that he hears "your software is being packaged for Debian" from us
+than discovers an ITP bug with his project's name on it. Send it; do not
+block on a reply.
 
-1. **Upstream already ships his own Debian package, and it is named
-   `xemu`.** `build/deb-build-simple.sh` in the source tree ("a very lame
-   binary-level DEB package builder", (C) LGB) sets `PROJECT="xemu"` and
-   emits `xemu_<cdate>_<arch>.deb`, installing to `/usr/bin` and
-   `/usr/share/xemu`. The naming decision above is therefore not ours to
-   make unilaterally: we would be proposing that Debian's `xemu` mean the
-   *Xbox* emulator, while this upstream already distributes a `.deb`
-   under exactly that name. His view should carry real weight here — he
-   may object, or may be glad to cede it once shown the collision.
-2. **The absence of tagged releases is our biggest obstacle, and only
-   upstream can remove it.** Debian is unenthusiastic about snapshot
-   versioning in main; one question — "would you consider tagging
-   releases?" — could turn `0~git20260129.40dfef0d` into a normal
-   upstream version and materially improve this ITP's prospects.
-3. **We already have an open channel.** PR
-   [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448) (our
-   `SOURCE_DATE_EPOCH` reproducibility fix) is live with him now, so this
-   is a natural follow-up rather than a cold approach.
+The one thing genuinely worth checking first is **whether he is already
+doing this**. He plainly has an interest in Debian packaging — the source
+tree carries `build/deb-build-simple.sh`, his own binary `.deb` builder
+("a very lame binary-level DEB package builder", (C) LGB), which sets
+`PROJECT="xemu"` and installs to `/usr/bin` and `/usr/share/xemu`. Someone
+who has already written a `.deb` script may well have Debian plans, a
+preferred packaging arrangement, or a maintainer lined up. That is the
+actual "stepping on toes" risk here, and one message removes it.
 
-Asks, in priority order: (a) does he object to `xemu` going to the Xbox
-emulator and `x-emulators` to his suite, or would he prefer `xemu-8bit`
-or something else; (b) would he consider tagging releases; (c) does he
-want to be listed as upstream contact and notified of Debian bugs.
+Worth raising while we have his attention:
 
-**Record his answer in this file before filing, and revisit the naming
-section above in light of it.**
+- **Tagged releases.** Not a demand, but the single change that would most
+  improve this package's standing: Debian is unenthusiastic about snapshot
+  versioning in main, and `0~git20260129.40dfef0d` exists only because
+  upstream publishes no tags. He may simply never have had a reason to tag.
+- **Naming, as information rather than a question.** Debian will want to
+  disambiguate his "xemu" from the unrelated Xbox emulator of the same
+  name; our thinking is in the section above. He may have a view and it is
+  worth hearing, but the final call belongs to ftp-master, not to us and
+  not to him — so tell him what is likely to happen rather than asking him
+  to decide it.
+- **Staying in the loop** — whether he wants to be listed as upstream
+  contact and have Debian bugs forwarded.
+
+**Timing:** PR [lgblgblgb/xemu#448](https://github.com/lgblgblgb/xemu/pull/448)
+(our `SOURCE_DATE_EPOCH` reproducibility fix) is open with him now, so this
+is a natural follow-up on an existing thread rather than a cold approach.
+
+Note anything he raises in this file. Only a "please don't" or a
+"packaging is already under way" should actually stop the filing.
 
 ## ITP draft
 

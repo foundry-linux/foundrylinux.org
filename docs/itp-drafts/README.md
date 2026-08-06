@@ -43,13 +43,13 @@ findings that change what happens next for several packages.
    (upstream's own full project name), so each package is named after
    itself rather than after the conflict. Same spirit as
    `asar` → `asar-snes-assembler`, but proposed before either name is
-   claimed. Final call is ftp-master's. **Contact upstream before filing:**
-   LGB already ships his own Debian package named `xemu`
-   (`build/deb-build-simple.sh`), so the name split is not ours to decide
-   unilaterally, and he is also the only one who can give us tagged
-   releases instead of a git snapshot. Builds cleanly from source (no
-   prebuilt-binary issue like `ghidra`/`ldtk`/`mesen2`/`pvsneslib`).
-   See [x-emulators.md](x-emulators.md).
+   claimed. Final call is ftp-master's. **Send upstream a heads-up before
+   filing** — courtesy, and he ships his own `.deb` builder
+   (`build/deb-build-simple.sh`), so check he is not already packaging it
+   for Debian himself; also a good moment to ask about tagged releases,
+   which would replace our git-snapshot version. Builds cleanly from
+   source (no prebuilt-binary issue like `ghidra`/`ldtk`/`mesen2`/
+   `pvsneslib`). See [x-emulators.md](x-emulators.md).
 
 ## Full table
 
@@ -80,7 +80,7 @@ findings that change what happens next for several packages.
 | [tilemap-studio](tilemap-studio.md) | LGPL-3 (+ FLTK, statically linked) | none found | ready to file (review static-link justification) |
 | [vgmstream](vgmstream.md) | ISC-vgmstream | none found | ready to file |
 | [wla-dx](wla-dx.md) | GPL-2+ | none found | ready to file (file early — pvsneslib depends on it) |
-| [x-emulators](x-emulators.md) | GPL-2.0-or-later | none found | **contact upstream first** (he ships his own `.deb` named `xemu`; also ask about tagged releases) |
+| [x-emulators](x-emulators.md) | GPL-2.0-or-later | none found | ready to file (send upstream a heads-up first — he ships his own `.deb` script, so check he isn't packaging it himself) |
 
 ## Suggested filing order, if/when filing is authorized
 
