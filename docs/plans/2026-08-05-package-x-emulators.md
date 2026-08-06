@@ -179,6 +179,25 @@ All steps run 2026-08-05 in a clean `ubuntu:26.04` container.
     **PASS** — the signed package is published, indexed, installable, and validated from the live
     repository.
 
+9. **Functional check of the live `-1foundry2` package.** Step 8 confirms the published package
+    installs and carries its man pages; this confirms it still *works*, across the desktop/icon
+    changes that landed in `-1foundry2` after the original verification.
+
+    Installed from `apt.foundrylinux.org` in a fresh Ubuntu 26.04 container via the signed repo,
+    then ran the bare-metal 65CE02 ASR kernel on the live `xc65`:
+
+    ```text
+    Package: x-emulators
+    Status: install ok installed
+    Version: 0~git20260129.40dfef0d-1foundry2
+    desktop entries: 7   icon paths: 4
+    flag=0x5a result=0xe0e8
+    ```
+
+    **PASS** — `0xE0E8` matches the host oracle, so the published package still reproduces the
+    llvm-mos #585 validation result. This is the check that would catch a packaging change breaking
+    the emulator itself, which a man-page/file-presence test cannot.
+
 ## Follow-ups
 
 - [x] Ship `.desktop` files and icons for the seven GUI emulators. Done 2026-08-05: static
