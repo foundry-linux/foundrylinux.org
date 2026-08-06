@@ -22,3 +22,4 @@ docs/investigations/.fetch-progress.log
 site/index.html
 site/packages.html
 site/packages-data.json
+.claude/state/

@@ -217,6 +217,11 @@ tasks:
     cmds:
       - npx --yes wrangler pages deploy site/ --project-name foundrylinux-org --branch main
 
+  package-publish:complete:
+    desc: "Verify the refreshed/deployed wald3n.com open-source inventory and clear the package-publish guard"
+    cmds:
+      - bash scripts/complete-package-publish.sh
+
   bump:
     desc: "Sync and auto-increment patch version (e.g. v0.0.3 → v0.0.4)"
     cmds:

@@ -2,6 +2,16 @@
   "hooks": {
     "PostToolUse": [
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/mark-package-publish.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
         "matcher": "Write|Edit",
         "hooks": [
           {
@@ -15,6 +25,17 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/check-todo-done.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-package-publish-complete.sh",
+            "timeout": 10
           }
         ]
       }
