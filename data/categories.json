@@ -126,6 +126,18 @@
       "in_edition_tier": "sprite"
     },
     {
+      "slug": "video",
+      "title": "Video",
+      "role": "Lossless trim · cut · remux",
+      "blurb": "Lossless video and audio editing — LosslessCut trims, cuts, merges and remuxes by stream copy instead of re-encoding, so cutting gameplay capture, trailers and devlog footage costs seconds and no quality.",
+      "icon": "VgmstreamIcon",
+      "metapackages": [],
+      "standalone_packages": [
+        "losslesscut"
+      ],
+      "in_edition_tier": "sprite"
+    },
+    {
       "slug": "games",
       "title": "Games & reimplementations",
       "role": "FOSS engines · free games",

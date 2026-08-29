@@ -1,0 +1,35 @@
+losslesscut (3.69.0-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of LosslessCut 3.69.0.
+  * Repackages upstream's official self-contained Linux application bundle.
+    The payload is taken from the published AppImage rather than the .tar.bz2:
+    both carry the identical Electron and FFmpeg tree, but the AppImage also
+    ships upstream's own 512x512 PNG icon and desktop entry, which the
+    tarball omits.
+  * The AppImage is unpacked at build time and its contents installed to
+    /usr/lib/losslesscut. Nothing mounts an AppImage at runtime, so the
+    package needs no FUSE support.
+  * Bundled FFmpeg 8.0 is retained. LosslessCut resolves it relative to its
+    own resources directory and the binaries are $ORIGIN-relative, so the
+    tree relocates cleanly; no system ffmpeg is required or consulted.
+  * Upstream ships no Debian packaging of its own -- no debian/ directory,
+    no .deb build script, and no PPA, Launchpad, OBS or COPR presence. Their
+    Linux distribution channels are the AppImage, the tarball, Snap and
+    Flathub (no.mifi.losslesscut). The binary package name losslesscut
+    matches upstream's own binary, Snap and desktop-entry naming; the
+    Repology project slug is lossless-cut, recorded in X-Repology-Project.
+  * chrome-sandbox is installed setuid root so Electron uses the SUID
+    sandbox. Upstream's AppImage sidesteps this by launching with
+    --no-sandbox; shipping the helper correctly keeps the renderer sandbox
+    enabled instead.
+  * The AppDir's six bundled compatibility shims under usr/lib are not
+    installed. libgconf-2.so.4 needs libgconf-2-4, which no longer exists in
+    26.04, and libappindicator.so.1/libindicator.so.7 are GTK2 and need
+    libdbusmenu-gtk4, which has no installation candidate — their own
+    dependencies are unsatisfiable on this target. libnotify.so.4,
+    libXtst.so.6 and libXss.so.1 are superseded by libnotify4, libxtst6 and
+    libxss1 from the archive; because Electron dlopens those three rather
+    than linking them, dh_shlibdeps cannot see them and they are listed in
+    Depends explicitly.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 29 Aug 2026 16:38:09 -0600

@@ -15,6 +15,7 @@ Depends: ${misc:Depends},
  foundry-art,
  foundry-trackers,
  foundry-daw,
+ losslesscut,
  digikam,
  showfoto
 Description: Foundry Linux retro / graphics / audio edition (anvil + heavy art + audio)
@@ -27,4 +28,5 @@ Description: Foundry Linux retro / graphics / audio edition (anvil + heavy art +
    * foundry-art             Krita, GIMP, Inkscape, MyPaint, Tux Paint
    * foundry-trackers        MilkyTracker, Schism, Furnace, openmpt123
    * foundry-daw             Ardour, Audacity, LMMS, Rosegarden, Hydrogen, Qtractor, Mixxx
+   * losslesscut             lossless video/audio trimming, cutting and remuxing
    * digikam + showfoto      photo library management and standalone photo editor

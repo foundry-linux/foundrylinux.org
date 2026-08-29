@@ -1,3 +1,12 @@
+foundry-sprite (1.0.2) resolute; urgency=medium
+
+  * Add losslesscut — lossless video/audio trimming, cutting and remuxing.
+    Sprite is the multimedia content-creation edition and had no video tool;
+    this fills that gap for cutting gameplay capture, trailers and devlogs.
+    See docs/plans/2026-08-29-package-losslesscut.md.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 29 Aug 2026 16:38:09 -0600
+
 foundry-sprite (1.0.1) resolute; urgency=medium
 
   * Add digikam and showfoto — photo library and standalone photo editor,

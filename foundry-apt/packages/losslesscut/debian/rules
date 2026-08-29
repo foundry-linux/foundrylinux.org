@@ -1,0 +1,133 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+PKG     = losslesscut
+DESTDIR = $(CURDIR)/debian/$(PKG)
+APPROOT = $(DESTDIR)/usr/lib/losslesscut
+
+# Payload copied out of the unpacked AppImage. AppDir-only metadata (AppRun,
+# .DirIcon, the AppImage desktop entry and icon symlink) is deliberately left
+# behind; the desktop entry and icon we ship are installed separately below.
+PAYLOAD = chrome-sandbox chrome_crashpad_handler chrome_100_percent.pak \
+          chrome_200_percent.pak icudtl.dat libEGL.so libGLESv2.so \
+          libffmpeg.so libvk_swiftshader.so libvulkan.so.1 locales \
+          losslesscut resources resources.pak snapshot_blob.bin \
+          v8_context_snapshot.bin vk_swiftshader_icd.json \
+          LICENSE.electron.txt LICENSES.chromium.html
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# pre-built upstream application bundle — no configure step
+
+override_dh_auto_build:
+	# pre-built upstream application bundle — no build step
+
+override_dh_auto_test:
+	# no test suite ships in the binary distribution
+
+override_dh_auto_install:
+	install -d $(APPROOT) $(DESTDIR)/usr/bin
+	for item in $(PAYLOAD); do \
+	    if [ -e "$(CURDIR)/$$item" ]; then \
+	        cp -a "$(CURDIR)/$$item" $(APPROOT)/; \
+	    else \
+	        echo "ERROR: expected payload item missing: $$item" >&2; exit 1; \
+	    fi; \
+	done
+	# The AppDir's usr/lib holds six compatibility shims for distributions
+	# far older than our target, and they are deliberately NOT installed:
+	#   libgconf-2.so.4      GConf; libgconf-2-4 no longer exists in 26.04
+	#   libappindicator.so.1 GTK2 tray; needs libdbusmenu-gtk4, which has no
+	#   libindicator.so.7    installation candidate in 26.04
+	#   libnotify.so.4       superseded by libnotify4 0.8.8 in universe
+	#   libXtst.so.6         superseded by libxtst6
+	#   libXss.so.1          superseded by libxss1
+	# Their own dependencies are unsatisfiable on 26.04, so shipping them
+	# would be dead weight. The three that Electron actually dlopens are
+	# listed in Depends: instead, and come from the archive.
+	# Launcher. The Electron binary has RPATH $ORIGIN and the bundled ffmpeg
+	# resolves its libav* siblings relative to $ORIGIN too, so the tree is
+	# fully relocatable and the launcher needs no environment setup at all.
+	printf '%s\n' \
+	    '#!/bin/sh' \
+	    '# LosslessCut launcher — Foundry Linux' \
+	    'exec /usr/lib/losslesscut/losslesscut "$$@"' \
+	    > $(DESTDIR)/usr/bin/losslesscut
+	chmod 755 $(DESTDIR)/usr/bin/losslesscut
+	# Desktop entry and the 512x512 icon upstream ships inside the AppImage.
+	install -D -m 0644 debian/losslesscut.desktop \
+	    $(DESTDIR)/usr/share/applications/losslesscut.desktop
+	install -D -m 0644 $(CURDIR)/usr/share/icons/hicolor/512x512/apps/losslesscut.png \
+	    $(DESTDIR)/usr/share/icons/hicolor/512x512/apps/losslesscut.png
+	install -D -m 0644 debian/losslesscut.appdata.xml \
+	    $(DESTDIR)/usr/share/metainfo/no.mifi.losslesscut.appdata.xml
+	# Upstream's ffmpeg build passes its rpath flag through unquoted, leaving
+	# the literal string "$$ORIGIN:-Wl:../lib" in the RPATH of ffmpeg and
+	# ffprobe. The "../lib" component is resolved relative to the working
+	# directory, so a hostile cwd could inject libraries — lintian rightly
+	# calls this an error. Only $$ORIGIN is actually needed, since the libav*
+	# libraries sit beside the binaries; rewrite the RPATH to just that.
+	for b in ffmpeg ffprobe; do \
+	    patchelf --set-rpath '$$ORIGIN' $(APPROOT)/resources/$$b; \
+	    patchelf --print-rpath $(APPROOT)/resources/$$b; \
+	done
+	# The upstream archive marks nearly everything executable. Normalise to
+	# 0644, then restore +x only where it belongs.
+	find $(APPROOT) -type f -exec chmod 644 {} +
+	find $(APPROOT) -type f -print0 \
+	    | xargs -0 file \
+	    | grep ": ELF " \
+	    | cut -d: -f1 \
+	    | xargs -r chmod 755
+	# Restore +x on shebanged scripts, testing only the first two bytes so
+	# binary files containing "#!" internally do not false-match.
+	find $(APPROOT) -type f -print0 \
+	    | xargs -0 -I{} sh -c \
+	      'head -c 2 "$$1" | grep -qF "#!" && chmod 755 "$$1" || true' -- {}
+
+override_dh_fixperms:
+	dh_fixperms
+	# dh_fixperms propagates +x but never adds it, and only normalises the
+	# standard binary directories — re-apply it inside /usr/lib/losslesscut.
+	find $(APPROOT) -type f -print0 \
+	    | xargs -0 file \
+	    | grep ": ELF " \
+	    | cut -d: -f1 \
+	    | xargs -r chmod 755
+	find $(APPROOT) -type f -print0 \
+	    | xargs -0 -I{} sh -c \
+	      'head -c 2 "$$1" | grep -qF "#!" && chmod 755 "$$1" || true' -- {}
+
+override_dh_strip:
+	dh_strip
+	# dh_strip's objcopy --add-gnu-debuglink resets the mode on any ELF file
+	# it rewrites, and runs after dh_fixperms — so restore +x last. Shared
+	# libraries stay 0644 per Debian Policy 8.1.
+	find $(APPROOT) -type f ! -name "*.so" ! -name "*.so.*" \
+	    -exec sh -c 'file "$$1" | grep -q ": ELF " && chmod 755 "$$1" || true' \
+	    sh {} \;
+	# Electron's SUID sandbox helper must be setuid root, otherwise the
+	# renderer sandbox cannot start. Upstream's AppImage dodges this by
+	# launching with --no-sandbox; installing the helper correctly keeps the
+	# sandbox enabled instead. Set this after every step that rewrites modes.
+	chmod 4755 $(APPROOT)/chrome-sandbox
+
+override_dh_shlibdeps:
+	# Resolve the bundled private libraries (libffmpeg.so and the libav* set)
+	# from inside the package rather than looking for a system package that
+	# owns them. Everything else must resolve to a real archive package, so
+	# the GUI libraries are in Build-Depends.
+	dh_shlibdeps \
+	    -l$(APPROOT):$(APPROOT)/resources \
+	    -- --ignore-missing-info
+
+override_dh_makeshlibs:
+	# The .so files under /usr/lib/losslesscut are private to the application,
+	# not public shared libraries on the linker path, so the package does not
+	# need an ldconfig trigger.
+	dh_makeshlibs --no-scripts
+
+override_dh_dwz:
+	# Upstream binaries ship stripped; there is no DWARF for dwz to compress.

@@ -1,0 +1,90 @@
+.TH LOSSLESSCUT 1 "2026-08-29" "LosslessCut 3.69.0" "User Commands"
+.SH NAME
+losslesscut \- lossless trimming and cutting of video and audio files
+.SH SYNOPSIS
+.B losslesscut
+.RI [ OPTIONS ]
+.RI [ FILE .\|.\|.]
+.SH DESCRIPTION
+.B LosslessCut
+is a graphical tool for lossless trimming, cutting, merging and remuxing of
+video and audio files. It performs an almost direct stream copy rather than a
+re\-encode, so operations complete in seconds regardless of file size and the
+output retains the exact quality of the source.
+.PP
+It is aimed at quickly extracting the good parts from large recordings \(em
+camera, drone, screen capture and gameplay footage \(em and discarding the rest
+without the time cost or generation loss of re\-encoding.
+.PP
+Beyond simple trimming it can merge files, extract or delete individual
+streams, change container formats, edit track and file metadata, take
+full\-resolution still snapshots, apply lossless rotation and cropping via
+container metadata, and export or import segment lists (CSV, EDL, CUE, XML and
+other formats).
+.PP
+The bundled
+.BR ffmpeg (1)
+build does the underlying work. This package ships upstream's self\-contained
+application bundle, so no system FFmpeg installation is required or used.
+.PP
+Passing one or more
+.I FILE
+arguments opens them on startup. With no arguments the graphical interface
+starts empty and files may be opened by drag\-and\-drop or through the menu.
+.SH OPTIONS
+LosslessCut is a graphical application and is normally started without
+arguments. It accepts the standard Electron and Chromium command\-line
+switches; the following are the ones most often useful.
+.TP
+.B \-\-help
+Show a usage summary and exit.
+.TP
+.B \-\-version
+Show the version and exit.
+.TP
+.B \-\-no\-sandbox
+Disable the Chromium sandbox. Needed only on systems where the sandbox cannot
+be initialised; it lowers the security of the renderer process, so use it only
+if the application will not otherwise start.
+.TP
+.B \-\-disable\-gpu
+Disable GPU hardware acceleration. Useful when a driver bug causes rendering
+artefacts or a failure to start.
+.TP
+.BI \-\-lang= LOCALE
+Force the interface language, overriding the system locale.
+.SH FILES
+.TP
+.I ~/.config/LosslessCut/
+Per\-user configuration and window state.
+.TP
+.I /usr/lib/losslesscut/
+The self\-contained application bundle, including its private copy of FFmpeg.
+.SH ENVIRONMENT
+.TP
+.B LLC_CUSTOM_FFMPEG_PATH
+Path to an alternative
+.B ffmpeg
+binary, overriding the bundled one. The matching
+.B ffprobe
+is expected alongside it.
+.SH EXIT STATUS
+Returns 0 on a normal exit and a non\-zero value if the application fails to
+start.
+.SH SEE ALSO
+.BR ffmpeg (1),
+.BR ffprobe (1)
+.PP
+Full documentation and the keyboard\-shortcut reference are available at
+.UR https://github.com/mifi/lossless-cut
+.UE .
+.SH AUTHORS
+LosslessCut was written by Mikael Finstad.
+.PP
+This manual page was written for the Foundry Linux package of LosslessCut,
+which repackages upstream's official self\-contained Linux build.
+.SH COPYRIGHT
+Copyright \(co 2016\-2026 Mikael Finstad.
+.PP
+LosslessCut is free software, licensed under the GNU General Public License
+version 2. There is NO WARRANTY, to the extent permitted by law.

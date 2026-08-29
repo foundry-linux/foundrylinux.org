@@ -1,0 +1,7 @@
+version=4
+# Upstream tags releases as v<major>.<minor>.<patch>. The tracked artifact is a
+# pre-built AppImage, not a source tarball, so uscan is used only to notice new
+# versions — the actual fetch and sha256 pin live in build.sh.
+opts=filenamemangle=s%.*/v?(\d\S*)\.tar\.gz%losslesscut-$1.tar.gz% \
+https://github.com/mifi/lossless-cut/tags \
+    .*/archive/refs/tags/v?@ANY_VERSION@\.tar\.gz
