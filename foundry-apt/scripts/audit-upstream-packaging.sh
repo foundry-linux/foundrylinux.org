@@ -99,6 +99,19 @@ extract_archive() {
     local archive=$1 dest=$2
     case "$archive" in
         *.zip|*.whl) unzip -q "$archive" -d "$dest" ;;
+        *.AppImage)
+            # A type-2 AppImage is an ELF runtime with a squashfs appended.
+            # --appimage-extract unpacks it without FUSE and without root,
+            # writing squashfs-root/ into the current directory.
+            chmod +x "$archive"
+            ( cd "$dest" && "$archive" --appimage-extract >/dev/null 2>&1 ) && return 0
+            # Fall back to reading the appended squashfs at its offset if the
+            # runtime cannot execute (unusual container, no binfmt).
+            local offset
+            offset=$("$archive" --appimage-offset 2>/dev/null || true)
+            [[ -n $offset ]] || return 1
+            unsquashfs -q -o "$offset" -d "$dest/squashfs-root" "$archive" >/dev/null
+            ;;
         *) tar -xf "$archive" -C "$dest" ;;
     esac
 }
@@ -130,7 +143,7 @@ for pkg in "${packages[@]}"; do
     fi
 
     suffix=${FETCH_URL%%\?*}; suffix=${suffix##*/}
-    case "$suffix" in *.zip|*.whl|*.tar.zst|*.tar.xz|*.tar.bz2|*.tgz|*.tar.gz) ;; *) suffix=upstream.tar.gz ;; esac
+    case "$suffix" in *.zip|*.whl|*.AppImage|*.tar.zst|*.tar.xz|*.tar.bz2|*.tgz|*.tar.gz) ;; *) suffix=upstream.tar.gz ;; esac
     # Key payloads by the build pin, not the Debian package name: two packages
     # may intentionally vendor different subsets of the same pinned upstream.
     archive="$CACHE_DIR/payload-${FETCH_PIN}-${suffix}"

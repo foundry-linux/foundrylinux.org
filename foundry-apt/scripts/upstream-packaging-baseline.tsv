@@ -1,7 +1,7 @@
 # package	upstream debian/	own .deb/.dsc build	PKGBUILD/.spec	distro refs
 asar-snes-assembler	no	no	no	no
-blender-asset-finder-cli	no	no	no	no
 blender-asset-finder	no	no	no	no
+blender-asset-finder-cli	no	no	no	no
 bsnes-jg	no	no	no	no
 drmon	no	no	no	no
 f9dasm	no	no	no	no
@@ -11,6 +11,7 @@ ghidra	no	no	no	no
 halfempty	no	no	no	no
 ldtk	no	no	no	no
 libvgm	no	no	no	no
+losslesscut	no	no	no	no
 m8te	no	no	no	no
 mesen2	no	no	no	no
 ppsspp	no	no	no	no
@@ -27,5 +28,5 @@ snes9x-gtk	no	no	no	no
 tilemap-studio	no	no	no	no
 vgmstream	no	no	no	no
 wla-dx	no	no	no	no
-xemu-xbox	xemu-0.8.136/debian	xemu-0.8.136/debian/build_deb.sh	no	no
 xemu	no	xemu-40dfef0d1d5f56be2469492715c12bdb32c75b67/build/deb-build-simple.sh	no	no
+xemu-xbox	xemu-0.8.136/debian	xemu-0.8.136/debian/build_deb.sh	no	no
