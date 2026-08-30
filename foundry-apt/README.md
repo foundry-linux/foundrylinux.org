@@ -68,6 +68,8 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 
 | Package | Upstream | Notes |
 |---|---|---|
+| `drawio-desktop` | [JGraph/drawio-desktop](https://github.com/jgraph/drawio-desktop) | Offline diagram editor packaged without its bundled Electron; depends on `electron-runtime-42`. `amd64`. |
+| `electron-runtime-42` | [Electron](https://www.electronjs.org/) | Versioned shared Electron/Chromium runtime for compatible application packages. `amd64`. |
 | `f9dasm` | [Arakula/f9dasm](https://github.com/Arakula/f9dasm) | Motorola 6800/6809/6309 family disassembler. `any`. |
 | `ghidra` | [ghidra-sre.org](https://ghidra-sre.org/) (NSA) | Software reverse-engineering framework. `amd64`. |
 | `halfempty` | [googleprojectzero/halfempty](https://github.com/googleprojectzero/halfempty) | Parallel, language-agnostic file-bisection test-case minimizer. `any`. |
@@ -131,11 +133,20 @@ foundry-apt/
 ## Local development
 
 ```bash
-bash scripts/build-all.sh
+task build                      # builds inside Ubuntu 26.04
 bash scripts/init-repo.sh       # → ~/.aptly/foundry repo
 bash scripts/publish-local.sh   # → ./public/ apt tree
 apt-cache depends foundry-retro-tools
 ```
+
+The container currently provides **target-ABI isolation**, not byte-for-byte
+reproducibility. It uses the mutable `ubuntu:26.04` image tag and installs the
+current Resolute archive packages at build time. Do not describe an artifact as
+reproducible merely because `task build` produced it in Docker. The shared
+Electron work tracks the stronger design—digest-pinned toolchain image,
+`SOURCE_DATE_EPOCH`, frozen JavaScript tools, double-build equality, SBOM, and
+provenance—in
+[`docs/investigations/2026-08-30-signal-vs-shared-electron-container-builds.md`](../docs/investigations/2026-08-30-signal-vs-shared-electron-container-builds.md).
 
 ## Adding or upgrading a package
 

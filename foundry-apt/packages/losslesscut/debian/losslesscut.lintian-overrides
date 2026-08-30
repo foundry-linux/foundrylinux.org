@@ -4,40 +4,17 @@
 # real fixes and were fixed in debian/rules and debian/copyright instead.
 
 # ── Embedded libraries ─────────────────────────────────────────────────────
-# Two upstream binaries statically link a large set of third-party libraries,
-# and neither can be relinked against the system copies without rebuilding it:
-#
-#   * the Electron/Chromium executable (usr/lib/losslesscut/losslesscut),
-#     which Chromium's build system deliberately links against its own vendored
-#     and patched forks rather than system libraries;
-#   * the private FFmpeg 8.0 under usr/lib/losslesscut/resources/, whose whole
-#     purpose is to be self-contained — every codec is statically linked in, so
-#     the libav* objects depend on nothing but the C library. That is what lets
-#     the package avoid depending on a system ffmpeg at all.
-#
-# Building either from source is out of scope for a binary repack, and for
-# Chromium is a distribution-scale undertaking. The vendored versions are the
-# ones upstream tests and ships, and they move with each upstream release.
+# The private FFmpeg 8.0 under usr/lib/losslesscut/resources/ statically links
+# its codec dependencies. It cannot be relinked against system copies without a
+# source build and is retained to preserve upstream's media-format support.
 losslesscut: embedded-library freetype *
 losslesscut: embedded-library gmp *
 losslesscut: embedded-library lcms2 *
 losslesscut: embedded-library libavdevice *
 losslesscut: embedded-library libavfilter *
 losslesscut: embedded-library libavutil *
-losslesscut: embedded-library libjpeg *
 losslesscut: embedded-library libswscale *
 losslesscut: embedded-library libtheora *
 losslesscut: embedded-library libxml2 *
 losslesscut: embedded-library openjpeg *
-losslesscut: embedded-library srtp *
-losslesscut: embedded-library tiff *
 losslesscut: embedded-library zlib *
-
-# ── Setuid Chromium sandbox helper ────────────────────────────────────────
-# chrome-sandbox is Electron's SUID sandbox helper and must be setuid root to
-# work; without it the renderer sandbox cannot start on Ubuntu, where AppArmor
-# restricts unprivileged user namespaces. The alternative is launching with
-# --no-sandbox, which disables the renderer sandbox outright — strictly worse
-# for security. This is the same arrangement official Chromium and VS Code
-# .debs use.
-losslesscut: elevated-privileges 4755 root/root [usr/lib/losslesscut/chrome-sandbox]

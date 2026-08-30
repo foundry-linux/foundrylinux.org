@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "suite": "resolute",
+  "architecture": "amd64",
+  "electron": "42.9.3",
+  "signingFingerprint": "0D77 B60F 37B8 A4AA B404 626D F567 ACF6 B6B8 F861",
+  "packages": {
+    "electron-runtime-42": "42.9.3-1foundry1",
+    "losslesscut": "3.69.0-1foundry2",
+    "drawio-desktop": "31.3.1-1foundry1"
+  }
+}

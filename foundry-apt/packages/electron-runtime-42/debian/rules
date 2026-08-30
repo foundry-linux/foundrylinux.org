@@ -1,0 +1,35 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DESTDIR = $(CURDIR)/debian/electron-runtime-42
+RUNTIME = $(DESTDIR)/usr/lib/electron-runtime-42
+
+%:
+	dh $@
+
+override_dh_auto_configure override_dh_auto_build override_dh_auto_test:
+
+override_dh_auto_install:
+	install -d $(RUNTIME)
+	cp -a electron chrome-sandbox chrome_crashpad_handler chrome_100_percent.pak \
+		chrome_200_percent.pak icudtl.dat libEGL.so libGLESv2.so libffmpeg.so \
+		libvk_swiftshader.so libvulkan.so.1 locales resources resources.pak \
+		snapshot_blob.bin v8_context_snapshot.bin vk_swiftshader_icd.json \
+		LICENSE LICENSES.chromium.html version $(RUNTIME)/
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod 0755 $(RUNTIME)/electron $(RUNTIME)/chrome_crashpad_handler
+	chmod 4755 $(RUNTIME)/chrome-sandbox
+
+override_dh_strip:
+	dh_strip
+	chmod 0755 $(RUNTIME)/electron $(RUNTIME)/chrome_crashpad_handler
+	chmod 4755 $(RUNTIME)/chrome-sandbox
+
+override_dh_shlibdeps:
+	dh_shlibdeps -l$(RUNTIME) -- --ignore-missing-info
+
+override_dh_makeshlibs:
+	dh_makeshlibs --no-scripts
+
+override_dh_dwz:

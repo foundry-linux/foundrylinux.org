@@ -4,6 +4,8 @@ Priority: optional
 Maintainer: Foundry Linux <packages@foundrylinux.org>
 Build-Depends: debhelper-compat (= 13),
  patchelf,
+ nodejs,
+ npm,
  libasound2t64,
  libatk-bridge2.0-0t64,
  libatk1.0-0t64,
@@ -35,6 +37,8 @@ Rules-Requires-Root: no
 Package: losslesscut
 Architecture: amd64
 Depends: ${shlibs:Depends}, ${misc:Depends},
+ electron-runtime-42 (>= 42.3.0),
+ electron-runtime-42 (<< 43),
  libnotify4,
  libxss1,
  libxtst6
@@ -54,8 +58,9 @@ Description: swiss army knife of lossless video and audio editing
  still snapshots, apply lossless rotation and cropping through container
  metadata, and import or export segment lists in CSV, EDL, CUE and XML.
  .
- This package repackages upstream's official pre-built Linux application
- bundle, an Electron program with its own private FFmpeg 8.0 build. That
+ This package repackages upstream's official pre-built Linux application and
+ uses the separately packaged, versioned Electron 42 runtime. It retains
+ its own private FFmpeg 8.0 build. That
  FFmpeg links only against the C library, with every codec statically linked
  in, so the package neither requires nor consults a system ffmpeg
  installation.

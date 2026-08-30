@@ -1,3 +1,11 @@
+losslesscut (3.69.0-1foundry2) resolute; urgency=medium
+
+  * Replace the bundled Electron payload with electron-runtime-42.
+  * Keep the application ASAR, translations, and private FFmpeg payload under
+    /usr/lib/losslesscut and adapt resource lookup for the shared runtime.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sun, 30 Aug 2026 18:10:00 -0600
+
 losslesscut (3.69.0-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of LosslessCut 3.69.0.

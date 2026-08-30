@@ -94,10 +94,22 @@ tasks:
     cmds:
       - bash test/run-test.sh {{.CLI_ARGS}}
 
+  shared-electron-test:
+    desc: "Install and smoke-test the shared Electron runtime with LosslessCut in a fresh container"
+    dir: "{{.TASKFILE_DIR}}"
+    cmds:
+      - bash test/test-shared-electron.sh
+
+  shared-electron-drawio-test:
+    desc: "Smoke-test LosslessCut and draw.io together on the shared Electron runtime"
+    dir: "{{.TASKFILE_DIR}}"
+    cmds:
+      - bash test/test-shared-electron-drawio.sh
+
   shellcheck:
     desc: "Lint all shell scripts"
     cmds:
-      - shellcheck scripts/*.sh packages/*/build.sh 2>/dev/null || shellcheck scripts/*.sh
+      - shellcheck scripts/*.sh packages/*/build.sh test/*.sh 2>/dev/null || shellcheck scripts/*.sh test/*.sh
 
   check-licenses:
     desc: "Verify every packages/*/build.sh has an entry in LICENSES-VENDORED.md"

@@ -1,0 +1,21 @@
+Source: drawio-desktop
+Section: graphics
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.2
+Homepage: https://github.com/jgraph/drawio-desktop
+X-Repology-Project: none
+Rules-Requires-Root: no
+
+Package: drawio-desktop
+Architecture: amd64
+Depends: ${misc:Depends}, electron-runtime-42 (>= 42.9.3), electron-runtime-42 (<< 43), libsecret-1-0, xdg-utils
+Provides: draw.io
+Conflicts: draw.io
+Replaces: draw.io
+Description: desktop application for creating diagrams
+ draw.io Desktop is an offline diagram editor for flowcharts, process diagrams,
+ UML, ER diagrams, network diagrams and many other visual models.
+ .
+ This unofficial package uses Foundry's shared, versioned Electron 42 runtime.

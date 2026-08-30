@@ -84,7 +84,7 @@ if command -v apt-get >/dev/null; then
     # build time so dpkg-shlibdeps can resolve the Electron binary's NEEDED
     # sonames to real archive packages — without them it fails outright with
     # "cannot find library", not merely with a missing-info warning.
-    _apt install -y --no-install-recommends file squashfs-tools patchelf \
+    _apt install -y --no-install-recommends file squashfs-tools patchelf nodejs npm \
         libasound2t64 libatk-bridge2.0-0t64 libatk1.0-0t64 libatspi2.0-0t64 \
         libcairo2 libcups2t64 libdbus-1-3 libexpat1 libgbm1 libglib2.0-0t64 \
         libgtk-3-0t64 libnspr4 libnss3 libpango-1.0-0 libudev1 libx11-6 \
@@ -118,6 +118,17 @@ for required in losslesscut resources/ffmpeg resources/app.asar \
         exit 1
     }
 done
+
+# A generic Electron executable keeps process.resourcesPath beside the shared
+# runtime, while LosslessCut's packaged code expects its private FFmpeg and
+# translations there. Give this distro package an explicit application-resource
+# override. Repacking is deterministic and the utility version is pinned.
+echo "=== Adapting app.asar for the shared runtime ==="
+ASAR_DIR="$WORKDIR/app-asar"
+npx --yes @electron/asar@4.0.1 extract "$SRC_DIR/resources/app.asar" "$ASAR_DIR"
+sed -i 's/process\.resourcesPath/(process.env.LLC_RESOURCES_PATH || process.resourcesPath)/g' \
+    "$ASAR_DIR/out/main/index.js"
+npx --yes @electron/asar@4.0.1 pack "$ASAR_DIR" "$SRC_DIR/resources/app.asar"
 
 echo "=== Copying debian/ tree into source ==="
 cp -a "$PKG_DIR/debian" "$SRC_DIR/"

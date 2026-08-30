@@ -1,0 +1,22 @@
+# Phase-1 repack of Electron's official Linux binary distribution. Chromium's
+# build deliberately embeds patched third-party libraries; replacing them with
+# Ubuntu libraries requires a full Chromium/Electron source build and is a later
+# project track. The runtime is versioned and follows Electron security updates.
+electron-runtime-42: embedded-library freetype [usr/lib/electron-runtime-42/electron]
+electron-runtime-42: embedded-library lcms2 [usr/lib/electron-runtime-42/electron]
+electron-runtime-42: embedded-library libjpeg [usr/lib/electron-runtime-42/electron]
+electron-runtime-42: embedded-library openjpeg [usr/lib/electron-runtime-42/electron]
+electron-runtime-42: embedded-library srtp [usr/lib/electron-runtime-42/electron]
+electron-runtime-42: embedded-library tiff [usr/lib/electron-runtime-42/electron]
+
+# Electron's SUID sandbox helper must be root-owned mode 4755. Running Electron
+# as root without --no-sandbox is intentionally rejected; applications run as
+# unprivileged desktop users and retain Chromium's renderer sandbox.
+electron-runtime-42: elevated-privileges 4755 root/root [usr/lib/electron-runtime-42/chrome-sandbox]
+
+# These are upstream Electron/Chromium redistribution notices in the paths used
+# by the official runtime archive. Keep them adjacent to the payload so the
+# repack remains complete; Debian's own copyright file remains under /usr/share.
+electron-runtime-42: extra-license-file [usr/lib/electron-runtime-42/LICENSE]
+electron-runtime-42: package-contains-documentation-outside-usr-share-doc [usr/lib/electron-runtime-42/LICENSE]
+electron-runtime-42: package-contains-documentation-outside-usr-share-doc [usr/lib/electron-runtime-42/LICENSES.chromium.html]

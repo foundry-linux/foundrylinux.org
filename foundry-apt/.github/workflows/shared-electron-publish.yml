@@ -1,0 +1,117 @@
+name: Publish Shared Electron APT repository
+
+on:
+  push:
+    tags:
+      - 'shared-electron-v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build and sign without uploading
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install host publication tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y aptly gnupg jq rclone shellcheck
+          shellcheck scripts/*.sh packages/{electron-runtime-42,losslesscut,drawio-desktop}/build.sh
+
+      - name: Restore Shared Electron artifact mirror
+        if: ${{ !inputs.dry_run }}
+        env:
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_REGION: auto
+        run: rclone copy R2:foundry-apt/shared-electron/.dist-cache/ ./dist/ --checksum --progress
+
+      - name: Build the compatible candidate set on Ubuntu 26.04
+        run: |
+          docker run --rm --security-opt seccomp=unconfined \
+            -v "$PWD:/work" -w /work \
+            -e DEBIAN_FRONTEND=noninteractive \
+            -e INCLUDE_SHARED_ELECTRON=1 \
+            ubuntu:26.04 bash -c '
+              set -euo pipefail
+              apt-get update -q
+              apt-get install -y --no-install-recommends \
+                build-essential debhelper dpkg-dev devscripts fakeroot lintian \
+                curl ca-certificates pkg-config sudo jq unzip zip python3 file \
+                squashfs-tools patchelf nodejs npm
+              bash scripts/build-all.sh electron-runtime-42 losslesscut drawio-desktop
+            '
+
+      - name: Test the shared runtime with both applications
+        run: bash test/test-shared-electron-drawio.sh
+
+      - name: Build repository metadata
+        env:
+          REPO_NAME: shared-electron
+          REPO_ORIGIN: Shared Electron
+          REPO_LABEL: Shared Electron
+        run: |
+          rm -rf public
+          bash scripts/init-repo.sh
+          bash scripts/publish-local.sh
+
+      - name: Sign with the independent Shared Electron key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.SHARED_ELECTRON_GPG_PRIVATE_KEY }}
+        run: |
+          bash scripts/sign.sh
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          gpg --export --armor > public/key.gpg
+
+      - name: Add repository landing page
+        run: |
+          cp shared-electron/index.html public/index.html
+          cp shared-electron/status.json public/status.json
+
+      - name: Upload repository atomically
+        if: ${{ !inputs.dry_run }}
+        env:
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_REGION: auto
+        run: |
+          rclone sync public/ R2:foundry-apt/shared-electron/ --checksum --exclude '.dist-cache/**' --exclude 'Release' --exclude 'Release.gpg' --exclude 'InRelease'
+          rclone copy public/dists/ R2:foundry-apt/shared-electron/dists/ --checksum --transfers=1 --include '**/Release' --include '**/Release.gpg' --include '**/InRelease'
+          rclone sync dist/ R2:foundry-apt/shared-electron/.dist-cache/ --checksum
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: shared-electron-${{ github.ref_name }}
+          path: public/
+          retention-days: 30
+
+  smoke:
+    needs: publish
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install both applications from the published repository
+        run: |
+          docker run --rm ubuntu:26.04 bash -c '
+            set -euo pipefail
+            apt-get update -q
+            apt-get install -y curl gnupg ca-certificates
+            curl -fsSL https://apt.wald3n.com/shared-electron/key.gpg | gpg --dearmor -o /etc/apt/keyrings/shared-electron.gpg
+            echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/shared-electron.gpg] https://apt.wald3n.com/shared-electron resolute main" > /etc/apt/sources.list.d/shared-electron.list
+            apt-get update -q
+            apt-get install -y electron-runtime-42 losslesscut drawio-desktop
+          '

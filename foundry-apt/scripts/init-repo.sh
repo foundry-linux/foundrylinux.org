@@ -9,8 +9,9 @@ cd "$(dirname "$0")/.."
 
 # Generate a runtime config with the absolute path to ./public/ baked in,
 # since aptly requires FileSystemPublishEndpoints.rootDir to be absolute.
-RUNTIME_CONFIG="/tmp/aptly-foundry.conf"
-PUBLIC_DIR="$(pwd)/public"
+REPO_NAME="${REPO_NAME:-foundry}"
+RUNTIME_CONFIG="/tmp/aptly-${REPO_NAME}.conf"
+PUBLIC_DIR="${PUBLIC_DIR:-$(pwd)/public}"
 jq --arg pub "$PUBLIC_DIR" \
     '.FileSystemPublishEndpoints = {"public": {"rootDir": $pub, "linkMethod": "copy", "verifyMethod": "md5"}}' \
     aptly/aptly.conf > "$RUNTIME_CONFIG"
@@ -22,15 +23,15 @@ if ! command -v aptly &>/dev/null; then
 fi
 
 # Create the repo if it doesn't exist
-if ! aptly -config="$APTLY_CONFIG" repo show foundry &>/dev/null; then
-    echo "Creating aptly repo 'foundry'..."
+if ! aptly -config="$APTLY_CONFIG" repo show "$REPO_NAME" &>/dev/null; then
+    echo "Creating aptly repo '$REPO_NAME'..."
     aptly -config="$APTLY_CONFIG" repo create \
         -distribution=resolute \
         -component=main \
         -architectures=amd64,arm64,all \
-        foundry
+        "$REPO_NAME"
 else
-    echo "Repo 'foundry' already exists."
+    echo "Repo '$REPO_NAME' already exists."
 fi
 
-aptly -config="$APTLY_CONFIG" repo show foundry
+aptly -config="$APTLY_CONFIG" repo show "$REPO_NAME"

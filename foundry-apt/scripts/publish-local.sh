@@ -12,8 +12,11 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-RUNTIME_CONFIG="/tmp/aptly-foundry.conf"
-PUBLIC_DIR="$(pwd)/public"
+REPO_NAME="${REPO_NAME:-foundry}"
+REPO_ORIGIN="${REPO_ORIGIN:-Foundry Linux}"
+REPO_LABEL="${REPO_LABEL:-Foundry Linux}"
+RUNTIME_CONFIG="/tmp/aptly-${REPO_NAME}.conf"
+PUBLIC_DIR="${PUBLIC_DIR:-$(pwd)/public}"
 jq --arg pub "$PUBLIC_DIR" \
     '.FileSystemPublishEndpoints = {"public": {"rootDir": $pub, "linkMethod": "copy", "verifyMethod": "md5"}}' \
     aptly/aptly.conf > "$RUNTIME_CONFIG"
@@ -31,8 +34,8 @@ if ! ls dist/*.deb &>/dev/null; then
     exit 1
 fi
 
-echo "=== Adding dist/*.deb to repo 'foundry' ==="
-aptly -config="$APTLY_CONFIG" repo add -force-replace foundry dist/
+echo "=== Adding dist/*.deb to repo '$REPO_NAME' ==="
+aptly -config="$APTLY_CONFIG" repo add -force-replace "$REPO_NAME" dist/
 
 echo
 echo "=== Dropping previous published snapshot (if any) ==="
@@ -51,11 +54,11 @@ fi
 # enforces these exact values (a Claude PostToolUse hook runs it on edits here).
 aptly -config="$APTLY_CONFIG" publish repo \
     "${gpg_args[@]}" \
-    -origin="Foundry Linux" \
-    -label="Foundry Linux" \
+    -origin="$REPO_ORIGIN" \
+    -label="$REPO_LABEL" \
     -architectures=amd64,arm64,all,source \
     -distribution="$SUITE" \
-    foundry filesystem:public:
+    "$REPO_NAME" filesystem:public:
 
 echo
 echo "=== Published — apt sources line ==="

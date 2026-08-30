@@ -1,0 +1,34 @@
+#!/usr/bin/make -f
+
+DESTDIR = $(CURDIR)/debian/drawio-desktop
+APPDIR = $(DESTDIR)/usr/lib/drawio-desktop
+
+%:
+	dh $@
+
+override_dh_auto_build:
+
+override_dh_auto_install:
+	install -d $(APPDIR)/resources $(DESTDIR)/usr/bin
+	install -m 0644 upstream-root/opt/drawio/resources/app.asar $(APPDIR)/resources/app.asar
+	cp -a upstream-root/usr/share $(DESTDIR)/usr/
+	rm -rf $(DESTDIR)/usr/share/doc/draw.io
+	# The distro launcher replaces upstream's /opt/drawio executable.
+	sed -i 's|^Exec=.*|Exec=/usr/bin/drawio %U|' \
+		$(DESTDIR)/usr/share/applications/drawio.desktop
+	grep -q '^Keywords=' $(DESTDIR)/usr/share/applications/drawio.desktop || \
+		printf '%s\n' 'Keywords=diagram;flowchart;UML;' >> \
+		$(DESTDIR)/usr/share/applications/drawio.desktop
+	printf '%s\n' \
+		'#!/bin/sh' \
+		'set -eu' \
+		'unset ELECTRON_RUN_AS_NODE' \
+		'export DRAWIO_DISABLE_UPDATE=true' \
+		'exec /usr/lib/electron-runtime-42/electron /usr/lib/drawio-desktop/resources/app.asar "$$@"' \
+		> $(DESTDIR)/usr/bin/drawio
+	chmod 0755 $(DESTDIR)/usr/bin/drawio
+
+override_dh_auto_test:
+
+override_dh_makeshlibs:
+	dh_makeshlibs --no-scripts

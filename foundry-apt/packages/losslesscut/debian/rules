@@ -8,12 +8,7 @@ APPROOT = $(DESTDIR)/usr/lib/losslesscut
 # Payload copied out of the unpacked AppImage. AppDir-only metadata (AppRun,
 # .DirIcon, the AppImage desktop entry and icon symlink) is deliberately left
 # behind; the desktop entry and icon we ship are installed separately below.
-PAYLOAD = chrome-sandbox chrome_crashpad_handler chrome_100_percent.pak \
-          chrome_200_percent.pak icudtl.dat libEGL.so libGLESv2.so \
-          libffmpeg.so libvk_swiftshader.so libvulkan.so.1 locales \
-          losslesscut resources resources.pak snapshot_blob.bin \
-          v8_context_snapshot.bin vk_swiftshader_icd.json \
-          LICENSE.electron.txt LICENSES.chromium.html
+PAYLOAD = resources
 
 %:
 	dh $@
@@ -52,8 +47,9 @@ override_dh_auto_install:
 	# fully relocatable and the launcher needs no environment setup at all.
 	printf '%s\n' \
 	    '#!/bin/sh' \
-	    '# LosslessCut launcher — Foundry Linux' \
-	    'exec /usr/lib/losslesscut/losslesscut "$$@"' \
+	    '# LosslessCut launcher — shared versioned Electron runtime' \
+	    'export LLC_RESOURCES_PATH=/usr/lib/losslesscut/resources' \
+	    'exec /usr/lib/electron-runtime-42/electron /usr/lib/losslesscut/resources/app.asar --locales-path=/usr/lib/losslesscut/resources/locales "$$@"' \
 	    > $(DESTDIR)/usr/bin/losslesscut
 	chmod 755 $(DESTDIR)/usr/bin/losslesscut
 	# Desktop entry and the 512x512 icon upstream ships inside the AppImage.
@@ -108,11 +104,6 @@ override_dh_strip:
 	find $(APPROOT) -type f ! -name "*.so" ! -name "*.so.*" \
 	    -exec sh -c 'file "$$1" | grep -q ": ELF " && chmod 755 "$$1" || true' \
 	    sh {} \;
-	# Electron's SUID sandbox helper must be setuid root, otherwise the
-	# renderer sandbox cannot start. Upstream's AppImage dodges this by
-	# launching with --no-sandbox; installing the helper correctly keeps the
-	# sandbox enabled instead. Set this after every step that rewrites modes.
-	chmod 4755 $(APPROOT)/chrome-sandbox
 
 override_dh_shlibdeps:
 	# Resolve the bundled private libraries (libffmpeg.so and the libav* set)

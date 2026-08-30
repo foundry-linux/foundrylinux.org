@@ -1,0 +1,31 @@
+.TH DRAWIO 1 "August 2026" "draw.io Desktop 31.3.1" "User Commands"
+.SH NAME
+drawio \- edit and export diagrams with draw.io Desktop
+.SH SYNOPSIS
+.B drawio
+.RI [ options ]
+.RI [ file ]
+.SH DESCRIPTION
+.B drawio
+starts draw.io Desktop using the distribution-managed, versioned Electron 42
+runtime. Application updates are supplied through APT; the upstream in-app
+updater is disabled.
+.SH OPTIONS
+The graphical application accepts files and URLs. Its command-line export
+interface includes
+.BR --export ,
+.BR --format ,
+and
+.BR --output .
+Run
+.B drawio --help
+for the options supported by this release.
+.SH FILES
+.TP
+.I /usr/lib/drawio-desktop/resources/app.asar
+Application payload.
+.TP
+.I /usr/lib/electron-runtime-42/electron
+Shared Electron executable.
+.SH SEE ALSO
+.BR electron (1)

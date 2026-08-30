@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Electron
+Source: https://github.com/electron/electron
+
+Files: *
+Copyright: 2013-2026 Electron contributors
+ 2006-2026 Chromium contributors
+License: MIT-and-BSD-3-clause
+ See /usr/lib/electron-runtime-42/LICENSE and LICENSES.chromium.html in the
+ installed package for the complete upstream notices and component licenses.

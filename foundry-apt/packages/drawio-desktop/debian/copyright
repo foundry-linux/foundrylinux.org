@@ -1,0 +1,19 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: draw.io Desktop
+Source: https://github.com/jgraph/drawio-desktop
+
+Files: *
+Copyright: 2005-2026 JGraph Ltd
+License: Apache-2.0
+
+Files: debian/*
+Copyright: 2026 Foundry Linux contributors
+License: GPL-2.0
+
+License: Apache-2.0
+ On Debian systems, the complete text is available in
+ /usr/share/common-licenses/Apache-2.0.
+
+License: GPL-2.0
+ On Debian systems, the complete text is available in
+ /usr/share/common-licenses/GPL-2.

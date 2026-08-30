@@ -103,6 +103,13 @@ fail=0
 for pkgdir in packages/*/; do
     name=$(basename "$pkgdir")
 
+    # Shared Electron is published through its separately signed repository.
+    # Never let the general Foundry release pick these packages up implicitly.
+    if [[ -f "$pkgdir/.shared-electron-only" && "${INCLUDE_SHARED_ELECTRON:-0}" != 1 ]]; then
+        echo "SKIP $name (Shared Electron repository only)"
+        continue
+    fi
+
     # Optional one-or-more-package filter.
     if ! package_selected "$name"; then
         continue
