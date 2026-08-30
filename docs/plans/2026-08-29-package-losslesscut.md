@@ -312,21 +312,78 @@ $ task gen-repology-ruleset
 PASS. `build-all.sh` iterates `packages/*/` and dispatches to `build.sh` when present, so it
 picks up `losslesscut` with no change.
 
+**9. Real desktop install and GUI launch** (added 2026‑08‑30, Ubuntu 26.04 Wayland session).
+
+`apt install` of the built `.deb` on a live desktop pulled **no additional packages** —
+confirming the "every dependency is already present on a desktop" premise behind choosing
+normal deps over vendoring:
+
+```
+Summary:
+  Upgrading: 0, Installing: 1, Removing: 0, Not Upgrading: 4
+Processing triggers for hicolor-icon-theme / man-db / desktop-file-utils
+```
+
+Launching it:
+
+```
+info: LosslessCut version 3.69.0 { isDev: false }
+info: Initialized config store
+info: Current version 3.69.0 / Newest version 3.69.0
+info: ffmpeg -f lavfi -i 'nullsrc=s=256x256:d=1' -f null -
+info: ffprobe -v 0 -of json -show_program_version
+
+$ pgrep -af losslesscut
+1205199 /usr/lib/losslesscut/losslesscut
+1205203 /usr/lib/losslesscut/chrome-sandbox /usr/lib/losslesscut/losslesscut
+```
+
+PASS, and it settles the two items that were previously reasoned rather than observed:
+
+- **The setuid sandbox is genuinely in use** — `chrome-sandbox` runs as a live process spawning
+  the zygote, across 10 Electron processes, with no "SUID sandbox helper … not configured
+  correctly" error. Installing it `4755 root:root` rather than launching `--no-sandbox` (as
+  upstream's AppImage does) works as intended.
+- **The rewritten RPATH survives in the real application.** LosslessCut runs its own startup
+  self-test against the bundled binaries — an `ffmpeg` null-encode and an `ffprobe` version
+  probe — and proceeds past both, exercising `patchelf --set-rpath '$ORIGIN'` in situ rather
+  than just under `ffmpeg -version`.
+
+One benign line, not a defect: `'--ozone-platform=wayland' is not compatible with Vulkan`.
+Chromium noting it cannot use Vulkan under Wayland and falling back; every Electron app on
+Wayland logs it, and it is unrelated to packaging.
+
 ## Not verified
 
-- **The GUI has not been launched.** The build and smoke containers have no display, so the
-  checks prove the binary's libraries all resolve, not that the window opens. In particular the
-  setuid `chrome-sandbox` path and the `StartupWMClass=LosslessCut` value are reasoned from
-  upstream's own AppImage behaviour, not observed. Worth one manual launch on a desktop.
+- **`StartupWMClass=LosslessCut`** was not confirmed against a live window, as neither `wmctrl`
+  nor `xdotool` is installed; the value is taken from upstream's own AppImage desktop entry,
+  which launches the same binary the same way. A mismatch would only cost taskbar icon
+  grouping.
 - **The full `Depends:` chain of `foundry-sprite`** could not be resolved locally, since that
   needs every other Foundry package present in `dist/`. CI resolves it on the full build.
 
 ## Follow-ups
 
-- Report the malformed ffmpeg RPATH to [mifi/ffmpeg-builds](https://github.com/mifi/ffmpeg-builds)
-  (finding 9). Not yet sent.
-- Send upstream the ITP heads-up, then file — see
-  [docs/itp-drafts/losslesscut.md](../itp-drafts/losslesscut.md), which argues the Debian bug
-  should be an **RFP** rather than an ITP because Electron is not packaged in Debian.
-- The ITP tracking item could not be added to `TODO.md`: adding a delegation tier is blocked for
-  non-Fable models and an untiered open item fails `todo-lint`. Add it from a Fable session.
+- [mifi/ffmpeg-builds#1](https://github.com/mifi/ffmpeg-builds/issues/1) reports the
+  malformed RPATH from finding 9 with the reproducer and verified `$ORIGIN`-only repair.
+- [mifi/lossless-cut#3035](https://github.com/mifi/lossless-cut/issues/3035) gives upstream the
+  Foundry Linux packaging heads-up and offers to forward relevant bugs.
+- Debian WNPP was re-checked on 2026-08-30 with no `losslesscut`/`lossless-cut` match. The
+  prepared request remains an **RFP**, not an ITP, because Electron is not packaged in Debian.
+  It is intentionally unfiled: this agent is not allowed to send email.
+
+## Publication completion (2026-08-30)
+
+- foundry-apt `v1.5.47` published `losslesscut 3.69.0-1foundry1` and
+  `foundry-sprite 1.0.2` in a green 7m09s production run.
+- The live APT Packages index contains LosslessCut; a real Ubuntu 26.04 desktop install pulled
+  no additional dependencies and the GUI, setuid Electron sandbox, bundled ffmpeg, and ffprobe
+  startup probes all passed.
+- The refreshed public inventory was deployed as wald3n `v0.0.426`, then the publisher SSH
+  handoff was hardened and the repaired one-command workflow created/deployed `v0.0.427`.
+- The live `/open-source` page contains LosslessCut and reports `v0.0.427`.
+- The historical publication marker was already absent. That state was recorded rather than
+  manufacturing a retrospective marker; APT, snapshot, live page, release tag, and deploy were
+  verified independently.
+
+All packaging and publication work is complete. No ISO build was started.
