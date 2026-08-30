@@ -113,12 +113,27 @@ No change to how releases happen: `task bump` still tags and publishes everythin
 | Warm cache, one package | ~10 min | ~3 min |
 | Cache evicted | full 27-package rebuild | download from R2 |
 
-## Implementation and production status (updated 2026-08-06)
+## Implementation and production status (updated 2026-08-29)
 
-Phase 1 is implemented and synced to `foundry-linux/foundry-apt`, but the
-production proof is not complete yet. Do not treat the R2 mirror as operational
-until the bucket permission issue below is resolved and verification steps 2,
-3, 5, and 6 pass.
+**Phase 1 is complete and proven in production.** Release `v1.5.47`
+([run 33285936705](https://github.com/foundry-linux/foundry-apt/actions/runs/33285936705),
+2026‑08‑30 01:33–01:40 UTC) went green end to end in **7 min 9 s**, hydrating
+198 artifacts from the R2 mirror, emitting **55 `SKIP` lines** (no vendored
+upstream recompiled), passing the completeness gate at 59 local vs 58 live, and
+persisting the mirror back. The live repo now publishes **59** binary packages
+with `Origin`/`Label: Foundry Linux`. Raw evidence is under **Verification**
+below.
+
+The previously recorded `AccessDenied` is **resolved by design, not by a grant**:
+the mirror was moved to the `.dist-cache/` prefix inside the already‑authorized
+`foundry-apt` bucket, so no separate `foundry-apt-dist` bucket is used and none
+needs authorizing. The run's logs contain no `AccessDenied` and no `403`.
+
+**Phase 2 is implemented** in `~/worldfoundry.org` (see the Phase 2 section) and
+verified locally against real builds. It has **not** been released — publishing
+it is a tag push and is left for the user.
+
+### Superseded status notes (2026-08-06)
 
 - The cache-eviction hypothesis is confirmed: v1.5.39 run `31020896519`
   restored no usable `dist/` cache, emitted zero `SKIP` lines, and rebuilt all
@@ -146,10 +161,47 @@ mirror therefore lives under the authorized `foundry-apt` bucket at the excluded
 `.dist-cache/` prefix. Both publishing workflows exclude that prefix so a public
 repo sync cannot delete it.
 
-Phase 2 changes have been prepared and pass focused selector, completeness,
-ShellCheck, syntax, and diff checks locally. They remain uncommitted and
-unpublished, preserving the required sequencing: land Phase 2 only after the
-Phase 1 R2 round-trip and targeted production publish are proven.
+**One production caveat worth recording rather than hand-waving.** The v1.5.47
+persist step logged seven `NotImplemented: Not Implemented` errors on
+`rclone copy` before succeeding:
+
+```
+2026-08-30 01:39:02 ERROR : foundry-sprite_1.0.2_all.deb: Failed to copy: NotImplemented: Not Implemented
+2026-08-30 01:39:02 ERROR : losslesscut_3.69.0-1foundry1.dsc: Failed to copy: NotImplemented: Not Implemented
+2026-08-30 01:39:13 ERROR : Attempt 1/3 failed with 7 errors and: NotImplemented: Not Implemented
+2026-08-30 01:39:13 ERROR : S3 bucket foundry-apt path .dist-cache: not deleting files as there were IO errors
+2026-08-30 01:39:18 ERROR : Attempt 2/3 succeeded
+```
+
+The concrete cause is R2 rejecting a subset of the S3 upload calls rclone issues,
+not a permission problem or a network blip: attempt 1 failed for exactly the
+newly built artifacts, rclone's own 3-attempt retry re-issued them, and attempt 2
+completed `400 / 400` checks with `Deleted: 3`. The important secondary
+behaviour is that rclone **refused to delete anything** while errors were
+outstanding — so a partial failure cannot truncate the mirror. No change is
+needed; if the retry ever exhausts all three attempts the step fails and the
+mirror is simply left at its previous good state.
+
+### Phase 2 landing (2026-08-29)
+
+The Phase 2 changes described on 2026‑08‑06 as "prepared but uncommitted" were
+**not present in the working tree** when this item was resumed — they had been
+lost. They were re-implemented from the now-proven foundry-apt design and
+verified locally against real container builds (steps 7–10 below).
+
+Two deliberate deviations from the Phase 2 list as originally written:
+
+1. **The mirror is `R2:worldfoundry-apt/.dist-cache/`, not `R2:worldfoundry-apt-dist/`.**
+   Item 3 of the Phase 2 list predates the R2-mirror-location finding above. A
+   separate bucket would need a new grant on the workflow token for no benefit;
+   an excluded in-bucket prefix is the pattern foundry-apt actually proved.
+   **No `worldfoundry-apt-dist` bucket is created or authorized.**
+2. **`prune-dist.sh` is part of the port, and was not on the original list.**
+   Dropping `rm -f dist/*.deb` from `build-all.sh` is what makes the mirror
+   work, but it also removes the only thing that was stopping orphaned and
+   superseded `.debs` from being republished forever. foundry-apt learned this
+   and added `scripts/prune-dist.sh`; porting the mirror without it would ship a
+   known bug.
 
 ## Phase 2 — the same change on `apt.worldfoundry.org`
 
@@ -190,12 +242,199 @@ This is CI and publishing infrastructure; there is no UI, rendered page, or CLI 
 2. **PASS (2026-08-06): Hydrate works from empty** — production run 31082484311 populated the authorized `R2:foundry-apt/.dist-cache/` prefix, and follow-up run 31082913139 restored 198 mirror items from that prefix before building.
 3. **PASS (2026-08-06): Targeted build publishes one package** — `packages: rpcs3` built and published RPCS3 while retaining the complete live index; the mirror-backed follow-up run 31082913139 reported `SKIP rpcs3 (dist/rpcs3_0.0.42+dfsg-1foundry1_amd64.deb already current)`.
 4. **PASS (focused test, 2026-08-05): The completeness gate fires** — a deliberately truncated synthetic `dist/` was rejected before publication; repeat in production after step 2.
+
+    **Repeated in production, 2026‑08‑29** (run 33285936705, step "Refuse to publish a truncated repository"):
+
+    ```
+    dist/ completeness check passed: 59 local .debs, 58 live packages
+    ```
+
+    The gate ran on the real tree and passed as a floor (`59 ≥ 58`; the +1 is
+    the newly added package this release shipped). **PASS**
+
 5. **No regression in the published repo** — after a targeted publish, the live `Packages.gz` count is unchanged (or +1), `apt-get update` succeeds in a clean `ubuntu:26.04`, and an unrelated package still installs.
+
+    Live index and Release metadata after run 33285936705:
+
+    ```
+    $ curl -fsSL https://apt.foundrylinux.org/dists/resolute/main/binary-amd64/Packages.gz | gzip -dc | grep -c '^Package: '
+    59
+    $ curl -fsSL https://apt.foundrylinux.org/dists/resolute/Release | head -8
+    Origin: Foundry Linux
+    Label: Foundry Linux
+    Suite: resolute
+    Codename: resolute
+    Date: Sun, 30 Aug 2026 01:38:31 UTC
+    Architectures: all arm64 amd64
+    Components: main
+    Description: Generated by aptly
+    ```
+
+    `apt-get update` in a clean `ubuntu:26.04` with both sources wired, and an
+    unrelated package installing from the live repo:
+
+    ```
+    Get:5 https://apt.foundrylinux.org resolute InRelease [12.3 kB]
+    Get:8 https://apt.foundrylinux.org resolute/main all Packages [21.6 kB]
+    Get:9 https://apt.foundrylinux.org resolute/main amd64 Packages [36.8 kB]
+    ...
+    ii  blender-asset-finder-cli 0.1.0+git0a19d26c-1foundry1 all   CLI companion to the blender-asset-finder Blender add-on
+    ```
+
+    Count went 58 → 59 (+1, the new package), signed index verified by apt, and an
+    unrelated package installed. **PASS**
+
 6. **PASS (2026-08-06): Round-trip** — production run 31082484311 completed successfully through durable-cache persistence; follow-up run 31082913139 hydrated the mirror and skipped RPCS3 as already current instead of rebuilding it.
+
+    **Confirmed again at full release scale, 2026‑08‑29** (run 33285936705).
+    Hydrate restored the whole mirror:
+
+    ```
+    Transferred:   	    1.756 GiB / 1.756 GiB, 100%, 55.110 MiB/s, ETA 0s
+    Transferred:          198 / 198, 100%
+    Elapsed time:        31.4s
+    ```
+
+    The build then recompiled **nothing** that the mirror already carried —
+    55 `SKIP` lines, e.g.:
+
+    ```
+    SKIP asar-snes-assembler (dist/asar-snes-assembler_1.91-1foundry2_amd64.deb already current)
+    SKIP rpcs3 (dist/rpcs3_0.0.42+dfsg-1foundry1_amd64.deb already current)
+    SKIP xemu (…already current)
+    SKIP ghidra (…already current)
+    ```
+
+    and persist closed the loop:
+
+    ```
+    Checks:               400 / 400, 100%
+    Deleted:                3 (files), 0 (dirs)
+    Elapsed time:        18.6s
+    ```
+
+    Whole run: **7 m 9 s**, against the ~45 min the plan set out to remove.
+    **PASS**
 
 ### Phase 2 (`apt.worldfoundry.org`)
 
+Implemented 2026‑08‑29 in `~/worldfoundry.org`. Steps 7–10 were run locally
+against real container builds; a production run awaits an `apt-v*` tag push.
+
 7. **Skip logic ported** — re-run a publish with no package changes; all 15 packages report `SKIP` and nothing compiles.
+
+    ```
+    $ bash scripts/in-docker.sh bash scripts/build-all.sh
+    SKIP cdpack (dist/cdpack_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP iffcomp (dist/iffcomp_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP iffdump (dist/iffdump_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP levcomp (dist/levcomp_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP lvldump (dist/lvldump_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP oaddump (dist/oaddump_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP oas2oad (dist/oas2oad_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP prep (dist/prep_0.103+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP textile (dist/textile_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP worldfoundry-blender-addons (dist/worldfoundry-blender-addons_1.1.3_amd64.deb already current)
+    SKIP worldfoundry-blender-editor-exporter (dist/worldfoundry-blender-editor-exporter_0.2.1+git3fa94cbe-2foundry2_amd64.deb already current)
+    SKIP worldfoundry-cli (dist/worldfoundry-cli_1.0.3_amd64.deb already current)
+    SKIP worldfoundry-development (dist/worldfoundry-development_1.0.4_amd64.deb already current)
+    SKIP worldfoundry-editor-dev (dist/worldfoundry-editor-dev_1.0.0_all.deb already current)
+    SKIP worldfoundry (dist/worldfoundry_1.1.4_amd64.deb already current)
+    ```
+
+    15 `SKIP`, zero `OK`, no compiler invoked. **PASS**
+
 8. **Targeted build works** — `workflow_dispatch` with `packages: textile`; exactly one package builds.
+
+    First run, from an empty `dist/`:
+
+    ```
+    $ bash scripts/in-docker.sh bash scripts/build-all.sh textile
+    ...
+    dpkg-deb: building package 'textile' in '../textile_0.1.0+git0a19d26c-1foundry2_amd64.deb'.
+    OK   /work/apt/dist/textile_0.1.0+git0a19d26c-1foundry2_amd64.deb  (317722 bytes)
+
+    === dist/ ===
+    total 312K
+    -rw-r--r-- 1 ubuntu ubuntu 311K Aug 30 02:50 textile_0.1.0+git0a19d26c-1foundry2_amd64.deb
+    ```
+
+    Second run, unchanged:
+
+    ```
+    $ bash scripts/in-docker.sh bash scripts/build-all.sh textile
+    SKIP textile (dist/textile_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    ```
+
+    Exactly one package built; the other 14 were never entered. **PASS**
+
 9. **Completeness gate fires** — truncated `dist/` aborts the publish before the R2 sync, same as step 4.
+
+    ```
+    $ DIST_DIR=<synthetic dir with 2 .debs> bash scripts/check-dist-complete.sh
+    ERROR: dist/ has 2 .debs but the live repo publishes 14 — refusing to publish a truncated index.
+    exit=1
+
+    $ DIST_DIR=<synthetic dir with 100 .debs> bash scripts/check-dist-complete.sh
+    dist/ completeness check passed: 100 local .debs, 14 live packages
+    exit=0
+
+    $ PACKAGES_URL=…/NOPE.gz bash scripts/check-dist-complete.sh     # fail-closed
+    curl: (22) The requested URL returned error: 404
+    exit=22
+
+    $ bash scripts/in-docker.sh bash scripts/check-dist-complete.sh  # the real dist/
+    dist/ completeness check passed: 15 local .debs, 14 live packages
+    ```
+
+    Truncation rejected, floor honoured (`15 ≥ 14` — the +1 is the unpublished
+    `worldfoundry-editor-dev`), and an unreachable live index fails closed
+    rather than proceeding blind. **PASS**
+
+    `prune-dist.sh`, which replaces the `rm -f dist/*.deb` this change removed,
+    was tested the same way — a synthetic superseded version and a synthetic
+    orphan were both dropped and the 15 real packages kept:
+
+    ```
+    $ bash scripts/in-docker.sh bash scripts/prune-dist.sh
+    drop  ghost-removed-pkg_1.0_amd64.deb  (renamed/removed — no current source for 'ghost-removed-pkg')
+    prune textile_0.0.1-old_amd64.deb  (superseded by textile 0.1.0+git0a19d26c-1foundry2)
+    prune-dist: kept 15 package(s); removed 1 orphan(s) + 1 superseded .deb(s), 0 orphan + 0 superseded source artifact(s)
+    ```
+
 10. **Both repos still resolve together** — in a clean `ubuntu:26.04` with both apt sources wired, `foundry-core` still resolves (it `Depends: worldfoundry`), confirming the cross-repo coupling survived changes to both pipelines.
+
+    **The step as written is not runnable, and that is a pre-existing fact about
+    `foundry-core`, not a regression.** `foundry-core` `Depends: task`, and
+    `task` is Cloudsmith-sourced — it is in neither apt repo:
+
+    ```
+    $ apt-cache policy task
+    task:
+      Installed: (none)
+      Candidate: (none)
+    $ apt-get install --dry-run foundry-core
+    E: Unable to satisfy dependencies. Reached two conflicting assignments:
+       1. foundry-core:amd64=1.0.6 is selected for install
+       2. foundry-core:amd64 Depends task
+          but none of the choices are installable
+    ```
+
+    The property the step was written to check — that a package in one repo
+    resolves against a package in the other — is checked instead with
+    `worldfoundry-cli`, which lives in `apt.worldfoundry.org` and
+    `Depends:` on `blender-asset-finder*` in `apt.foundrylinux.org`:
+
+    ```
+    $ apt-get install --no-install-recommends --dry-run worldfoundry-cli
+    Inst libexpat1 (2.7.4-1 Ubuntu:26.04/resolute [amd64])
+    Inst python3 (3.14.3-0ubuntu2 Ubuntu:26.04/resolute [amd64])
+    ...
+    (no E: lines — full plan produced across both repos)
+
+    $ apt-get install --no-install-recommends blender-asset-finder-cli
+    ii  blender-asset-finder-cli 0.1.0+git0a19d26c-1foundry1 all
+    ```
+
+    Cross-repo coupling intact. **PASS (via `worldfoundry-cli`; step text should
+    be corrected to name a package that does not need the Cloudsmith source).**
