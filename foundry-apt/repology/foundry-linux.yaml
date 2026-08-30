@@ -6,13 +6,13 @@
 # (ruleset: [debuntu, foundry_linux]). Every rule is scoped 'ruleset: foundry_linux'.
 
 # ── name remaps: our source package → canonical Repology project ──
+- { ruleset: foundry_linux, name: [bsnes-jg], setname: "jg:bsnes" }
 - { ruleset: foundry_linux, name: [losslesscut], setname: "lossless-cut" }
 - { ruleset: foundry_linux, name: [mesen2], setname: "mesen" }
 - { ruleset: foundry_linux, name: [python3-glfw], setname: "python:glfw" }
 - { ruleset: foundry_linux, name: [python3-inators], setname: "python:inators" }
 - { ruleset: foundry_linux, name: [python3-librosa], setname: "python:librosa" }
 - { ruleset: foundry_linux, name: [python3-mss], setname: "python:mss" }
-- { ruleset: foundry_linux, name: [python3-picire], setname: "python:picire" }
 - { ruleset: foundry_linux, name: [python3-pydub], setname: "python:pydub" }
 - { ruleset: foundry_linux, name: [snes9x-gtk], setname: "snes9x" }
 - { ruleset: foundry_linux, name: [xemu-xbox], setname: "xemu" }
@@ -22,4 +22,4 @@
 
 # ── remove: tools verified not tracked on Repology (X-Repology-Project: none).
 #    Flip the package's X-Repology-Project to a real slug if it ever lands there. ──
-- { ruleset: foundry_linux, remove: true, name: [blender-asset-finder, blender-asset-finder-cli, drmon, foundry-welcome, m8te, xemu] }
+- { ruleset: foundry_linux, remove: true, name: [blender-asset-finder, blender-asset-finder-cli, drmon, foundry-welcome, m8te, python3-picire, xemu] }

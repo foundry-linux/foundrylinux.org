@@ -8,7 +8,7 @@ Build-Depends: debhelper-compat (= 13),
  libsamplerate0-dev
 Standards-Version: 4.7.2
 Homepage: https://gitlab.com/jgemu/bsnes
-X-Repology-Project: bsnes-jg
+X-Repology-Project: jg:bsnes
 Rules-Requires-Root: no
 
 Package: bsnes-jg
