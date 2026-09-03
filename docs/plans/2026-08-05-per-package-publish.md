@@ -321,6 +321,10 @@ This is CI and publishing infrastructure; there is no UI, rendered page, or CLI 
 Implemented 2026‑08‑29 in `~/worldfoundry.org`. Steps 7–10 were run locally
 against real container builds; a production run awaits an `apt-v*` tag push.
 
+**Re-verified 2026‑09‑03** — see the "Phase 2 re-verification" subsection at the
+end of this section (steps 11–16). Nothing has rotted; the release is still one
+tag push away.
+
 7. **Skip logic ported** — re-run a publish with no package changes; all 15 packages report `SKIP` and nothing compiles.
 
     ```
@@ -438,3 +442,160 @@ against real container builds; a production run awaits an `apt-v*` tag push.
 
     Cross-repo coupling intact. **PASS (via `worldfoundry-cli`; step text should
     be corrected to name a package that does not need the Cloudsmith source).**
+
+### Phase 2 re-verification (2026‑09‑03)
+
+Re-run to confirm nothing rotted between the 2026‑08‑29 implementation and the
+(still unpushed) release tag. **Everything still passes; no drift found.**
+
+11. **The Phase 2 code is committed and pushed, and carries no uncommitted drift.**
+
+    ```
+    $ git -C ~/worldfoundry.org log --oneline -1
+    34d5a31 ci(apt): durable R2 dist mirror + targeted publish (per-package-publish Phase 2)
+
+    $ git -C ~/worldfoundry.org status --porcelain -- apt/ .github/
+    (no output — clean)
+
+    $ git -C ~/worldfoundry.org branch -r --contains 34d5a31
+      origin/HEAD -> origin/main
+      origin/main
+    ```
+
+    All six ported pieces are present in that commit and match the plan:
+    `build-all.sh` skip logic (`SKIP … already current`), the multi-name
+    `PKG_FILTERS` package filter, the R2 hydrate/persist steps against
+    `R2:worldfoundry-apt/.dist-cache/`, `check-dist-complete.sh`, the
+    `workflow_dispatch` `packages:` input, and `prune-dist.sh`.
+
+    The workflow's public sync carries `--exclude ".dist-cache/**"` on the
+    `rclone sync ./public/ R2:worldfoundry-apt/` pass, so a repo sync cannot
+    delete the mirror — the in-bucket-prefix pattern, not a second bucket, as
+    the 2026‑08‑29 deviation note records. **PASS**
+
+12. **No `apt-v*` release has shipped this change** — the newest tag predates it.
+
+    ```
+    $ git -C ~/worldfoundry.org tag -l 'apt-v*' --sort=-v:refname | head -3
+    apt-v0.1.37
+    apt-v0.1.36
+    apt-v0.1.35
+
+    $ git -C ~/worldfoundry.org merge-base --is-ancestor 34d5a31 apt-v0.1.37 && echo YES || echo NO
+    NO
+
+    $ git -C ~/worldfoundry.org log --oneline apt-v0.1.37..HEAD | head -1
+    34d5a31 ci(apt): durable R2 dist mirror + targeted publish (per-package-publish Phase 2)
+    ```
+
+    `gh run list` shows no `apt-publish` run since 2026‑08‑06, so nothing has
+    been released by accident either. The next tag is **`apt-v0.1.38`**, and
+    pushing it is the one remaining step — deliberately left to the user, since
+    it publishes to a live public apt repo with external consumers. **PASS
+    (confirmed unreleased, as intended)**
+
+13. **Step 7 re-run — skip logic still holds.**
+
+    ```
+    $ bash scripts/in-docker.sh bash scripts/build-all.sh
+    SKIP cdpack (dist/cdpack_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP iffcomp (dist/iffcomp_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP iffdump (dist/iffdump_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP levcomp (dist/levcomp_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP lvldump (dist/lvldump_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP oaddump (dist/oaddump_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP oas2oad (dist/oas2oad_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP prep (dist/prep_0.103+git0a19d26c-1foundry2_amd64.deb already current)
+    SKIP textile (dist/textile_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+    === Building worldfoundry-blender-addons (canonical debian/ source format) ===
+    SKIP worldfoundry-blender-addons (dist/worldfoundry-blender-addons_1.1.3_amd64.deb already current)
+    SKIP worldfoundry-blender-editor-exporter (dist/worldfoundry-blender-editor-exporter_0.2.1+git3fa94cbe-2foundry2_amd64.deb already current)
+    === Building worldfoundry-cli (canonical debian/ source format) ===
+    SKIP worldfoundry-cli (dist/worldfoundry-cli_1.0.3_amd64.deb already current)
+    === Building worldfoundry-development (canonical debian/ source format) ===
+    SKIP worldfoundry-development (dist/worldfoundry-development_1.0.4_amd64.deb already current)
+    === Building worldfoundry-editor-dev (canonical debian/ source format) ===
+    SKIP worldfoundry-editor-dev (dist/worldfoundry-editor-dev_1.0.0_all.deb already current)
+    === Building worldfoundry (canonical debian/ source format) ===
+    SKIP worldfoundry (dist/worldfoundry_1.1.4_amd64.deb already current)
+
+    exit=0   (SKIP=15, OK=0, FAIL=0, build.sh invocations=0)
+    ```
+
+    15 `SKIP`, zero builds, no compiler invoked. **PASS**
+
+    One cosmetic wrinkle the 2026‑08‑29 transcript did not show: the five
+    canonical-layout metapackages print a `=== Building <name> … ===` header
+    *before* their `SKIP` line, because the loop echoes that header before
+    `build_canonical()` runs the skip test. Nothing is built — `OK`/`FAIL`
+    counts are both zero — so this is log noise, not a behaviour difference.
+    Not worth a code change on its own; fold the `echo` into the non-skip path
+    next time `build-all.sh` is touched.
+
+14. **Step 8 re-run — the package filter still isolates one package.**
+
+    ```
+    $ bash scripts/in-docker.sh bash scripts/build-all.sh textile
+    SKIP textile (dist/textile_0.1.0+git0a19d26c-1foundry2_amd64.deb already current)
+
+    === dist/ ===
+    total 2.0M
+    … 15 unchanged .debs …
+    ```
+
+    Only `textile` was considered; the other 14 packages were never entered and
+    `dist/` is byte-identical. **PASS**
+
+15. **Step 9 re-run — the completeness gate and `prune-dist.sh` still behave.**
+
+    ```
+    $ bash scripts/check-dist-complete.sh              # the real dist/
+    dist/ completeness check passed: 15 local .debs, 14 live packages
+    exit=0
+
+    $ DIST_DIR=<synthetic dir with 2 .debs> bash scripts/check-dist-complete.sh
+    ERROR: dist/ has 2 .debs but the live repo publishes 14 — refusing to publish a truncated index.
+    exit=1
+
+    $ PACKAGES_URL=…/NOPE.gz bash scripts/check-dist-complete.sh    # fail-closed
+    curl: (22) The requested URL returned error: 404
+    exit=22
+
+    $ bash scripts/prune-dist.sh                       # real dist/, nothing to drop
+    prune-dist: kept 15 package(s); removed 0 orphan(s) + 0 superseded .deb(s), 0 orphan + 0 superseded source artifact(s)
+    exit=0
+    ```
+
+    The live index is independently still at 14:
+
+    ```
+    $ curl -fsSL https://apt.worldfoundry.org/dists/stable/main/binary-amd64/Packages.gz | gzip -dc | grep -c '^Package: '
+    14
+    ```
+
+    Floor honoured (`15 ≥ 14`), truncation rejected, unreachable index fails
+    closed, and `prune-dist.sh` is a no-op on a healthy tree. **PASS**
+
+16. **ShellCheck clean on the three ported scripts.**
+
+    ```
+    $ shellcheck scripts/build-all.sh scripts/check-dist-complete.sh scripts/prune-dist.sh
+    (no output)
+    ```
+
+    **PASS**
+
+**Remaining step, for the user to run.** Everything above is green; the only
+thing left is the production release, which is a tag push to `worldfoundry.org`:
+
+```bash
+git -C ~/worldfoundry.org tag apt-v0.1.38 -m "apt: durable R2 dist mirror + targeted publish (per-package-publish Phase 2)"
+git -C ~/worldfoundry.org push origin apt-v0.1.38
+```
+
+That triggers `.github/workflows/apt-publish.yml`. Expect the first run to be a
+**cold bootstrap**: `R2:worldfoundry-apt/.dist-cache/` does not exist yet, so
+hydration will log "R2 dist mirror is not available yet; continuing only because
+this is a full bootstrap build", all 15 packages will build, and the persist
+step will populate the mirror. Every run after that should show 15 `SKIP` lines
+and finish in minutes.
