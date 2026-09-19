@@ -198,6 +198,12 @@ numbered to match the checklist order; wording is unchanged.
    **FAIL** — superseded by a different design; the literal bucket named in this checklist item was
    deliberately never provisioned.
 
+   **Triage (orchestrator, 2026‑09‑19): step retired.** The
+   [r2-403 plan](2026-08-06-foundry-apt-dist-r2-403.md) chose the `.dist-cache/` prefix
+   inside the existing bucket instead of a second bucket, and that path is proven by every
+   hydrate/persist run since. This step is not a defect, it describes a design that was not
+   built; it stays in the checklist as history and does not block completion.
+
 2. **Workflow tests cover authorized durable hydration/persistence and fail-closed fallback behavior.**
 
    The fail-closed *implementation* exists in `foundry-apt/.github/workflows/publish.yml` (the
@@ -404,6 +410,28 @@ numbered to match the checklist order; wording is unchanged.
     a pre-approved Bash permission rule for this path or interactive approval, which this session doesn't
     have. Reporting rather than working around it or fabricating output.
 
+    **Orchestrator addendum (same day, real marker, not synthetic):** the `uv` release
+    left a genuine `package=uv` marker in `.claude/state/package-publish-wald3n.pending`
+    (written by `task bump` at 2026‑09‑19T02:27:49Z). After wald3n.com `v0.0.430`
+    deployed, the guard was run against clean HEAD worktrees of both repos:
+
+    ```
+    $ WALD3N_ROOT=<clean wald3n.com worktree> task package-publish:complete
+    === Checking refreshed wald3n.com inventory ===
+    PRs: 12
+    Packages: 60 (30 packaged upstream, 6 ours, 24 metapackages)
+    Verified 12 PRs and 60 package sources.
+    === Checking live https://wald3n.com/open-source ===
+      ok uv
+    PASS: APT publication and wald3n.com/open-source are both complete.
+    $ ls .claude/state/package-publish-wald3n.pending
+    ls: cannot access '.claude/state/package-publish-wald3n.pending': No such file or directory
+    ```
+
+    **PASS** — the guard printed the verified package and removed the marker, observed
+    end‑to‑end on the real `uv` publication (full detail in
+    [add-uv-to-base](2026-09-19-add-uv-to-base.md), verification step 8).
+
 11. **A second targeted/no-change run proves durable mirror round-trip and skip behavior.**
 
     Reusing evidence already recorded in the r2-403 plan's 2026-09-19 re-verification (item 4 there): runs
@@ -418,6 +446,15 @@ regression-testing and access-provisioning work this plan called for (items 1–
 design was superseded by the sibling r2-403 plan, and items 2–4 have no test coverage, only working
 implementation. Item 10 needs a re-run with elevated permission to observe directly. This plan should
 **not** be promoted to Done as-is; the FAIL items are real gaps, not verification friction.
+
+**Orchestrator triage, 2026‑09‑19 — revised tally: 7 PASS / 3 FAIL / 1 retired.** Item 10 is
+PASS on the real `uv` marker (addendum above). Item 1 is retired, not failed: the design it
+names was replaced by the r2‑403 decision. Items 2–4 are the remaining gaps and are now
+tracked as work in `TODO.md`: a T2 item for workflow tests covering hydrate/persist
+fail‑closed behaviour and the marker‑lifecycle scripts (items 2–3), and item 4 folded into
+the existing T2 item on making wald3n's inventory refresh read committed content (which
+also gets the canonical‑checkout regression check). The `[verify]` row stays open until
+those land and items 2–4 are re‑run.
 
 ## Out of scope
 
