@@ -111,10 +111,11 @@ rows on commit.*
 | [Audit vendored upstreams for their own Debian packaging](2026-08-05-audit-upstream-packaging.md) | Close the `/package` gap between "is it in Debian" and "does upstream package it", and re-check the 30 packages vendored before the fix. | _PENDING_ | Packaging |
 | [Rename: `xemu` → the Commodore suite, `xemu-xbox` → the Xbox emulator](2026-08-05-xemu-rename-and-upstream-pr.md) | Give the bare `xemu` name to the upstream that has shipped a `.deb` under it since 2016, qualify the Xbox emulator, and port upstream's `.desktop` generation. | [`78c4d9c`](https://github.com/foundry-linux/foundrylinux.org/commit/78c4d9c) | Packaging |
 | [Per-package publish for apt.foundrylinux.org](2026-08-05-per-package-publish.md) | Replace the evictable build cache with a durable R2 `dist/` mirror and safely target individual package rebuilds. | [`9f1c7ed`](https://github.com/foundry-linux/foundrylinux.org/commit/9f1c7ed) | Infra |
+| [Harden the package-publishing completion pipeline](2026-08-06-package-publish-pipeline-hardening.md) | Make targeted APT publishing finish green and enforce the complete APT → wald3n → guard-clear lifecycle. | _PENDING_ | Infra |
 | [Package LosslessCut as a .deb for apt.foundrylinux.org](2026-08-29-package-losslesscut.md) | Repack upstream's pre-built Electron bundle after establishing that its AppImage is not self-contained, dropping six unsatisfiable legacy shims and fixing a malformed ffmpeg RPATH. | [`09fe5c5`](https://github.com/foundry-linux/foundrylinux.org/commit/09fe5c5) | Packaging |
 | [Complete LosslessCut publication and upstream handoff](2026-08-30-complete-losslesscut-publication.md) | Deploy and verify the public inventory, harden the publisher SSH handoff, notify upstream, and close non-ISO LosslessCut bookkeeping. | _PENDING_ | Packaging |
-
 | [Add `uv` to the base installation](2026-09-19-add-uv-to-base.md) | Vendor Astral's uv as a .deb (ruff pattern), add it to foundry-core Depends, add a Phase 0 install-uv.sh, extend devbox smoke test and docs. | _PENDING_ | Packaging |
+
 ---
 
 ## How this index was derived
@@ -122,4 +123,4 @@ rows on commit.*
 - **Order** = each plan's *creation* commit (oldest commit that touched the file), by committer date.
 - **Commit(s)** = the full `git log --follow` set per plan, oldest → newest.
 - **Summaries / categories** auto-generated from each plan's TL;DR (Sonnet, medium effort) — refine as needed.
-- **Generated** 2026-08-05 for 102 indexed plan(s).
+- **Generated** 2026-08-06 for 103 indexed plan(s).

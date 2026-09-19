@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<!--
+  Design mockup (not a live KDE screenshot).
+  Kvantum application style — Breeze (current) vs FoundryLinux (target).
+  Self-contained: inline CSS only. Logical canvas 1440x900.
+
+  THIS FILE IS THE DESIGN SOURCE OF TRUTH for
+  foundry-apt/packages/foundry-kde-theme/data/kvantum/FoundryLinux/FoundryLinux.kvconfig.
+
+  Honest scope note baked into the artwork: corner radius is NOT a kvconfig key.
+  It lives in the theme SVG, and this pass ships no custom SVG, so the right-hand
+  column draws the engine's default 2 px radius. Everything ANNOTATED IN ORANGE
+  is a kvconfig key this pass actually sets.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mockup — Kvantum application style</title>
+<style>
+  :root {
+    --bg:       #0a0a0a;   /* window.color            */
+    --base:     #0d0d0d;   /* base.color              */
+    --altbase:  #141414;   /* alt.base.color          */
+    --button:   #1a1a1a;   /* button.color            */
+    --light:    #2a2a2a;   /* light.color             */
+    --mid:      #262626;   /* mid.color               */
+    --text:     #f7f7f7;   /* text.color              */
+    --muted:    #909090;
+    --dis:      #6e6e6e;   /* disabled.text.color     */
+    --accent:   #ff5b1a;   /* highlight.color         */
+    --accentlo: #c8410a;   /* inactive.highlight      */
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; width: 1440px; height: 900px; overflow: hidden;
+    background: #050505; color: var(--text);
+    font: 13px/1.45 "Noto Sans", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 16px 32px 14px; border-bottom: 1px solid var(--mid); background: var(--bg); height: 56px;
+  }
+  header h1 { margin: 0; font-size: 17px; font-weight: 600; }
+  header .sub { color: var(--muted); font-size: 12px; }
+  header .tag {
+    margin-left: auto; font: 600 10px ui-monospace, Menlo, monospace;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+    border: 1px solid var(--accent); padding: 3px 9px;
+  }
+  main { display: grid; grid-template-columns: 1fr 1fr; height: 782px; }
+  .col { padding: 18px 32px; overflow: hidden; }
+  .col + .col { border-left: 1px solid var(--mid); }
+  .col > h2 {
+    margin: 0 0 3px; font-size: 12px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  }
+  .col > h2.hot { color: var(--accent); }
+  .col > .note { margin: 0 0 18px; color: var(--muted); font-size: 12px; }
+
+  .grp { margin-bottom: 14px; }
+  .grp > .lbl {
+    font: 600 10px ui-monospace, Menlo, monospace; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+  }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .st { font: 10px ui-monospace, Menlo, monospace; color: var(--muted); text-align: center; }
+  .stack { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+
+  /* ---------- BREEZE (current) ---------- */
+  .bz .btn {
+    height: 30px; min-width: 86px; padding: 0 14px;
+    display: grid; place-items: center;
+    background: #31363b; border: 1px solid #3f4449; border-radius: 3px;
+    color: #eff0f1; font-size: 13px;
+  }
+  .bz .btn.hover  { background: #3b4045; border-color: #3daee9; }
+  .bz .btn.press  { background: #232629; border-color: #3daee9; }
+  .bz .btn.dis    { background: #2a2e32; border-color: #33373b; color: #6e7276; }
+  .bz .le {
+    height: 30px; width: 220px; padding: 0 9px; display: flex; align-items: center;
+    background: #232629; border: 1px solid #3f4449; border-radius: 3px; color: #eff0f1;
+  }
+  .bz .le.focus { border: 2px solid #3daee9; padding: 0 8px; }
+  .bz .cb { width: 18px; height: 18px; border: 1px solid #5c6165; border-radius: 3px; background: #232629; }
+  .bz .cb.on { background: #3daee9; border-color: #3daee9; }
+  .bz .rd { width: 18px; height: 18px; border: 1px solid #5c6165; border-radius: 50%; background: #232629; display: grid; place-items: center; }
+  .bz .rd.on i { width: 8px; height: 8px; border-radius: 50%; background: #3daee9; display: block; }
+  .bz .sl-groove { width: 200px; height: 4px; border-radius: 2px; background: #3f4449; position: relative; }
+  .bz .sl-groove i { position: absolute; inset: 0 45% 0 0; background: #3daee9; border-radius: 2px; }
+  .bz .sl-h { position: absolute; left: 55%; top: -6px; width: 16px; height: 16px; border-radius: 50%; background: #3daee9; }
+  .bz .sc { width: 12px; height: 132px; background: #2a2e32; border-radius: 6px; position: relative; }
+  .bz .sc i { position: absolute; left: 2px; right: 2px; top: 12px; height: 62px; background: #5c6165; border-radius: 4px; }
+  .bz .pb { width: 220px; height: 6px; border-radius: 3px; background: #3f4449; position: relative; }
+  .bz .pb i { position: absolute; inset: 0 38% 0 0; background: #3daee9; border-radius: 3px; }
+  .bz .tab { display: flex; border-bottom: 1px solid #3f4449; }
+  .bz .tab span { padding: 7px 16px; color: #a1a5a8; font-size: 12px; }
+  .bz .tab span.on { color: #eff0f1; box-shadow: inset 0 -2px 0 #3daee9; }
+
+  /* ---------- FOUNDRY (target) ---------- */
+  .fd .btn {
+    height: 30px; min-width: 86px; padding: 0 14px;
+    display: grid; place-items: center;
+    background: var(--button); border: 1px solid var(--light); border-radius: 2px;
+    color: var(--text); font-size: 13px;
+  }
+  .fd .btn.hover { background: #202020; border-color: var(--accent); }
+  .fd .btn.press { background: var(--accent); border-color: var(--accent); color: #f7f7f7; font-weight: 600; }
+  .fd .btn.dis   { background: #121212; border-color: #1f1f1f; color: var(--dis); }
+  .fd .le {
+    height: 30px; width: 220px; padding: 0 9px; display: flex; align-items: center;
+    background: var(--base); border: 1px solid var(--light); border-radius: 2px; color: var(--text);
+  }
+  .fd .le.focus { border: 2px solid var(--accent); padding: 0 8px; }
+  .fd .cb { width: 16px; height: 16px; border: 1px solid var(--light); border-radius: 2px; background: var(--base); display: grid; place-items: center; }
+  .fd .cb.on { background: var(--accent); border-color: var(--accent); }
+  .fd .rd { width: 16px; height: 16px; border: 1px solid var(--light); border-radius: 50%; background: var(--base); display: grid; place-items: center; }
+  .fd .rd.on i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: block; }
+  .fd .sl-groove { width: 200px; height: 4px; border-radius: 2px; background: var(--light); position: relative; }
+  .fd .sl-groove i { position: absolute; inset: 0 45% 0 0; background: var(--accent); border-radius: 2px; }
+  .fd .sl-h { position: absolute; left: 55%; top: -5px; width: 14px; height: 14px; border-radius: 2px; background: var(--accent); }
+  .fd .sc { width: 10px; height: 132px; background: var(--altbase); border-radius: 2px; position: relative; }
+  .fd .sc i { position: absolute; left: 1px; right: 1px; top: 12px; height: 62px; background: #3a3a3a; border-radius: 2px; }
+  .fd .sc.hovered i { background: var(--accent); }
+  .fd .pb { width: 220px; height: 4px; border-radius: 2px; background: var(--light); position: relative; }
+  .fd .pb i { position: absolute; inset: 0 38% 0 0; background: var(--accent); border-radius: 2px; }
+  .fd .tab { display: flex; border-bottom: 1px solid var(--light); }
+  .fd .tab span { padding: 7px 16px; color: var(--muted); font-size: 12px; }
+  .fd .tab span.on { color: var(--text); background: var(--altbase); box-shadow: inset 0 -2px 0 var(--accent); }
+
+  .ann {
+    margin-top: 6px; font: 10px/1.7 ui-monospace, Menlo, monospace; color: var(--muted);
+  }
+  .ann b { color: var(--accent); font-weight: 600; }
+  .ann i { color: var(--text); font-style: normal; }
+
+  footer {
+    height: 62px; border-top: 1px solid var(--mid); background: var(--bg);
+    display: flex; align-items: center; padding: 0 32px; gap: 22px;
+    font: 11px ui-monospace, Menlo, monospace; color: var(--muted);
+  }
+  footer .sw { display: flex; align-items: center; gap: 7px; }
+  footer .chip { width: 13px; height: 13px; border: 1px solid #333; }
+  footer .caveat { margin-left: auto; color: var(--accentlo); max-width: 470px; text-align: right; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Kvantum application style — Qt widget rendering</h1>
+  <span class="sub">design mockup — not a live KDE screenshot</span>
+  <span class="tag">1440 × 900</span>
+</header>
+
+<main>
+  <!-- ============ CURRENT ============ -->
+  <div class="col bz">
+    <h2>Current — Breeze widget style</h2>
+    <p class="note">Qt apps render with Breeze’s own painter. The Foundry colour scheme
+       reaches text and window backgrounds, but Breeze keeps its blue <b>#3daee9</b>
+       for focus, checks, slider fill and progress.</p>
+
+    <div class="grp">
+      <div class="lbl">push button — 4 states</div>
+      <div class="row">
+        <div class="stack"><div class="btn">Build</div><div class="st">normal</div></div>
+        <div class="stack"><div class="btn hover">Build</div><div class="st">hover</div></div>
+        <div class="stack"><div class="btn press">Build</div><div class="st">pressed</div></div>
+        <div class="stack"><div class="btn dis">Build</div><div class="st">disabled</div></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="lbl">line edit</div>
+      <div class="row">
+        <div class="le">~/foundry/assets</div>
+        <div class="le focus">~/foundry/assets</div>
+      </div>
+      <div class="ann">focus ring <i>2 px #3daee9</i></div>
+    </div>
+
+    <div class="grp">
+      <div class="lbl">check box · radio</div>
+      <div class="row">
+        <div class="cb"></div>
+        <div class="cb on"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4.5 9.2l3 3 6-6.4" fill="none" stroke="#232629" stroke-width="2"/></svg></div>
+        <div class="rd"></div><div class="rd on"><i></i></div>
+        <span class="st">18 px · radius 3 px</span>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="lbl">slider · progress</div>
+      <div class="row" style="gap:26px">
+        <div class="sl-groove"><i></i><div class="sl-h"></div></div>
+      </div>
+      <div class="row" style="margin-top:16px"><div class="pb"><i></i></div><span class="st">6 px</span></div>
+    </div>
+
+    <div class="grp">
+      <div class="lbl">tab bar</div>
+      <div class="tab"><span class="on">Scene</span><span>Assets</span><span>Build log</span></div>
+    </div>
+
+    <div class="grp" style="display:flex;gap:22px;align-items:flex-start">
+      <div>
+        <div class="lbl">scrollbar</div>
+        <div class="sc"><i></i></div>
+        <div class="ann">12 px wide, transient</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TARGET ============ -->
+  <div class="col fd">
+    <h2 class="hot">Target — Kvantum “FoundryLinux”</h2>
+    <p class="note">Same widget geometry, forge palette throughout: every blue affordance
+       becomes <b style="color:var(--accent)">#ff5b1a</b>, surfaces drop to #0a0a0a/#1a1a1a,
+       and controls thin out (scrollbar 10 px, progress 4 px, check 16 px).</p>
+
+    <div class="grp">
+      <div class="lbl">push button — 4 states</div>
+      <div class="row">
+        <div class="stack"><div class="btn">Build</div><div class="st">normal</div></div>
+        <div class="stack"><div class="btn hover">Build</div><div class="st">hover</div></div>
+        <div class="stack"><div class="btn press">Build</div><div class="st">pressed</div></div>
+        <div class="stack"><div class="btn dis">Build</div><div class="st">disabled</div></div>
+      </div>
+      <div class="ann">
+        <b>button.color</b> <i>#1a1a1a</i> · <b>light.color</b> <i>#2a2a2a</i> ·
+        <b>highlight.color</b> <i>#ff5b1a</i> · <b>disabled.text.color</b> <i>#6e6e6e</i><br>
+        pressed = <b>highlight.color</b> fill with <b>highlight.text.color</b> <i>#f7f7f7</i>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="lbl">line edit</div>
+      <div class="row">
+        <div class="le">~/foundry/assets</div>
+        <div class="le focus">~/foundry/assets</div>
+      </div>
+      <div class="ann"><b>base.color</b> <i>#0d0d0d</i> · focus ring <i>2 px #ff5b1a</i></div>
+    </div>
+
+    <div class="grp">
+      <div class="lbl">check box · radio</div>
+      <div class="row">
+        <div class="cb"></div>
+        <div class="cb on"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 7.2l2.6 2.6L11 4.2" fill="none" stroke="#f7f7f7" stroke-width="2"/></svg></div>
+        <div class="rd"></div><div class="rd on"><i></i></div>
+        <span class="st">16 px</span>
+      </div>
+      <div class="ann"><b>check_size</b> <i>16</i></div>
+    </div>
+
+    <div class="grp">
+      <div class="lbl">slider · progress</div>
+      <div class="row" style="gap:26px">
+        <div class="sl-groove"><i></i><div class="sl-h"></div></div>
+      </div>
+      <div class="ann"><b>slider_width</b> <i>4</i> · <b>slider_handle_width/length</b> <i>14</i></div>
+      <div class="row" style="margin-top:14px"><div class="pb"><i></i></div><span class="st">4 px</span></div>
+      <div class="ann"><b>progressbar_thickness</b> <i>4</i> · <b>spread_progressbar</b> <i>true</i></div>
+    </div>
+
+    <div class="grp">
+      <div class="lbl">tab bar</div>
+      <div class="tab"><span class="on">Scene</span><span>Assets</span><span>Build log</span></div>
+      <div class="ann">active tab: <b>alt.base.color</b> <i>#141414</i> + 2 px accent underline</div>
+    </div>
+
+    <div class="grp" style="display:flex;gap:28px;align-items:flex-start">
+      <div>
+        <div class="lbl">scrollbar</div>
+        <div class="sc"><i></i></div>
+        <div class="ann"><b>scroll_width</b> <i>10</i><br><b>scroll_arrows</b> <i>false</i></div>
+      </div>
+      <div>
+        <div class="lbl">hovered</div>
+        <div class="sc hovered"><i></i></div>
+        <div class="ann">handle → <i>#ff5b1a</i></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="sw"><span class="chip" style="background:#0a0a0a"></span>#0a0a0a window</div>
+  <div class="sw"><span class="chip" style="background:#1a1a1a"></span>#1a1a1a button</div>
+  <div class="sw"><span class="chip" style="background:#f7f7f7"></span>#f7f7f7 text</div>
+  <div class="sw"><span class="chip" style="background:#ff5b1a"></span>#ff5b1a highlight</div>
+  <div class="caveat">
+    Corner radius is not a kvconfig key — it lives in the theme SVG, and this pass
+    ships colour + geometry config only, so radius stays at the Kvantum engine default.
+    A custom FoundryLinux.svg to square the corners off is the follow-up.
+  </div>
+</footer>
+
+</body>
+</html>

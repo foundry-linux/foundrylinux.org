@@ -165,9 +165,9 @@ Status as of the first pass. Items 4–6 are gated on the in-flight rebuild and 
     No `x-emulators` remains outside historical plan/transcript files, the ITP draft's fallback
     list (where it is deliberate), and the wnpp-search line recording what was searched for.
 
-2. **Build + lintian.** ✅ **PASS for `xemu`** — builds in a clean `ubuntu:26.04`, lintian clean on
-   **both** the `.deb` and the `.dsc`. ⏳ `xemu-xbox` rebuilding after the `NAME`/`SRC_DIR` fix; its
-   first attempt failed outright, so this is not yet proven.
+2. **Build + lintian.** ✅ **PASS for both packages** — `xemu` and `xemu-xbox` build in a clean
+   `ubuntu:26.04`; lintian is clean on both the `.deb` and `.dsc` for each package. The rebuilt Xbox
+   artifact is `xemu-xbox_0.8.136-1foundry2_amd64.deb`.
 
 3. **Menu entries generated, not hand-written.** ✅ **PASS**
 
@@ -182,16 +182,25 @@ Status as of the first pass. Items 4–6 are gated on the in-flight rebuild and 
     `/usr/share/pixmaps` icon its `Icon=` points at. Two previously hand-written names were wrong.
 
 4. **Metapackage chains resolve** (`foundry-emulators-computers` → `xemu`,
-   `foundry-emulators-consoles` → `xemu-xbox`). ⏳ **PENDING** — gated on the rebuild.
+   `foundry-emulators-consoles` → `xemu-xbox`). ✅ **PASS** — an Ubuntu 26.04 APT dry-run resolved
+   and configured both complete chains; the live index carries the same dependencies in versions
+   `1.0.3` and `1.0.6`, respectively.
 
 5. **Live repo after publish:** `x-emulators` and the old Xbox `xemu_0.8.136*` **absent** from the
-   `Packages` index; `xemu` resolves to the suite and `xemu-xbox` to the Xbox emulator. ⏳ **PENDING.**
-   Local `dist/` has already been purged of both old names, so this is now about confirming the sync
-   deletes them from R2 rather than leaving them stranded.
+   `Packages` index; `xemu` resolves to the suite and `xemu-xbox` to the Xbox emulator. ✅ **PASS** —
+   published 2026-08-06. Live versions are `xemu 0~git20260129.40dfef0d-1foundry3` and
+   `xemu-xbox 0.8.136-1foundry2`; no `x-emulators` stanza remains.
 
 6. **End-to-end regression:** the renamed `xemu` package's `xc65` still runs the bare-metal 65CE02
-   kernel to `0xE0E8` from the live repo. ⏳ **PENDING** — this is the check that would catch the
-   `.desktop`/rename work having broken the actual emulators, which no lintian or metadata test can.
+   kernel to `0xE0E8` from the live repo. ✅ **PASS** — installed the signed live package in a clean
+   Ubuntu 26.04 container and ran its `/usr/bin/xc65` as an unprivileged user:
+
+    ```text
+    xemu    0~git20260129.40dfef0d-1foundry3
+    XEMU_RESULT=0xE0E8
+    ```
+
+   This matches the host oracle and confirms the rename/desktop work did not break the emulator.
 
 ## Follow-ups
 
@@ -201,5 +210,25 @@ The upstream-facing metadata deliberately keeps Gabor Lenart as both `Maintainer
 changelog identity because this extends the `.deb` packaging he already maintained; Foundry is a
 contributor, not the new package maintainer. At the user's direction, the proposed DEP-5 file has no
 separate `Files: debian/*` Foundry copyright stanza.
-- [ ] Investigate the 8 upstream targets not built by default (`xcx16`, `xzxspect`, `xrc2014`, `xc900`,
-      `xpc`, `xrecpm`, …) — there may be more emulators available at no extra cost.
+### Omitted-target investigation — 2026-08-06
+
+Built each of the eight targets omitted from the root `Makefile` individually at PR #448 head `6c8ec13`.
+**Decision: package none of them.** The omission is an upstream maturity boundary, not merely a stale
+default list; adding the three binaries that happen to compile would advertise software upstream itself
+says not to use.
+
+| Target | Build | Finding |
+|---|---|---|
+| `xcx16` | PASS | README calls it “very rudimentary”, not usable for average users, and recommends the official Commander X16 emulator; no sound, SD card, raster IRQ, or sane speed control. |
+| `xpc` | PASS | README says “Unfinished” and “Do not use this (yet)”; it is an experimental Fake86 integration. |
+| `xzxspect` | PASS | README says it is “simply unusable”: incorrect display/timing, no loading, and no sound. |
+| `xep128old` | FAIL | Requires undetected readline and is explicitly the old, early-alpha Enterprise port; the default package already ships its rewritten successor, `xep128`. |
+| `xkeyconfig` | FAIL | Compiles but does not link: undefined `font_16x16`. It is a keyboard-layout utility, not an additional emulator. |
+| `xrc2014` | FAIL | Uses the removed `CONFIG_KBD_ALSO_*_SDL_CALLBACK` keyboard API; the shared header deliberately stops compilation until the target is ported. |
+| `xrecpm` | FAIL | Uses the removed keyboard API and directly includes `vgafonts.c`, which now deliberately errors and must be requested through `emutools.c`. |
+| `xc900` | FAIL | Source is incomplete: implicit `z8010_init`/`z8010_reset` and missing `F_OVERFLOWSUB_BY16`. Its own description calls the emulator “a try”. |
+
+The three successful binaries also reached their `-h` output under a temporary writable data directory,
+confirming they are real executables rather than accidental partial links. That does not override the
+upstream usability warnings. Revisit only if upstream promotes a target into the root `TARGETS` list or
+removes its warning and restores it to a maintained, buildable state.

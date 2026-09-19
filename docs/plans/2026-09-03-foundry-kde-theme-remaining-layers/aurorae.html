@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<!--
+  Design mockup (not a live KDE screenshot).
+  Aurorae window decoration — Breeze (current) vs FoundryLinux (target).
+  Self-contained: inline CSS only. Logical canvas 1440x900.
+
+  THIS FILE IS THE DESIGN SOURCE OF TRUTH for
+  foundry-apt/packages/foundry-kde-theme/data/aurorae/FoundryLinux/*.
+  Every measurement annotated here is the number written into
+  FoundryLinuxrc [Layout] or drawn into decoration.svg / <button>.svg.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mockup — Aurorae window decoration</title>
+<style>
+  :root {
+    --bg:        #0a0a0a;   /* forge background      */
+    --surface:   #141414;   /* raised / titlebar     */
+    --widget:    #1a1a1a;   /* buttons, inputs       */
+    --text:      #f7f7f7;   /* warm white            */
+    --muted:     #909090;   /* inactive text         */
+    --dim:       #6e6e6e;   /* inactive glyph        */
+    --disabled:  #3a3a3a;   /* deactivated glyph     */
+    --accent:    #ff5b1a;   /* forge orange          */
+    --accent-lo: #c8410a;   /* forge orange, banked  */
+    --line:      #262626;   /* hard 1px border       */
+    --line-lo:   #1a1a1a;   /* inactive border       */
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; width: 1440px; height: 900px; overflow: hidden;
+    background: #050505; color: var(--text);
+    font: 13px/1.45 "Noto Sans", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 16px 32px 14px; border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+  header h1 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: .01em; }
+  header .sub { color: var(--muted); font-size: 12px; }
+  header .tag {
+    margin-left: auto; font: 600 10px ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+    border: 1px solid var(--accent); padding: 3px 9px;
+  }
+  main { display: grid; grid-template-columns: 1fr 1fr; height: 900px; }
+  .col { padding: 26px 32px; }
+  .col + .col { border-left: 1px solid var(--line); }
+  .col h2 {
+    margin: 0 0 4px; font-size: 12px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  }
+  .col h2.hot { color: var(--accent); }
+  .col .note { margin: 0 0 22px; color: var(--muted); font-size: 12px; }
+  .caption {
+    margin: 7px 0 16px; color: var(--muted);
+    font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .caption b { color: var(--text); font-weight: 600; }
+
+  /* ---------- shared window shell geometry ---------- */
+  .win { width: 560px; background: var(--bg); }
+  .win .body {
+    height: 104px; background: var(--bg);
+    display: flex; align-items: center; padding: 0 16px; color: var(--muted);
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .tb {
+    display: flex; align-items: center;
+    height: 30px;              /* TitleEdgeTop 6 + TitleHeight 18 + TitleEdgeBottom 6 */
+    padding: 0 8px;            /* TitleEdgeLeft / TitleEdgeRight = 8 */
+    font-size: 13px; font-weight: 600;
+  }
+  .tb .title { flex: 1; text-align: center; }
+  .btns { display: flex; gap: 8px; }   /* ButtonSpacing = 8 */
+  .btn {
+    width: 16px; height: 16px;         /* ButtonWidth / ButtonHeight = 16 */
+    display: grid; place-items: center;
+  }
+  .btn svg { display: block; }
+
+  /* ---------- BREEZE (current) ---------- */
+  .breeze {
+    border: 1px solid #1b1b1b;
+    border-radius: 6px 6px 0 0;        /* Breeze rounds the top corners */
+    overflow: hidden;
+  }
+  .breeze .tb { background: #31363b; border-bottom: 1px solid #22262a; }
+  .breeze.inactive .tb { background: #2a2e32; color: var(--muted); }
+  .breeze .dot {
+    width: 18px; height: 18px; border-radius: 50%;   /* Breeze: circular buttons */
+    display: grid; place-items: center;
+  }
+  .breeze .btns { gap: 4px; }
+
+  /* ---------- FOUNDRY (target) ---------- */
+  .foundry {
+    border: 1px solid var(--line);      /* BorderLeft/Right/Bottom = 1 */
+    border-radius: 0;                   /* squared — forged, not moulded */
+  }
+  .foundry .tb {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);   /* the hot seam: 2px #ff5b1a */
+  }
+  .foundry.inactive { border-color: var(--line-lo); }
+  .foundry.inactive .tb {
+    background: #0f0f0f; color: var(--muted);
+    border-bottom: 2px solid #2a2a2a;         /* seam cools when unfocused */
+  }
+  .foundry .btn.hover  { }
+  .foundry .btn.press  { background: var(--accent); }
+
+  /* ---------- state matrix ---------- */
+  table.states { border-collapse: collapse; margin-top: 4px; }
+  table.states th {
+    font: 600 10px/1 ui-monospace, Menlo, monospace; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 0 9px 10px; text-align: center; font-weight: 600;
+  }
+  table.states th.rowh { text-align: right; padding-right: 14px; width: 92px; }
+  table.states td {
+    padding: 5px 10px; text-align: center;
+  }
+  table.states td.rowh {
+    text-align: right; padding-right: 14px; color: var(--text);
+    font: 500 11px ui-monospace, Menlo, monospace;
+  }
+  .cell { width: 16px; height: 16px; display: inline-grid; place-items: center; }
+  .cell.press { background: var(--accent); }
+
+  .specs {
+    margin-top: 20px; border-top: 1px solid var(--line); padding-top: 14px;
+    font: 11px/1.85 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted);
+  }
+  .specs b { color: var(--accent); font-weight: 600; }
+  .specs span { color: var(--text); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Aurorae window decoration</h1>
+  <span class="sub">design mockup — not a live KDE screenshot</span>
+  <span class="tag">1440 × 900</span>
+</header>
+
+<main>
+  <!-- ============ CURRENT ============ -->
+  <div class="col">
+    <h2>Current — Breeze decoration</h2>
+    <p class="note">Forge colour scheme repaints Breeze, but the shapes stay Breeze:
+       6&nbsp;px rounded top corners, 18&nbsp;px circular buttons, no accent on the frame.</p>
+
+    <div class="win breeze">
+      <div class="tb">
+        <div class="btns" style="visibility:hidden"><div class="dot"></div></div>
+        <div class="title">dolphin — ~/foundry</div>
+        <div class="btns">
+          <div class="dot" style="background:#3f4449">
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5h6" stroke="#f7f7f7" stroke-width="1.2"/></svg>
+          </div>
+          <div class="dot" style="background:#3f4449">
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 6l3-3 3 3" fill="none" stroke="#f7f7f7" stroke-width="1.2"/></svg>
+          </div>
+          <div class="dot" style="background:#3f4449">
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5" stroke="#f7f7f7" stroke-width="1.2"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="body">active window · Breeze · titlebar #31363b · radius 6px</div>
+    </div>
+    <p class="caption"><b>active</b> — titlebar <b>#31363b</b>, radius <b>6 px</b>, circular 18 px buttons</p>
+
+    <div class="win breeze inactive">
+      <div class="tb">
+        <div class="btns" style="visibility:hidden"><div class="dot"></div></div>
+        <div class="title">konsole</div>
+        <div class="btns">
+          <div class="dot"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5h6" stroke="#909090" stroke-width="1.2"/></svg></div>
+          <div class="dot"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 6l3-3 3 3" fill="none" stroke="#909090" stroke-width="1.2"/></svg></div>
+          <div class="dot"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5" stroke="#909090" stroke-width="1.2"/></svg></div>
+        </div>
+      </div>
+      <div class="body">inactive window · nothing distinguishes it but a slightly darker bar</div>
+    </div>
+    <p class="caption"><b>inactive</b> — only a 7% luminance drop separates focused from unfocused</p>
+
+    <div class="specs">
+      library <span>org.kde.breeze</span> &nbsp;·&nbsp; theme <span>Breeze</span><br>
+      corner radius <span>6 px</span> &nbsp;·&nbsp; button <span>18 px circle</span><br>
+      accent <span>unused on the frame</span>
+    </div>
+  </div>
+
+  <!-- ============ TARGET ============ -->
+  <div class="col">
+    <h2 class="hot">Target — Aurorae “FoundryLinux”</h2>
+    <p class="note">Forged, not moulded: every corner squared to <b>0&nbsp;px</b>, a hard
+       1&nbsp;px frame, and a <b>2&nbsp;px #ff5b1a hot seam</b> under the title that cools
+       to #2a2a2a when the window loses focus.</p>
+
+    <div class="win foundry">
+      <div class="tb">
+        <div class="btns" style="visibility:hidden"><div class="btn"></div></div>
+        <div class="title">dolphin — ~/foundry</div>
+        <div class="btns">
+          <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 11h10" stroke="#f7f7f7" stroke-width="1.5"/></svg></div>
+          <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3.75" y="3.75" width="8.5" height="8.5" fill="none" stroke="#f7f7f7" stroke-width="1.5"/></svg></div>
+          <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#f7f7f7" stroke-width="1.5"/></svg></div>
+        </div>
+      </div>
+      <div class="body">active window · titlebar #141414 · 2px #ff5b1a seam · radius 0</div>
+    </div>
+    <p class="caption"><b>active</b> — titlebar <b>#141414</b>, seam <b>2 px #ff5b1a</b>, squared 16 px glyph buttons</p>
+
+    <div class="win foundry inactive">
+      <div class="tb">
+        <div class="btns" style="visibility:hidden"><div class="btn"></div></div>
+        <div class="title">konsole</div>
+        <div class="btns">
+          <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 11h10" stroke="#6e6e6e" stroke-width="1.5"/></svg></div>
+          <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3.75" y="3.75" width="8.5" height="8.5" fill="none" stroke="#6e6e6e" stroke-width="1.5"/></svg></div>
+          <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#6e6e6e" stroke-width="1.5"/></svg></div>
+        </div>
+      </div>
+      <div class="body">inactive window · seam cooled to #2a2a2a · glyphs #6e6e6e</div>
+    </div>
+    <p class="caption"><b>inactive</b> — focus is unmistakable: the seam goes out</p>
+
+    <h2 style="margin-top:20px">Button state matrix — <span style="color:var(--text);text-transform:none;letter-spacing:0;font-weight:500">16 × 16 tile, 1.5 px stroke</span></h2>
+    <table class="states">
+      <tr>
+        <th class="rowh"></th>
+        <th>active</th><th>inactive</th><th>hover</th><th>pressed</th><th>deactivated</th>
+      </tr>
+      <tr>
+        <td class="rowh">close</td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#f7f7f7" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#6e6e6e" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#ff5b1a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell press"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#0a0a0a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#3a3a3a" stroke-width="1.5"/></svg></span></td>
+      </tr>
+      <tr>
+        <td class="rowh">maximize</td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3.75" y="3.75" width="8.5" height="8.5" fill="none" stroke="#f7f7f7" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3.75" y="3.75" width="8.5" height="8.5" fill="none" stroke="#6e6e6e" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3.75" y="3.75" width="8.5" height="8.5" fill="none" stroke="#ff5b1a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell press"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3.75" y="3.75" width="8.5" height="8.5" fill="none" stroke="#0a0a0a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3.75" y="3.75" width="8.5" height="8.5" fill="none" stroke="#3a3a3a" stroke-width="1.5"/></svg></span></td>
+      </tr>
+      <tr>
+        <td class="rowh">restore</td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M5.75 5.75h6.5v6.5" fill="none" stroke="#f7f7f7" stroke-width="1.5"/><rect x="3.75" y="3.75" width="6.5" height="6.5" fill="none" stroke="#f7f7f7" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M5.75 5.75h6.5v6.5" fill="none" stroke="#6e6e6e" stroke-width="1.5"/><rect x="3.75" y="3.75" width="6.5" height="6.5" fill="none" stroke="#6e6e6e" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M5.75 5.75h6.5v6.5" fill="none" stroke="#ff5b1a" stroke-width="1.5"/><rect x="3.75" y="3.75" width="6.5" height="6.5" fill="none" stroke="#ff5b1a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell press"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M5.75 5.75h6.5v6.5" fill="none" stroke="#0a0a0a" stroke-width="1.5"/><rect x="3.75" y="3.75" width="6.5" height="6.5" fill="none" stroke="#0a0a0a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M5.75 5.75h6.5v6.5" fill="none" stroke="#3a3a3a" stroke-width="1.5"/><rect x="3.75" y="3.75" width="6.5" height="6.5" fill="none" stroke="#3a3a3a" stroke-width="1.5"/></svg></span></td>
+      </tr>
+      <tr>
+        <td class="rowh">minimize</td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 11h10" stroke="#f7f7f7" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 11h10" stroke="#6e6e6e" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 11h10" stroke="#ff5b1a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell press"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 11h10" stroke="#0a0a0a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 11h10" stroke="#3a3a3a" stroke-width="1.5"/></svg></span></td>
+      </tr>
+      <tr>
+        <td class="rowh">keepabove</td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3.5 9.5L8 5l4.5 4.5" fill="none" stroke="#f7f7f7" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3.5 9.5L8 5l4.5 4.5" fill="none" stroke="#6e6e6e" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3.5 9.5L8 5l4.5 4.5" fill="none" stroke="#ff5b1a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell press"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3.5 9.5L8 5l4.5 4.5" fill="none" stroke="#0a0a0a" stroke-width="1.5"/></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3.5 9.5L8 5l4.5 4.5" fill="none" stroke="#3a3a3a" stroke-width="1.5"/></svg></span></td>
+      </tr>
+      <tr>
+        <td class="rowh">alldesktops</td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><g fill="#f7f7f7"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/></g></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><g fill="#6e6e6e"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/></g></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><g fill="#ff5b1a"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/></g></svg></span></td>
+        <td><span class="cell press"><svg width="16" height="16" viewBox="0 0 16 16"><g fill="#0a0a0a"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/></g></svg></span></td>
+        <td><span class="cell"><svg width="16" height="16" viewBox="0 0 16 16"><g fill="#3a3a3a"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/></g></svg></span></td>
+      </tr>
+    </table>
+
+    <div class="specs">
+      library <span>org.kde.kwin.aurorae</span> &nbsp;·&nbsp; theme <span>__aurorae__svg__FoundryLinux</span><br>
+      TitleHeight <b>18</b> + TitleEdgeTop <b>6</b> + TitleEdgeBottom <b>6</b> = <span>30 px bar</span><br>
+      Border L/R/B <b>1</b> &nbsp;·&nbsp; TitleEdgeLeft/Right <b>8</b> &nbsp;·&nbsp; ButtonSpacing <b>8</b><br>
+      Button <b>16 × 16</b> &nbsp;·&nbsp; corner radius <b>0</b> &nbsp;·&nbsp; seam <b>2 px #ff5b1a</b>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

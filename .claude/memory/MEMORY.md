@@ -13,6 +13,7 @@
 - [Dropped packages → add TODO to research + repackage](feedback_dropped_packages_todo.md) — when removing a dep because it's gone from Ubuntu, add TODO entries for why it was dropped and whether to package it ourselves.
 - [Smoke-test tasks and scripts before handoff](feedback_test_before_handoff.md) — run every new task/script at least once before committing; catch wiring bugs before Will does.
 - [Always smoke-test after uploads automatically](feedback_smoke_test_after_upload.md) — never ask; curl remote checksum, compare to local, verify size. PASS before proceeding.
+- [Package publishes must update wald3n.com/open-source](feedback_package_publish_updates_wald3n.md) — APT live/install verification is only half the release; refresh, review, commit, deploy, and verify the wald3n.com inventory before reporting completion.
 - [Foundry Linux audience: game devs new to Linux](project_foundry_audience.md) — NOT traditional Linux users; they don't care about Linux, it's just the platform. Frame UX/hosting as "downloading a game tool", not "downloading a distro".
 - [VM downloads are a planned distribution channel](project_vm_distribution.md) — VirtualBox/VMware/QEMU rows are intentional strategy, not placeholders. Add alongside, never replace.
 - [Check for running VMs before launching a new one](feedback_vm_before_launch.md) — launching a second VM OOM-crashed the machine; check first, prompt to close if fresh boot needed, otherwise give in-VM instructions.
@@ -38,7 +39,7 @@
 
 ## Project (inherited from ~)
 
-- [Home/SRC layout post-reformat](home_src_layout.md) — Projects moved ~/SRC/<name> → ~/<name> post-reformat; projects.json + hook-runner still assume ~/SRC (hook-runner patched via symlink)
+- [Flat homedir layout](home_src_layout.md) — ~/SRC is gone; every project lives at ~/<name>, shared docs at ~/CLAUDE.md + ~/docs/ — never recreate an SRC compat path
 - [Laptop comparison investigation](laptop-comparison-investigation.md) — 32GB eBay laptop compare; deliverable done in docs/investigations; open TODO = send #7 pick link (phone/Trello/email all blocked)
 
 ## Feedback (inherited from ~)

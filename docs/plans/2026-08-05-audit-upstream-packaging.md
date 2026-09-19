@@ -138,6 +138,6 @@ results are retained in this table (xemu-xbox's package plan also already contai
 Completed: the baseline-aware audit is wired into CI. Every run checks that all `build.sh` entries have
 exactly one baseline row, audits changed package pins, and rechecks `xemu` as the small known-positive
 control.
-- [ ] `x-emulators`: decide whether the binary-name divergence (`xc65` vs upstream `xemu-*`) is worth
-      raising in the upstream heads-up. Current position is to keep bare names — they are what upstream's
-      own build, docs and `-h` output use — but say so rather than let him notice.
+Decision 2026-08-06: do **not** raise the binary-name divergence (`xc65` versus the `.deb` script's
+`xemu-*`) upstream. We keep the bare names because they are what upstream's normal build, documentation,
+and `-h` output use; this is a downstream packaging choice that needs no upstream action.

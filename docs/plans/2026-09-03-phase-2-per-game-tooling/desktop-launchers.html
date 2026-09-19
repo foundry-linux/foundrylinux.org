@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<!--
+  Plan mockup — host application menu with per-game launchers.
+  Self-contained: inline CSS only. 1440x900 logical canvas.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mockup — host application menu</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1f2328; --muted: #656d76;
+    --line: #d1d9e0; --panel: #f6f8fa; --accent: #0969da;
+    --shell: #2b3038; --shell2: #21252c; --shellfg: #f2f5f8; --shelldim: #a7b0bb;
+    --tile: rgba(255,255,255,.07); --tileh: rgba(255,255,255,.15);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1;
+      --line: #30363d; --panel: #161b22; --accent: #4493f8;
+      --shell: #1b1f26; --shell2: #14171c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; width: 1440px; height: 900px; overflow: hidden;
+    background: var(--bg); color: var(--fg);
+    font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px; height: 53px;
+    padding: 12px 24px; border-bottom: 1px solid var(--line); background: var(--panel);
+  }
+  header h1 { margin: 0; font-size: 16px; font-weight: 600; }
+  header .sub { font-size: 13px; color: var(--muted); }
+  header .tag {
+    margin-left: auto; font: 600 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .04em; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 10px; padding: 2px 8px;
+  }
+  main { display: grid; grid-template-columns: 1fr 344px; gap: 18px; padding: 16px 24px;
+         height: calc(900px - 53px); }
+
+  /* ── the desktop shell mock ─────────────────────────────────────── */
+  .shell {
+    border-radius: 10px; overflow: hidden; border: 1px solid var(--line);
+    background: linear-gradient(155deg, #3a4550 0%, #232a33 48%, #1a2027 100%);
+    display: flex; flex-direction: column; min-height: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,.22);
+  }
+  .searchrow { padding: 20px 26px 12px; display: flex; justify-content: center; }
+  .search {
+    width: 430px; background: rgba(0,0,0,.34); border: 1px solid rgba(255,255,255,.16);
+    border-radius: 18px; padding: 8px 16px; color: var(--shelldim); font-size: 13.5px;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .grid { padding: 4px 26px 0; overflow: hidden; }
+  .ghead {
+    color: var(--shelldim); font: 600 11px ui-sans-serif, system-ui;
+    letter-spacing: .09em; text-transform: uppercase;
+    margin: 14px 0 9px; display: flex; align-items: center; gap: 9px;
+  }
+  .ghead::after { content: ""; flex: 1; height: 1px; background: rgba(255,255,255,.11); }
+  .row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .tile {
+    background: var(--tile); border: 1px solid rgba(255,255,255,.07); border-radius: 9px;
+    padding: 12px 8px 10px; text-align: center; color: var(--shellfg);
+  }
+  .tile.hl { background: var(--tileh); border-color: rgba(255,255,255,.24); }
+  .ico {
+    width: 46px; height: 46px; margin: 0 auto 8px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font: 700 18px ui-monospace, monospace; color: #fff; letter-spacing: -.5px;
+  }
+  .ico.dk { background: linear-gradient(160deg,#e2564a,#a3271f); }
+  .ico.qb { background: linear-gradient(160deg,#e0a13a,#9c5f14); }
+  .ico.smb{ background: linear-gradient(160deg,#4a86e2,#1f4aa3); }
+  .ico.mm { background: linear-gradient(160deg,#59b98b,#1f7a52); }
+  .ico.sh { background: rgba(255,255,255,.11); border: 1px dashed rgba(255,255,255,.3);
+            font-size: 20px; font-weight: 400; color: var(--shelldim); }
+  .ico.gh { background: linear-gradient(160deg,#8a6bd0,#4d3690); }
+  .ico.em { background: linear-gradient(160deg,#5a6470,#343b44); }
+  .ico.wf { background: linear-gradient(160deg,#d0973a,#8a5c14); }
+  .nm { font-size: 12.5px; line-height: 1.3; }
+  .lb { display: block; font-size: 10.5px; color: var(--shelldim); margin-top: 3px; }
+
+  /* ── side panel ──────────────────────────────────────────────────── */
+  .side { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+  .card {
+    border: 1px solid var(--line); border-radius: 9px; background: var(--panel);
+    padding: 13px 15px; font-size: 12.7px; line-height: 1.55;
+  }
+  .card h2 {
+    margin: 0 0 8px; font-size: 12px; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); font-weight: 700;
+  }
+  .card p { margin: 0 0 8px; }
+  .card p:last-child { margin-bottom: 0; }
+  code {
+    font: 11.6px ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: rgba(127,127,127,.14); padding: 1px 5px; border-radius: 4px;
+  }
+  .kv { display: grid; grid-template-columns: 62px 1fr; gap: 3px 9px; }
+  .kv dt { color: var(--muted); font-weight: 600; font-size: 11.5px; }
+  .kv dd { margin: 0; font: 11.6px/1.45 ui-monospace, Menlo, monospace; word-break: break-all; }
+
+  /* ── empty state inset ───────────────────────────────────────────── */
+  .empty {
+    border: 1px solid var(--line); border-radius: 9px; overflow: hidden;
+    background: linear-gradient(155deg,#3a4550,#1f252c);
+  }
+  .empty .cap {
+    font: 600 10.5px ui-sans-serif; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); background: var(--panel); padding: 6px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .empty .body { padding: 20px 18px 22px; text-align: center; color: var(--shelldim); }
+  .empty .body strong { display: block; color: var(--shellfg); font-size: 13.5px; margin-bottom: 5px; }
+  .empty .body code { background: rgba(0,0,0,.32); color: #cfe4ff; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Host application menu</h1>
+    <span class="sub">per-game launchers alongside the shared heavy-tools container &mdash; four games, one engine</span>
+    <span class="tag">MOCKUP &mdash; NOT SHIPPED</span>
+  </header>
+
+  <main>
+    <div class="shell">
+      <div class="searchrow">
+        <div class="search"><span>&#128269;</span><span>Type to search&hellip;</span></div>
+      </div>
+
+      <div class="grid">
+        <div class="ghead">Games &mdash; World Foundry projects</div>
+        <div class="row">
+          <div class="tile hl"><div class="ico dk">DK</div><div class="nm">Donkey Kong<span class="lb">wf-donkey-kong &middot; running</span></div></div>
+          <div class="tile"><div class="ico qb">Q*</div><div class="nm">Q*bert<span class="lb">wf-qbert</span></div></div>
+          <div class="tile"><div class="ico smb">W1</div><div class="nm">SMB&nbsp;W1&#8209;1<span class="lb">wf-smb-w1-1</span></div></div>
+          <div class="tile"><div class="ico mm">MM</div><div class="nm">Marble Madness<span class="lb">wf-marble-madness</span></div></div>
+        </div>
+
+        <div class="ghead">Development &mdash; per-game dev shells</div>
+        <div class="row">
+          <div class="tile"><div class="ico sh">&gt;_</div><div class="nm">Donkey Kong<span class="lb">(dev shell)</span></div></div>
+          <div class="tile"><div class="ico sh">&gt;_</div><div class="nm">Q*bert<span class="lb">(dev shell)</span></div></div>
+          <div class="tile"><div class="ico sh">&gt;_</div><div class="nm">SMB&nbsp;W1&#8209;1<span class="lb">(dev shell)</span></div></div>
+          <div class="tile"><div class="ico sh">&gt;_</div><div class="nm">Marble Madness<span class="lb">(dev shell)</span></div></div>
+        </div>
+
+        <div class="ghead">Foundry heavy tools &mdash; one shared container, opt&#8209;in</div>
+        <div class="row">
+          <div class="tile"><div class="ico gh">GH</div><div class="nm">Ghidra<span class="lb">(Foundry heavy tools)</span></div></div>
+          <div class="tile"><div class="ico em">VI</div><div class="nm">VICE x64sc<span class="lb">(Foundry heavy tools)</span></div></div>
+          <div class="tile"><div class="ico em">A8</div><div class="nm">Atari800<span class="lb">(Foundry heavy tools)</span></div></div>
+          <div class="tile"><div class="ico em">ZX</div><div class="nm">FBZX<span class="lb">(Foundry heavy tools)</span></div></div>
+        </div>
+
+        <div class="ghead">Foundry Linux</div>
+        <div class="row">
+          <div class="tile"><div class="ico wf">WF</div><div class="nm">Welcome<span class="lb">foundry-welcome</span></div></div>
+          <div class="tile"><div class="ico em">BL</div><div class="nm">Blender<span class="lb">host</span></div></div>
+          <div class="tile"><div class="ico em">MA</div><div class="nm">MAME<span class="lb">host</span></div></div>
+          <div class="tile"><div class="ico em">TI</div><div class="nm">Tiled<span class="lb">host</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <h2>Two mechanisms, deliberately</h2>
+        <p><b>Rows&nbsp;1&ndash;2</b> are written by <code>wf-game-create</code> directly into
+        <code>~/.local/share/applications/</code>. Nothing in the container ships a
+        &ldquo;Donkey&nbsp;Kong&rdquo; desktop entry, so there is nothing to export.</p>
+        <p><b>Row&nbsp;3</b> comes from <code>distrobox-export --app</code> run inside
+        <code>wf-tools-heavy</code>. Ghidra and the vintage emulators <i>do</i> ship desktop
+        entries; the <code>(Foundry heavy tools)</code> suffix is
+        <code>--export-label</code>.</p>
+        <p><code>distrobox create --no-entry</code> keeps Distrobox from adding a fifth,
+        generic entry per game.</p>
+      </div>
+
+      <div class="card">
+        <h2>wf-game-donkey-kong.desktop</h2>
+        <dl class="kv">
+          <dt>Exec</dt><dd>wf-game donkey-kong</dd>
+          <dt>Icon</dt><dd>wf-game-donkey-kong</dd>
+          <dt>Categories</dt><dd>Game;Development;</dd>
+          <dt>X-Foundry-Game</dt><dd>donkey-kong</dd>
+        </dl>
+        <p style="margin-top:9px"><code>X-Foundry-Game</code> is the teardown handle &mdash;
+        <code>wf-game rm</code> greps for it rather than guessing filenames, so both entries
+        and the icon go together.</p>
+      </div>
+
+      <div class="empty">
+        <div class="cap">Empty state &mdash; first run, no games yet</div>
+        <div class="body">
+          <div style="font-size:30px;opacity:.4;margin-bottom:8px">&#9633;</div>
+          <strong>No World Foundry games yet</strong>
+          Create one from a terminal:<br>
+          <code style="display:inline-block;margin-top:8px;padding:5px 9px">wf-game-create donkey-kong</code>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:auto">
+        <h2>N, not 1</h2>
+        <p>Four game containers, <b>one</b> read-only engine mount, <b>one</b> read-only ROM
+        library, <b>one</b> shared heavy-tools container. Adding a fifth game adds one row
+        here and no shared state.</p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

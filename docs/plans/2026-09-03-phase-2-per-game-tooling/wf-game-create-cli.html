@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!--
+  Plan mockup — wf-game-create CLI surface.
+  Self-contained: inline CSS only. 1440x900 logical canvas.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mockup — wf-game-create CLI</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1f2328; --muted: #656d76;
+    --line: #d1d9e0; --panel: #f6f8fa; --accent: #0969da;
+    --term-bg: #12161c; --term-fg: #d7dde5; --term-dim: #7d8794;
+    --g: #46c07a; --y: #e3b341; --r: #f2726f; --c: #56b6d6; --m: #c48ee0; --w: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1;
+      --line: #30363d; --panel: #161b22; --accent: #4493f8;
+      --term-bg: #010409;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; width: 1440px; height: 900px; overflow: hidden;
+    background: var(--bg); color: var(--fg);
+    font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 24px; border-bottom: 1px solid var(--line); background: var(--panel);
+    height: 53px;
+  }
+  header h1 { margin: 0; font-size: 16px; font-weight: 600; }
+  header .sub { font-size: 13px; color: var(--muted); }
+  header .tag {
+    margin-left: auto; font: 600 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .04em; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 10px; padding: 2px 8px;
+  }
+  main {
+    display: grid; grid-template-columns: 782px 1fr; gap: 16px;
+    padding: 16px 24px 0; height: calc(900px - 53px);
+  }
+  .col { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+
+  .term {
+    background: var(--term-bg); border: 1px solid var(--line); border-radius: 8px;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,.18);
+  }
+  .term .bar {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 11px; background: rgba(255,255,255,.045);
+    border-bottom: 1px solid rgba(255,255,255,.09);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.a { background: #ff5f57 } .dot.b { background: #febc2e } .dot.c { background: #28c840 }
+  .term .bar .t {
+    margin-left: 6px; font: 500 11.5px ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--term-dim); letter-spacing: .02em;
+  }
+  .term .bar .badge {
+    margin-left: auto; font: 600 10px ui-monospace, monospace; letter-spacing: .05em;
+    padding: 2px 7px; border-radius: 9px; text-transform: uppercase;
+  }
+  .badge.ok   { color: #8fe0b0; background: rgba(70,192,122,.16); }
+  .badge.warn { color: #f0cd7a; background: rgba(227,179,65,.16); }
+  .badge.err  { color: #ffa9a6; background: rgba(242,114,111,.18); }
+
+  pre {
+    margin: 0; padding: 12px 14px; overflow: hidden; flex: 1;
+    font: 12.5px/1.62 ui-monospace, SFMono-Regular, "Cascadia Mono", Menlo, monospace;
+    color: var(--term-fg); white-space: pre;
+  }
+  .p  { color: var(--m); }            /* prompt */
+  .cm { color: var(--w); font-weight: 600; }
+  .g  { color: var(--g); }
+  .y  { color: var(--y); }
+  .r  { color: var(--r); }
+  .c  { color: var(--c); }
+  .d  { color: var(--term-dim); }
+  .b  { color: var(--w); font-weight: 600; }
+
+  .note {
+    font-size: 12.5px; color: var(--muted); line-height: 1.5;
+    border-left: 3px solid var(--accent); padding: 2px 0 2px 10px;
+  }
+  .note b { color: var(--fg); font-weight: 600; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>wf-game-create</h1>
+    <span class="sub">terminal surface &mdash; success, list, and the two error states that matter</span>
+    <span class="tag">MOCKUP &mdash; NOT SHIPPED</span>
+  </header>
+
+  <main>
+    <!-- ── left: the happy path ─────────────────────────────────────── -->
+    <div class="col">
+      <div class="term" style="flex:1 1 auto">
+        <div class="bar">
+          <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+          <span class="t">will@foundry:~ &mdash; wf-game-create donkey-kong</span>
+          <span class="badge ok">exit&nbsp;0</span>
+        </div>
+<pre><span class="p">$</span> <span class="cm">wf-game-create donkey-kong --display-name "Donkey Kong"</span>
+
+<span class="c">▸</span> <span class="b">Resolving host paths</span>
+  <span class="g">✓</span> engine   <span class="d">~/WorldFoundry-wbniv</span>            <span class="d">(probe 3 of 3; cached to ~/.config/foundry/wf-game.conf)</span>
+  <span class="g">✓</span> roms     <span class="d">~/mame/roms</span>                     <span class="d">(1 284 sets)</span>
+  <span class="g">✓</span> brief    <span class="d">~/wf-games/donkey-kong/</span>          <span class="d">(5 documents)</span>
+  <span class="g">✓</span> template <span class="d">worldfoundry-game-template 0.1.0</span>
+
+<span class="c">▸</span> <span class="b">Scaffolding ~/Games/donkey-kong</span>
+  <span class="g">✓</span> design/     <span class="d">donkey-kong.md · bestiary.md · stages.md · tuning.md · tests.md</span>
+  <span class="g">✓</span> level/      <span class="d">donkey-kong.lev · donkey-kong.ini · blender_create_donkey-kong.py</span>
+  <span class="g">✓</span> art/ sfx/ reference/ build/
+  <span class="g">✓</span> CLAUDE.md · Taskfile.yml · licence_policy.toml
+  <span class="g">✓</span> .claude/settings.json <span class="d">(14 allow · 2 deny · 1 mcp server)</span>
+  <span class="g">✓</span> git init + git-lfs track <span class="d">*.blend *.tga *.iff *.lvl</span>
+
+<span class="c">▸</span> <span class="b">Creating container</span> <span class="d">wf-donkey-kong</span>
+  <span class="d">image   ghcr.io/foundry-linux/devbox:26.04            (cached, 3.9 GiB)</span>
+  <span class="d">home    ~/Games/donkey-kong                          identical path inside</span>
+  <span class="d">volume  ~/WorldFoundry-wbniv  →  /opt/wf-engine       </span><span class="y">ro</span>
+  <span class="d">volume  ~/mame/roms           →  /opt/wf-roms         </span><span class="y">ro</span>
+  <span class="g">✓</span> container created            <span class="d">14.2 s</span>
+  <span class="g">✓</span> init-hooks: rompath → /opt/wf-roms, PATH += /opt/wf-engine/engine
+
+<span class="c">▸</span> <span class="b">Registering launchers</span>
+  <span class="g">✓</span> ~/.local/share/applications/wf-game-donkey-kong.desktop
+  <span class="g">✓</span> ~/.local/share/applications/wf-game-donkey-kong-shell.desktop
+  <span class="g">✓</span> icon from reference/icon.png → hicolor/256x256
+  <span class="g">✓</span> update-desktop-database
+
+<span class="g">✓</span> <span class="b">Donkey Kong</span> is ready.
+
+    play   <span class="c">wf-game donkey-kong</span>        <span class="d">or the "Donkey Kong" launcher</span>
+    shell  <span class="c">distrobox enter wf-donkey-kong</span>
+    check  <span class="c">wf-game doctor donkey-kong</span>
+<span class="p">$</span> <span class="d">▊</span></pre>
+      </div>
+      <div class="note">
+        <b>Path parity.</b> The container's <code>$HOME</code> <i>is</i> <code>~/Games/donkey-kong</code> at
+        the same absolute path on both sides, so every path in this transcript is copy-pasteable
+        inside the container too. <code>--dry-run</code> prints this same run with every
+        <code>distrobox</code>/<code>install</code> command echoed instead of executed.
+      </div>
+    </div>
+
+    <!-- ── right: list + the two failures ───────────────────────────── -->
+    <div class="col">
+      <div class="term" style="flex:0 0 262px">
+        <div class="bar">
+          <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+          <span class="t">wf-game list &mdash; N games, one engine</span>
+          <span class="badge ok">exit&nbsp;0</span>
+        </div>
+<pre><span class="p">$</span> <span class="cm">wf-game list</span>
+
+<span class="d">GAME            CONTAINER          STATE      ENGINE     DISK</span>
+donkey-kong     wf-donkey-kong     <span class="g">running</span>    <span class="c">a4f1e02</span>    412 MiB
+qbert           wf-qbert           <span class="d">exited</span>     <span class="c">a4f1e02</span>    388 MiB
+smb-w1-1        wf-smb-w1-1        <span class="d">exited</span>     <span class="c">a4f1e02</span>    1.1 GiB
+marble-madness  wf-marble-madness  <span class="g">running</span>    <span class="y">9c02bb7</span>    734 MiB
+
+<span class="d">shared</span>          wf-tools-heavy     <span class="d">exited</span>     <span class="d">—</span>          2.4 GiB
+
+<span class="y">⚠</span> marble-madness pins <span class="y">9c02bb7</span>; host engine is at <span class="c">a4f1e02</span>.
+  <span class="d">Relaunch to pick up the newer build — no container rebuild needed.</span></pre>
+      </div>
+
+      <div class="term" style="flex:0 0 174px">
+        <div class="bar">
+          <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+          <span class="t">error &mdash; slug already in use</span>
+          <span class="badge warn">exit&nbsp;1</span>
+        </div>
+<pre><span class="p">$</span> <span class="cm">wf-game-create qbert</span>
+
+<span class="r">✗</span> A game named <span class="b">qbert</span> already exists.
+
+    container   wf-qbert            <span class="d">(exited)</span>
+    project     ~/Games/qbert       <span class="d">(388 MiB, 61 files)</span>
+
+  <span class="d">Nothing was changed. To start over:</span>
+    <span class="c">wf-game rm qbert --purge</span>   <span class="d">removes both</span>
+    <span class="c">wf-game-create qbert-2</span>      <span class="d">side by side</span></pre>
+      </div>
+
+      <div class="term" style="flex:1 1 auto">
+        <div class="bar">
+          <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+          <span class="t">error &mdash; engine root unresolvable</span>
+          <span class="badge err">exit&nbsp;1</span>
+        </div>
+<pre><span class="p">$</span> <span class="cm">wf-game-create pitfall</span>
+
+<span class="c">▸</span> <span class="b">Resolving host paths</span>
+  <span class="r">✗</span> engine   <span class="r">not found</span>
+  <span class="y">⚠</span> roms     <span class="y">not found</span> <span class="d">— continuing; an original WF title needs none</span>
+
+<span class="r">✗</span> Cannot create a game container without a World Foundry
+  engine build. Probed, in order:
+
+    <span class="d">$WF_ENGINE_ROOT             (unset)</span>
+    <span class="d">~/.config/foundry/wf-game.conf   (no entry)</span>
+    <span class="d">~/Projects/WorldFoundry     (missing)</span>
+    <span class="d">~/WorldFoundry              (missing)</span>
+    <span class="d">~/WorldFoundry-wbniv        (missing)</span>
+
+  <span class="d">Point it at a checkout that has been built:</span>
+
+    <span class="c">wf-game-create pitfall --engine ~/src/WorldFoundry</span>
+    <span class="d">or</span>  <span class="c">echo 'engine = ~/src/WorldFoundry' \
+          &gt;&gt; ~/.config/foundry/wf-game.conf</span>
+
+  <span class="d">The mount is read-only, so the checkout is never modified —
+  but it must contain engine/wf_game. Build it with:</span>
+
+    <span class="c">cd ~/src/WorldFoundry &amp;&amp; task build</span>
+
+<span class="d">Nothing was created.</span></pre>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
