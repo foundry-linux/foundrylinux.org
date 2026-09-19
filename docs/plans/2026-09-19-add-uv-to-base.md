@@ -491,10 +491,21 @@ published pool. Publish and the two bumps are the last three verification steps.
     and deployed as wald3n.com `v0.0.430`; `task package-publish:complete` →
     `ok uv` on the live page, `PASS`, marker cleared.
 
-    Devbox: `task devbox-bump` → foundry-devbox `v0.0.6`. Smoke-test result recorded
-    below once the image build finishes.
+    Devbox: `task devbox-bump` → foundry-devbox `v0.0.6` built and pushed the image but
+    failed its CI smoke-check on `MISSING: ghidra` — the workflow's tool list,
+    `test/smoke-test.sh` and the Dockerfile comment still named ghidra, which moved to
+    atelier on 2026‑06‑20 (pre‑existing staleness). Fixed in `5ac222d` (ghidra dropped,
+    `uv uvx` added to the CI list) and re‑tagged `v0.0.7`:
+    [run 35416606219](https://github.com/foundry-linux/foundry-devbox/actions/runs/35416606219)
+    → `success`.
 
-    <!-- devbox-smoke-result -->
+    ```
+    publish	Smoke-check image (pull + foundry-core tool list)	All foundry-core tools present on PATH.
+    ```
+
+    **PASS (devbox)** — the published `ghcr.io/foundry-linux/devbox:26.04` has `uv`
+    and `uvx` on `PATH` (checked by the workflow's own smoke step; a local pull was not
+    possible because the `gh` token lacks `read:packages`).
 
 9. ISO: after `task iso-bump`, the new ISO's package manifest lists `uv`:
 
