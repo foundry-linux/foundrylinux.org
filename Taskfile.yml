@@ -441,28 +441,20 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        shopt -s nullglob
         mkdir -p foundry-iso/local-debs
-        any=0
-        for newest in foundry-apt/dist/*.deb; do
-          pkg=$(dpkg-deb --field "$newest" Package)
-          newest_ver=$(dpkg-deb --field "$newest" Version)
-          staged=$(find foundry-iso/local-debs -maxdepth 1 -name "${pkg}_*.deb" 2>/dev/null | head -1 || true)
-          if [[ -z "$staged" ]]; then
-            cp "$newest" foundry-iso/local-debs/
-            echo "Staged:  ${pkg}  (new)  ${newest_ver}"
-            any=1
-          else
-            staged_ver=$(dpkg-deb --field "$staged" Version)
-            if dpkg --compare-versions "$newest_ver" gt "$staged_ver"; then
-              rm -f foundry-iso/local-debs/"${pkg}"_*.deb
-              cp "$newest" foundry-iso/local-debs/
-              echo "Updated: ${pkg}  ${staged_ver} → ${newest_ver}"
-              any=1
-            fi
-          fi
-        done
-        if [[ $any -eq 0 ]]; then echo "local-debs: all packages up to date."; fi
+        # local-debs/ is an exact mirror of dist/*.deb — including deletions.
+        # The old add-or-upgrade-by-version loop could never remove a staged
+        # package that left dist/ (x-emulators after its rename, task after it
+        # was un-vendored) and could never *replace* one whose stale version
+        # compared higher than the correct one: a pre-rename
+        # xemu_0.8.136-1foundry1 (the Xbox emulator) outranked LGB's
+        # xemu 0~git…, got installed over it by the local-debs hook, and
+        # collided with xemu-xbox on /usr/bin/xemu — ISO build 0.9.132 failed
+        # on exactly that (2026-09-19). Mirroring by filename has no such hole.
+        rsync -a --delete --include='*.deb' --exclude='*' --itemize-changes \
+          foundry-apt/dist/ foundry-iso/local-debs/ \
+          | grep -E '^(>f|\*deleting)' | sed 's/^>f[^ ]* /Staged:  /; s/^\*deleting /Removed: /' \
+          || echo "local-debs: all packages up to date."
 
   iso-build:
     desc: "Build the ISO locally (EDITION=anvil|atelier|all, default: anvil)"
