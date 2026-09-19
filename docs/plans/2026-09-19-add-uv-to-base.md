@@ -140,8 +140,10 @@ source (0.9.17+ds1-6) builds only `python3-uv-build`, not the CLI. Watch for the
 `Build-only-uv-build-for-now` patch being dropped, then fold into the from‑source
 rework item."
 
-**6. Release.** New package → next *minor* tag per the CLAUDE.md version rule
-(`1.x.0`, not `1.0.x`); `task sync-and-release TAG=…` builds, signs and syncs to R2.
+**6. Release.** `task bump` syncs `foundry-apt/` (committed content only, via
+`git archive HEAD`) to the mirror repo and pushes the next patch tag, which builds, signs
+and syncs to R2. (The CLAUDE.md `1.0.x` / `1.x.0` rule is about *package* versions in
+`debian/changelog`, not repo tags; repo tags are always patch bumps here.)
 Then `task devbox-bump` and `task iso-bump` so the two consumers rebuild against the
 published pool. Publish and the two bumps are the last three verification steps.
 
@@ -320,9 +322,38 @@ published pool. Publish and the two bumps are the last three verification steps.
     sudo-n-exit=1
     ```
 
-    **NOT RUN** — `task apt-test` needs `sudo apt` on the host, and sudo is not
-    available non-interactively in this environment. Nothing was faked. Run this
-    step manually (or let the release pipeline cover it) before tagging.
+    `task apt-test` needs `sudo apt` on the host and sudo is tty‑bound in this
+    session, so the same resolution was run non‑root against the `task publish-local`
+    output, with a private apt state directory pointed at `./public/`:
+
+    ```
+    $ cd foundry-apt && task publish-local
+    publish-local exit=0
+    $ ls public/pool/main/u/uv/
+    uv_0.12.17-1foundry1.debian.tar.xz
+    uv_0.12.17-1foundry1.dsc
+    uv_0.12.17-1foundry1_amd64.deb
+    uv_0.12.17.orig.tar.gz
+    $ S=$(mktemp -d); mkdir -p $S/lists/partial $S/cache/archives/partial $S/etc
+    $ echo "deb [trusted=yes] file://$PWD/public resolute main" > $S/etc/sources.list
+    $ A="-o Dir::Etc::sourcelist=$S/etc/sources.list -o Dir::Etc::sourceparts=- -o Dir::State=$S -o Dir::State::lists=$S/lists -o Dir::Cache=$S/cache -o Dir::State::status=/var/lib/dpkg/status -o Debug::NoLocking=1"
+    $ apt-get $A update -qq
+    $ apt-cache $A policy uv foundry-core | grep -E '^[a-z]|Candidate'
+    uv:
+      Candidate: 0.12.17-1foundry1
+    foundry-core:
+      Candidate: 1.0.7
+    $ apt-get $A -s install foundry-core 2>&1 | grep -E '^Inst (uv|foundry-core) |^E:'
+    Inst uv (0.12.17-1foundry1 Foundry Linux:resolute [amd64])
+    Inst foundry-core [1.0.6] (1.0.7 Foundry Linux:resolute [all])
+    ```
+
+    **PASS** — the locally published repo indexes `uv` and `foundry-core` 1.0.7, and
+    upgrading `foundry-core` on this host (which has 1.0.6 installed) pulls `uv` in.
+    (First attempt failed inside aptly with "Unable to import file
+    dist/uv_0.12.17.orig.tar.gz": the orig tarball had not been copied out of the
+    agent worktree with the other artifacts. Rebuilding `uv` in the CI container
+    regenerated it; nothing about the package changed.)
 
 6. Phase 0 scripts lint, help short‑circuits, and the default role now plans a `uv` step:
 
