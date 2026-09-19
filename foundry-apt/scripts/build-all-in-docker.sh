@@ -12,21 +12,30 @@ cd "$(dirname "$0")/.."   # foundry-apt/
 # Optional package filters, matching build-all.sh. Package names cannot contain
 # whitespace, so a space-separated environment value is safe to split below.
 PKG_FILTERS="$*"
+BUILDER_IMAGE="foundry-apt-builder:ubuntu-26.04"
+BUILDER_CACHE="$(pwd)/dist/.builder-cache"
+mkdir -p "$BUILDER_CACHE/npm" "$BUILDER_CACHE/pnpm" "$BUILDER_CACHE/yarn"
+
+# Keep the expensive Ubuntu/Node/Qt toolchain in a versioned Docker layer. The
+# Dockerfile is still rebuilt when its inputs change, while repeated package
+# builds no longer reinstall hundreds of packages in throwaway containers.
+docker build --pull=false \
+  -f docker/package-builder.Dockerfile \
+  -t "$BUILDER_IMAGE" \
+  docker
 
 docker run --rm \
   -v "$(pwd):/work" \
-  -w /work \
-  -e DEBIAN_FRONTEND=noninteractive \
-  -e PKG_FILTERS="$PKG_FILTERS" \
-  ubuntu:26.04 \
+  -v "$BUILDER_CACHE/npm:/root/.npm" \
+  -v "$BUILDER_CACHE/pnpm:/root/.local/share/pnpm/store" \
+  -v "$BUILDER_CACHE/yarn:/root/.cache/yarn" \
+    -w /work \
+    -e DEBIAN_FRONTEND=noninteractive \
+    -e INCLUDE_SHARED_ELECTRON="${INCLUDE_SHARED_ELECTRON:-0}" \
+    -e PKG_FILTERS="$PKG_FILTERS" \
+  "$BUILDER_IMAGE" \
   bash -c '
     set -euo pipefail
-    apt-get update -q
-    apt-get install -y --no-install-recommends \
-      build-essential debhelper dpkg-dev devscripts fakeroot lintian \
-      curl ca-certificates pkg-config sudo \
-      zip python3 \
-      cmake qt6-base-dev qt6-declarative-dev
     read -r -a filters <<< "$PKG_FILTERS"
     bash scripts/build-all.sh "${filters[@]}"
   '

@@ -1,21 +1,30 @@
 # package	upstream debian/	own .deb/.dsc build	PKGBUILD/.spec	distro refs
 asar-snes-assembler	no	no	no	no
+audex-player	no	yes	no	no
 blender-asset-finder-cli	no	no	no	no
 blender-asset-finder	no	no	no	no
 bsnes-jg	no	no	no	no
 drawio-desktop	no	yes	no	no
 drmon	no	no	no	no
 electron-runtime-42	no	no	no	no
+electron-runtime-44	no	no	no	no
 f9dasm	no	no	no	no
 flycast	no	no	no	no
 foundry-welcome	n/a (native package)	n/a	n/a	n/a
 ghidra	no	no	no	no
 halfempty	no	no	no	no
+jbrowse-desktop	no	yes	no	no
+joplin	no	yes	no	no
+jupyterlab-desktop	no	yes	no	no
 ldtk	no	no	no	no
 libvgm	no	no	no	no
 losslesscut	no	no	no	no
 m8te	no	no	no	no
+marktext	no	yes	no	no
 mesen2	no	no	no	no
+nerimity-desktop	no	yes	no	no
+netron	no	yes	no	no
+opencomic	no	yes	no	no
 ppsspp	no	no	no	no
 pvsneslib	no	no	no	no
 python3-glfw	no	no	no	no
@@ -27,7 +36,9 @@ python3-pydub	no	no	no	no
 rpcs3	no	no	no	rpcs3-cd814f8c926400cf62dab7924f723e4eb7719e50/BUILDING.md
 ruff	no	no	no	no
 snes9x-gtk	no	no	no	no
+teams-for-linux	no	yes	no	no
 tilemap-studio	no	no	no	no
+trilium-notes	no	yes	no	no
 uv	no	no	no	no
 vgmstream	no	no	no	no
 wla-dx	no	no	no	no
