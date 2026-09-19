@@ -7,6 +7,11 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ### apt-repo resilience — `task` vendored + source health-check
 
+- [T3] **Port the durable R2 mirror design to `apt.worldfoundry.org`** — the per-package publish path (restore `dist/` from the live pool instead of the GitHub Actions cache) is proven on apt.foundrylinux.org (`v1.5.49` was a green production run); apply the same workflow shape to the WorldFoundry repo. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md) and [r2-403 plan](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md).
+- [T2] **wald3n `refresh-open-source-data.mjs` must read committed content, not the sibling working tree** — it scans `../foundrylinux.org/foundry-apt/packages` on disk, so any in-flight deletion there (seen 2026-09-19: the shared-electron removal) breaks `open-source:refresh` and the `package-publish:complete` guard. Read from `git archive HEAD` (or a `--ref` option) in `wald3n.com/scripts/`. Surfaced by [activate-wf-dispatch](docs/plans/2026-08-05-activate-wf-dispatch.md).
+- [verify T2] **foundry-apt dist R2 403 fix** — Verification section present but no PASS recorded; run + record the steps. See [plan](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md).
+- [verify T2] **package-publish pipeline hardening** — Verification section present but no PASS recorded; `v1.5.49` (2026-09-19) is a candidate green proof — record the steps against it. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md).
+
 
 ### Phase 3 — Foundry Linux ISO
 
@@ -38,6 +43,8 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 New vendored upstreams land here; `/package <name>`, then move to Done + add an ITP line below.
 
 - [verify T3] **Add `uv` to the base installation** — vendor Astral's `uv` 0.12.17 as a `.deb` (prebuilt manylinux wheel, ruff pattern; not in 26.04 universe), add it to `foundry-core` `Depends:`, ship a Phase 0 `install-uv.sh` for the legacy roles, extend the devbox smoke test and docs. **Released 2026-09-19 as foundry-apt `v1.5.49` (live: `apt install uv` resolves 0.12.17-1foundry1), wald3n.com `v0.0.430`, devbox `v0.0.7` (smoke-check green), ISO 0.9.131 bumped. Verify steps 1–8, 10 PASS; only step 9 (ISO package manifest) is outstanding — needs the next full `task iso-build`, same gate as the KDE config-stack item above.** [plan](docs/plans/2026-09-19-add-uv-to-base.md)
+- [T2] **Replace `pipx` with `uv tool install` in Phase 0** — `install-foundry-retro-tools.sh` (shrinkray) and `install-foundry-ios-development.sh` (codemagic-cli-tools) can drop the `pipx` apt dependency now that `uv` is in base; update the retro-tools E2E test and the `foundry-ios-development` control description that mentions pipx. Deferred from [add-uv-to-base](docs/plans/2026-09-19-add-uv-to-base.md).
+- [verify T1] **losslesscut publication completion** — Verification section present but no PASS recorded; the checklist already notes wald3n `v0.0.427` and the guard result — transcribe them as step outputs. See [plan](docs/plans/2026-08-30-complete-losslesscut-publication.md).
 - [T1] **Fix the PyPI reachability preflight in every wheel-sourced `build.sh`** — a HEAD request to the bare [files.pythonhosted.org](https://files.pythonhosted.org/) host root now returns 404, so `ruff/build.sh` (and any other `build.sh` probing that host root) aborts with "cannot reach files.pythonhosted.org" even when PyPI is fine. Apply the fix already in `packages/uv/build.sh` (probe `$UPSTREAM_URL` with `curl -fsIL`) to each; recipe is settled, found 2026-09-19 while packaging uv.
 
 ### Debian ITP
@@ -81,6 +88,10 @@ Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) 
 
 Items to check periodically and act on only if something changes.
 
+### losslesscut — upstream tracking ([plan](docs/plans/2026-08-29-package-losslesscut.md))
+
+- [mifi/ffmpeg-builds#1](https://github.com/mifi/ffmpeg-builds/issues/1) (the prebuilt FFmpeg the AppImage bundles) and [mifi/lossless-cut#3035](https://github.com/mifi/lossless-cut/issues/3035) (our packaging heads-up to upstream) are open; Debian WNPP had no `losslesscut`/`lossless-cut` entry as of 2026-08-30. Re-check both issues and WNPP when bumping the package; the package itself now lives in the `sharedpair/shared-electron` repo.
+
 ### go-task Cloudsmith repo
 
 - Already rotated layout once (`any-distro`→per-distro); 404s read as intermittent (CloudFront caches the error). Run `task check-apt-repos` before any ISO/devbox build or release. If `ubuntu resolute` breaks or lags upstream `task`, pull the trigger on Phase 2 flip (own `task` fully from foundry-apt). Current upstream: 3.51.1 (vendored); `ubuntu/resolute` served 3.51.1 as of 2026-05-31.
@@ -100,6 +111,10 @@ Items to check periodically and act on only if something changes.
 ## Parked
 
 Items intentionally on hold — revisit if priorities shift, unpark to `## Open` when ready.
+
+### uv — aarch64 build ([plan](docs/plans/2026-09-19-add-uv-to-base.md))
+
+- The `manylinux_2_17_aarch64` wheel exists and would drop into `packages/uv/build.sh` as a second architecture, but the repo and ISO are amd64-only. Revisit only with a multi-arch decision for the whole repo.
 
 ### tUME map editor port ([investigation](docs/investigations/2026-06-10-tume-map-editor-port-and-successors.md))
 
@@ -236,31 +251,6 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage each into M1/M2/etc. and delete it here — it will not come back._
 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
-- [ ] **(triage)** `wbniv/wald3n.com/.github/workflows/deploy.yml` has its `push: tags:` trigger **commented out** — _from [2026-08-05-activate-wf-dispatch.md](docs/plans/2026-08-05-activate-wf-dispatch.md)_  <!-- fp:c7504e84fb650767 -->
-- [ ] **(triage)** `scripts/refresh-open-source-data.mjs` reads a **local sibling clone** (`../foundry-apt/packages`, — _from [2026-08-05-activate-wf-dispatch.md](docs/plans/2026-08-05-activate-wf-dispatch.md)_  <!-- fp:88a85b475d900faf -->
-- [ ] **(triage)** Broadening the CI credential to additional R2 buckets. — _from [2026-08-06-foundry-apt-dist-r2-403.md](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md)_  <!-- fp:dc91467fe5933ae4 -->
-- [ ] **(triage)** Porting the mirror to `apt.worldfoundry.org` before this path has two green production proofs. — _from [2026-08-06-foundry-apt-dist-r2-403.md](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md)_  <!-- fp:1e6378e556dec57b -->
-- [ ] **(triage)** Fixing unrelated package build failures such as RPCS3 dependency resolution. — _from [2026-08-06-foundry-apt-dist-r2-403.md](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md)_  <!-- fp:10f66d5f678e6bb0 -->
-- [ ] **(triage)** Changing package contents or republishing solely to manufacture a new version. — _from [2026-08-06-foundry-apt-dist-r2-403.md](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md)_  <!-- fp:bf53b0265e6d8756 -->
-- [verify] **2026-08-06-foundry-apt-dist-r2-403** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-06-foundry-apt-dist-r2-403.md](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md)_  <!-- fp:327e5317eca07098 -->
-- [ ] **(triage)** [mifi/ffmpeg-builds#1](https://github.com/mifi/ffmpeg-builds/issues/1) reports the — _from [2026-08-29-package-losslesscut.md](docs/plans/2026-08-29-package-losslesscut.md)_  <!-- fp:61122b26cb5103d5 -->
-- [ ] **(triage)** [mifi/lossless-cut#3035](https://github.com/mifi/lossless-cut/issues/3035) gives upstream the — _from [2026-08-29-package-losslesscut.md](docs/plans/2026-08-29-package-losslesscut.md)_  <!-- fp:4a324ab2789edf5e -->
-- [ ] **(triage)** Debian WNPP was re-checked on 2026-08-30 with no `losslesscut`/`lossless-cut` match. The — _from [2026-08-29-package-losslesscut.md](docs/plans/2026-08-29-package-losslesscut.md)_  <!-- fp:dc7b21515b332c16 -->
-- [verify] **2026-08-30-complete-losslesscut-publication** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-30-complete-losslesscut-publication.md](docs/plans/2026-08-30-complete-losslesscut-publication.md)_  <!-- fp:aa55581c398d01d2 -->
-- [verify] **2026-08-30-drawio-desktop-shared-electron** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-30-drawio-desktop-shared-electron.md](docs/plans/2026-08-30-drawio-desktop-shared-electron.md)_  <!-- fp:5cf4a285d70caccc -->
-- [ ] **(triage)** **Replace `pipx` with `uv tool install` in Phase 0.** Once `uv` is in base, `install-foundry-retro-tools.sh` (shrinkray) and `install-foundry-ios-development.sh` (codemagic-cli-tools) can drop the extra `pipx` apt dependency and use `uv tool install`. Separate T2 item; touches the retro‑tools E2E test. — _from [2026-09-19-add-uv-to-base.md](docs/plans/2026-09-19-add-uv-to-base.md)_  <!-- fp:056ab519d734fbb6 -->
-- [ ] **(triage)** **aarch64 build.** The `manylinux_2_17_aarch64` wheel exists, but the repo and ISO are amd64‑only; revisit with any multi‑arch decision, not here. — _from [2026-09-19-add-uv-to-base.md](docs/plans/2026-09-19-add-uv-to-base.md)_  <!-- fp:b0ce7a778ce95998 -->
-- [ ] **(triage)** **Managed Python via `uv python install`.** Deliberately not pre‑seeded; system `python3` from universe stays the interpreter Foundry supports. — _from [2026-09-19-add-uv-to-base.md](docs/plans/2026-09-19-add-uv-to-base.md)_  <!-- fp:24cfb4d7084c4471 -->
-- [ ] **(triage)** Porting the durable mirror design to `apt.worldfoundry.org`; do that after this proof is green. — _from [2026-08-06-package-publish-pipeline-hardening.md](docs/plans/2026-08-06-package-publish-pipeline-hardening.md)_  <!-- fp:cc8d4085a5271fc3 -->
-- [ ] **(triage)** Changing APT suite names, signing keys, repository layout, or package contents beyond the small proof revision. — _from [2026-08-06-package-publish-pipeline-hardening.md](docs/plans/2026-08-06-package-publish-pipeline-hardening.md)_  <!-- fp:b661a024a34b659c -->
-- [ ] **(triage)** Treating GitHub Actions cache as the long-term authoritative artifact store. — _from [2026-08-06-package-publish-pipeline-hardening.md](docs/plans/2026-08-06-package-publish-pipeline-hardening.md)_  <!-- fp:1c7201d0c5226abb -->
-- [verify] **2026-08-06-package-publish-pipeline-hardening** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-06-package-publish-pipeline-hardening.md](docs/plans/2026-08-06-package-publish-pipeline-hardening.md)_  <!-- fp:5c6bb45eb7b6abe4 -->
-- [verify] **2026-09-03-kiosk-mode** — Verification section present but no PASS recorded — run + record the steps. _from [2026-09-03-kiosk-mode.md](docs/plans/2026-09-03-kiosk-mode.md)_  <!-- fp:eba3831945e928c2 -->
-- [ ] **(triage)** Any modification to `devbox:26.04` or to `foundry-core`. — _from [2026-09-03-phase-2-per-game-tooling.md](docs/plans/2026-09-03-phase-2-per-game-tooling.md)_  <!-- fp:3d2abbbdabc92812 -->
-- [ ] **(triage)** A `wf-game` GUI / Podman Desktop integration. — _from [2026-09-03-phase-2-per-game-tooling.md](docs/plans/2026-09-03-phase-2-per-game-tooling.md)_  <!-- fp:09e94ecf151f35a6 -->
-- [ ] **(triage)** Authoring the WF-format template's actual `.lev` content (Stage B, sibling repo). — _from [2026-09-03-phase-2-per-game-tooling.md](docs/plans/2026-09-03-phase-2-per-game-tooling.md)_  <!-- fp:be3367a5e94ce814 -->
-- [ ] **(triage)** `release-sniper` Steam builds. — _from [2026-09-03-phase-2-per-game-tooling.md](docs/plans/2026-09-03-phase-2-per-game-tooling.md)_  <!-- fp:1eb4af774395ca87 -->
-- [ ] **(triage)** Windows/macOS host support — Distrobox is Linux-only by construction. — _from [2026-09-03-phase-2-per-game-tooling.md](docs/plans/2026-09-03-phase-2-per-game-tooling.md)_  <!-- fp:25c39206a1d15c3f -->
 <!-- END auto-captured-deferrals -->
 <!-- triaged 2026-08-05: the two per-package-publish exclusions dropped — apt format/signing changes are explicit non-goals, not deferred work. -->
 <!-- triaged 2026-08-05: the Debian source packaging was merged into upstream PR #448; the "8 unbuilt targets" follow-up remains curated under "Packaging — new upstreams". -->
