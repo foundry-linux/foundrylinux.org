@@ -543,6 +543,56 @@ published pool. Publish and the two bumps are the last three verification steps.
     on). **PENDING** until the next ISO build; `task iso-sync-local-debs` will carry
     `dist/uv_0.12.17-1foundry1_amd64.deb` into it automatically.
 
+    **Resolved 2026-09-19 against `foundry-anvil-0.9.133-amd64.iso`.** ISO 0.9.132
+    (`68b2f98`) had failed first: it staged a stale, pre‑rename `xemu` `.deb` (the
+    Xbox emulator, `xemu_0.8.136-1foundry1`) into `foundry-iso/local-debs/` that
+    outranked and collided with the renamed `xemu-xbox` package on `/usr/bin/xemu`,
+    because the old sync logic could only add‑or‑upgrade by version and could never
+    remove a package that had left `foundry-apt/dist/`. Fixed in commit
+    [`5a7706c`](../../foundry-iso/scripts/build-iso.sh) ("local-debs/ is an exact
+    mirror of foundry-apt/dist/*.deb, deletions included" — `rsync --delete` instead
+    of the old merge), bumped to 0.9.133 (`4a80214`), and 0.9.133 is the build that
+    carries `uv`:
+
+    ```bash
+    grep -E '^uv\b' foundry-iso/dist/*.packages 2>/dev/null || grep -E '^uv\b' foundry-iso/binary.packages
+    grep -E '^uv\b' foundry-iso/chroot.packages.install
+    grep -E '^uv\b' foundry-iso/chroot.packages.live
+    ls foundry-iso/chroot/usr/bin/uv foundry-iso/chroot/usr/bin/uvx
+    grep -A2 '^Package: uv$' foundry-iso/chroot/var/lib/dpkg/status
+    ```
+
+    ```
+    $ grep -E '^uv\b' foundry-iso/dist/*.packages 2>/dev/null || grep -E '^uv\b' foundry-iso/binary.packages
+    uv	0.12.17-1foundry1
+    exit=0
+
+    $ grep -E '^uv\b' foundry-iso/chroot.packages.install
+    uv	0.12.17-1foundry1
+
+    $ grep -E '^uv\b' foundry-iso/chroot.packages.live
+    uv	0.12.17-1foundry1
+
+    $ ls foundry-iso/chroot/usr/bin/uv foundry-iso/chroot/usr/bin/uvx
+    ls: cannot access 'foundry-iso/chroot/usr/bin/uv': No such file or directory
+    ls: cannot access 'foundry-iso/chroot/usr/bin/uvx': No such file or directory
+    ```
+
+    The `foundry-iso/chroot/` tree itself is no longer present on disk (only the
+    manifest files `chroot.packages.install`, `chroot.packages.live`,
+    `binary.packages` and `chroot.headers` survive the completed build — same
+    absence noted independently while re‑verifying the
+    [KDE config‑stack plan](2026-05-30-full-kde-experience.md) against this same
+    0.9.133 build), so the binary/`dpkg` status supplementary checks could not be
+    run; the manifest evidence above is what the step's own command asks for and it
+    is unambiguous across all three manifests (`binary.packages`,
+    `chroot.packages.install`, `chroot.packages.live` all list `uv 0.12.17-1foundry1`).
+
+    **PASS** — the step's literal command (`grep -E '^uv\b' foundry-iso/dist/*.packages
+    2>/dev/null || grep -E '^uv\b' foundry-iso/binary.packages`) returns
+    `uv	0.12.17-1foundry1`, confirmed redundantly in both chroot package-selection
+    manifests. Step 9 is done.
+
 10. The rejected Debian path is still rejected at implementation time: Debian's `uv`
     source package still produces no `uv` binary (if `Binary:` ever lists more than
     `python3-uv-build`, stop and re‑evaluate before building the wheel repack):

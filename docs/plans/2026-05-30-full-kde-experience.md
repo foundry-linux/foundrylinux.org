@@ -108,16 +108,67 @@ Plasma-5-idiom bug in claude-usage (fixed there). This plan's job is narrower:
    STATUS: **IN PROGRESS** — not yet PASS or FAIL. Will update again once a full
    run reaches the chroot-verification block.
 
+   **Re-verified 2026-09-19 against a real, complete build** — `foundry-anvil-0.9.133-amd64.iso`
+   (`EDITION=anvil task iso-build`, run 21:11–22:44, log
+   `foundry-iso/dist/build-anvil-0.9.133.log`):
+
+   ```
+   $ grep -n "PASS: KDE config QML stack" foundry-iso/dist/build-anvil-0.9.133.log
+   17394:PASS: KDE config QML stack present (kcmutils, kquickcontrols, QtQuick.Dialogs)
+   $ grep -n "PASS: KDE config QML stack" /tmp/claude-1000/-home-will-foundrylinux-org/ef75e775-3e8a-401a-a09b-a21ee7044809/scratchpad/iso-build.log
+   17794:PASS: KDE config QML stack present (kcmutils, kquickcontrols, QtQuick.Dialogs)
+   ```
+
+   The assertion (`foundry-iso/scripts/build-iso.sh:243-257`) ran after `lb chroot`
+   and printed its PASS line in both the per-build log and the full task-runner
+   log, confirming all three modules (`org/kde/kcmutils`, `org/kde/kquickcontrols`,
+   `QtQuick/Dialogs`) were present in the chroot for this build. The ISO itself
+   landed at `foundry-iso/dist/foundry-anvil-0.9.133-amd64.iso` (4.4G).
+
+   **PASS.**
+
 2. Temporarily add `qml6-module-org-kde-kquickcontrols` to the purge list →
    `task iso-build` **fails** at the assertion (guard works) → revert.
 
-   _PENDING — same full-build dependency as step 1._
+   **NOT RUN 2026-09-19.** This is a negative test that requires its own full
+   `lb chroot` cycle (edit `strip.list.chroot.purge`, rerun `task iso-build`,
+   observe the failure, revert, and — to leave a clean state — rebuild again or
+   discard the run). The 0.9.133 build that step 1 verifies against took ~93
+   minutes (21:11–22:44) end to end; a second full rebuild solely to exercise
+   this negative path was judged out of scope for this verification pass and
+   was not run. Additionally, the `foundry-iso/chroot/` tree this task was
+   dispatched with the promise of ("the live-build chroot tree is still
+   present") is no longer on disk — confirmed absent (`ls chroot` → "No such
+   file or directory"; only the manifest files `chroot.packages.install`,
+   `chroot.packages.live`, `binary.packages`, `chroot.headers` remain, and the
+   build log has no explicit `rm -rf chroot` at that point, so it's unclear
+   whether `lb binary`'s own packaging stage reclaims it or another process on
+   this shared host removed it). That rules out a cheaper substitute (editing
+   the on-disk chroot directly and re-running just the assertion snippet)
+   without first reproducing a chroot. Left **PENDING** — needs a dedicated
+   full rebuild scheduled on its own, same as step 1's original gating.
 
 3. `EDITION=atelier task iso-build` → same assertion passes (both editions).
 
-   _PENDING — same full-build dependency as step 1. (Note: anvil-only strip of digikam/showfoto
-   does not touch the QML stack, so both editions exercise the same assertion.)_
+   **NOT RUN 2026-09-19.** Same full-build dependency as step 2: only the
+   anvil edition was built this session (0.9.133). Exercising this step means
+   a separate `EDITION=atelier task iso-build`, another ~90+ minute run, not
+   performed here. Left **PENDING**. (Note: anvil-only strip of digikam/showfoto
+   does not touch the QML stack, so both editions exercise the same assertion.)
 
 4. Boot via `task iso-smoke`; over live-ssh, `qmllint` a 3-import probe → clean.
 
-   _PENDING — optional; depends on a built ISO from step 1._
+   **NOT RUNNABLE 2026-09-19.** `task iso-smoke` → `foundry-iso/test/boot-smoke.sh`
+   launches `qemu-system-x86_64 ... -display gtk,gl=on`, i.e. it opens a real,
+   interactive GTK/OpenGL window. This session is running on the user's own
+   live desktop, not a headless CI box — confirmed via `ps aux`, which shows an
+   active `kwin_wayland` / `Xwayland :0` session (`DISPLAY=:0` reachable,
+   `glxinfo` reports `direct rendering: Yes`). Launching `iso-smoke` here would
+   pop an uninvited GUI window on the user's actual screen, which this task
+   does not have standing to do. `task iso-qemu` has the same
+   `-display gtk,gl=on` shape (`Taskfile.yml:518-537`) and shares the problem.
+   Recording as NOT RUNNABLE rather than faking a boot/qmllint transcript;
+   this needs a human at the display (or a headless variant of
+   `boot-smoke.sh`, e.g. `-display none` + serial-only, which would be a
+   change to the test script itself and out of this verification task's
+   scope).
