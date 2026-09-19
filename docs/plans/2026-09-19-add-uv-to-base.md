@@ -310,6 +310,30 @@ published pool. Publish and the two bumps are the last three verification steps.
     **PASS** — `uv python find` resolves the system interpreter, not a
     downloaded managed one.
 
+    Real host, after the `v1.5.49` publish (Ubuntu 26.04.1, `foundry-core` 1.0.6
+    already installed, apt.foundrylinux.org already wired):
+
+    ```
+    $ sudo apt install uv
+    Get:1 https://apt.foundrylinux.org resolute/main amd64 uv amd64 0.12.17-1foundry1 [14.3 MB]
+    Unpacking uv (0.12.17-1foundry1)…
+    Setting up uv (0.12.17-1foundry1)…
+    Processing triggers for man-db (2.13.1-1build1)…
+    $ uv --version; uvx --version; uv python find
+    uv 0.12.17 (x86_64-unknown-linux-gnu)
+    uvx 0.12.17 (x86_64-unknown-linux-gnu)
+    /usr/bin/python3
+    $ man -w uv uvx
+    /usr/share/man/man1/uv.1.gz /usr/share/man/man1/uvx.1.gz
+    $ ls /usr/share/bash-completion/completions/uv* /usr/share/zsh/vendor-completions/_uv* /usr/share/fish/vendor_completions.d/uv*
+    /usr/share/bash-completion/completions/uv /usr/share/bash-completion/completions/uvx
+    /usr/share/fish/vendor_completions.d/uv.fish /usr/share/fish/vendor_completions.d/uvx.fish
+    /usr/share/zsh/vendor-completions/_uv /usr/share/zsh/vendor-completions/_uvx
+    ```
+
+    **PASS (real host)** — installed from the live repo on the maintainer's laptop;
+    binaries, man pages and completions all present.
+
 5. `foundry-core` 1.0.7 resolves `uv` from the local publish:
 
     ```bash
