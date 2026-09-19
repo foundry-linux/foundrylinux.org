@@ -563,6 +563,16 @@ separate TODO item and its own verification, not re-run here as part of *this* p
 4 above is left unchanged pending a dedicated pass — but the gap it names no longer exists in the
 codebase.
 
+**Orchestrator closure, 2026‑09‑19 — item 4 PASS; final tally 10 PASS / 0 FAIL / 1 retired.**
+The dedicated pass happened as the wald3n item's own verification (recorded in that hand‑back
+and in `TODO.md`'s Done line `wald3n-refresh-head`): the configured root is the canonical
+monorepo path; a legacy root is rejected before git is touched; a clone with no `origin`, and
+one whose `origin` normalises to a different repo, are both refused with explicit messages
+(exit 1); a worktree with 27 uncommitted package deletions still yields the full 57‑package
+set from HEAD; each snapshot carries `sourceCommit` matching `rev-parse HEAD`. Every
+non‑retired checklist item now has recorded PASS output, so this plan's verification is
+complete and the `[verify]` row is promoted to Done.
+
 **Orchestrator triage, 2026‑09‑19 — revised tally: 7 PASS / 3 FAIL / 1 retired.** Item 10 is
 PASS on the real `uv` marker (addendum above). Item 1 is retired, not failed: the design it
 names was replaced by the r2‑403 decision. Items 2–4 are the remaining gaps and are now

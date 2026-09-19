@@ -8,8 +8,6 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 ### apt-repo resilience — `task` vendored + source health-check
 
 - [T3] **Port the durable R2 mirror design to `apt.worldfoundry.org`** — the per-package publish path (restore `dist/` from the live pool instead of the GitHub Actions cache) is proven on apt.foundrylinux.org (`v1.5.49` was a green production run); apply the same workflow shape to the WorldFoundry repo. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md) and [r2-403 plan](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md).
-- [verify T2] **package-publish pipeline hardening** — verification run 2026-09-19 against the `uv` proof (`v1.5.49`): 7 PASS / 3 FAIL / 1 retired. Step 4 (wald3n canonical-checkout check) landed in wald3n `32d3c61` the same day; the remaining FAILs are steps 2–3 (hydrate/persist fail-closed tests, marker-lifecycle tests) — tracked by the tests item below; re-run steps 2–4 once it lands, then promote. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md).
-- [T2] **Tests for the publish pipeline's hydrate/persist fail-closed path and the package-publish marker scripts** — `publish.yml`'s `.dist-cache/` hydrate/persist steps fail closed but nothing exercises that outside production runs, and `scripts/mark-package-publish.sh`, `.claude/hooks/check-package-publish-complete.sh`, `scripts/complete-package-publish.sh` have zero test references. Add bats/shell tests under `foundry-apt/test/` (marker lifecycle: create → hook blocks → complete clears) and a `test.yml` job that drives the hydrate/persist shell logic against a local fake bucket. Closes plan steps 2–3 of [pipeline-hardening](docs/plans/2026-08-06-package-publish-pipeline-hardening.md).
 
 
 ### Phase 3 — Foundry Linux ISO
@@ -133,6 +131,8 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
+- ✅ 2026-09-19 — [publish-pipeline-tests] dist-cache hydrate/persist extracted to `scripts/dist-cache.sh` + 13 fail-closed tests; 13 marker-lifecycle tests; `task test` + `test.yml` job. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md).
+- ✅ 2026-09-19 — [pipeline-hardening-verify] Verified the package-publish hardening plan against the `uv` proof: 10 PASS / 1 retired. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md).
 - ✅ 2026-09-19 — [wald3n-refresh-head] wald3n's open-source refresh now reads package sources from committed HEAD with a canonical-origin check + `sourceCommit` metadata (wald3n `32d3c61`). Closes pipeline-hardening step 4.
 - ✅ 2026-09-19 — [r2-403-verify] Re-verified the foundry-apt dist R2 403 fix: all 9 steps PASS against live pool + run 35415719516. See [plan](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md).
 - ✅ 2026-08-06 — [xemu-skipped-targets] Checked the 8 targets xemu's default build skips: none packageable (3 unusable per upstream, 5 fail to build). See [plan](docs/plans/2026-08-05-xemu-rename-and-upstream-pr.md).
