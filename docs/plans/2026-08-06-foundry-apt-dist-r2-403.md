@@ -99,6 +99,189 @@ clean Ubuntu 26.04 container accepted the signed repository and resolved candida
 - [x] Clean Ubuntu 26.04 `apt-get update` succeeds against the signed repository.
 - [x] No R2 access key, secret, endpoint, or probe payload is written to logs or commits.
 
+### Re-verification — 2026-09-19
+
+The checklist above was checked off on 2026-08-06 alongside a prose Result summary but without raw
+command output recorded per step. This re-run pastes live evidence under each original bullet, gathered
+from today's production run `35415719516` (tag `v1.5.49`, workflow `publish.yml`, job `build-and-publish`
+ID `105823877231` + job `Smoke-check Foundry APT repo in Ubuntu 26.04` ID `105824576132`, both
+`conclusion: success`) and from re-confirming the original two-run proof is still green. Steps are
+numbered to match the checklist order; wording of each step is unchanged.
+
+1. **ShellCheck passes for the modified workflow scripts.**
+
+   ```
+   $ cd foundry-apt && shellcheck scripts/*.sh
+   EXIT:0
+   ```
+
+   The CI run's own gate step also passed: `build-and-publish` step 5 "shellcheck scripts (same lint gate
+   as the PR workflow)" → `conclusion: success`.
+
+   **PASS**
+
+2. **Public sync excludes `.dist-cache/**`.**
+
+   ```
+   $ grep -n "exclude" foundry-apt/.github/workflows/publish.yml
+   185:            --exclude '.dist-cache/**' \
+   186:            --exclude 'Release' --exclude 'Release.gpg' --exclude 'InRelease' \
+   ```
+
+   **PASS**
+
+3. **Bootstrap targeted publish persists the complete flat mirror successfully.**
+
+   The original bootstrap proof (run `31083910889`) is still green today:
+
+   ```
+   $ gh run view 31083910889 --repo foundry-linux/foundry-apt --json conclusion,status,url
+   {"conclusion":"success","status":"completed","url":"https://github.com/foundry-linux/foundry-apt/actions/runs/31083910889"}
+   ```
+
+   Fresh corroboration from today's persist step (job `105823877231`, step 21, "Persist durable dist
+   mirror to Cloudflare R2", `rclone sync ./dist/ R2:foundry-apt/.dist-cache/ --checksum --progress
+   --transfers=8`), pulled via `gh api repos/foundry-linux/foundry-apt/actions/jobs/105823877231/logs`:
+
+   ```
+   2026-09-19T02:31:22.8767287Z Checks:               408 / 408, 100%
+   2026-09-19T02:31:22.8767868Z Deleted:                3 (files), 0 (dirs)
+   2026-09-19T02:31:22.8768390Z Elapsed time:         10.8s
+   ```
+
+   No `403` / `AccessDenied` anywhere in the job log (`grep -inE "403|AccessDenied" job1.log` matches only
+   unrelated lines — Ubuntu package fetch progress and an rclone `Checks: 403 / 405` counter, not an HTTP
+   status).
+
+   **PASS**
+
+4. **Second targeted publish hydrates from the durable mirror and skips current artifacts.**
+
+   The original round-trip proof (run `31084186722`) is still green today:
+
+   ```
+   $ gh run view 31084186722 --repo foundry-linux/foundry-apt --json conclusion,status,url
+   {"conclusion":"success","status":"completed","url":"https://github.com/foundry-linux/foundry-apt/actions/runs/31084186722"}
+   ```
+
+   Fresh corroboration from today's hydrate step (job `105823877231`, step 8, "Hydrate durable dist mirror
+   from Cloudflare R2", `rclone copy R2:foundry-apt/.dist-cache/ ./dist/ --checksum --progress
+   --transfers=8`):
+
+   ```
+   2026-09-19T02:28:56.3036298Z  *                       ghidra_12.1.orig.tar.gz:100% /538.888Mi, 18.081Mi/s, 0sTransferred:   	    2.113 GiB / 2.113 GiB, 100%, 53.170 MiB/s, ETA 0s
+   2026-09-19T02:28:56.3037308Z Transferred:          202 / 202, 100%
+   2026-09-19T02:28:56.3037823Z Elapsed time:        35.5s
+   ```
+
+   All 202/202 durable artifacts hydrated from `.dist-cache/` before any build ran (the `if rclone copy
+   ...; then exit 0; fi` guard succeeded on the first branch, so none of the fallback/failure echo lines
+   printed), and the completeness gate then passed:
+
+   ```
+   $ awk '/check-dist-complete/{f=1} f{print} f&&/##\[endgroup\]/{exit}' job1.log  # (step header)
+   ...
+   2026-09-19T02:30:33.7282351Z dist/ completeness check passed: 60 local .debs, 59 live packages
+   ```
+
+   Caveat: today's run built real new work for `v1.5.49` (60 local vs. 59 live, one package changed)
+   rather than repeating the Aug 6 proof's exact "skip everything, no-change" shape — that specific
+   no-change scenario is what run `31084186722` already covers and remains the literal evidence for
+   "skips current artifacts." Today's run corroborates that hydrate-before-build still works unchanged six
+   weeks later; it does not re-run the no-change case.
+
+   **PASS** (via re-confirmed `31084186722` + today's corroborating hydrate)
+
+5. **Both workflow runs conclude green.**
+
+   ```
+   $ gh run list --repo foundry-linux/foundry-apt --limit 20 --json databaseId,displayTitle,headBranch,conclusion,event,createdAt
+   ...
+   {"conclusion":"success", ..., "databaseId":35415719516, "headBranch":"v1.5.49", ...}
+   {"conclusion":"success", ..., "databaseId":31084186722, "headBranch":"main", ...}
+   {"conclusion":"success", ..., "databaseId":31083910889, "headBranch":"main", ...}
+   ```
+
+   Note: run `35415569022` (tag `v1.5.48`, same day) shows `conclusion: failure`, but that is unrelated to
+   this fix — it failed at `build-and-publish` step 3 "Check upstream-packaging baseline inventory", a
+   pre-build guard that runs before the hydrate step (step 8) or persist step (step 21):
+
+   ```
+   $ gh run view 35415569022 --repo foundry-linux/foundry-apt --json jobs | python3 -c '...'
+   build-and-publish -> 3 Check upstream-packaging baseline inventory failure
+   ```
+
+   **PASS** (for the runs this fix is responsible for; `v1.5.48`'s failure is out of scope — a separate,
+   already-diagnosed pre-build guard issue)
+
+6. **Live `Packages` still contains `xemu`, `xemu-xbox`, and an unrelated control package.**
+
+   ```
+   $ curl -fsS https://apt.foundrylinux.org/dists/resolute/main/binary-amd64/Packages \
+     | grep -E "^Package: (xemu|xemu-xbox|asar-snes-assembler|x-emulators)$"
+   Package: asar-snes-assembler
+   Package: xemu
+   Package: xemu-xbox
+   ```
+
+   **PASS**
+
+7. **Live `Packages` contains no `x-emulators` stanza and no `.dist-cache/` filename.**
+
+   ```
+   $ curl -fsS https://apt.foundrylinux.org/dists/resolute/main/binary-amd64/Packages | grep -ci "dist-cache"
+   0
+   ```
+
+   (No `x-emulators` line appeared in the step 6 grep above either.)
+
+   **PASS**
+
+8. **Clean Ubuntu 26.04 `apt-get update` succeeds against the signed repository.**
+
+   The workflow's own `Smoke-check Foundry APT repo in Ubuntu 26.04` job (ID `105824576132`,
+   `conclusion: success`) does exactly this in a fresh container against the live signed repo published by
+   this same run:
+
+   ```
+   2026-09-19T02:32:53.2916602Z Fetched 26.1 MB in 1s (23.2 MB/s)
+   2026-09-19T02:32:58.5201082Z Fetched 10.1 MB in 2s (4848 kB/s)
+   2026-09-19T02:33:04.4468045Z Fetched 71.3 kB in 1s (50.8 kB/s)
+   ```
+
+   No `E:` apt errors, no `GPG error`, no `NO_PUBKEY` anywhere in the job log; the subsequent
+   `apt-cache show foundry-retro-tools|f9dasm|vgmstream|ghidra|libvgm|blender-asset-finder|
+   blender-asset-finder-cli` calls all returned valid stanzas.
+
+   **PASS**
+
+9. **No R2 access key, secret, endpoint, or probe payload is written to logs or commits.**
+
+   ```
+   $ gh api repos/foundry-linux/foundry-apt/actions/jobs/105823877231/logs > job1.log
+   $ grep -n "RCLONE_CONFIG_R2" job1.log
+   RCLONE_CONFIG_R2_TYPE: s3
+   RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+   RCLONE_CONFIG_R2_ACCESS_KEY_ID: ***
+   RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ***
+   RCLONE_CONFIG_R2_ENDPOINT: ***
+   RCLONE_CONFIG_R2_REGION: auto
+   $ grep -inE "AKIA[0-9A-Z]{16}|https://[0-9a-f]{32}\.r2\.cloudflarestorage\.com" job1.log job2.log
+   (no matches)
+   $ git show a00480d --stat
+   .github/workflows/foundry-apt-publish.yml    |  1 +
+   docs/plans/2026-08-05-per-package-publish.md | 25 +++++++++++++------------
+   foundry-apt/.github/workflows/publish.yml    |  5 +++--
+   (no key material in the diff)
+   ```
+
+   **PASS**
+
+**Overall: PASS.** All nine checklist items re-verified against live evidence dated 2026-09-19. Items 3
+and 4 rely on the original Aug 6 two-run proof (still green and reachable via `gh run view`) for their
+literal "bootstrap"/"no-change skip" shape, corroborated by today's production run exercising the same
+hydrate → build → persist path end-to-end with zero `403`s.
+
 ## Rollback
 
 Revert the workflow prefix changes. This returns targeted releases to the GitHub Actions cache fallback
