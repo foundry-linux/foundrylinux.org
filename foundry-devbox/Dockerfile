@@ -46,7 +46,7 @@ RUN apt-get update \
 # Transitive expansion of foundry-core (apt resolves these; comments are for readers):
 #   foundry-core                Depends:
 #     ├── foundry-retro-tools         = mame mame-tools dasm cc65 z80dasm z80asm radare2 binwalk
-#     │                                 sox binutils-m68k-linux-gnu xa65 f9dasm libvgm vgmstream ghidra
+#     │                                 sox binutils-m68k-linux-gnu xa65 f9dasm libvgm vgmstream
 #     ├── foundry-emulators-computers = dosbox-x hatari fs-uae openmsx openmsx-data
 #     ├── foundry-emulators-consoles  = fceux mednafen stella desmume scummvm frotz
 #     ├── foundry-game-frameworks     = tiled libsdl2-dev libsdl3-dev libsfml-dev

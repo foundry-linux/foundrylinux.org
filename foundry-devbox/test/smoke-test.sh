@@ -16,7 +16,7 @@ IMAGE="${IMAGE:-ghcr.io/foundry-linux/devbox:local}"
 
 TOOLS=(
     # foundry-retro-tools
-    mame chdman ghidra ghidra-headless
+    mame chdman
     vgmstream-cli f9dasm vgm-player vgm2wav
     z80dasm z80asm dasm cc65 radare2 binwalk
     # foundry-emulators-computers

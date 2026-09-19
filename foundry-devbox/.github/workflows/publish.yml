@@ -58,8 +58,8 @@ jobs:
           # /usr/games in PATH inside the image — mame lives at /usr/games/mame
           # per Debian games convention.
           for tool in \
-              mame chdman ghidra ghidra-headless blender \
-              vgmstream-cli f9dasm vgm-player vgm2wav task \
+              mame chdman blender \
+              vgmstream-cli f9dasm vgm-player vgm2wav task uv uvx \
               cdpack iffcomp levcomp \
               dosbox-x scummvm fceux mednafen stella hatari fs-uae \
               openmsx frotz desmume-cli \
