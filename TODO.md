@@ -9,8 +9,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 - [T3] **Port the durable R2 mirror design to `apt.worldfoundry.org`** — the per-package publish path (restore `dist/` from the live pool instead of the GitHub Actions cache) is proven on apt.foundrylinux.org (`v1.5.49` was a green production run); apply the same workflow shape to the WorldFoundry repo. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md) and [r2-403 plan](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md).
 - [T2] **wald3n `refresh-open-source-data.mjs` must read committed content, not the sibling working tree** — it scans `../foundrylinux.org/foundry-apt/packages` on disk, so any in-flight deletion there (seen 2026-09-19: the shared-electron removal) breaks `open-source:refresh` and the `package-publish:complete` guard. Read from `git archive HEAD` (or a `--ref` option) in `wald3n.com/scripts/`. Surfaced by [activate-wf-dispatch](docs/plans/2026-08-05-activate-wf-dispatch.md).
-- [verify T2] **foundry-apt dist R2 403 fix** — Verification section present but no PASS recorded; run + record the steps. See [plan](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md).
-- [verify T2] **package-publish pipeline hardening** — Verification section present but no PASS recorded; `v1.5.49` (2026-09-19) is a candidate green proof — record the steps against it. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md).
+- [wip T2] **package-publish pipeline hardening** — Verification section present but no PASS recorded; `v1.5.49` (2026-09-19) is a candidate green proof — record the steps against it. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md). <!-- agent:af079765823531d39 -->
 
 
 ### Phase 3 — Foundry Linux ISO
@@ -134,6 +133,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 
 ## Done
 
+- ✅ 2026-09-19 — [r2-403-verify] Re-verified the foundry-apt dist R2 403 fix: all 9 steps PASS against live pool + run 35415719516. See [plan](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md).
 - ✅ 2026-08-06 — [xemu-skipped-targets] Checked the 8 targets xemu's default build skips: none packageable (3 unusable per upstream, 5 fail to build). See [plan](docs/plans/2026-08-05-xemu-rename-and-upstream-pr.md).
 - [x] 2026-09-03 — [flycast-todo-staleness] Corrected a stale TODO entry: Flycast was already vendored and packaged (commit `8afe28b`, 2026-08-05), wired into `foundry-emulators-consoles-heavy` 1.0.6, and live on apt.foundrylinux.org as `2.6-1foundry1` — the "needs its own plan before dispatch" line had never been updated. See [plan](docs/plans/2026-08-05-package-flycast.md).
 - [x] 2026-09-03 — [rpcs3-todo-staleness] Corrected a stale TODO entry: RPCS3 was already vendored and packaged (commit `8afe28b`, 2026-08-05), wired into `foundry-emulators-consoles-heavy`, and live on apt.foundrylinux.org — the "needs its own plan before dispatch" line had never been updated. See [plan](docs/plans/2026-08-05-package-rpcs3.md).
