@@ -156,8 +156,8 @@ Run a second no-change targeted publish if needed to prove the durable mirror ro
 ## Verification
 
 - [ ] R2 probe round-trip succeeds against `foundry-apt-dist` with the CI credential.
-- [ ] Workflow tests cover authorized durable hydration/persistence and fail-closed fallback behavior.
-- [ ] Marker lifecycle tests cover create, merge, retain-on-failure, verify, and clear-on-success.
+- [x] Workflow tests cover authorized durable hydration/persistence and fail-closed fallback behavior.
+- [x] Marker lifecycle tests cover create, merge, retain-on-failure, verify, and clear-on-success.
 - [ ] wald3n regression check rejects the legacy sibling checkout and accepts the canonical monorepo tree.
 - [x] wald3n offline schema/uniqueness verification passes.
 - [x] Targeted production workflow concludes green.
@@ -226,6 +226,54 @@ numbered to match the checklist order; wording is unchanged.
 
    **FAIL** — no dedicated test exists; only the runtime implementation and repeated production runs.
 
+   **Addendum — 2026-09-19 (tests added, closing this step):** the hydrate/persist shell was extracted
+   from `publish.yml` into `foundry-apt/scripts/dist-cache.sh` (`hydrate`/`persist` subcommands, identical
+   `rclone` verbs/flags — `git diff` of `publish.yml` shows only the two `run:` bodies changing to
+   `bash scripts/dist-cache.sh hydrate`/`persist`, both `env:` blocks untouched) so the workflow and a new
+   test drive the same code. `foundry-apt/test/test-dist-cache.sh` exercises it against a local fake bucket
+   (an rclone remote of type `local` pointed at a throwaway temp dir — no R2, no credentials):
+
+   ```
+   $ cd foundry-apt && bash test/test-dist-cache.sh
+   === hydrate pulls files from a populated remote ===
+     ok hydrate exits 0 against a populated remote (exit 0)
+     ok hydrate pulled foundry-core .deb
+     ok hydrate pulled xemu .deb
+
+   === persist pushes files to the remote ===
+     ok persist exits 0 against a writable remote (exit 0)
+     ok persist pushed the .deb to the bucket
+
+   === persist FAILS CLOSED against a missing/unauthorized remote ===
+     ok persist exits non-zero (fails closed) rather than silently succeeding (exit 1)
+
+   === hydrate against an empty remote is a clean no-op ===
+     ok hydrate exits 0 against an empty remote (exit 0)
+     ok hydrate left DIST_DIR empty (clean no-op)
+
+   === hydrate FAILS CLOSED for a targeted publish with no fallback cache ===
+     ok hydrate exits 1 for a targeted publish with a failed hydration and no fallback (exit 1)
+     ok error message names the refusal
+
+   === hydrate WARNS BUT CONTINUES for a targeted publish with a restored fallback cache ===
+     ok hydrate exits 0 for a targeted publish when a fallback cache was restored (exit 0)
+
+   === -h/--help exits 0 without touching rclone ===
+     ok dist-cache.sh -h exits 0 (exit 0)
+     ok dist-cache.sh with no subcommand exits non-zero (exit 1)
+
+   Results: 13 passed, 0 failed
+   ```
+
+   The "unauthorized remote" case models a real 403 by pointing `persist` at a `chmod 000` parent
+   directory rclone cannot write into — confirmed the script propagates the failure (exit 1) rather than
+   swallowing it, which is the actual regression this step exists to catch. Wired into
+   `foundry-apt/Taskfile.yml`'s new `task test` and into a new `pipeline-tests` job in
+   `foundry-apt/.github/workflows/test.yml` (installs `rclone`/`jq`, runs both new test files). `task
+   shellcheck` (which already globs `scripts/*.sh` and `test/*.sh`) stays green against the new files.
+
+   **PASS**
+
 3. **Marker lifecycle tests cover create, merge, retain-on-failure, verify, and clear-on-success.**
 
    ```
@@ -247,6 +295,62 @@ numbered to match the checklist order; wording is unchanged.
    retain-on-failure, verify, clear-on-success) has a regression test.
 
    **FAIL** — no marker lifecycle tests exist.
+
+   **Addendum — 2026-09-19 (tests added, closing this step):** `foundry-apt/test/test-package-publish-marker.sh`
+   drives the real, unmodified `.claude/hooks/mark-package-publish.sh`, `.claude/hooks/check-package-publish-complete.sh`,
+   and `scripts/complete-package-publish.sh` inside a throwaway temp git repo (a fixture `foundry-apt/packages/pkg-a/`,
+   never the real monorepo or `.claude/state/`), with `task` and `curl` PATH-shimmed so nothing reaches a
+   real Taskfile or `wald3n.com`:
+
+   ```
+   $ cd foundry-apt && bash test/test-package-publish-marker.sh
+   === (a) mark-package-publish.sh: no-ops for a non-release command ===
+     ok non-release command exits 0 (exit 0)
+     ok no marker written
+
+   === (a) mark-package-publish.sh: creates the marker for a release command ===
+     ok release command exits 0 (exit 0)
+     ok marker file created
+     ok marker records the package
+     ok marker records the triggering command
+     ok marker records an ISO-8601 published_at
+
+   === (a) mark-package-publish.sh: merges without duplicating an already-current package ===
+     ok release command exits 0 (exit 0)
+     ok pkg-a already in the snapshot is omitted from a fresh marker
+
+   === (b) check-package-publish-complete.sh: blocks while the marker exists ===
+     ok Stop hook exits 0 even while blocking (exit 0)
+     ok Stop hook reports decision=block while the marker exists
+
+   === (b) check-package-publish-complete.sh: silent + non-blocking once the marker is gone ===
+     ok Stop hook exits 0 with no marker (exit 0)
+     ok Stop hook prints nothing once the marker is gone
+
+   === (c) complete-package-publish.sh: refuses when the snapshot lacks the package ===
+     ok refuses when pkg-a is absent from the refreshed snapshot (exit 1)
+     ok marker retained after a refused completion
+     ok error names the missing package
+
+   === (c) complete-package-publish.sh: clears the marker once snapshot + live page agree ===
+     ok completes once the package is verified live (exit 0)
+     ok prints a PASS line
+     ok marker removed
+
+   === (c) complete-package-publish.sh: no-ops cleanly when there is nothing pending ===
+     ok no-op exits 0 when no marker exists (exit 0)
+     ok no-op reports nothing pending
+
+   Results: 13 passed, 0 failed
+   ```
+
+   Covers every behavior this checklist item names: create (with `package=`/`published_at`/`command=`
+   fields), merge-without-duplicating an already-current package, retain-on-failure (marker survives a
+   refused completion), verify (rejects a snapshot missing the package), and clear-on-success (marker
+   removed only once the snapshot *and* the live-page stub both confirm the package). Wired into `task
+   test` and the same `pipeline-tests` job in `test.yml` as item 2's test; `task shellcheck` stays green.
+
+   **PASS**
 
 4. **wald3n regression check rejects the legacy sibling checkout and accepts the canonical monorepo tree.**
 
@@ -446,6 +550,18 @@ regression-testing and access-provisioning work this plan called for (items 1–
 design was superseded by the sibling r2-403 plan, and items 2–4 have no test coverage, only working
 implementation. Item 10 needs a re-run with elevated permission to observe directly. This plan should
 **not** be promoted to Done as-is; the FAIL items are real gaps, not verification friction.
+
+**Update — 2026-09-19 (post-addenda tally):** item 1 was retriaged as retired (not a defect — see its
+inline note), item 10 was observed end-to-end on the real `uv` publication and flipped to **PASS** (see
+its orchestrator addendum), and items 2–3 now have real test coverage and are **PASS** (see their
+addenda above). Recomputed: **9 PASS / 1 FAIL (item 4) / 1 retired (item 1, non-blocking)**. Item 4's
+underlying robustness bug — `refresh-open-source-data.mjs` reading the sibling working tree instead of
+committed HEAD — was fixed the same day in `wald3n.com` commit `32d3c61` (`open-source: read package
+sources from committed HEAD`), which also adds the canonical-checkout regression check (origin-identity
+comparison + legacy-path rejection, both test-covered) this item calls for. That fix was made under a
+separate TODO item and its own verification, not re-run here as part of *this* plan's checklist, so item
+4 above is left unchanged pending a dedicated pass — but the gap it names no longer exists in the
+codebase.
 
 **Orchestrator triage, 2026‑09‑19 — revised tally: 7 PASS / 3 FAIL / 1 retired.** Item 10 is
 PASS on the real `uv` marker (addendum above). Item 1 is retired, not failed: the design it

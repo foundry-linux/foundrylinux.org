@@ -69,19 +69,7 @@ jobs:
           RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           RCLONE_CONFIG_R2_ENDPOINT:          ${{ secrets.R2_ENDPOINT }}
           RCLONE_CONFIG_R2_REGION: auto
-        run: |
-          if rclone copy R2:foundry-apt/.dist-cache/ ./dist/ --checksum --progress --transfers=8; then
-            exit 0
-          fi
-          if [[ -n "$TARGET_PACKAGES" && -z "$DIST_CACHE_KEY" ]]; then
-            echo "ERROR: R2 dist hydration failed during a targeted publish — refusing to continue." >&2
-            exit 1
-          fi
-          if [[ -n "$TARGET_PACKAGES" ]]; then
-            echo "R2 dist hydration failed, but a secondary dist cache was restored; the completeness gate will verify it before publication."
-            exit 0
-          fi
-          echo "R2 dist mirror is not available yet; continuing only because this is a full bootstrap build."
+        run: bash scripts/dist-cache.sh hydrate
 
       - name: Build all .debs in ubuntu:26.04 (our distribution base)
         id: build
@@ -221,7 +209,7 @@ jobs:
           RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           RCLONE_CONFIG_R2_ENDPOINT:          ${{ secrets.R2_ENDPOINT }}
           RCLONE_CONFIG_R2_REGION: auto
-        run: rclone sync ./dist/ R2:foundry-apt/.dist-cache/ --checksum --progress --transfers=8
+        run: bash scripts/dist-cache.sh persist
 
       - name: Upload artifacts (always, for audit)
         uses: actions/upload-artifact@v7

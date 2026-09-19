@@ -93,3 +93,24 @@ jobs:
           name: foundry-apt-debs
           path: dist/*.deb
           retention-days: 14
+
+  pipeline-tests:
+    name: dist-cache fail-closed path + package-publish marker lifecycle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install runner-side deps (rclone for the local fake-bucket test, jq for the marker test)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y rclone jq
+
+      - name: Test scripts/dist-cache.sh hydrate/persist against a local fake bucket
+        # No R2, no credentials — exercises the same rclone verbs/flags
+        # publish.yml uses, against a local rclone remote.
+        run: bash test/test-dist-cache.sh
+
+      - name: Test the package-publish marker lifecycle
+        # No wald3n.com, no network — task/curl are PATH-shimmed inside the
+        # test itself.
+        run: bash test/test-package-publish-marker.sh

@@ -94,6 +94,13 @@ tasks:
     cmds:
       - bash test/run-test.sh {{.CLI_ARGS}}
 
+  test:
+    desc: "Run local unit/integration tests (dist-cache fail-closed path, package-publish marker lifecycle) — no network, no live repo"
+    dir: "{{.TASKFILE_DIR}}"
+    cmds:
+      - bash test/test-dist-cache.sh
+      - bash test/test-package-publish-marker.sh
+
   shellcheck:
     desc: "Lint all shell scripts"
     cmds:
