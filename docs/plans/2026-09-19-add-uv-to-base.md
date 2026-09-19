@@ -461,8 +461,40 @@ published pool. Publish and the two bumps are the last three verification steps.
     IMAGE=ghcr.io/foundry-linux/devbox:26.04 bash foundry-devbox/test/smoke-test.sh 2>&1 | grep -E 'uv|PASS|FAIL'
     ```
 
-    **NOT RUN** — depends on the release (Approach step 6), which is deliberately
-    not part of the implementation change.
+    Release: `task bump` → `v1.5.48` failed at "Check upstream-packaging baseline
+    inventory" (`packages/uv/` had no row in `scripts/upstream-packaging-baseline.tsv`;
+    `drawio-desktop` and `electron-runtime-42` were missing rows too). Fixed in
+    `6724f28`, re-released as `v1.5.49`:
+    [run 35415719516](https://github.com/foundry-linux/foundry-apt/actions/runs/35415719516)
+    → `completed success`.
+
+    ```
+    $ docker run --rm ubuntu:26.04 bash -c '… curl -fsSL https://foundrylinux.org/setup.sh | bash …; apt-get update; apt-cache policy uv foundry-core'
+    Hit:4 https://apt.foundrylinux.org resolute InRelease
+    uv:
+      Installed: (none)
+      Candidate: 0.12.17-1foundry1
+      Version table:
+         0.12.17-1foundry1 500
+            500 https://apt.foundrylinux.org resolute/main amd64 Packages
+    foundry-core:
+      Installed: (none)
+    ```
+
+    **PASS (live repo)** — a fresh 26.04 wired by the public `setup.sh` resolves `uv`
+    0.12.17-1foundry1 from apt.foundrylinux.org.
+
+    Publication follow‑through (the repo's `package-publish` guard): wald3n.com
+    inventory refreshed from clean HEAD checkouts of both repos (the local
+    `foundrylinux.org` tree carries unrelated in‑flight package deletions that break
+    the scanner), `uv` added to its Repology mapping, committed as `10c6b26`, published
+    and deployed as wald3n.com `v0.0.430`; `task package-publish:complete` →
+    `ok uv` on the live page, `PASS`, marker cleared.
+
+    Devbox: `task devbox-bump` → foundry-devbox `v0.0.6`. Smoke-test result recorded
+    below once the image build finishes.
+
+    <!-- devbox-smoke-result -->
 
 9. ISO: after `task iso-bump`, the new ISO's package manifest lists `uv`:
 
@@ -470,7 +502,11 @@ published pool. Publish and the two bumps are the last three verification steps.
     grep -E '^uv\b' foundry-iso/dist/*.packages 2>/dev/null || grep -E '^uv\b' foundry-iso/binary.packages
     ```
 
-    **NOT RUN** — depends on `task iso-bump`, part of the release step.
+    `task iso-bump` done → `foundry-iso/VERSION` 0.9.131 (`8102e88`). The manifest
+    check needs a full `task iso-build`, a multi‑hour local live‑build that is run on
+    its own schedule (the same gate the KDE config‑stack item in `TODO.md` is waiting
+    on). **PENDING** until the next ISO build; `task iso-sync-local-debs` will carry
+    `dist/uv_0.12.17-1foundry1_amd64.deb` into it automatically.
 
 10. The rejected Debian path is still rejected at implementation time: Debian's `uv`
     source package still produces no `uv` binary (if `Binary:` ever lists more than
