@@ -53,6 +53,7 @@ RUN apt-get update \
 #     │                                 liballegro5-dev libtcod-dev glslang-tools spirv-cross spirv-tools
 #     ├── foundry-image-cli           = imagemagick graphicsmagick
 #     ├── task                          (resolved directly from the Cloudsmith repo configured in Layer 1)
+#     ├── uv                            = uv + uvx (vendored wheel repack; Python package/project manager)
 #     ├── worldfoundry [cross-repo]   = worldfoundry-cli + worldfoundry-blender-addons
 #     │     ├── worldfoundry-cli      = cdpack iffcomp iffdump levcomp lvldump oaddump
 #     │     │                           oas2oad textile blender-asset-finder-cli prep

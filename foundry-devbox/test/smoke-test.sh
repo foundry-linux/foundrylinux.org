@@ -30,6 +30,8 @@ TOOLS=(
     magick gm
     # Cloudsmith task
     task
+    # vendored uv (Python package/project manager + ephemeral tool runner)
+    uv uvx
     # worldfoundry (cross-repo)
     blender cdpack iffcomp iffdump levcomp lvldump oaddump oas2oad textile prep
 )

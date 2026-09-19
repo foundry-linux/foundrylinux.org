@@ -237,6 +237,7 @@ install_metapackages() {
         game-dev)
             run_subscript install-foundry-engine-build-deps.sh "${dry[@]}"
             run_subscript install-task.sh "${dry[@]}"
+            run_subscript install-uv.sh "${dry[@]}"
             $SKIP_BLENDER || run_subscript install-foundry-blender.sh "${dry[@]}"
             if ! $SKIP_RETRO; then
                 local args=("${dry[@]}")
@@ -248,6 +249,7 @@ install_metapackages() {
         engine-dev)
             run_subscript install-foundry-engine-build-deps.sh "${dry[@]}"
             run_subscript install-task.sh "${dry[@]}"
+            run_subscript install-uv.sh "${dry[@]}"
             if ! $SKIP_RETRO; then
                 local args=("${dry[@]}")
                 $APT_ONLY && args+=(--apt-only)

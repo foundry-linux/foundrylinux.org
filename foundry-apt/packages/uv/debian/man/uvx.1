@@ -1,0 +1,126 @@
+.TH UVX 1 "September 2026" "uv 0.12.17" "User Commands"
+.SH NAME
+uvx \- run a command provided by a Python package
+.SH SYNOPSIS
+.B uvx
+[\fIOPTIONS\fR] [\fICOMMAND\fR]
+.SH DESCRIPTION
+.B uvx
+runs a command provided by a Python package in an ephemeral, cached
+environment, without installing it into the current project or onto the
+user's path. It is an alias for \fBuv tool run\fR and ships with the same
+.BR uv (1)
+binary release.
+.PP
+By default the package name is taken to be the command name; use
+\fB\-\-from\fR when they differ.
+.SH OPTIONS
+.TP
+.BI \-\-from " FROM"
+Use the given package to provide the command.
+.TP
+.BR \-w ", " \-\-with " \fIWITH\fR"
+Run with the given packages also installed.
+.TP
+.BI \-\-with\-editable " WITH_EDITABLE"
+Run with the given packages installed in editable mode.
+.TP
+.BI \-\-with\-requirements " FILE"
+Run with the packages listed in the given requirements files.
+.TP
+.BR \-c ", " \-\-constraints " \fIFILE\fR"
+Constrain versions using the given requirements files.
+.TP
+.BR \-b ", " \-\-build\-constraints " \fIFILE\fR"
+Constrain build dependencies using the given requirements files.
+.TP
+.BI \-\-overrides " FILE"
+Override versions using the given requirements files.
+.TP
+.B \-\-isolated
+Run the tool in an isolated virtual environment, ignoring any
+already\-installed tools.
+.TP
+.BI \-\-env\-file " ENV_FILE"
+Load environment variables from a \fB.env\fR file.
+.TP
+.B \-\-no\-env\-file
+Avoid reading environment variables from a \fB.env\fR file.
+.TP
+.BI \-\-python\-platform " PLATFORM"
+The platform for which requirements should be installed.
+.TP
+.BI \-\-index " INDEX"
+An index to use when resolving dependencies, in addition to the default
+index.
+.TP
+.BI \-\-default\-index " DEFAULT_INDEX"
+The default package index (by default, https://pypi.org/simple).
+.TP
+.B \-\-no\-index
+Ignore the registry index, relying on direct URL dependencies and
+\fB\-\-find\-links\fR instead.
+.TP
+.BR \-U ", " \-\-upgrade
+Allow package upgrades, ignoring pinned versions.
+.TP
+.BI \-\-resolution " RESOLUTION"
+Version selection strategy: \fBhighest\fR, \fBlowest\fR or
+\fBlowest\-direct\fR.
+.TP
+.B \-\-reinstall
+Reinstall all packages, regardless of whether they are already
+installed.
+.TP
+.BR \-n ", " \-\-no\-cache
+Avoid reading from or writing to the cache.
+.TP
+.B \-\-offline
+Disable network access.
+.TP
+.BR \-h ", " \-\-help
+Display the concise help for this command.
+.TP
+.BR \-V ", " \-\-version
+Display the uvx version.
+.SH EXAMPLES
+Run a linter without installing it:
+.PP
+.RS
+.B uvx ruff check .
+.RE
+.PP
+Run a command whose package name differs from the command:
+.PP
+.RS
+.B uvx --from httpie http example.com
+.RE
+.PP
+Run with an extra package available:
+.PP
+.RS
+.B uvx --with rich python -c "import rich"
+.RE
+.SH ENVIRONMENT
+.TP
+.B UV_CACHE_DIR
+Path to the cache directory shared with
+.BR uv (1).
+.TP
+.B UV_PYTHON
+The Python interpreter to use by default.
+.TP
+.B UV_ISOLATED
+Run tools in an isolated environment when set.
+.SH SEE ALSO
+.BR uv (1),
+.BR python3 (1)
+.PP
+Full documentation:
+.UR https://docs.astral.sh/uv/guides/tools/
+.UE
+.SH AUTHORS
+Astral Software Inc. and the uv contributors.
+.SH COPYRIGHT
+Copyright \(co 2023 Astral Software Inc. Licensed under the MIT license
+or the Apache License 2.0, at your option.

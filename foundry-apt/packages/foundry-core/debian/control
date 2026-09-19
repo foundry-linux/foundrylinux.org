@@ -23,6 +23,7 @@ Depends: ${misc:Depends},
  openjdk-17-jre-headless,
  openjdk-21-jre-headless,
  task,
+ uv,
  worldfoundry
 Description: Foundry Linux developer toolkit — desktop-agnostic
  The complete Foundry Linux developer toolkit for existing Ubuntu installs.
@@ -33,7 +34,8 @@ Description: Foundry Linux developer toolkit — desktop-agnostic
  Blender add-ons), the retro-porting toolkit (MAME, dasm, z80,
  cc65, …; Ghidra is atelier-only), light universe emulators, game-dev
  frameworks (SDL2/3, SFML, Allegro, libtcod, Tiled, LOVE + Vulkan shader
- tools), CLI image utilities, go-task, btop and dust (du-dust, an intuitive
+ tools), CLI image utilities, go-task, uv (the fast Python package and
+ project manager, with uvx), btop and dust (du-dust, an intuitive
  disk-usage viewer), and Java 17 + 21 LTS runtimes (LibGDX, Gradle, and
  mod toolchains).
  .

@@ -1,0 +1,55 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: uv
+Upstream-Contact: Astral Software <support@astral.sh>
+Source: https://github.com/astral-sh/uv
+
+Files: *
+Copyright: 2023 Astral Software Inc. <support@astral.sh>
+License: MIT or Apache-2.0
+ uv is dual-licensed under the MIT license and the Apache License 2.0;
+ either licence may be chosen at the recipient's option. Both texts ship
+ inside the upstream wheel as LICENSE-MIT and LICENSE-APACHE.
+
+Files: debian/*
+Copyright: 2026 Foundry Linux <packages@foundrylinux.org>
+License: MIT
+
+License: MIT
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+License: Apache-2.0
+ Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ use this file except in compliance with the License. You may obtain a copy of
+ the License at
+ .
+     https://www.apache.org/licenses/LICENSE-2.0
+ .
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations under
+ the License.
+ .
+ On Debian and Ubuntu systems the complete text of the Apache License,
+ Version 2.0 can be found in /usr/share/common-licenses/Apache-2.0.
+ .
+ Note: This binary statically links a large number of Rust crates, all
+ licensed under permissive terms (MIT, Apache-2.0, BSD-3-Clause, ISC and
+ similar). The upstream wheel ships a CycloneDX SBOM with the full
+ dependency and licence inventory.

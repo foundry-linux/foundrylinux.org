@@ -1,0 +1,6 @@
+usr/share/bash-completion/completions/uv
+usr/share/bash-completion/completions/uvx
+usr/share/zsh/vendor-completions/_uv
+usr/share/zsh/vendor-completions/_uvx
+usr/share/fish/vendor_completions.d/uv.fish
+usr/share/fish/vendor_completions.d/uvx.fish

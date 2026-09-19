@@ -30,7 +30,7 @@ The nesting is `foundry-core ⊆ foundry-anvil ⊆ foundry-sprite ⊆ foundry-at
 
 | Edition | Builds on | What it adds |
 |---|---|---|
-| `foundry-core` | — (base toolkit) | Desktop‑agnostic dev toolkit — `foundry-retro-tools`, `foundry-game-frameworks`, `foundry-image-cli`, `foundry-emulators-computers`, `foundry-emulators-consoles`, `foundry-python-gamedev`(+`-extras`), `worldfoundry`&nbsp;`[WF]`, plus `task`, `btop`, `firefox`. **This is what the devbox container installs.** |
+| `foundry-core` | — (base toolkit) | Desktop‑agnostic dev toolkit — `foundry-retro-tools`, `foundry-game-frameworks`, `foundry-image-cli`, `foundry-emulators-computers`, `foundry-emulators-consoles`, `foundry-python-gamedev`(+`-extras`), `worldfoundry`&nbsp;`[WF]`, plus `task`, `uv`, `btop`, `firefox`. **This is what the devbox container installs.** |
 | `foundry-desktop` | — | KDE desktop integration: `foundry-kde-theme` + `foundry-welcome`. ISO / KDE hosts only — kept **out** of the container. |
 | `foundry-anvil` | `core` + `desktop` | The developer toolkit on a themed KDE desktop. **Default ISO edition.** |
 | `foundry-sprite` | `anvil` | + heavy graphics/audio: `foundry-art`, `foundry-pixel-art`, `foundry-trackers`, `foundry-daw`, `digikam`, `showfoto`. |
@@ -82,6 +82,7 @@ Packages not in the Ubuntu archive, repackaged and shipped from this repo via [`
 | `flycast` | [flycast.org](https://flycast.org) | Sega Dreamcast, NAOMI and Atomiswave emulator. Console and arcade firmware not shipped. `amd64`. |
 | `rpcs3` | [rpcs3.net](https://rpcs3.net) | Sony PlayStation 3 emulator and debugger. PS3 firmware not shipped. Orig tarball synthesised from a pinned superproject commit — upstream publishes no source release. `amd64`. |
 | `ruff` | [astral.sh/ruff](https://docs.astral.sh/ruff) | Extremely fast Python linter and code formatter. `amd64`. |
+| `uv` | [astral.sh/uv](https://docs.astral.sh/uv) | Extremely fast Python package and project manager; ships `uv` + `uvx` and bash/zsh/fish completions. Not in 26.04 universe (Debian's `uv` source builds only `python3-uv-build`). `amd64`. |
 | `python3-glfw` | [FlorianRhiem/pyGLFW](https://github.com/FlorianRhiem/pyGLFW) | Python ctypes bindings for GLFW3. `all`. |
 | `python3-librosa` | [librosa.org](https://librosa.org) | Audio and music analysis library for Python. `all`. |
 | `python3-mss` | [BoboTiG/python-mss](https://github.com/BoboTiG/python-mss) | Ultra-fast cross-platform screenshot library for Python. `all`. |

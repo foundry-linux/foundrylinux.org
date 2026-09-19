@@ -41,7 +41,9 @@ Then `sudo apt install foundry-<edition>` finishes the job.
 **`install.sh`** (local clone only) additionally:
 
 - Checks Ubuntu 26.04 LTS (errors on any other release — bypass with `--force`)
-- Dispatches to per-metapackage installers for legacy roles
+- Dispatches to per-metapackage installers for legacy roles — the `both`, `game-dev`
+  and `engine-dev` roles also chain `install-uv.sh` (`uv` + `uvx`), which the Phase 1
+  editions get transitively through `foundry-core`
 - For Phase 1 editions (`anvil`/`sprite`/`atelier`): just wires sources + runs `apt install`
 
 WF engine workspace setup (Rust, repo clones, wftools build, Blender addon) is handled by

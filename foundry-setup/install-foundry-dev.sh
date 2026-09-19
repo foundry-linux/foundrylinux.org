@@ -93,6 +93,9 @@ fi
 step "dev umbrella: task runner"
 run_subscript install-task.sh "${DRY_FLAG[@]}"
 
+step "dev umbrella: uv (Python package and project manager)"
+run_subscript install-uv.sh "${DRY_FLAG[@]}"
+
 if $SKIP_RETRO; then
     info "Skipping foundry-retro-tools (--skip-retro)"
 else

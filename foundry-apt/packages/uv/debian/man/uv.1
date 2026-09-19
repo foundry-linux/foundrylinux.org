@@ -1,0 +1,199 @@
+.TH UV 1 "September 2026" "uv 0.12.17" "User Commands"
+.SH NAME
+uv \- extremely fast Python package and project manager
+.SH SYNOPSIS
+.B uv
+[\fIOPTIONS\fR] \fICOMMAND\fR [\fIARGS\fR...]
+.SH DESCRIPTION
+.B uv
+is an extremely fast Python package and project manager written in Rust.
+A single binary replaces pip, pip\-tools, pipx, poetry, pyenv, twine and
+virtualenv, running 10\(en100x faster than the tools it stands in for.
+.PP
+Project configuration is read from \fBpyproject.toml\fR; uv\-specific
+settings may also live in a \fBuv.toml\fR file. Resolutions are recorded
+in a universal \fBuv.lock\fR.
+.SH COMMANDS
+.TP
+.B run \fICOMMAND\fR
+Run a command or script in the project environment.
+.TP
+.B init [\fIPATH\fR]
+Create a new project.
+.TP
+.B add \fIPACKAGE\fR...
+Add dependencies to the project.
+.TP
+.B remove \fIPACKAGE\fR...
+Remove dependencies from the project.
+.TP
+.B version
+Read or update the project's version.
+.TP
+.B sync
+Update the project's environment to match the lockfile.
+.TP
+.B lock
+Update the project's lockfile.
+.TP
+.B export
+Export the project's lockfile to an alternate format.
+.TP
+.B tree
+Display the project's dependency tree.
+.TP
+.B format
+Format Python code in the project.
+.TP
+.B check
+Run checks on the project.
+.TP
+.B audit
+Audit the project's dependencies.
+.TP
+.B tool
+Run and install commands provided by Python packages. See also
+.BR uvx (1),
+which is an alias for \fBuv tool run\fR.
+.TP
+.B python
+Manage Python versions and installations.
+.TP
+.B pip
+Manage Python packages with a pip\-compatible interface.
+.TP
+.B venv [\fIPATH\fR]
+Create a virtual environment.
+.TP
+.B build
+Build Python packages into source distributions and wheels.
+.TP
+.B publish
+Upload distributions to an index.
+.TP
+.B workspace
+Inspect uv workspaces.
+.TP
+.B cache
+Manage uv's cache.
+.TP
+.B self
+Manage the uv executable. Note that self\-update is not supported for
+this packaged build \(em upgrade through apt instead.
+.TP
+.B auth
+Manage authentication for package indexes.
+.TP
+.B help [\fICOMMAND\fR]
+Display the long\-form documentation for a command.
+.SH OPTIONS
+.TP
+.BR \-h ", " \-\-help
+Display the concise help for this command.
+.TP
+.BR \-V ", " \-\-version
+Display the uv version.
+.TP
+.BR \-v ", " \-\-verbose
+Use verbose output. Repeat for more detail.
+.TP
+.BR \-q ", " \-\-quiet
+Use quiet output. Repeat for less output.
+.TP
+.BR \-n ", " \-\-no\-cache
+Avoid reading from or writing to the cache, using a temporary directory
+for the duration of the operation.
+.TP
+.BI \-\-cache\-dir " CACHE_DIR"
+Path to the cache directory.
+.TP
+.B \-\-managed\-python
+Require the use of uv\-managed Python versions.
+.TP
+.B \-\-no\-managed\-python
+Disable the use of uv\-managed Python versions.
+.TP
+.B \-\-no\-python\-downloads
+Disable automatic downloads of Python.
+.TP
+.BI \-\-color " WHEN"
+Control the use of color in output: \fBauto\fR, \fBalways\fR or
+\fBnever\fR.
+.TP
+.B \-\-offline
+Disable network access.
+.TP
+.BI \-\-directory " DIRECTORY"
+Change to the given directory prior to running the command.
+.TP
+.BI \-\-project " PROJECT"
+Discover a project in the given directory.
+.TP
+.BI \-\-config\-file " CONFIG_FILE"
+The path to a \fBuv.toml\fR file to use for configuration.
+.TP
+.B \-\-no\-config
+Avoid discovering configuration files.
+.TP
+.B \-\-no\-progress
+Hide all progress output.
+.SH EXAMPLES
+Create a project and add a dependency:
+.PP
+.RS
+.B uv init mygame && cd mygame && uv add pygame
+.RE
+.PP
+Create a virtual environment and install into it:
+.PP
+.RS
+.B uv venv && uv pip install rich
+.RE
+.PP
+Install a command\-line tool for the current user:
+.PP
+.RS
+.B uv tool install shrinkray
+.RE
+.PP
+Show which interpreter uv would use:
+.PP
+.RS
+.B uv python find
+.RE
+.SH FILES
+.TP
+.B pyproject.toml
+Project metadata; uv settings under \fB[tool.uv]\fR.
+.TP
+.B uv.toml
+Standalone uv configuration (same format, no \fB[tool.uv]\fR wrapper).
+.TP
+.B uv.lock
+The project's universal lockfile.
+.SH ENVIRONMENT
+.TP
+.B UV_CACHE_DIR
+Path to the cache directory.
+.TP
+.B UV_PYTHON
+The Python interpreter to use by default.
+.TP
+.B UV_NO_CACHE
+Disable the cache when set.
+.TP
+.B UV_OFFLINE
+Disable network access when set.
+.SH SEE ALSO
+.BR uvx (1),
+.BR python3 (1),
+.BR pip (1)
+.PP
+Full documentation:
+.UR https://docs.astral.sh/uv
+.UE
+.SH AUTHORS
+Astral Software Inc. and the uv contributors.
+.SH COPYRIGHT
+Copyright \(co 2023 Astral Software Inc. Licensed under the MIT license
+or the Apache License 2.0, at your option.

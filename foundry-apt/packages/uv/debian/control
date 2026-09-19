@@ -1,0 +1,28 @@
+Source: uv
+Section: devel
+Priority: optional
+Maintainer: Foundry Linux <packages@foundrylinux.org>
+Build-Depends: debhelper-compat (= 13), unzip
+Standards-Version: 4.7.0
+Homepage: https://docs.astral.sh/uv
+X-Repology-Project: uv
+Rules-Requires-Root: no
+
+Package: uv
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: python3
+Description: extremely fast Python package and project manager
+ uv is an extremely fast Python package and project manager, written in
+ Rust. It replaces pip, pip-tools, pipx, poetry, pyenv, twine and
+ virtualenv with a single binary, running 10-100x faster than the tools
+ it stands in for.
+ .
+ Provides project management with a universal lockfile, a pip-compatible
+ interface, script execution with inline dependency metadata, tool
+ installation and one-shot tool runs via uvx, and managed Python
+ interpreter installs.
+ .
+ This package ships both the uv and uvx binaries plus shell completions
+ for bash, zsh and fish. python3 is recommended so that uv resolves the
+ system interpreter instead of downloading a managed one.

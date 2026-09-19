@@ -1,0 +1,10 @@
+uv (0.12.17-1foundry1) resolute; urgency=medium
+
+  * Initial Foundry Linux packaging of uv 0.12.17.
+  * Repackaged from the upstream manylinux_2_17 x86_64 wheel.
+  * Ships uv and uvx plus bash/zsh/fish completions generated at build time.
+  * Source wheel: https://files.pythonhosted.org/packages/0d/8d/
+    e45565a046bd2592b75cb96fded9a7ab0cd6d470152fec713c82ee83ddbb/
+    uv-0.12.17-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 19 Sep 2026 12:00:00 +0000

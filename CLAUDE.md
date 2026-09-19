@@ -10,7 +10,7 @@ Phase 0 (bash installer) lives in this repo; Phase 1 (signed apt repos) ships ac
 
 | Repo | Scope | Source tree |
 |---|---|---|
-| `apt.foundrylinux.org` | Foundry Linux distro toolchain — `foundry-*` edition/category metapackages + **30 vendored upstreams** (`f9dasm`, `flycast`, `ghidra`, `halfempty`, `libvgm`, `vgmstream`, `ppsspp`, `snes9x-gtk`, `ruff`, `python3-{glfw,inators,librosa,mss,picire,pydub}`, `blender-asset-finder{,-cli}`, `asar-snes-assembler`, `bsnes-jg`, `drmon`, `ldtk`, `losslesscut`, `m8te`, `mesen2`, `tilemap-studio`, `wla-dx`, `pvsneslib`, `xemu`, `xemu-xbox`, `rpcs3` — full list in [`foundry-apt/LICENSES-VENDORED.md`](foundry-apt/LICENSES-VENDORED.md); `task` is Cloudsmith-sourced, not vendored — see that file's Retired entries) | this repo, `foundry-apt/` |
+| `apt.foundrylinux.org` | Foundry Linux distro toolchain — `foundry-*` edition/category metapackages + **31 vendored upstreams** (`f9dasm`, `flycast`, `ghidra`, `halfempty`, `libvgm`, `vgmstream`, `ppsspp`, `snes9x-gtk`, `ruff`, `uv`, `python3-{glfw,inators,librosa,mss,picire,pydub}`, `blender-asset-finder{,-cli}`, `asar-snes-assembler`, `bsnes-jg`, `drmon`, `ldtk`, `losslesscut`, `m8te`, `mesen2`, `tilemap-studio`, `wla-dx`, `pvsneslib`, `xemu`, `xemu-xbox`, `rpcs3` — full list in [`foundry-apt/LICENSES-VENDORED.md`](foundry-apt/LICENSES-VENDORED.md); `task` is Cloudsmith-sourced, not vendored — see that file's Retired entries) | this repo, `foundry-apt/` |
 | `apt.worldfoundry.org` | WorldFoundry-specific authoring tools — 9 CLIs (cdpack, iffcomp, iffdump, levcomp, lvldump, oaddump, oas2oad, prep, textile) + 1 Blender add-on (`worldfoundry-blender-editor-exporter`) + 4 umbrella metapackages (`worldfoundry`, `worldfoundry-cli`, `worldfoundry-blender-addons`, `worldfoundry-development`) | sibling repo `../worldfoundry.org/apt/` |
 
 The two repos are **deliberately separate**: foundry-linux is the distribution; WorldFoundry is one tenant's authoring stack. The separation is at the **pipeline** level — neither repo's build/publish depends on the other; they tag and ship from independent namespaces (`v*` vs `apt-v*`). At the **package** level they are intentionally cross‑coupled, though: `foundry-core` `Depends: worldfoundry` and `foundry-atelier` `Depends: worldfoundry-development` (both in apt.worldfoundry.org), while `worldfoundry-cli`/`-blender-addons` `Depend` on `blender-asset-finder*` (in apt.foundrylinux.org). So **both apt sources must be wired for either to resolve** — Phase 0's two `setup-*-apt-source.sh` scripts guarantee that. "Co‑installed, independently published" — not "independently installable."
@@ -26,7 +26,7 @@ foundry-core ⊆ foundry-anvil ⊆ foundry-sprite ⊆ foundry-atelier        (fo
 
 foundry-core      desktop-agnostic dev toolkit (retro-tools, game-frameworks, image-cli,
                   emulators-computers/-consoles, python-gamedev[-extras], worldfoundry [WF],
-                  task, btop, firefox)            ← this is what the Phase 2 devbox installs
+                  task, uv, btop, firefox)        ← this is what the Phase 2 devbox installs
 foundry-desktop   KDE integration (foundry-kde-theme, foundry-welcome)  ← ISO/KDE only, never in the container
 foundry-anvil     = foundry-core + foundry-desktop                      ← the default ISO edition
 foundry-sprite    = anvil + heavy art/audio (art, pixel-art, trackers, daw, digikam)
@@ -53,7 +53,8 @@ foundry-setup/
   install-foundry-android-development.sh apt install foundry-android-development (apt.foundrylinux.org → JDK 17, adb, NDK r26c; enables Ubuntu multiverse)
   install-foundry-ios-development.sh     apt install foundry-ios-development (apt.foundrylinux.org → libimobiledevice, ideviceinstaller, usbmuxd, ifuse) + pipx install codemagic-cli-tools
   install-task.sh                              go-task (Cloudsmith)
-  install-foundry-dev.sh                 apt install worldfoundry-development (apt.worldfoundry.org umbrella — pulls cli + Blender + dev deps) + chains task + retro-tools
+  install-uv.sh                                apt install uv (apt.foundrylinux.org → uv + uvx; editions get it via foundry-core, this is for the legacy roles)
+  install-foundry-dev.sh                 apt install worldfoundry-development (apt.worldfoundry.org umbrella — pulls cli + Blender + dev deps) + chains task + uv + retro-tools
 ```
 
 WF repo cloning, Rust install, and wftools build are **not** in these scripts — they live in `setup-wf-workspace.sh` (tracked in the WorldFoundry repo).

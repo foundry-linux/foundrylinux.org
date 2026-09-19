@@ -165,6 +165,14 @@ published pool. Publish and the two bumps are the last three verification steps.
     docker run --rm ubuntu:26.04 bash -c 'apt-get update -qq >/dev/null; apt-cache policy uv'
     ```
 
+    ```
+    (no output — apt-cache policy prints nothing on stdout or stderr; the
+    explicit exit-status echo added alongside it confirms the command ran)
+    apt-cache-policy-exit=0
+    ```
+
+    **PASS** — no `uv` package exists in resolute, so vendoring is still the only path.
+
 2. The package builds in the CI container and lintian is clean (zero `E:`/`W:` lines):
 
     ```bash
@@ -173,12 +181,110 @@ published pool. Publish and the two bumps are the last three verification steps.
        && bash scripts/build-all.sh uv && lintian dist/uv_0.12.17-1foundry1_amd64.deb'
     ```
 
+    Run with the body of the `bash -c` string in a file mounted at `/sp/step2.sh`
+    (the agent harness refuses `bash -c` strings); the commands are identical.
+    Tail of the 1900‑line log — apt install output elided:
+
+    ```
+    SKIP drawio-desktop (Shared Electron repository only)
+    SKIP electron-runtime-42 (Shared Electron repository only)
+    SKIP losslesscut (Shared Electron repository only)
+    === Running uv/build.sh ===
+    === Fetching https://files.pythonhosted.org/packages/0d/8d/e45565a046bd2592b75cb96fded9a7ab0cd6d470152fec713c82ee83ddbb/uv-0.12.17-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl ===
+    === Verifying sha256 ===
+    /tmp/uv-build-yuZjOH/uv-0.12.17.whl: OK
+    === Extracting wheel ===
+    === Copying debian/ tree into source ===
+    === Installing Build-Depends ===
+    === dpkg-buildpackage -us -uc -b ===
+    OK   dist/uv_0.12.17-1foundry1.dsc
+    OK   dist/uv_0.12.17-1foundry1.debian.tar.xz
+    OK   dist/uv_0.12.17.orig.tar.gz
+    dpkg-buildpackage: info: source package uv
+    dpkg-buildpackage: info: source version 0.12.17-1foundry1
+    dpkg-buildpackage: info: source distribution resolute
+     debian/rules binary
+    dh binary
+       debian/rules override_dh_auto_build
+    chmod 0755 .../uv-0.12.17.data/scripts/uv .../uv-0.12.17.data/scripts/uvx
+       dh_prep
+       debian/rules override_dh_auto_install
+    install -D -m 0755 uv-0.12.17.data/scripts/uv   .../debian/uv/usr/bin/uv
+    install -D -m 0755 uv-0.12.17.data/scripts/uvx  .../debian/uv/usr/bin/uvx
+    .../scripts/uv generate-shell-completion bash > debian/tmp/usr/share/bash-completion/completions/uv
+    .../scripts/uv generate-shell-completion zsh  > debian/tmp/usr/share/zsh/vendor-completions/_uv
+    .../scripts/uv generate-shell-completion fish > debian/tmp/usr/share/fish/vendor_completions.d/uv.fish
+    .../scripts/uvx --generate-shell-completion bash > debian/tmp/usr/share/bash-completion/completions/uvx
+    .../scripts/uvx --generate-shell-completion zsh  > debian/tmp/usr/share/zsh/vendor-completions/_uvx
+    .../scripts/uvx --generate-shell-completion fish > debian/tmp/usr/share/fish/vendor_completions.d/uvx.fish
+       dh_install
+       dh_installdocs
+       dh_installchangelogs
+       dh_installman
+       dh_dwz -a
+    dwz: debian/uv/usr/bin/uv: .debug_info section not present
+       debian/rules override_dh_strip
+    # Pre-built Rust release binary — already stripped by upstream CI
+       dh_makeshlibs -a
+       dh_shlibdeps -a
+    dpkg-shlibdeps: warning: package could avoid a useless dependency if debian/uv/usr/bin/uv was not linked against libdl.so.2 (it uses none of the library's symbols)
+       dh_gencontrol
+       dh_builddeb
+    dpkg-deb: building package 'uv' in '../uv_0.12.17-1foundry1_amd64.deb'.
+    OK   /work/dist/uv_0.12.17-1foundry1_amd64.deb  (14336980 bytes)
+
+    === dist/ ===
+    total 33M
+    -rw-r--r-- 1 root root 5.4K Sep 19 01:58 uv_0.12.17-1foundry1.debian.tar.xz
+    -rw-r--r-- 1 root root  839 Sep 19 01:58 uv_0.12.17-1foundry1.dsc
+    -rw-r--r-- 1 root root  14M Sep 19 01:59 uv_0.12.17-1foundry1_amd64.deb
+    -rw-r--r-- 1 root root  19M Sep 19 01:58 uv_0.12.17.orig.tar.gz
+    running with root privileges is not recommended!
+    ```
+
+    lintian emitted no tags at all (`grep -E '^(E|W|I|P): '` over the full log
+    returns nothing); the container exited 0.
+
+    **PASS** — zero `E:` and zero `W:`.
+
+    Two fixes were needed to get here, both recorded in **Deviations** below: the
+    upstream reachability preflight had to probe the wheel URL rather than the
+    bare host, and the completion generation had to move from
+    `override_dh_auto_build` to `override_dh_auto_install` because `dh_prep`
+    wipes `debian/tmp` in between.
+
 3. The `.deb` carries both binaries, both man pages and the three completion files:
 
     ```bash
     dpkg-deb -c foundry-apt/dist/uv_0.12.17-1foundry1_amd64.deb | grep -E 'usr/bin/|man1/|completion'
     dpkg-deb -I foundry-apt/dist/uv_0.12.17-1foundry1_amd64.deb | grep -E '^ (Depends|Recommends|Architecture)'
     ```
+
+    ```
+    drwxr-xr-x root/root         0 2026-09-19 08:58 ./usr/bin/
+    -rwxr-xr-x root/root  50162872 2026-09-19 08:58 ./usr/bin/uv
+    -rwxr-xr-x root/root    347000 2026-09-19 08:58 ./usr/bin/uvx
+    drwxr-xr-x root/root         0 2026-09-19 08:58 ./usr/share/bash-completion/
+    drwxr-xr-x root/root         0 2026-09-19 08:58 ./usr/share/bash-completion/completions/
+    -rw-r--r-- root/root    481416 2026-09-19 08:58 ./usr/share/bash-completion/completions/uv
+    -rw-r--r-- root/root     17311 2026-09-19 08:58 ./usr/share/bash-completion/completions/uvx
+    drwxr-xr-x root/root         0 2026-09-19 08:58 ./usr/share/fish/vendor_completions.d/
+    -rw-r--r-- root/root    800789 2026-09-19 08:58 ./usr/share/fish/vendor_completions.d/uv.fish
+    -rw-r--r-- root/root     17679 2026-09-19 08:58 ./usr/share/fish/vendor_completions.d/uvx.fish
+    drwxr-xr-x root/root         0 2026-09-19 08:58 ./usr/share/man/man1/
+    -rw-r--r-- root/root      1869 2026-09-19 08:58 ./usr/share/man/man1/uv.1.gz
+    -rw-r--r-- root/root      1434 2026-09-19 08:58 ./usr/share/man/man1/uvx.1.gz
+    drwxr-xr-x root/root         0 2026-09-19 08:58 ./usr/share/zsh/vendor-completions/
+    -rw-r--r-- root/root    563993 2026-09-19 08:58 ./usr/share/zsh/vendor-completions/_uv
+    -rw-r--r-- root/root     18849 2026-09-19 08:58 ./usr/share/zsh/vendor-completions/_uvx
+    ---
+     Architecture: amd64
+     Depends: libc6 (>= 2.34), libgcc-s1 (>= 4.2)
+     Recommends: python3
+    ```
+
+    **PASS** — both binaries, both man pages, and completions for all three
+    shells (six files, not three: `uv` and `uvx` each get one per shell).
 
 4. It installs and works on a fresh 26.04 system: both binaries run, and `uv` finds the
    system interpreter rather than downloading one:
@@ -189,11 +295,34 @@ published pool. Publish and the two bumps are the last three verification steps.
        && uv --version && uvx --version && uv python find && uv venv -q /tmp/v && uv pip install -q --python /tmp/v/bin/python rich && /tmp/v/bin/python -c "import rich; print(\"rich ok\")"'
     ```
 
+    Again run from a mounted script rather than a `bash -c` string; identical
+    commands. debconf frontend noise elided:
+
+    ```
+    uv 0.12.17 (x86_64-unknown-linux-gnu)
+    uvx 0.12.17 (x86_64-unknown-linux-gnu)
+    /usr/bin/python3
+    rich ok
+    ```
+
+    **PASS** — `uv python find` resolves the system interpreter, not a
+    downloaded managed one.
+
 5. `foundry-core` 1.0.7 resolves `uv` from the local publish:
 
     ```bash
     cd foundry-apt && task publish-local && task apt-test 2>&1 | grep -E '^Inst (uv|foundry-core) '
     ```
+
+    ```
+    $ sudo -n true
+    sudo: interactive authentication is required
+    sudo-n-exit=1
+    ```
+
+    **NOT RUN** — `task apt-test` needs `sudo apt` on the host, and sudo is not
+    available non-interactively in this environment. Nothing was faked. Run this
+    step manually (or let the release pipeline cover it) before tagging.
 
 6. Phase 0 scripts lint, help short‑circuits, and the default role now plans a `uv` step:
 
@@ -205,6 +334,58 @@ published pool. Publish and the two bumps are the last three verification steps.
     bash foundry-setup/test/run-test.sh
     ```
 
+    ```
+    $ shellcheck foundry-setup/install-uv.sh foundry-setup/install-foundry-dev.sh foundry-setup/install.sh
+
+    In foundry-setup/install-uv.sh line 45:
+        source "$SCRIPT_DIR/lib.sh"
+               ^------------------^ SC1091 (info): Not following: lib.sh was not specified as input (see shellcheck -x).
+
+
+    In foundry-setup/install-foundry-dev.sh line 55:
+        source "$SCRIPT_DIR/lib.sh"
+               ^------------------^ SC1091 (info): Not following: lib.sh was not specified as input (see shellcheck -x).
+
+
+    In foundry-setup/install.sh line 60:
+    source "$SCRIPT_DIR/lib.sh"
+           ^------------------^ SC1091 (info): Not following: lib.sh was not specified as input (see shellcheck -x).
+
+    exit=1
+
+    $ bash foundry-setup/install-uv.sh --help
+    Phase 0 installer for uv
+
+    Installs the uv package from apt.foundrylinux.org: the uv and uvx
+    binaries (Python package/project manager, tool runner, venv and
+    lockfile management) plus shell completions.
+
+    Usage: install-uv.sh [--dry-run|-n] [-h|--help]
+
+    Options:
+      -n, --dry-run   Print commands without executing
+      -h, --help      Show this help and exit
+    exit=0
+
+    $ bash foundry-setup/install.sh --dry-run 2>&1 | grep -n 'install-uv.sh'
+    42:ℹ → install-uv.sh --dry-run
+
+    $ bash foundry-setup/install.sh --dry-run --role engine-dev 2>&1 | grep -n 'install-uv.sh'
+    31:ℹ → install-uv.sh --dry-run
+
+    $ bash foundry-setup/test/run-test.sh
+    … (harness dry-run inside ubuntu:26.04; line 57 of the log is
+       "ℹ → install-uv.sh --dry-run")
+    === All tests passed ===
+    exit=0
+    ```
+
+    **PASS** — the only shellcheck findings are `SC1091` *info* notices about not
+    following `lib.sh`, which are pre‑existing: the same notice is emitted by
+    `git show HEAD:foundry-setup/install.sh | shellcheck -` before this change.
+    `task shellcheck` in `foundry-apt/` (which covers `packages/*/build.sh`, so the
+    new `packages/uv/build.sh`) exits 0 with no output.
+
 7. Every place that enumerates the base toolkit mentions `uv`, and the vendored count is
    31:
 
@@ -212,6 +393,34 @@ published pool. Publish and the two bumps are the last three verification steps.
     grep -n 'uv' foundry-apt/packages/foundry-core/debian/control foundry-apt/README.md foundry-apt/LICENSES-VENDORED.md CLAUDE.md foundry-setup/README.md foundry-devbox/test/smoke-test.sh foundry-devbox/Dockerfile
     grep -n 'vendored upstreams' CLAUDE.md
     ```
+
+    ```
+    foundry-apt/packages/foundry-core/debian/control:26: uv,
+    foundry-apt/packages/foundry-core/debian/control:37: tools), CLI image utilities, go-task, uv (the fast Python package and
+    foundry-apt/packages/foundry-core/debian/control:38: project manager, with uvx), btop and dust (du-dust, an intuitive
+    foundry-apt/README.md:33:| `foundry-core` | … plus `task`, `uv`, `btop`, `firefox`. **This is what the devbox container installs.** |
+    foundry-apt/README.md:85:| `uv` | [astral.sh/uv](https://docs.astral.sh/uv) | Extremely fast Python package and project manager; ships `uv` + `uvx` and bash/zsh/fish completions. Not in 26.04 universe (Debian's `uv` source builds only `python3-uv-build`). `amd64`. |
+    foundry-apt/LICENSES-VENDORED.md:37:| uv | astral-sh/uv | MIT or Apache-2.0 (dual-licensed, recipient's choice) | `/usr/share/doc/uv/copyright` |
+    CLAUDE.md:13:… **31 vendored upstreams** (`f9dasm`, …, `ruff`, `uv`, `python3-{glfw,…}`, …)
+    CLAUDE.md:29:                  task, uv, btop, firefox)        ← this is what the Phase 2 devbox installs
+    CLAUDE.md:56:  install-uv.sh                                apt install uv (apt.foundrylinux.org → uv + uvx; editions get it via foundry-core, this is for the legacy roles)
+    CLAUDE.md:57:  install-foundry-dev.sh                 … + chains task + uv + retro-tools
+    foundry-setup/README.md:45:  and `engine-dev` roles also chain `install-uv.sh` (`uv` + `uvx`), which the Phase 1
+    foundry-devbox/test/smoke-test.sh:33:    # vendored uv (Python package/project manager + ephemeral tool runner)
+    foundry-devbox/test/smoke-test.sh:34:    uv uvx
+    foundry-devbox/Dockerfile:56:#     ├── uv                            = uv + uvx (vendored wheel repack; Python package/project manager)
+
+    $ grep -n 'vendored upstreams' CLAUDE.md
+    13:| `apt.foundrylinux.org` | … metapackages + **31 vendored upstreams** (…) |
+    73:                                             "3.0 (quilt)" for vendored upstreams
+    75:    [patches/series]                         optional quilt patches for vendored upstreams
+    76:    [watch]                                  optional uscan tracker for vendored upstreams
+    77:  packages/<name>/build.sh                   only for vendored upstreams (e.g. f9dasm) —
+    ```
+
+    (Long table rows elided at `…` for width; the files carry the full text.)
+
+    **PASS** — every enumeration mentions `uv`, and the count reads 31.
 
 8. Published: a fresh container pointed at the live repo sees the package, and the
    rebuilt devbox image passes its smoke test with `uv`/`uvx` on `PATH`:
@@ -221,11 +430,16 @@ published pool. Publish and the two bumps are the last three verification steps.
     IMAGE=ghcr.io/foundry-linux/devbox:26.04 bash foundry-devbox/test/smoke-test.sh 2>&1 | grep -E 'uv|PASS|FAIL'
     ```
 
+    **NOT RUN** — depends on the release (Approach step 6), which is deliberately
+    not part of the implementation change.
+
 9. ISO: after `task iso-bump`, the new ISO's package manifest lists `uv`:
 
     ```bash
     grep -E '^uv\b' foundry-iso/dist/*.packages 2>/dev/null || grep -E '^uv\b' foundry-iso/binary.packages
     ```
+
+    **NOT RUN** — depends on `task iso-bump`, part of the release step.
 
 10. The rejected Debian path is still rejected at implementation time: Debian's `uv`
     source package still produces no `uv` binary (if `Binary:` ever lists more than
@@ -235,3 +449,53 @@ published pool. Publish and the two bumps are the last three verification steps.
     curl -fsSL https://deb.debian.org/debian/pool/main/u/uv/ | grep -o 'uv_[0-9][^"]*\.dsc' | sort -V | tail -1 \
       | xargs -I{} curl -fsSL https://deb.debian.org/debian/pool/main/u/uv/{} | grep -E '^(Version|Binary):'
     ```
+
+    ```
+    Binary: python3-uv-build
+    Version: 0.9.17+ds1-6
+    ```
+
+    **PASS** — still only `python3-uv-build`, no `uv` CLI. The rejection of the
+    Debian path holds; the wheel repack proceeds.
+
+## Deviations from the plan
+
+1. **`build.sh` reachability preflight probes the wheel URL, not the host root.**
+   The plan said to copy ruff's `build.sh` verbatim. Ruff's preflight is
+   a `curl -fsI` against [https://files.pythonhosted.org/](https://files.pythonhosted.org/), and that URL now
+   answers **404** to a `HEAD` (verified from a clean `ubuntu:26.04` container:
+   host root → `404`, wheel URL → `200`), so `curl -f` exits 22 and the build
+   aborts with "cannot reach files.pythonhosted.org" even though PyPI is fully
+   reachable. `packages/uv/build.sh` therefore probes `"$UPSTREAM_URL"` with
+   `-fsIL`. **The same latent breakage sits in `packages/ruff/build.sh` and in
+   every other PyPI-sourced `build.sh` in this repo** — not fixed here to keep the
+   diff to this change; worth its own item.
+
+2. **Completions are generated in `override_dh_auto_install`, not
+   `override_dh_auto_build`.** The plan placed the generation in the build step
+   writing into `debian/tmp/`. `dh_prep` runs between build and install and wipes
+   `debian/tmp`, so `dh_install` then failed with "missing files, aborting". The
+   generation moved into the install override, which runs after `dh_prep`.
+   `debian/uv.install` is unchanged and still picks the files up from
+   `debian/tmp`.
+
+3. **`debian/copyright` references `/usr/share/common-licenses/Apache-2.0`
+   instead of inlining the full Apache text.** The plan said "both texts". Debian
+   policy requires the common-licenses reference for Apache-2.0, and lintian has a
+   tag for a copyright file carrying the full text — inlining it would have broken
+   the zero-`W:` requirement of step 2. The MIT text is inlined in full.
+
+4. **`LICENSES-VENDORED.md` row placed alphabetically, not "after `ruff`".** That
+   file carries an explicit maintenance rule to keep the table sorted by package
+   name, so the `uv` row sits between `tilemap-studio` and `vgmstream`. The
+   `foundry-apt/README.md` vendored table is not sorted, so there the row is
+   immediately after `ruff` as the plan said.
+
+5. **The `TODO.md` Debian-ITP one-liner from Approach step 5 was not written.**
+   `TODO.md` is managed by the orchestrator, which explicitly held it back from
+   this change. The text to add is in Approach step 5 verbatim.
+
+6. **`install-uv.sh` does not short-circuit on an already-installed `uv` when
+   `--dry-run` is given.** The guard is `if ! $DRY_RUN && command -v uv`, so a
+   dry run always shows the full plan. `install-task.sh` exits early even under
+   `--dry-run`; this is the small improvement, not a copy of that behaviour.
