@@ -13,10 +13,37 @@ interpreters, and is the de‑facto standard the rest of the Python ecosystem no
 
 **It cannot come from Ubuntu.** Checked on a fresh `ubuntu:26.04` container on
 2026‑09‑19: `apt-cache policy uv` has no candidate, and the Launchpad primary archive
-lists zero published `uv` sources for resolute. Debian does carry it in sid/forky
-(`uv 0.9.17+ds1-6`, a from‑source build by the Rust team) but that never reaches an
-already‑released LTS, and it is fifteen minor versions behind upstream. So for the life
-of the 26.04 base it is a vendored upstream, exactly like `ruff`.
+lists zero published `uv` sources for resolute. Debian sid/forky has a source package
+named `uv` (`0.9.17+ds1-6`) and Ubuntu has synced it into stonking (26.10, in
+development), but it never reaches an already‑released LTS. So for the life of the 26.04
+base it is a vendored upstream, exactly like `ruff`.
+
+### Evaluated alternative: build from Debian's `uv` source package
+
+Rebuilding Debian's package on 26.04 was evaluated as a second path on 2026‑09‑19 and
+**rejected**. The facts, from the `.dsc` on
+[deb.debian.org](https://deb.debian.org/debian/pool/main/u/uv/) and the packaging on
+[sources.debian.org](https://sources.debian.org/src/uv/0.9.17+ds1-6/debian/):
+
+| Question | Answer |
+|---|---|
+| Does it ship the `uv` CLI? | **No.** `Binary: python3-uv-build` is the only package. The quilt patch `Build-only-uv-build-for-now.patch` rewrites `pyproject.toml` to build the PEP 517 backend `uv-build` only, and `debian/rules` moves even that out of `/usr/bin` into `/usr/lib/uv-build`. There is no `uv` or `uvx` binary anywhere in Debian or Ubuntu. |
+| Why not? | Debian forbids vendored crates. The package needs 231 `Build-Depends`, almost all `librust-*-dev` from the archive, linked with `cargo prepare-debian --link-from-system`, plus 14 patches that strip features (self‑update, keyring, AWS S3 auth, Windows deps, codspeed). The maintainers stopped at the build backend. |
+| Toolchain | Debian's 0.9.17 needs `rustc ≥ 1.89`; resolute ships 1.91 to 1.93, so that version would compile. Current `uv 0.12.17` declares `rust-version = "1.96.0"`, which resolute does not have. Building today's `uv` from source on 26.04 means a rustup toolchain and `cargo vendor` in CI, which is a bespoke from‑source build, not Debian's. |
+| Version gap | 0.9.17 was released 2025‑12‑09; 0.12.17 on 2026‑09‑18. Three minor series apart (0.10, 0.11, 0.12), each with documented breaking changes, for example `uv venv --clear` and `uv init` declaring a build system by default. |
+
+Verdict: Debian's packaging offers nothing reusable for the CLI we want to ship, and
+what it does build is three breaking releases old. The prebuilt manylinux wheel stays the
+source artifact. Two things follow from this for the record:
+
+- There is no Debian ITP to file or track, because the source package name is taken and
+  active. The thing to **watch** is whether Debian ever ships the `uv` binary itself
+  (the `Build-only-uv-build-for-now` patch disappearing from
+  [tracker.debian.org/pkg/uv](https://tracker.debian.org/pkg/uv)). If it does, `uv`
+  joins the existing T4 item "Rework prebuilt-binary vendored packages to build from
+  source" in `TODO.md`, where Debian's `debian/` would then be the starting point.
+- At the next base bump the first check is whether that Ubuntu series carries a real
+  `uv` binary package, not just the source name.
 
 **Upstream ships no Debian packaging** (the audit in
 [2026-08-05-audit-upstream-packaging.md](2026-08-05-audit-upstream-packaging.md)
@@ -53,7 +80,7 @@ bundle; the scaffolded one was deleted.
   `emit_source_package … || true` call so the Sources index gets a `.dsc`.
 - `debian/control`: `Source: uv`, `Section: devel`, `Architecture: amd64` (the repo
   publishes amd64 only; the aarch64 wheel exists if that ever changes),
-  `Homepage: https://docs.astral.sh/uv`, `X-Repology-Project: uv`,
+  `Homepage:` [docs.astral.sh/uv](https://docs.astral.sh/uv), `X-Repology-Project: uv`,
   `Build-Depends: debhelper-compat (= 13), unzip`,
   `Depends: ${shlibs:Depends}, ${misc:Depends}`, `Recommends: python3` (uv will
   download a managed interpreter without it, which is not what an Ubuntu user expects).
@@ -107,8 +134,10 @@ after `ruff`; add `uv` to the `foundry-core` row's tool list),
 `CLAUDE.md` (the "30 vendored upstreams" count and list → 31; the edition diagram line
 `task, btop, firefox`; the Phase 0 script table gains `install-uv.sh`),
 `foundry-setup/README.md` ("What it does"), and the `TODO.md` Debian ITP section gets a
-one‑liner "`uv` — already in Debian (0.9.17+ds1-6, sid/forky), no ITP" the way
-`python3-pydub` is recorded there.
+one‑liner the way `python3-pydub` is recorded there: "`uv` — no ITP; Debian's `uv`
+source (0.9.17+ds1-6) builds only `python3-uv-build`, not the CLI. Watch for the
+`Build-only-uv-build-for-now` patch being dropped, then fold into the from‑source
+rework item."
 
 **6. Release.** New package → next *minor* tag per the CLAUDE.md version rule
 (`1.x.0`, not `1.0.x`); `task sync-and-release TAG=…` builds, signs and syncs to R2.
@@ -195,4 +224,13 @@ published pool. Publish and the two bumps are the last three verification steps.
 
     ```bash
     grep -E '^uv\b' foundry-iso/dist/*.packages 2>/dev/null || grep -E '^uv\b' foundry-iso/binary.packages
+    ```
+
+10. The rejected Debian path is still rejected at implementation time: Debian's `uv`
+    source package still produces no `uv` binary (if `Binary:` ever lists more than
+    `python3-uv-build`, stop and re‑evaluate before building the wheel repack):
+
+    ```bash
+    curl -fsSL https://deb.debian.org/debian/pool/main/u/uv/ | grep -o 'uv_[0-9][^"]*\.dsc' | sort -V | tail -1 \
+      | xargs -I{} curl -fsSL https://deb.debian.org/debian/pool/main/u/uv/{} | grep -E '^(Version|Binary):'
     ```
