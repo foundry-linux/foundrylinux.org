@@ -39,11 +39,12 @@ Sub-tasks that completed plans explicitly punted/deferred and that weren't track
 
 New vendored upstreams land here; `/package <name>`, then move to Done + add an ITP line below.
 
-- [T3] **Add `uv` to the base installation** — vendor Astral's `uv` 0.12.17 as a `.deb` (prebuilt manylinux wheel, ruff pattern; not in 26.04 universe), add it to `foundry-core` `Depends:`, ship a Phase 0 `install-uv.sh` for the legacy roles, extend the devbox smoke test and docs. [plan](docs/plans/2026-09-19-add-uv-to-base.md)
+- [verify T3] **Add `uv` to the base installation** — vendor Astral's `uv` 0.12.17 as a `.deb` (prebuilt manylinux wheel, ruff pattern; not in 26.04 universe), add it to `foundry-core` `Depends:`, ship a Phase 0 `install-uv.sh` for the legacy roles, extend the devbox smoke test and docs. **Code landed 2026-09-19 (`8e040a5`); verify steps 1–4, 6, 7, 10 PASS; step 5 needs sudo, steps 8–9 need the release (tag + `task devbox-bump` + `task iso-bump`).** [plan](docs/plans/2026-09-19-add-uv-to-base.md) <!-- agent:a6ffc69e1295b1e50 -->
+- [T1] **Fix the PyPI reachability preflight in every wheel-sourced `build.sh`** — a HEAD request to the bare [files.pythonhosted.org](https://files.pythonhosted.org/) host root now returns 404, so `ruff/build.sh` (and any other `build.sh` probing that host root) aborts with "cannot reach files.pythonhosted.org" even when PyPI is fine. Apply the fix already in `packages/uv/build.sh` (probe `$UPSTREAM_URL` with `curl -fsIL`) to each; recipe is settled, found 2026-09-19 while packaging uv.
 
 ### Debian ITP
 
-Batch drafts prepared 2026-08-05 (prepare-only, nothing filed) in [docs/itp-drafts/](docs/itp-drafts/) — see its README for the wnpp/licence table. `python3-pydub` dropped: already in Debian (0.25.1-2).
+Batch drafts prepared 2026-08-05 (prepare-only, nothing filed) in [docs/itp-drafts/](docs/itp-drafts/) — see its README for the wnpp/licence table. `python3-pydub` dropped: already in Debian (0.25.1-2). `uv` — no ITP; Debian's `uv` source (0.9.17+ds1-6) builds only `python3-uv-build`, not the CLI. Watch for its `Build-only-uv-build-for-now` patch being dropped, then fold into the from‑source rework item above ([plan](docs/plans/2026-09-19-add-uv-to-base.md)).
 
 - [T4] **Rework prebuilt-binary vendored packages to build from source** — `ldtk`, `mesen2`, `pvsneslib` ship prebuilt upstream binaries and `m8te` may bundle a prebuilt CIL assembly (flagged in the ITP drafts); fine for our repo, disqualifying for Debian main. Per-package from-source build design; also a repo-quality win. See [docs/itp-drafts/README.md](docs/itp-drafts/README.md).
 
