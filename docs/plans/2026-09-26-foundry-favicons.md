@@ -28,6 +28,8 @@ sites in this repository.
 - [x] Finish visual checks of the generated icon and verify generated HTML.
 - [x] Publish the favicon assets and HTML changes.
 - [x] Verify live icon content types, image dimensions, and HTML links.
+- [x] Replace the low-contrast split anvil logo with the site's recognizable
+  `AnvilIcon` after live browser feedback showed it was not legible.
 
 ## Validation notes
 
@@ -41,7 +43,7 @@ verified to contain 16, 32, 48, and 64 px images. The APT and ISO live HTML
 was updated only at the favicon links, preserving the published listings.
 
 The main site was deployed through Cloudflare Pages:
-[deployment 30a2ac07](https://30a2ac07.foundrylinux-org.pages.dev).
+[deployment 05e1e0a7](https://05e1e0a7.foundrylinux-org.pages.dev).
 APT and ISO assets and HTML were uploaded directly to their R2 buckets.
 
 ## Verified live result
@@ -58,3 +60,16 @@ Every downloaded icon matched the corresponding source asset byte for byte.
 The related WorldFoundry sites already have working SVG favicons; their ICO
 fallbacks remain absent. The `www.foundrylinux.org` DNS result is separate
 from this favicon change.
+
+## Correction
+
+The first published asset reused the large split lit/shadow logo. It was too
+low contrast to read as an anvil at favicon size. The canonical source now
+uses the small anvil icon from `site/icons.jsx`, simplified into a bold white
+silhouette with forge sparks on the Foundry ember-orange background.
+
+The original `favicon.svg` and `favicon.ico` names were already cached on the
+APT hostname. The HTML now references `favicon-anvil.svg` and
+`favicon-anvil.ico`, distinct files that deliver the correction immediately.
+The ISO upload script includes those files so subsequent ISO publishing keeps
+the correction in place.

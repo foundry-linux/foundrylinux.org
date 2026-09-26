@@ -23,4 +23,9 @@ rsvg-convert --keep-aspect-ratio -w 256 -h 256 "$ROOT/site/favicon.svg" -o "$PNG
 for dest in "$ROOT/foundry-apt/gen/static" "$ROOT/foundry-iso/gen/static"; do
   mkdir -p "$dest"
   cp "$ROOT/site/favicon.svg" "$ROOT/site/favicon.ico" "$dest/"
+  cp "$ROOT/site/favicon.svg" "$dest/favicon-anvil.svg"
+  cp "$ROOT/site/favicon.ico" "$dest/favicon-anvil.ico"
 done
+
+cp "$ROOT/site/favicon.svg" "$ROOT/site/favicon-anvil.svg"
+cp "$ROOT/site/favicon.ico" "$ROOT/site/favicon-anvil.ico"
