@@ -1,3 +1,13 @@
+drmon (1.0.3) resolute; urgency=medium
+
+  * Build-Depend on libdwarf-dev and libzstd-dev: the e26f7a5 snapshot's
+    DRMON_MAME_BACKEND now requires pkg-config module 'libdwarf' (whose
+    .pc file in turn pulls in 'libzstd' via Requires.private), which the
+    1.0.2 build-deps list omitted (build failure: "Package 'libdwarf' not
+    found", then "Package 'libzstd', required by 'libdwarf', not found").
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 03:29:38 +0000
+
 drmon (1.0.2) resolute; urgency=medium
 
   * Update the packaged drdevtools snapshot to commit

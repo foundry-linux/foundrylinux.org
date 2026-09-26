@@ -12,8 +12,8 @@
 #
 # Build deps the CI runner needs (publish.yml installs build-essential debhelper
 # dpkg-dev lintian; this script installs the rest):
-#   pkg-config libsdl2-dev libsamplerate0-dev
-# (bsnes-jg 2.1.0's example frontend uses SDL2; master has since moved to SDL3.)
+#   pkg-config libsdl3-dev libsamplerate0-dev
+# (bsnes-jg 2.1.0's example frontend used SDL2; 2.1.2 has moved to SDL3.)
 # Plus The Jolly Good API headers (gitlab.com/jgemu/jg) — not a Debian package,
 # so this script make-installs them to /usr at build time. They are build-only
 # (jg.h is an interface header; nothing from jg is shipped in the .deb). If
@@ -91,7 +91,7 @@ mv "$EXTRACTED" "$SRC_DIR"
 echo "=== Installing Build-Depends ==="
 if command -v apt-get >/dev/null; then
     run_root apt-get install -y --no-install-recommends \
-        pkg-config libsdl2-dev libsamplerate0-dev
+        pkg-config libsdl3-dev libsamplerate0-dev
 fi
 
 echo "=== Installing The Jolly Good API headers (jg.h — build-only) ==="

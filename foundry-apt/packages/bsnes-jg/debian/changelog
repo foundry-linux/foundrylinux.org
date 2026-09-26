@@ -1,3 +1,11 @@
+bsnes-jg (2.1.2-1foundry2) resolute; urgency=medium
+
+  * Build-Depend on libsdl3-dev instead of libsdl2-dev: 2.1.2's example
+    frontend links against SDL3, not SDL2 (build failure: "SDL3/SDL.h: No
+    such file or directory").
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 03:29:38 +0000
+
 bsnes-jg (2.1.2-1foundry1) resolute; urgency=medium
 
   * New upstream release 2.1.2.

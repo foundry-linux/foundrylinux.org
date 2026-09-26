@@ -19,6 +19,8 @@
 #
 # Build deps the CI runner needs:
 #   build-essential debhelper dpkg-dev lintian cmake ninja-build libncurses-dev
+#   libdwarf-dev + libzstd-dev (DRMON_MAME_BACKEND's DWARF symbol support,
+#   new upstream dep; libdwarf.pc pulls in libzstd via Requires.private)
 #
 # To bump the version: re-pin DRDEVTOOLS_SHA + SHA256 below to a newer commit
 # (re-pin with: curl -fsSL <archive-url> | sha256sum), add a debian/changelog
@@ -113,7 +115,7 @@ echo "=== Installing Build-Depends ==="
 if command -v apt-get >/dev/null; then
     _apt() { if [[ $EUID -eq 0 ]]; then apt-get "$@"; else sudo apt-get "$@"; fi; }
     _apt install -y --no-install-recommends \
-        cmake ninja-build libncurses-dev libcppdap-dev libjsoncpp-dev
+        cmake ninja-build libncurses-dev libcppdap-dev libjsoncpp-dev libdwarf-dev libzstd-dev
 fi
 
 echo "=== dpkg-buildpackage -us -uc -b ==="
