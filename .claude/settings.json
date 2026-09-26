@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/mark-package-publish.sh",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/mark-package-publish.sh\"",
             "timeout": 10
           }
         ]
@@ -24,7 +24,7 @@
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-todo-done.sh"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-todo-done.sh\""
           }
         ]
       }
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-package-publish-complete.sh",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-package-publish-complete.sh\"",
             "timeout": 10
           }
         ]
