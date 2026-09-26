@@ -8,6 +8,8 @@ industrial design.
 This guide governs new public surfaces: the website, APT and ISO pages, package
 art, social graphics, and desktop branding. [`../DESIGN.md`](../DESIGN.md) is
 the implementation reference for the website's components and responsive CSS.
+Open the [visual mockup sheet](style-guide.html) for examples of the palette,
+mark, type, and common UI surfaces.
 
 ## Principles
 
