@@ -4,7 +4,8 @@ Off-site brand assets (deliberately **not** under `site/`, so they aren't
 deployed with the website).
 
 Read the [Foundry Linux style guide](STYLE_GUIDE.md) before creating a new
-public visual surface. [`../DESIGN.md`](../DESIGN.md) covers the website's
+public visual surface. Its [visual mockup sheet](style-guide.html) shows the
+intended application. [`../DESIGN.md`](../DESIGN.md) covers the website's
 component-level implementation.
 
 ## Site favicons

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Foundry Linux — visual style guide</title>
+  <style>
+    :root {
+      --ember: #ff5b1a; --bg: #111; --panel: #171717; --silver-hi: #f7f7f7;
+      --silver-mid: #b8b8b8; --silver-lo: #4a4a4a; --ink: #ebe8e2;
+      --soft: rgba(200,197,190,.68); --faint: rgba(170,167,160,.75);
+      --rule: rgba(255,255,255,.12); --mono: "JetBrains Mono", ui-monospace, monospace;
+      --body: "Space Grotesk", system-ui, sans-serif;
+      --display: Impact, "Arial Black", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); }
+    .sheet { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 56px 0 96px; }
+    .eyebrow, .label { color: var(--ember); font: 11px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; }
+    header { border-bottom: 1px solid var(--rule); padding-bottom: 40px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { margin-top: 12px; font: 900 clamp(54px, 11vw, 130px)/.82 var(--display); letter-spacing: -.02em;
+      background: linear-gradient(#fff 0%, #b8b8b8 40%, #4a4a4a 55%, #e8e8e8 78%, #777 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .intro { max-width: 610px; color: var(--soft); margin-top: 24px; }
+    section { border-bottom: 1px solid var(--rule); padding: 44px 0; }
+    h2 { font: 900 clamp(32px, 4vw, 56px)/.9 var(--display); letter-spacing: .01em; text-transform: uppercase; }
+    .section-copy { color: var(--soft); margin: 10px 0 24px; max-width: 720px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
+    .tile { min-height: 175px; padding: 22px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+    .tile .label { display: block; margin-bottom: 16px; color: var(--faint); }
+    .swatch { height: 64px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,.15); }
+    .swatch-name { display: block; font: 700 14px var(--mono); }
+    .swatch-value { color: var(--faint); font: 12px var(--mono); }
+    .identity { display: grid; grid-template-columns: 1fr 1.4fr; gap: 1px; background: var(--rule); }
+    .identity > * { background: var(--panel); padding: clamp(24px, 4vw, 52px); }
+    .anvil-field { display: grid; place-items: center; min-height: 300px; background: radial-gradient(circle at 50% 35%, #3a1b0f, #111 67%); }
+    .anvil-field img { width: min(210px, 70%); image-rendering: auto; }
+    .spec-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 20px; }
+    .spec-list strong { display: block; font: 700 17px var(--mono); }
+    .spec-list span { color: var(--soft); font-size: 14px; }
+    .type-samples { display: grid; gap: 14px; }
+    .wordmark { font: 900 clamp(48px, 8vw, 88px)/.82 var(--display); letter-spacing: -.02em; text-transform: uppercase; }
+    .body-sample { color: var(--soft); max-width: 52ch; }
+    .mono-sample { color: var(--ember); font: 13px var(--mono); letter-spacing: .06em; }
+    .ui-demo { display: grid; grid-template-columns: 1.1fr .9fr; gap: 20px; }
+    .command, .edition { border: 1px solid var(--rule); background: rgba(255,255,255,.025); }
+    .command { padding: 18px; font: 14px var(--mono); }
+    .prompt { color: var(--ember); text-shadow: 0 0 12px rgba(255,91,26,.55); }
+    .copy { float: right; color: var(--faint); font-size: 10px; letter-spacing: .12em; }
+    .edition { padding: 24px; background: linear-gradient(180deg, #191716, rgba(255,91,26,.13)); }
+    .edition h3 { margin: 8px 0; font: 900 38px/.9 var(--display); text-transform: uppercase; }
+    .edition p { color: var(--soft); font-size: 14px; }
+    .edition footer { border-top: 1px solid var(--rule); color: var(--faint); font: 11px var(--mono); margin-top: 20px; padding-top: 14px; }
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .choice { border: 1px solid var(--rule); padding: 20px; }
+    .choice.good { border-color: rgba(255,91,26,.7); }
+    .choice .badge { display: inline-block; font: 10px var(--mono); letter-spacing: .14em; padding: 4px 7px; text-transform: uppercase; }
+    .good .badge { background: var(--ember); color: #111; } .bad .badge { border: 1px solid var(--rule); color: var(--faint); }
+    .good .sample { display: flex; gap: 14px; align-items: center; margin-top: 18px; }
+    .good img { width: 64px; } .good p, .bad p { color: var(--soft); margin-top: 12px; font-size: 14px; }
+    .bad .sample { background: linear-gradient(135deg, #7f7f7f, #d8d8d8, #9b4c1b); border-radius: 15px; color: #fff; margin-top: 18px; padding: 22px; text-shadow: 0 2px 4px #000; }
+    .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .rules ul { margin: 12px 0 0; padding-left: 20px; color: var(--soft); }
+    .rules li + li { margin-top: 8px; }
+    @media (max-width: 720px) { .sheet { width: min(100% - 28px, 1200px); padding-top: 34px; } .grid, .ui-demo, .identity, .choices, .rules { grid-template-columns: 1fr; } .tile { min-height: 130px; } }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <header>
+      <div class="eyebrow">Foundry Linux · visual reference</div>
+      <h1>Style guide</h1>
+      <p class="intro">A practical visual reference for Foundry Linux: raised silver on near black, ember heat for intent, and a solid anvil for the workbench.</p>
+    </header>
+
+    <section>
+      <h2>Palette</h2>
+      <p class="section-copy">The surface stays quiet so that command paths and active choices have room to carry heat.</p>
+      <div class="grid">
+        <div class="tile"><div class="swatch" style="background:#ff5b1a"></div><span class="swatch-name">Ember</span><span class="swatch-value">#ff5b1a · active only</span></div>
+        <div class="tile"><div class="swatch" style="background:#111"></div><span class="swatch-name">Near black</span><span class="swatch-value">#111 · surface</span></div>
+        <div class="tile"><div class="swatch" style="background:#ebe8e2"></div><span class="swatch-name" style="color:#111">Warm white</span><span class="swatch-value" style="color:#444">#ebe8e2 · reading text</span></div>
+        <div class="tile"><div class="swatch" style="background:#f7f7f7"></div><span class="swatch-name">Silver highlight</span><span class="swatch-value">#f7f7f7 · metal</span></div>
+        <div class="tile"><div class="swatch" style="background:#b8b8b8"></div><span class="swatch-name">Silver midtone</span><span class="swatch-value">#b8b8b8 · metal</span></div>
+        <div class="tile"><div class="swatch" style="background:#4a4a4a"></div><span class="swatch-name">Silver shadow</span><span class="swatch-value">#4a4a4a · depth</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Primary mark</h2>
+      <p class="section-copy">The anvil is simple enough to read in a browser tab and substantial enough to carry the brand by itself.</p>
+      <div class="identity">
+        <div class="anvil-field"><img src="../site/favicon-anvil.svg" alt="White anvil with sparks on an ember-orange square"></div>
+        <div>
+          <span class="label">Anvil favicon</span>
+          <ul class="spec-list">
+            <li><strong>Flat white silhouette</strong><span>The form holds at 16 px. Fine line work does not.</span></li>
+            <li><strong>Three forge sparks</strong><span>Use as a compact cue for making and shipping, not as decoration elsewhere.</span></li>
+            <li><strong>Ember square</strong><span>The only broad orange field in the standard system.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Type</h2>
+      <div class="type-samples">
+        <div class="wordmark">Foundry Linux</div>
+        <p class="body-sample">Build tools, package sets, and system guidance should read calmly. The design is heavy; the prose does not need to be.</p>
+        <div class="mono-sample">$ sudo apt install foundry-anvil</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Working surfaces</h2>
+      <p class="section-copy">Use fine rules, quiet panels, and a single active colour. The interface should feel like a tool bench, not a dashboard.</p>
+      <div class="ui-demo">
+        <div class="command"><span class="copy">COPY</span><span class="prompt">$</span> sudo apt install foundry-anvil</div>
+        <article class="edition"><span class="label">Default edition</span><h3>Anvil</h3><p>Developer toolkit and KDE desktop for the Foundry Linux workstation.</p><footer>FOUNDry-ANVIL · 5.2 GiB</footer></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Use the weight</h2>
+      <div class="choices">
+        <article class="choice good"><span class="badge">Use</span><div class="sample"><img src="../site/favicon-anvil.svg" alt=""><strong>Flat, high-contrast, clear at a glance.</strong></div><p>Reserve orange for the mark, active controls, and short command cues.</p></article>
+        <article class="choice bad"><span class="badge">Avoid</span><div class="sample">FOUNDRY<br>METALWORKS</div><p>Avoid broad orange fills, decorative chrome text, rounded glossy panels, and generic industrial decoration.</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Quick rules</h2>
+      <div class="rules">
+        <div><span class="label">Do</span><ul><li>Lead with legibility and hierarchy.</li><li>Use line art for interface icons.</li><li>Use compact mono labels for system details.</li><li>Make motion quiet and optional.</li></ul></div>
+        <div><span class="label">Avoid</span><ul><li>Make orange the default surface colour.</li><li>Add rust, flames, rivets, or medieval ornament.</li><li>Use chrome effects on body copy.</li><li>Invent a second icon style.</li></ul></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
