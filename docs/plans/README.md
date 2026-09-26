@@ -115,6 +115,7 @@ rows on commit.*
 | [Package LosslessCut as a .deb for apt.foundrylinux.org](2026-08-29-package-losslesscut.md) | Repack upstream's pre-built Electron bundle after establishing that its AppImage is not self-contained, dropping six unsatisfiable legacy shims and fixing a malformed ffmpeg RPATH. | [`09fe5c5`](https://github.com/foundry-linux/foundrylinux.org/commit/09fe5c5) | Packaging |
 | [Complete LosslessCut publication and upstream handoff](2026-08-30-complete-losslesscut-publication.md) | Deploy and verify the public inventory, harden the publisher SSH handoff, notify upstream, and close non-ISO LosslessCut bookkeeping. | _PENDING_ | Packaging |
 | [Add `uv` to the base installation](2026-09-19-add-uv-to-base.md) | Vendor Astral's uv as a .deb (ruff pattern), add it to foundry-core Depends, add a Phase 0 install-uv.sh, extend devbox smoke test and docs. | _PENDING_ | Packaging |
+| [Foundry anvil favicons](2026-09-26-foundry-favicons.md) | Add anvil ICO fallbacks to the main, APT, and ISO sites and audit related Foundry domains. | _PENDING_ | Fix |
 
 ---
 
