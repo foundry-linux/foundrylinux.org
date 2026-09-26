@@ -2,17 +2,92 @@
 # QEMU boot test: boots the ISO with VirtGL so kwin_wayland --drm has a DRM device.
 #
 # Usage:
-#   bash test/boot-smoke.sh dist/foundry-anvil-1.0-amd64.iso
+#   bash test/boot-smoke.sh [--headless|--gui] dist/foundry-anvil-1.0-amd64.iso
+#
+# Modes:
+#   --headless   Force headless: -display none, serial console + SSH
+#                port-forward only. No GUI window is opened.
+#   --gui        Force the interactive GTK+VirtGL display (for humans).
+#   (default)    Auto-detect: headless if HEADLESS=1 is set, or if both
+#                DISPLAY and WAYLAND_DISPLAY are unset/empty. Otherwise GUI.
 #
 # SSH into the live session (ISOs built with hook 1200-live-ssh):
 #   ssh -p 2222 user@localhost   # password: live
 #   ssh -p 2222 root@localhost   # password: foundry
 #
-# Requires: qemu-system-x86_64, ovmf, host with OpenGL support
+# Requires: qemu-system-x86_64, ovmf, host with OpenGL support (GUI mode only)
 
 set -euo pipefail
 
-ISO="${1:?Usage: $0 <path-to-iso>}"
+usage() {
+  cat <<'EOF'
+Usage: boot-smoke.sh [--headless|--gui] <path-to-iso>
+
+Boots an ISO under QEMU (UEFI) and watches for a successful boot signal.
+
+Options:
+  --headless   Force headless mode: -display none, serial console + SSH
+               port-forward only. No GUI window is opened. Suitable for
+               agents and CI.
+  --gui        Force the interactive GTK+VirtGL display (for humans).
+  -h, --help   Show this help and exit.
+
+With neither flag, mode is auto-detected: headless if HEADLESS=1 is set
+in the environment, or if both DISPLAY and WAYLAND_DISPLAY are unset or
+empty; GUI otherwise.
+
+SSH into the live session (ISOs built with hook 1200-live-ssh):
+  ssh -p 2222 user@localhost   # password: live
+  ssh -p 2222 root@localhost   # password: foundry
+EOF
+}
+
+MODE=""
+ISO=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --headless)
+      MODE="headless"
+      shift
+      ;;
+    --gui)
+      MODE="gui"
+      shift
+      ;;
+    -*)
+      echo "ERROR: unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+    *)
+      if [[ -n "$ISO" ]]; then
+        echo "ERROR: unexpected extra argument: $1" >&2
+        exit 1
+      fi
+      ISO="$1"
+      shift
+      ;;
+  esac
+done
+
+if [[ -z "$ISO" ]]; then
+  usage >&2
+  exit 1
+fi
+
+if [[ -z "$MODE" ]]; then
+  if [[ "${HEADLESS:-}" == "1" ]] || [[ -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]; then
+    MODE="headless"
+  else
+    MODE="gui"
+  fi
+fi
+
 TIMEOUT=180   # seconds to wait for boot signals
 PIDFILE=/tmp/foundry-boot-smoke-$$.pid
 LOGFILE=/tmp/foundry-boot-smoke-$$.log
@@ -39,7 +114,14 @@ cp /usr/share/OVMF/OVMF_VARS_4M.fd "$OVMF_VARS"
 KVM_ARGS=()
 [[ -w /dev/kvm ]] && KVM_ARGS=(-enable-kvm -cpu host)
 
-echo "=== Boot smoke: $ISO (timeout: ${TIMEOUT}s) ==="
+if [[ "$MODE" == "headless" ]]; then
+  DISPLAY_ARGS=(-display none)
+else
+  # shellcheck disable=SC2054  # commas are part of the qemu arg values, not array separators
+  DISPLAY_ARGS=(-device virtio-vga-gl,xres=1280,yres=800 -display gtk,gl=on)
+fi
+
+echo "=== Boot smoke: $ISO (mode: $MODE, timeout: ${TIMEOUT}s) ==="
 echo "    UEFI: $OVMF_CODE   KVM: ${KVM_ARGS[*]:-(disabled)}"
 echo "    SSH:  ssh -p 2222 user@localhost  (password: live)  — available ~60s after boot"
 
@@ -50,8 +132,7 @@ qemu-system-x86_64 \
   -drive if=pflash,format=raw,file="$OVMF_VARS" \
   -drive file="$ISO",media=cdrom,format=raw,readonly=on \
   -boot order=d \
-  -device virtio-vga-gl,xres=1280,yres=800 \
-  -display gtk,gl=on \
+  "${DISPLAY_ARGS[@]}" \
   -serial file:"$LOGFILE" \
   -no-reboot \
   -device virtio-net,netdev=n0 \
@@ -67,8 +148,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo "  QEMU PID: $QEMU_PID — display window open; watching for crash..."
-echo "  (KDE live session is graphical — close the QEMU window when done)"
+if [[ "$MODE" == "headless" ]]; then
+  echo "  QEMU PID: $QEMU_PID — headless (no display); watching for crash..."
+  echo "  (serial console: $LOGFILE — SSH available on port 2222 once boot completes)"
+else
+  echo "  QEMU PID: $QEMU_PID — display window open; watching for crash..."
+  echo "  (KDE live session is graphical — close the QEMU window when done)"
+fi
 
 # Minimum bar: QEMU stays alive for 30 s (rules out immediate boot failure).
 ALIVE_THRESHOLD=30
@@ -86,8 +172,12 @@ while (( ELAPSED < TIMEOUT )); do
 
   if (( ELAPSED == ALIVE_THRESHOLD )); then
     echo "  [${ELAPSED}s] QEMU alive — UEFI+kernel reached ✓"
-    echo "=== PASS: ISO booted past early-boot stage (check display for desktop) ==="
-    # Stay running so user can inspect the display; exit when QEMU closes.
+    if [[ "$MODE" == "headless" ]]; then
+      echo "=== PASS: ISO booted past early-boot stage (check serial log / SSH for desktop) ==="
+    else
+      echo "=== PASS: ISO booted past early-boot stage (check display for desktop) ==="
+    fi
+    # Stay running so user/CI can inspect further; exit when QEMU closes or timeout is reached.
   fi
 
   printf "  [%3ds] running…\r" "$ELAPSED"
