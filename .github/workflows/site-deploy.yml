@@ -48,6 +48,9 @@ jobs:
       - name: Check links
         run: node scripts/check-links.js
 
+      - name: Check rendered images and icons
+        run: node scripts/check-web-assets.js site/index.html site/packages.html --site-root site
+
       - uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CF_PAGES_API_TOKEN }}

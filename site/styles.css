@@ -1955,9 +1955,12 @@ a.channel-card:hover {
 .ver-wrap:hover .ver-tip { display: block; }
 
 /* ── Repology badge ── */
-.repology-badge { display: block; margin-top: 4px; text-decoration: none; }
-.repology-badge img { vertical-align: middle; opacity: 0.8; }
-.repology-badge:hover img { opacity: 1; }
+.repology-badge {
+  display: inline-block; margin-top: 4px; color: var(--ink-faint);
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .08em;
+  text-decoration: none; text-transform: uppercase;
+}
+.repology-badge:hover { color: var(--accent); }
 
 /* ── CVE tracker link ── */
 .cve-link {
