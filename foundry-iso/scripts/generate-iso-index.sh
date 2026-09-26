@@ -80,8 +80,8 @@ cat > "$OUT" <<HTML
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Foundry Linux Downloads</title>
-<link rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48 64x64" href="/favicon.ico" />
-<link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=2" />
+<link rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-anvil.ico" />
+<link rel="icon" type="image/svg+xml" sizes="any" href="/favicon-anvil.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />

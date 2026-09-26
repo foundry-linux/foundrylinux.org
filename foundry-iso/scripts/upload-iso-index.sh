@@ -59,6 +59,7 @@ export RCLONE_CONFIG_R2_ACL=public-read
 echo "=== Uploading favicons ==="
 rclone copy "$DIST_DIR/" "r2:${BUCKET}/" \
   --include '/favicon.svg' --include '/favicon.ico' \
+  --include '/favicon-anvil.svg' --include '/favicon-anvil.ico' \
   --s3-no-check-bucket \
   --progress
 
