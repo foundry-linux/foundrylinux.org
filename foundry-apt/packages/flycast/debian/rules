@@ -16,8 +16,8 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 # staging the source, so they are injected instead. See
 # debian/patches/0001-allow-packagers-to-override-the-git-derived-version.patch.
 # Keep in step with debian/changelog and build.sh's EXPECTED_COMMIT.
-UPSTREAM_TAG  = v2.6
-UPSTREAM_HASH = 392a429
+UPSTREAM_TAG  = v2.7
+UPSTREAM_HASH = 5aa091f
 
 %:
 	dh $@

@@ -36,7 +36,7 @@ Build bsnes-jg as a Debian .deb via dpkg-buildpackage.
 Usage: build.sh [-h|--help]
 
 Environment overrides (rarely needed):
-  BSNES_JG_VERSION   upstream version (default: 2.1.0)
+  BSNES_JG_VERSION   upstream version (default: 2.1.2)
   BSNES_JG_SHA256    sha256 of the upstream tarball (must match VERSION)
   JG_API_VERSION     Jolly Good API version (default: 1.0.0)
   JG_API_SHA256      sha256 of the jg-api tarball
@@ -48,8 +48,8 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${BSNES_JG_VERSION:-2.1.0}"
-SHA256="${BSNES_JG_SHA256:-a8e0fd36711406198afe1110ddc6960c9d795f4ab73d0badd8878396ac3d0c42}"
+UPSTREAM_VERSION="${BSNES_JG_VERSION:-2.1.2}"
+SHA256="${BSNES_JG_SHA256:-d1a2420bdf7664d1166a6e9877304a6b26871141a14d68911e9ab408fb4969bd}"
 UPSTREAM_URL="https://gitlab.com/jgemu/bsnes/-/archive/${UPSTREAM_VERSION}/bsnes-${UPSTREAM_VERSION}.tar.gz"
 
 JG_API_VERSION="${JG_API_VERSION:-1.0.0}"

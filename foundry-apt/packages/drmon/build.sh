@@ -48,8 +48,8 @@ EOF
 done
 
 # Pinned drdevtools commit + sha256 of its GitHub archive tarball.
-DRDEVTOOLS_SHA="${DRDEVTOOLS_SHA:-d28c9d8cee2094436870d10b222139c9c2e6f785}"
-SHA256="${DRDEVTOOLS_SHA256:-6cae0384747072355e8d0680e2464375b2b4e800d4f33d4b4565d7a94ea403c1}"
+DRDEVTOOLS_SHA="${DRDEVTOOLS_SHA:-e26f7a59025dbe1383aba65f94e15b3e6b4f3723}"
+SHA256="${DRDEVTOOLS_SHA256:-ba4dc3dda3a30f3d2b518d1d4226090c01a98c965366dc9c413c01ed9726ee4b}"
 TARBALL_URL="https://github.com/developer-resources-co/drdevtools/archive/${DRDEVTOOLS_SHA}.tar.gz"
 
 cd "$(dirname "$0")"

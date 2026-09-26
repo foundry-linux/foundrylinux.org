@@ -6,7 +6,7 @@
 # Fetches the upstream tarball (sha256-pinned), overlays debian/, and builds
 # a .deb via dpkg-buildpackage. No external build deps beyond cmake.
 #
-# Tag:   v10.6
+# Tag:   v10.7
 # SHA256 sourced: 2026-06-11
 #
 # To bump the upstream version:
@@ -32,8 +32,8 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${WLA_DX_VERSION:-10.6}"
-EXPECTED_SHA256="${WLA_DX_SHA256:-010c4d426fd1733b978cbca7530a5e68bdfb6f62976c0d5ff7bff447894e19a8}"
+UPSTREAM_VERSION="${WLA_DX_VERSION:-10.7}"
+EXPECTED_SHA256="${WLA_DX_SHA256:-38296a96bc20be873d17e0e88be0c5b20a15ef2ec4da5279600e56af30ad925a}"
 TARBALL_URL="https://github.com/vhelin/wla-dx/archive/refs/tags/v${UPSTREAM_VERSION}.tar.gz"
 
 cd "$(dirname "$0")"

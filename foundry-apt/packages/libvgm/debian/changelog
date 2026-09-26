@@ -1,3 +1,10 @@
+libvgm (0.1+git20260905.c8b998b-1foundry1) resolute; urgency=medium
+
+  * Update the untagged upstream snapshot to commit
+    c8b998b606895990c409a512b86c5509070f9f0d (2026-09-05).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 12:00:00 +0000
+
 libvgm (0.1+git20260406.d115188-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of libvgm at upstream commit

@@ -40,11 +40,11 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${PVSNESLIB_VERSION:-4.5.0}"
-SHA256="${PVSNESLIB_SHA256:-b69ff32ada19895b7ebfe02a1e3c08a44c80bd9c8132de05f5c356f86264ce32}"
+UPSTREAM_VERSION="${PVSNESLIB_VERSION:-4.6.0}"
+SHA256="${PVSNESLIB_SHA256:-db08f2f95400125f8ae0cc62e87c3c350fa46a3eadb3174dd3161606ee49c84c}"
 # The release asset filename encodes the version without dots (4.5.0 -> 450).
 VERSION_NODOTS="${UPSTREAM_VERSION//./}"
-UPSTREAM_URL="https://github.com/alekmaul/pvsneslib/releases/download/${UPSTREAM_VERSION}/pvsneslib_${VERSION_NODOTS}_64b_linux.zip"
+UPSTREAM_URL="https://github.com/alekmaul/pvsneslib/releases/download/${UPSTREAM_VERSION}/pvsneslib_${VERSION_NODOTS}_64b_linux_release.zip"
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"

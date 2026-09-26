@@ -38,8 +38,8 @@ Build libvgm as a Debian .deb via dpkg-buildpackage.
 Usage: build.sh [-h|--help]
 
 Environment overrides (rarely needed):
-  LIBVGM_COMMIT   upstream commit sha (default: d1151884997ba4769b070b7c7aaedeffc60a25fb)
-  LIBVGM_DATE     upstream commit date as YYYYMMDD (default: 20260406)
+  LIBVGM_COMMIT   upstream commit sha (default: c8b998b606895990c409a512b86c5509070f9f0d)
+  LIBVGM_DATE     upstream commit date as YYYYMMDD (default: 20260905)
   LIBVGM_SHA256   sha256 of the upstream tarball (must match COMMIT)
 
 Output: \$REPO_ROOT/dist/libvgm_<UPSTREAM>-<REVISION>_<arch>.deb
@@ -49,9 +49,9 @@ EOF
     esac
 done
 
-UPSTREAM_COMMIT="${LIBVGM_COMMIT:-d1151884997ba4769b070b7c7aaedeffc60a25fb}"
-UPSTREAM_DATE="${LIBVGM_DATE:-20260406}"
-SHA256="${LIBVGM_SHA256:-7af2e58bc1bef990c0ee759cdef7bdf5e1e1ebc9d16cde489932b0370c0e7fbc}"
+UPSTREAM_COMMIT="${LIBVGM_COMMIT:-c8b998b606895990c409a512b86c5509070f9f0d}"
+UPSTREAM_DATE="${LIBVGM_DATE:-20260905}"
+SHA256="${LIBVGM_SHA256:-a04e08e27e42e4775c9f316ff8cbfa03b35e5223b92651f246adfc0c5f793305}"
 
 # Synthesised upstream version string: 0.1 (upstream's declared CMake version)
 # + git-snapshot qualifier so versions sort correctly across rebumps.

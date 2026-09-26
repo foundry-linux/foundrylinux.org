@@ -1,3 +1,9 @@
+wla-dx (10.7-1foundry1) resolute; urgency=medium
+
+  * New upstream release 10.7.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 12:00:00 +0000
+
 wla-dx (10.6-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of WLA DX 10.6.

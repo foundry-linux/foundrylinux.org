@@ -35,9 +35,9 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${RUFF_VERSION:-0.15.15}"
-SHA256="${RUFF_SHA256:-48decfa11d740de4889de623be1463308346312f2409a56e24aa280c86162dc4}"
-UPSTREAM_URL="https://files.pythonhosted.org/packages/fe/1c/e6e5e568f22be4fb05d6244234aba384c06b451252453b821e1a529263cf/ruff-${UPSTREAM_VERSION}-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+UPSTREAM_VERSION="${RUFF_VERSION:-0.16.9}"
+SHA256="${RUFF_SHA256:-a21713e629d3e5bdb2f5c2def1cc7f04f47fa8e1a7eb0571b4a28e1da64bc728}"
+UPSTREAM_URL="https://files.pythonhosted.org/packages/bc/b8/9c543074918061abbefc3bd139bee22de35abedb00dde0f2d27288838962/ruff-${UPSTREAM_VERSION}-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"
@@ -45,8 +45,8 @@ NAME="ruff"
 REPO_ROOT="$(cd ../.. && pwd)"
 mkdir -p "$REPO_ROOT/dist"
 
-if ! curl -fsI -o /dev/null https://files.pythonhosted.org/; then
-    echo "ERROR: cannot reach files.pythonhosted.org — skipping $NAME build" >&2
+if ! curl -fsIL -o /dev/null "$UPSTREAM_URL"; then
+    echo "ERROR: cannot reach $UPSTREAM_URL — skipping $NAME build" >&2
     exit 1
 fi
 

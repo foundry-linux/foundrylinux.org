@@ -2,7 +2,9 @@ FROM ubuntu:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update -qq \
+# Vendored packages use Build-Depends from universe (for example dh-python).
+RUN sed -i 's/^Components: main restricted$/Components: main restricted universe multiverse/' /etc/apt/sources.list.d/ubuntu.sources \
+    && apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
         build-essential debhelper dpkg-dev devscripts fakeroot lintian \
         curl ca-certificates pkg-config sudo \

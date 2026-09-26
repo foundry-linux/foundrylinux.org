@@ -33,9 +33,9 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${GLFW_VERSION:-2.10.0}"
-SHA256="${GLFW_SHA256:-801e55d8581b34df9aa2cfea43feb06ff617576e2a8cc5dac23ee75b26d10abe}"
-UPSTREAM_URL="https://files.pythonhosted.org/packages/96/72/642d4f12f61816ac96777f7360d413e3977a7dd08237d196f02da681b186/glfw-${UPSTREAM_VERSION}.tar.gz"
+UPSTREAM_VERSION="${GLFW_VERSION:-2.10.2}"
+SHA256="${GLFW_SHA256:-5d2cf97c66bc42a6b583be0e307eae5a3945438322e2ed0c5e4f14dc251d693d}"
+UPSTREAM_URL="https://files.pythonhosted.org/packages/0f/62/096058bcb4b4fb28f7ecd28fb048f07969d90b243c417af5f6d09d45a0c2/glfw-${UPSTREAM_VERSION}.tar.gz"
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"
@@ -43,8 +43,8 @@ NAME="python3-glfw"
 REPO_ROOT="$(cd ../.. && pwd)"
 mkdir -p "$REPO_ROOT/dist"
 
-if ! curl -fsI -o /dev/null https://files.pythonhosted.org/; then
-    echo "ERROR: cannot reach files.pythonhosted.org — skipping $NAME build" >&2
+if ! curl -fsIL -o /dev/null "$UPSTREAM_URL"; then
+    echo "ERROR: cannot reach $UPSTREAM_URL — skipping $NAME build" >&2
     exit 1
 fi
 
@@ -61,7 +61,7 @@ echo "$SHA256  $ORIG_TARBALL" | sha256sum -c -
 
 echo "=== Extracting ==="
 tar -xzf "$ORIG_TARBALL" -C "$WORKDIR"
-# PyPI sdist extracts to glfw-2.10.0/; rename to match package name convention
+# PyPI sdist extracts to glfw-<VERSION>/; rename to match package convention.
 SRC_DIR="$WORKDIR/${NAME}-${UPSTREAM_VERSION}"
 mv "$WORKDIR/glfw-${UPSTREAM_VERSION}" "$SRC_DIR"
 

@@ -1,3 +1,9 @@
+ruff (0.16.9-1foundry1) resolute; urgency=medium
+
+  * New upstream release 0.16.9.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 12:00:00 +0000
+
 ruff (0.15.15-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of ruff 0.15.15.

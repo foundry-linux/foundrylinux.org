@@ -38,10 +38,10 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${GHIDRA_VERSION:-12.1}"
-SHA256="${GHIDRA_SHA256:-aa5cbcbbf48f41ca185fce900e19592f1ade4cd5994eb6e0ede468dac8a6f302}"
+UPSTREAM_VERSION="${GHIDRA_VERSION:-12.1.4}"
+SHA256="${GHIDRA_SHA256:-ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db}"
 # NOTE: the zip filename includes the release date; update UPSTREAM_URL on each bump.
-UPSTREAM_URL="https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_${UPSTREAM_VERSION}_build/ghidra_${UPSTREAM_VERSION}_PUBLIC_20260513.zip"
+UPSTREAM_URL="https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_${UPSTREAM_VERSION}_build/ghidra_${UPSTREAM_VERSION}_PUBLIC_20260921.zip"
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"
@@ -67,7 +67,7 @@ echo "$SHA256  $ZIP" | sha256sum -c -
 
 echo "=== Extracting ==="
 unzip -q "$ZIP" -d "$WORKDIR"
-# Upstream extracts to ghidra_12.1_PUBLIC/ — rename to ghidra-12.1/ (dpkg convention)
+# Upstream extracts to ghidra_<VERSION>_PUBLIC/; rename for dpkg convention.
 EXTRACTED="$WORKDIR/ghidra_${UPSTREAM_VERSION}_PUBLIC"
 SRC_DIR="$WORKDIR/${NAME}-${UPSTREAM_VERSION}"
 [[ -d "$EXTRACTED" ]] || { echo "ERROR: expected $EXTRACTED after extract" >&2; ls "$WORKDIR"; exit 1; }

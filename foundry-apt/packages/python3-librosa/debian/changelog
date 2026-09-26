@@ -1,3 +1,9 @@
+python3-librosa (1.0.0-1foundry1) resolute; urgency=medium
+
+  * New upstream release 1.0.0.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 12:00:00 +0000
+
 python3-librosa (0.11.0-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of librosa 0.11.0.

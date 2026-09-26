@@ -1,3 +1,9 @@
+bsnes-jg (2.1.2-1foundry1) resolute; urgency=medium
+
+  * New upstream release 2.1.2.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 12:00:00 +0000
+
 bsnes-jg (2.1.0-1foundry1) resolute; urgency=medium
 
   * Initial Foundry packaging of bsnes-jg, the cycle-accurate SNES / Super

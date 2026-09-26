@@ -1,3 +1,9 @@
+uv (0.12.19-1foundry1) resolute; urgency=medium
+
+  * New upstream release 0.12.19.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 12:00:00 +0000
+
 uv (0.12.17-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of uv 0.12.17.

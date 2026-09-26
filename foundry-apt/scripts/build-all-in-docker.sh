@@ -36,6 +36,11 @@ docker run --rm \
   "$BUILDER_IMAGE" \
   bash -c '
     set -euo pipefail
+    # The builder image removes /var/lib/apt/lists to keep its layer compact.
+    # Package build wrappers install their own Build-Depends, so refresh once
+    # before dispatching them; otherwise every package outside the image seed
+    # looks unavailable even though universe and multiverse are enabled.
+    apt-get update -qq
     read -r -a filters <<< "$PKG_FILTERS"
     bash scripts/build-all.sh "${filters[@]}"
   '

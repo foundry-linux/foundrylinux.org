@@ -35,9 +35,9 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${UV_VERSION:-0.12.17}"
-SHA256="${UV_SHA256:-9e25bb39e1674799c408345a6397ebc2c7c719d498be0ce9d935466d36ceacf5}"
-UPSTREAM_URL="https://files.pythonhosted.org/packages/0d/8d/e45565a046bd2592b75cb96fded9a7ab0cd6d470152fec713c82ee83ddbb/uv-${UPSTREAM_VERSION}-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+UPSTREAM_VERSION="${UV_VERSION:-0.12.19}"
+SHA256="${UV_SHA256:-a63d18a0aa38ee9f21a5406afbbaeb41303bcd954be9d6b7c1b95ac275e53958}"
+UPSTREAM_URL="https://files.pythonhosted.org/packages/76/71/b47cec536d8ee7b09017c1d9db211dfc2e7ce5c87d0482918d8b3411ec48/uv-${UPSTREAM_VERSION}-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"

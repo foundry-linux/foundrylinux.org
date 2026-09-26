@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
-UPSTREAM = 0.15.15
+UPSTREAM = 0.16.9
 
 %:
 	dh $@

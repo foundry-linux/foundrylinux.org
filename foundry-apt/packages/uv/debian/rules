@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
-UPSTREAM = 0.12.17
+UPSTREAM = 0.12.19
 SCRIPTS  = $(CURDIR)/uv-$(UPSTREAM).data/scripts
 
 %:

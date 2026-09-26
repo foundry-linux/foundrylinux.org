@@ -7,7 +7,7 @@
 # Like ppsspp — and unlike most packages in foundry-apt — this script does NOT
 # download a tarball. Neither of the usual vendoring routes works for Flycast:
 #
-#   * GitHub's auto-generated tag archive omits all 20 git submodules under
+#   * GitHub's auto-generated tag archive omits all 22 git submodules under
 #     core/deps/ (Vulkan-Headers, VulkanMemoryAllocator, glslang, libchdr,
 #     libjuice, luabridge, rcheevos, asio, websocketpp, xbyak, ...), so it will
 #     not configure, let alone build.
@@ -25,7 +25,8 @@
 # a shallow submodule fetch can land on the submodule's branch tip rather than
 # the recorded commit, silently breaking the pin. The explicit
 # `git submodule update --init --depth 1 <paths>` below fetches each recorded
-# SHA by name.
+# SHA by name. DreamPicoPort-API's libusb is initialised separately: recursive
+# initialisation would also fetch LuaBridge's test-only nested googletest.
 #
 # Build deps the CI runner needs (publish.yml installs build-essential etc.;
 # build.sh installs the package-specific deps listed below):
@@ -69,8 +70,8 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${FLYCAST_VERSION:-2.6}"
-EXPECTED_COMMIT="${FLYCAST_COMMIT:-392a429e8b040b3e5bf6696cb4f984274fc44123}"
+UPSTREAM_VERSION="${FLYCAST_VERSION:-2.7}"
+EXPECTED_COMMIT="${FLYCAST_COMMIT:-5aa091fde632fb332c8d8c34e280d62dc951954c}"
 TAG="v${UPSTREAM_VERSION}"
 REPO_URL="https://github.com/flyinghead/flycast.git"
 
@@ -131,7 +132,7 @@ echo "=== Initialising required submodules (depth 1) ==="
 # a libchdr.pc, which is what -DUSE_HOST_LIBCHDR=ON consumes — that both fixes
 # the link and satisfies Debian's preference for system libraries over
 # vendored copies.
-git -C "$SRC_DIR" submodule update --init --recursive --depth 1 \
+git -C "$SRC_DIR" submodule update --init --depth 1 \
     core/deps/Vulkan-Headers \
     core/deps/VulkanMemoryAllocator \
     core/deps/glslang \
@@ -141,8 +142,15 @@ git -C "$SRC_DIR" submodule update --init --recursive --depth 1 \
     core/deps/asio \
     core/deps/websocketpp \
     core/deps/xbyak \
-    core/deps/libusb-cmake \
-    core/deps/DreamPicoPort-API
+    core/deps/DreamPicoPort-API \
+    core/deps/tinygettext \
+    core/deps/freetype
+
+# DreamPicoPort-API bundles the Linux libusb CMake project as its only nested
+# submodule. Fetch it explicitly, rather than recursing into unrelated
+# test-only submodules elsewhere in Flycast's dependency tree.
+git -C "$SRC_DIR/core/deps/DreamPicoPort-API" submodule update --init --depth 1 \
+    ext/libusb-cmake
 
 echo "=== Verifying submodule gitlinks match the superproject tree ==="
 # git checks this itself, but assert it explicitly so a silent shallow-fetch
@@ -165,7 +173,7 @@ echo "=== Stripping VCS metadata ==="
 # scripts/lib-source-build.sh), so the clone's object stores must not ride
 # along — they are ~250 MB and carry no packaging value. Dropping .git is also
 # why debian/rules injects GIT_VERSION/GIT_HASH explicitly.
-find "$SRC_DIR" -maxdepth 4 -name .git -exec rm -rf {} + 2>/dev/null || true
+find "$SRC_DIR" -name .git -exec rm -rf {} + 2>/dev/null || true
 rm -rf "$SRC_DIR/.github"
 
 echo "=== Copying debian/ tree into source ==="

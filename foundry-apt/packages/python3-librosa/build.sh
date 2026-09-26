@@ -33,9 +33,9 @@ EOF
     esac
 done
 
-UPSTREAM_VERSION="${LIBROSA_VERSION:-0.11.0}"
-SHA256="${LIBROSA_SHA256:-f5ed951ca189b375bbe2e33b2abd7e040ceeee302b9bbaeeffdfddb8d0ace908}"
-UPSTREAM_URL="https://files.pythonhosted.org/packages/64/36/360b5aafa0238e29758729e9486c6ed92a6f37fa403b7875e06c115cdf4a/librosa-${UPSTREAM_VERSION}.tar.gz"
+UPSTREAM_VERSION="${LIBROSA_VERSION:-1.0.0}"
+SHA256="${LIBROSA_SHA256:-73ed480d4022e436e85dfa6f6b06ff38a259b9210039ac99939cd64854b61a57}"
+UPSTREAM_URL="https://files.pythonhosted.org/packages/8e/c1/ce66b20953b7370421dd13d22b4e04e401346c824ceacb9f4e722eec84dc/librosa-${UPSTREAM_VERSION}.tar.gz"
 
 cd "$(dirname "$0")"
 PKG_DIR="$(pwd)"
@@ -43,8 +43,8 @@ NAME="python3-librosa"
 REPO_ROOT="$(cd ../.. && pwd)"
 mkdir -p "$REPO_ROOT/dist"
 
-if ! curl -fsI -o /dev/null https://files.pythonhosted.org/; then
-    echo "ERROR: cannot reach files.pythonhosted.org — skipping $NAME build" >&2
+if ! curl -fsIL -o /dev/null "$UPSTREAM_URL"; then
+    echo "ERROR: cannot reach $UPSTREAM_URL — skipping $NAME build" >&2
     exit 1
 fi
 

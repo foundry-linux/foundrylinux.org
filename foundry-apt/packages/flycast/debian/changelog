@@ -1,3 +1,11 @@
+flycast (2.7-1foundry1) resolute; urgency=medium
+
+  * New upstream release 2.7.
+  * Pin the complete submodule checkout to tag v2.7, commit
+    5aa091fde632fb332c8d8c34e280d62dc951954c.
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 12:00:00 +0000
+
 flycast (2.6-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux package of Flycast, the Sega Dreamcast, NAOMI and

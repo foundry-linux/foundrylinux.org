@@ -1,3 +1,9 @@
+ghidra (12.1.4-1foundry1) resolute; urgency=medium
+
+  * New upstream release 12.1.4 (2026-09-21).
+
+ -- Foundry Linux <packages@foundrylinux.org>  Sat, 26 Sep 2026 12:00:00 +0000
+
 ghidra (12.1-1foundry1) resolute; urgency=medium
 
   * Initial Foundry Linux packaging of Ghidra 12.1 (2026-05-13 release).
