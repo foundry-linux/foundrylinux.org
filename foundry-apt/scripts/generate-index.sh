@@ -252,7 +252,8 @@ cat > "$OUT" <<HTML
 <meta property="og:title"       content="${SITE_TITLE}" />
 <meta property="og:description" content="${PKG_COUNT} signed packages for Ubuntu 26.04 (resolute)" />
 <meta name="twitter:card"       content="summary" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48 64x64" href="/favicon.ico" />
+<link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=2" />
 <link rel="alternate" type="application/rss+xml" title="${SITE_TITLE}" href="${SITE_URL}/feed.xml" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

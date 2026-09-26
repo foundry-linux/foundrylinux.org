@@ -84,7 +84,8 @@ function wrap(body, { title, description, url, extraBodyScripts }) {
   <meta property="og:title"       content="${title}" />
   <meta property="og:description" content="${description}" />
   <meta name="twitter:card"       content="summary" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48 64x64" href="/favicon.ico" />
+  <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=2" />
   <link rel="preload" href="fonts/big-shoulders-display-900-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css" />
 </head>

@@ -56,6 +56,12 @@ export RCLONE_CONFIG_R2_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
 export RCLONE_CONFIG_R2_ENDPOINT="$ENDPOINT"
 export RCLONE_CONFIG_R2_ACL=public-read
 
+echo "=== Uploading favicons ==="
+rclone copy "$DIST_DIR/" "r2:${BUCKET}/" \
+  --include '/favicon.svg' --include '/favicon.ico' \
+  --s3-no-check-bucket \
+  --progress
+
 echo "=== Uploading index.html ==="
 rclone copyto "$DIST_DIR/index.html" "r2:${BUCKET}/index.html" \
   --s3-no-check-bucket \
