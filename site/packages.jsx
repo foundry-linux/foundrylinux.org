@@ -149,8 +149,7 @@ function CategorySection({ cat, index }) {
                       <a className="repology-badge"
                          href={`https://repology.org/project/${p.repology_project}/versions`}
                          target="_blank" rel="noopener" aria-label="Repology versions">
-                        <img src={`https://repology.org/badge/latest-versions/${p.repology_project}.svg`}
-                             alt="latest versions" height="14" />
+                        Repology ↗
                       </a>
                     )}
                   </td>
@@ -195,8 +194,7 @@ function VendoredStandalones() {
                 <a className="repology-badge"
                    href={`https://repology.org/project/${v.repology_project}/versions`}
                    target="_blank" rel="noopener" aria-label="Repology versions">
-                  <img src={`https://repology.org/badge/latest-versions/${v.repology_project}.svg`}
-                       alt="latest versions" height="14" />
+                  Repology ↗
                 </a>
               )}
             </li>

@@ -90,6 +90,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
       - name: Download manifests
         uses: actions/download-artifact@v7
         with:
@@ -99,6 +103,9 @@ jobs:
 
       - name: Generate index.html
         run: bash foundry-iso/scripts/generate-iso-index.sh
+
+      - name: Check generated images and icons
+        run: node scripts/check-web-assets.js foundry-iso/dist/index.html --site-root foundry-iso/dist
 
       - name: Upload index to R2
         if: ${{ !inputs.dry_run }}

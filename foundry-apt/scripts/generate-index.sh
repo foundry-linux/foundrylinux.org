@@ -100,13 +100,13 @@ for i, fname in enumerate(sorted(os.listdir(meta_dir))):
     if changelog:
         ver_cell = f'<span class="ver-wrap">{ver_cell}<span class="ver-tip">{esc(changelog)}</span></span>'
 
-    # Repology badge for vendored packages
+    # Repology version link for vendored packages. Keep it textual: remote SVG
+    # badges can fail independently of the repository page.
     if repology:
-        badge_url  = f"https://repology.org/badge/latest-versions/{esc(repology)}.svg"
         badge_href = f"https://repology.org/project/{esc(repology)}/versions"
         ver_cell  += (f'<a class="repology-badge" href="{badge_href}" target="_blank"'
                       f' rel="noopener" aria-label="Repology versions">'
-                      f'<img src="{badge_url}" alt="latest versions" height="14"></a>')
+                      f'Repology ↗</a>')
 
     # Description cell with optional <details> for long desc + dep chips
     if desc_long or depends or inst_kb is not None:
@@ -396,9 +396,8 @@ cat > "$OUT" <<HTML
     white-space: pre-wrap; word-break: break-word; pointer-events: none;
   }
   .ver-wrap:hover .ver-tip { display: block; }
-  .repology-badge { display: block; margin-top: 5px; }
-  .repology-badge img { vertical-align: middle; opacity: 0.8; }
-  .repology-badge:hover img { opacity: 1; }
+  .repology-badge { display: inline-block; margin-top: 5px; color: var(--ink-faint); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .repology-badge:hover { color: var(--accent); }
   .cve-link { display: inline-flex; align-items: center; margin-left: 5px; color: var(--ink-faint); text-decoration: none; opacity: 0.5; vertical-align: middle; }
   .cve-link:hover { color: var(--accent); opacity: 1; }
   td.col-desc { word-break: break-word; }

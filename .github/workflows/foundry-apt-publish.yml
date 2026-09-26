@@ -24,6 +24,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
       - name: Check known Build-Depends companion packages
         run: bash scripts/check-build-dep-pairs.sh
 
@@ -88,6 +92,10 @@ jobs:
       - name: Generate index.html
         if: ${{ !inputs.dry_run }}
         run: bash scripts/generate-index.sh
+
+      - name: Check generated images and icons
+        if: ${{ !inputs.dry_run }}
+        run: node scripts/check-web-assets.js public/index.html --site-root public
 
       - name: Sync to Cloudflare R2
         if: ${{ !inputs.dry_run }}
