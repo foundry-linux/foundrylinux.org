@@ -3,6 +3,10 @@
 Off-site brand assets (deliberately **not** under `site/`, so they aren't
 deployed with the website).
 
+Read the [Foundry Linux style guide](STYLE_GUIDE.md) before creating a new
+public visual surface. [`../DESIGN.md`](../DESIGN.md) covers the website's
+component-level implementation.
+
 ## Site favicons
 
 [`../site/favicon.svg`](../site/favicon.svg) is the canonical anvil mark.
@@ -20,8 +24,9 @@ so publishing needs no image conversion tools.
   but reads muddier at small sizes).
 - `org-avatar.png` — upload-ready 1000×1000 render of the canonical SVG.
 
-Derived from [`../site/favicon.svg`](../site/favicon.svg) — the lit/shadow
-anvil mark — centered on a solid brand-accent square.
+The avatar uses the earlier lit/shadow anvil treatment centered on a solid
+brand-accent square. It remains suitable for the GitHub organisation profile;
+use the high-contrast favicon asset for browser and application icons.
 
 Regenerate the PNG:
 
