@@ -1,10 +1,10 @@
-; Foundry Linux KDE color scheme
-;   background   #0a0a0a  (10,10,10)    near-black
-;   surface-hi   #141414  (20,20,20)    raised surfaces
-;   widget-bg    #1a1a1a  (26,26,26)    buttons / inputs
-;   text         #f7f7f7  (247,247,247) warm white
-;   muted        #909090  (144,144,144) inactive / secondary
-;   accent       #ff5b1a  (255,91,26)   forge orange
+# Foundry Linux KDE color scheme
+#   background   #0a0a0a  (10,10,10)    near-black
+#   surface-hi   #141414  (20,20,20)    raised surfaces
+#   widget-bg    #1a1a1a  (26,26,26)    buttons / inputs
+#   text         #f7f7f7  (247,247,247) warm white
+#   muted        #909090  (144,144,144) inactive / secondary
+#   accent       #ff5b1a  (255,91,26)   forge orange
 
 [ColorEffects:Disabled]
 Color=56,56,56

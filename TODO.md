@@ -253,6 +253,7 @@ Items intentionally on hold — revisit if priorities shift, unpark to `## Open`
 _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage each into M1/M2/etc. and delete it here — it will not come back._
 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
+- [verify] **2026-10-10-lock-screen-24-hour-clock** — Verification section present but no PASS recorded — run + record the steps. _from [2026-10-10-lock-screen-24-hour-clock.md](docs/plans/2026-10-10-lock-screen-24-hour-clock.md)_  <!-- fp:eeb3cf690b62b2c8 -->
 <!-- END auto-captured-deferrals -->
 <!-- triaged 2026-08-05: the two per-package-publish exclusions dropped — apt format/signing changes are explicit non-goals, not deferred work. -->
 <!-- triaged 2026-08-05: the Debian source packaging was merged into upstream PR #448; the "8 unbuilt targets" follow-up remains curated under "Packaging — new upstreams". -->

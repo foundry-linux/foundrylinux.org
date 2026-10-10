@@ -34,6 +34,51 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"
 DIST_DIR="$REPO_ROOT/dist"
 
+# A disconnected or failed external drive can return as read-only after an I/O
+# error. Stop before Docker or live-build modifies the workspace.
+MOUNT_OPTIONS="$(findmnt -no OPTIONS -T "$REPO_ROOT" 2>/dev/null || true)"
+if [[ ",$MOUNT_OPTIONS," == *,ro,* ]]; then
+  echo "ERROR: ISO workspace is on a read-only mount: $REPO_ROOT" >&2
+  echo "       Check the drive connection and filesystem before retrying." >&2
+  exit 1
+fi
+
+# A rootless Docker bind mount is always nodev, even when the host filesystem
+# permits device nodes. live-build needs working /dev entries in its chroot, so
+# run this build against the standard daemon through one desktop auth prompt.
+if [[ "$(id -u)" != 0 ]] \
+   && docker info --format '{{.SecurityOptions}}' 2>/dev/null | grep -q rootless; then
+  echo "=== Rootless Docker cannot build this ISO; switching to the standard daemon ==="
+  exec pkexec /usr/bin/env \
+    DOCKER_HOST=unix:///var/run/docker.sock \
+    FOUNDRY_HOST_UID="$(id -u)" \
+    FOUNDRY_HOST_GID="$(id -g)" \
+    EDITION="$EDITION" \
+    /bin/bash "$SCRIPT_DIR/build-iso.sh"
+fi
+
+# live-build creates device nodes inside the chroot. Desktop automounters often
+# mount removable ext4 drives with nodev, which turns /dev/null into an unusable
+# regular file in the chroot and eventually breaks package triggers.
+if [[ ",$MOUNT_OPTIONS," == *,nodev,* && "$(id -u)" == 0 \
+      && -n "${FOUNDRY_HOST_UID:-}" ]]; then
+  MOUNT_POINT="$(findmnt -no TARGET -T "$REPO_ROOT")"
+  if [[ "$MOUNT_POINT" == /run/media/* || "$MOUNT_POINT" == /media/* ]]; then
+    echo "=== Enabling device nodes on $MOUNT_POINT for live-build ==="
+    mount -o remount,dev "$MOUNT_POINT"
+    MOUNT_OPTIONS="$(findmnt -no OPTIONS -T "$REPO_ROOT")"
+  fi
+fi
+if [[ ",$MOUNT_OPTIONS," == *,ro,* ]]; then
+  echo "ERROR: ISO workspace became read-only: $REPO_ROOT" >&2
+  exit 1
+fi
+if [[ ",$MOUNT_OPTIONS," == *,nodev,* ]]; then
+  echo "ERROR: ISO workspace is on a nodev mount: $REPO_ROOT" >&2
+  echo "       Remount it with dev before building (sudo mount -o remount,dev <mountpoint>)." >&2
+  exit 1
+fi
+
 mkdir -p "$DIST_DIR"
 
 # Prune old local ISOs for this edition before building to prevent disk exhaustion.
@@ -55,8 +100,15 @@ find "$DIST_DIR" -maxdepth 1 \( \
 GRUB_PATCH=""
 _cleanup() {
   [[ -n "$GRUB_PATCH" ]] && rm -f "$GRUB_PATCH"
+  # In rootless Docker, container UID 0 maps to the invoking host user.
+  # Chowning to the host UID inside that container instead maps files to a
+  # subordinate host UID and makes subsequent builds unable to update keys.
+  local owner="${FOUNDRY_HOST_UID:-$(id -u)}:${FOUNDRY_HOST_GID:-$(id -g)}"
+  if docker info --format '{{.SecurityOptions}}' 2>/dev/null | grep -q rootless; then
+    owner="0:0"
+  fi
   docker run --rm -v "$REPO_ROOT:/work" ubuntu:26.04 \
-    chown -R "$(id -u):$(id -g)" /work/config /work/dist >/dev/null 2>&1 || true
+    chown -R "$owner" /work/config /work/dist >/dev/null 2>&1 || true
 }
 trap _cleanup EXIT
 
@@ -89,6 +141,10 @@ docker run --rm \
   ubuntu:26.04 \
   bash -c '
     set -euo pipefail
+    if [[ ",$(findmnt -no OPTIONS -T /work)," == *,nodev,* ]]; then
+      echo "ERROR: Docker still sees /work as nodev; live-build cannot use /dev in the chroot" >&2
+      exit 1
+    fi
     apt-get update -qq
     apt-get install -y --no-install-recommends \
       live-build curl gpg apt-utils ca-certificates \

@@ -1,3 +1,17 @@
+foundry-kde-theme (1.0.10) resolute; urgency=medium
+
+  * Default Plasma's time locale to en_GB.UTF-8 so the lock-screen clock uses
+    24-hour time, while per-user Region & Language settings can override it.
+
+ -- Will Norris <wbnorris@gmail.com>  Sat, 10 Oct 2026 19:04:28 +0700
+
+foundry-kde-theme (1.0.9) resolute; urgency=medium
+
+  * Use valid KConfig comment syntax in the FoundryLinux color scheme and
+    desktop-theme palette, preventing the KDE Screen Locker greeter crash.
+
+ -- Will Norris <wbnorris@gmail.com>  Sun, 27 Sep 2026 13:30:00 +0700
+
 foundry-kde-theme (1.0.8) resolute; urgency=medium
 
   * Fix the 24-hour clock default: 1.0.7 set use24hFormat=1, but Plasma 6

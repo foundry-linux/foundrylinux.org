@@ -41,6 +41,15 @@ EDITION=anvil task sign
 
 See `task --list` for all available tasks.
 
+The build needs a filesystem that supports device nodes in the live-build
+chroot. When the active Docker context is rootless, `build-iso.sh` requests
+desktop authorization once and uses the standard Docker daemon for that build.
+For a workspace on a removable drive mounted under `/run/media` or `/media`, it
+also enables device nodes on that mount. The script stops if the workspace is
+read-only or Docker still sees it as `nodev`. Keep the external drive securely
+connected throughout the build; a USB disconnect can abort the ext4 journal and
+leave the workspace read-only.
+
 ---
 
 ## Layout

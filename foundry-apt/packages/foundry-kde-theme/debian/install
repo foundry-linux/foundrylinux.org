@@ -15,6 +15,7 @@ data/look-and-feel/org.foundrylinux.foundry-linux/contents/previews/preview.png 
 data/desktoptheme/FoundryLinux/metadata.json  usr/share/plasma/desktoptheme/FoundryLinux/
 data/desktoptheme/FoundryLinux/colors  usr/share/plasma/desktoptheme/FoundryLinux/
 data/xdg/kdeglobals  etc/xdg/
+data/xdg/plasma-localerc  etc/xdg/
 data/xdg/ksplashrc  etc/xdg/
 data/xdg/kscreenlockerrc  etc/xdg/
 data/xdg/kicker-extra-favoritesrc  usr/share/foundry-kde-theme/
