@@ -5,7 +5,7 @@
 FROM ubuntu:26.04
 
 RUN apt-get update -q && apt-get install -y --no-install-recommends \
-        bash sudo curl ca-certificates lsb-release \
+        bash ca-certificates curl lsb-release sudo \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/bash -G sudo tester \

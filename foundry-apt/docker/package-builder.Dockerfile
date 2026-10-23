@@ -6,12 +6,32 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN sed -i 's/^Components: main restricted$/Components: main restricted universe multiverse/' /etc/apt/sources.list.d/ubuntu.sources \
     && apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
-        build-essential debhelper dpkg-dev devscripts fakeroot lintian \
-        curl ca-certificates pkg-config sudo \
-        zip python3 nodejs npm \
-        cmake qt6-base-dev qt6-declarative-dev \
-        libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev \
-        libx11-dev libxkbfile-dev libsecret-1-dev libfontconfig-dev \
+        build-essential \
+        ca-certificates \
+        cmake \
+        curl \
+        debhelper \
+        devscripts \
+        dpkg-dev \
+        fakeroot \
+        libcairo2-dev \
+        libfontconfig-dev \
+        libgif-dev \
+        libjpeg-dev \
+        libpango1.0-dev \
+        librsvg2-dev \
+        libsecret-1-dev \
+        libx11-dev \
+        libxkbfile-dev \
+        lintian \
+        nodejs \
+        npm \
+        pkg-config \
+        python3 \
+        qt6-base-dev \
+        qt6-declarative-dev \
+        sudo \
+        zip \
     && rm -rf /var/lib/apt/lists/*
 
 ARG NODE_VERSION=24.20.0
