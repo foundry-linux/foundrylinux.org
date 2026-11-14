@@ -133,6 +133,10 @@ foundry-apt/
   docs/infra-setup.md           one-time setup: R2 bucket, GPG, DNS
 ```
 
+## PowerDevil recovery fix
+
+Foundry rebuilds Ubuntu’s PowerDevil 6.6.6 as `4:6.6.6-0ubuntu0.1+foundry1` with the upstream fixes for stale battery warnings. `foundry-desktop` 1.0.3 requires this version or newer. The package keeps the Ubuntu 26.04 KDE stack and runs battery-notification regression tests during its build. See [the package notes](packages/powerdevil/README.md) for provenance, validation and maintenance requirements.
+
 ## Local development
 
 ```bash

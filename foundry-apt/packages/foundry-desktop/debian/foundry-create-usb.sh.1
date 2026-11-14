@@ -1,0 +1,34 @@
+.TH FOUNDRY-CREATE-USB.SH 1 "2026-11-14" "Foundry Linux" "User Commands"
+.SH NAME
+foundry-create-usb.sh \- download a Foundry ISO and prepare installation media
+.SH SYNOPSIS
+.B foundry-create-usb.sh
+.RI [ options ]
+.SH DESCRIPTION
+Downloads the selected Foundry Linux ISO, verifies its published SHA256 checksum,
+and opens it in isoimagewriter or usb-creator-kde.
+A local ISO may be selected instead.
+.SH OPTIONS
+.TP
+.BI "--iso " PATH
+Use a local ISO instead of downloading. Local images are not checksum-verified
+by this script.
+.TP
+.BI "--device " DEV
+Write directly to the named block device using dd. This erases the device.
+The script rejects mounted partitions and undersized devices, then asks for
+the exact confirmation YES. Writing requires appropriate device permissions.
+.TP
+.BI "--edition " NAME
+Select the edition to download; the default is anvil.
+.TP
+.B -h, --help
+Show usage and exit.
+.SH ENVIRONMENT
+.B EDITION
+sets the default edition; --edition overrides it.
+.SH FILES
+Downloaded images are cached in ~/Downloads/.
+.SH SEE ALSO
+.BR dd (1),
+.BR sha256sum (1)
