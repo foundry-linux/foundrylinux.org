@@ -1,19 +1,24 @@
-FROM ubuntu:26.04
+# Inherits home-lab's stack-deb (Ubuntu 26.04 + build-essential, cmake,
+# pkg-config, python3, curl, ca-certificates, debhelper, devscripts, fakeroot,
+# lintian, aptly, gnupg, rclone), pinned by digest from home-lab
+# stacks/stacks.lock.json. Only project-specific packages are installed here; a
+# missing shared tool goes into stack-deb (home-lab
+# docs/plans/2026-10-23-standard-container-stacks.md, "The rule").
+# registry.lab.home.arpa:5000 is reachable only inside the lab; this image is
+# built only by scripts/build-all-in-docker.sh (task apt-build) on a lab machine.
+# CI (.github/workflows/foundry-apt-publish.yml) does not use this file.
+FROM registry.lab.home.arpa:5000/stacks/stack-deb@sha256:86c63a46301a9aee9d797ae7bfa49aa593dc6cc44f0190b7698fa4455c1708c2
 
 ENV DEBIAN_FRONTEND=noninteractive
+# The stack ends as user dev; this builder runs as root (build-all-in-docker.sh
+# mounts its caches under /root, and build.sh scripts take the EUID 0 branch of
+# _apt), so it stays root as before.
+USER root
 
 # Vendored packages use Build-Depends from universe (for example dh-python).
 RUN sed -i 's/^Components: main restricted$/Components: main restricted universe multiverse/' /etc/apt/sources.list.d/ubuntu.sources \
     && apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
-        build-essential \
-        ca-certificates \
-        cmake \
-        curl \
-        debhelper \
-        devscripts \
-        dpkg-dev \
-        fakeroot \
         libcairo2-dev \
         libfontconfig-dev \
         libgif-dev \
@@ -23,11 +28,8 @@ RUN sed -i 's/^Components: main restricted$/Components: main restricted universe
         libsecret-1-dev \
         libx11-dev \
         libxkbfile-dev \
-        lintian \
         nodejs \
         npm \
-        pkg-config \
-        python3 \
         qt6-base-dev \
         qt6-declarative-dev \
         sudo \
