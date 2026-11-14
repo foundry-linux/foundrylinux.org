@@ -13,7 +13,8 @@ Depends: ${misc:Depends},
  foundry-kde-theme,
  foundry-welcome,
  isoimagewriter | usb-creator-kde,
- kdialog
+ kdialog,
+ powerdevil (>= 4:6.6.6-0ubuntu0.1+foundry1)
 Description: Foundry Linux KDE desktop integration (ISO / KDE hosts only)
  KDE-specific Foundry Linux packages. Only meaningful on the Foundry Linux
  ISO (Kubuntu 26.04 base) or on an existing KDE Plasma desktop.

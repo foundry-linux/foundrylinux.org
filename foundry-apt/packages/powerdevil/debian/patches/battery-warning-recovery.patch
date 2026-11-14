@@ -1,0 +1,288 @@
+Description: Refresh and clear battery warnings after charge recovers
+ Backport the upstream recovery fixes and add ten regression cases for the
+ actual Core charge-change handler, thresholds, timers and peripherals.
+Origin: backport, https://github.com/KDE/powerdevil/commit/8eac4ca25bf0b6bd957b6fc10b9b1c953110b3d6
+ https://github.com/KDE/powerdevil/commit/e6d348ab2daa08b5333cd6c4ed6ad1d637d30f2d
+ https://github.com/KDE/powerdevil/commit/5c7928c4775492bdcec373bf590afea6b14396c1
+Author: Kai Uwe Broulik <kde@privat.broulik.de>
+Author: Ramil Nurmanov <ramil2004nur@gmail.com>
+Bug: https://bugs.kde.org/show_bug.cgi?id=500838
+Forwarded: not-needed
+Last-Update: 2026-11-14
+Comment: Runtime changes are upstream. New tests and backport preparation
+ assisted by OpenAI Codex CLI 0.169.0, gpt-6-astra, reasoning effort medium
+ (verified session metadata).
+
+diff --git a/autotests/CMakeLists.txt b/autotests/CMakeLists.txt
+index 6b73300..5be6ba8 100644
+--- a/autotests/CMakeLists.txt
++++ b/autotests/CMakeLists.txt
+@@ -1,3 +1,4 @@
+ include(ECMMarkAsTest)
+ add_subdirectory(applets)
+ add_subdirectory(migrateconfig)
++add_subdirectory(batterynotifications)
+diff --git a/autotests/batterynotifications/CMakeLists.txt b/autotests/batterynotifications/CMakeLists.txt
+new file mode 100644
+index 0000000..795696d
+--- /dev/null
++++ b/autotests/batterynotifications/CMakeLists.txt
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: BSD-2-Clause
++find_package(Qt6 REQUIRED COMPONENTS Test)
++add_executable(batterynotificationstest batterynotificationstest.cpp)
++target_include_directories(batterynotificationstest PRIVATE
++    ${CMAKE_SOURCE_DIR}/daemon ${CMAKE_BINARY_DIR}/daemon)
++target_link_libraries(batterynotificationstest PRIVATE powerdevilcore Qt::Test)
++add_test(NAME batterynotificationstest COMMAND batterynotificationstest)
++set_tests_properties(batterynotificationstest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
++ecm_mark_as_test(batterynotificationstest)
+diff --git a/autotests/batterynotifications/batterynotificationstest.cpp b/autotests/batterynotifications/batterynotificationstest.cpp
+new file mode 100644
+index 0000000..7cbf9e6
+--- /dev/null
++++ b/autotests/batterynotifications/batterynotificationstest.cpp
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include "powerdevilcore.h"
++#include "PowerDevilGlobalSettings.h"
++#include <KNotification>
++#include <QStandardPaths>
++#include <QTest>
++#include <QTimer>
++
++namespace PowerDevil
++{
++class BatteryNotificationsTest : public QObject
++{
++    Q_OBJECT
++private Q_SLOTS:
++    void initTestCase()
++    {
++        QStandardPaths::setTestModeEnabled(true);
++    }
++
++    void recoveringCharge_data()
++    {
++        QTest::addColumn<int>("previous");
++        QTest::addColumn<int>("current");
++        QTest::addColumn<int>("otherBattery");
++        QTest::addColumn<bool>("critical");
++        QTest::addColumn<bool>("remains");
++        QTest::newRow("low-percentage-updates") << 7 << 9 << 0 << false << true;
++        QTest::newRow("low-boundary") << 9 << 10 << 0 << false << true;
++        QTest::newRow("low-recovered") << 9 << 12 << 0 << false << false;
++        QTest::newRow("charged-during-suspend") << 9 << 80 << 0 << false << false;
++        QTest::newRow("critical-percentage-updates") << 2 << 4 << 0 << true << true;
++        QTest::newRow("critical-boundary") << 4 << 5 << 0 << true << true;
++        QTest::newRow("critical-recovered-still-low") << 4 << 6 << 0 << true << false;
++        QTest::newRow("aggregate-charge-recovers") << 4 << 6 << 5 << false << false;
++    }
++
++    void recoveringCharge()
++    {
++        QFETCH(int, previous);
++        QFETCH(int, current);
++        QFETCH(int, otherBattery);
++        QFETCH(bool, critical);
++        QFETCH(bool, remains);
++        Core core(nullptr);
++        core.m_globalSettings = new GlobalSettings(false, false, &core);
++        core.m_globalSettings->setBatteryLowLevel(10);
++        core.m_globalSettings->setBatteryCriticalLevel(5);
++        core.m_batteriesPercent.insert(QStringLiteral("battery"), previous);
++        core.m_batteriesPercent.insert(QStringLiteral("other"), otherBattery);
++        auto &notification = critical ? core.m_criticalBatteryNotification : core.m_lowBatteryNotification;
++        notification = new KNotification(QStringLiteral("test"), KNotification::Persistent, &core);
++        if (critical) {
++            core.m_criticalBatteryTimer->start(60000);
++        }
++        // Exercise the real signal handler without an AC plug/unplug event.
++        core.onBatteryChargePercentChanged(current, QStringLiteral("battery"));
++        QCOMPARE(core.currentChargePercent(), current + otherBattery);
++        QCOMPARE(!notification.isNull(), remains);
++        if (remains) {
++            QVERIFY(notification->title().contains(QString::number(current + otherBattery)));
++        }
++        if (critical) {
++            QCOMPARE(core.m_criticalBatteryTimer->isActive(), remains);
++        }
++    }
++
++    void recoveryCancelsTimerAfterNotificationDismissed()
++    {
++        Core core(nullptr);
++        core.m_globalSettings = new GlobalSettings(false, false, &core);
++        core.m_globalSettings->setBatteryCriticalLevel(5);
++        core.m_batteriesPercent.insert(QStringLiteral("battery"), 4);
++        core.m_criticalBatteryTimer->start(60000);
++        core.onBatteryChargePercentChanged(6, QStringLiteral("battery"));
++        QVERIFY(!core.m_criticalBatteryTimer->isActive());
++    }
++
++    void peripheralRecoveryDoesNotClearLaptopWarning()
++    {
++        Core core(nullptr);
++        core.m_batteriesPercent.insert(QStringLiteral("battery"), 4);
++        core.m_peripheralBatteriesPercent.insert(QStringLiteral("mouse"), 4);
++        core.m_criticalBatteryNotification = new KNotification(QStringLiteral("test"), KNotification::Persistent, &core);
++        core.m_criticalBatteryTimer->start(60000);
++        core.onBatteryChargePercentChanged(80, QStringLiteral("mouse"));
++        QCOMPARE(core.currentChargePercent(), 4);
++        QVERIFY(core.m_criticalBatteryNotification);
++        QVERIFY(core.m_criticalBatteryTimer->isActive());
++    }
++};
++}
++
++QTEST_MAIN(PowerDevil::BatteryNotificationsTest)
++#include "batterynotificationstest.moc"
+diff --git a/daemon/powerdevilcore.cpp b/daemon/powerdevilcore.cpp
+index 27cfb64..7414d72 100644
+--- a/daemon/powerdevilcore.cpp
++++ b/daemon/powerdevilcore.cpp
+@@ -292,11 +292,7 @@ void Core::reparseConfiguration()
+ 
+     // Check if critical threshold might have changed and cancel the timer if necessary.
+     if (currentChargePercent() > m_globalSettings->batteryCriticalLevel()) {
+-        m_criticalBatteryTimer->stop();
+-        if (m_criticalBatteryNotification) {
+-            m_criticalBatteryNotification->close();
+-            m_criticalBatteryNotification = nullptr;
+-        }
++        cancelCriticalBatteryNotification();
+     }
+ 
+     if (m_lowBatteryNotification && currentChargePercent() > m_globalSettings->batteryLowLevel()) {
+@@ -469,17 +465,14 @@ void Core::onDeviceAdded(const QString &udi)
+     }
+ 
+     if (currentChargePercent() > m_globalSettings->batteryCriticalLevel()) {
+-        if (m_criticalBatteryNotification) {
+-            m_criticalBatteryNotification->close();
+-            m_criticalBatteryNotification = nullptr;
+-        }
+-
+         if (m_criticalBatteryTimer->isActive()) {
+             m_criticalBatteryTimer->stop();
+             emitRichNotification(QStringLiteral("pluggedin"), //
+                                  i18n("Extra Battery Added"),
+                                  i18n("The system will no longer go to sleep."));
+         }
++        // This stops the timer, so for the notification we check if it was active before that.
++        cancelCriticalBatteryNotification();
+     }
+ }
+ 
+@@ -666,11 +659,7 @@ void Core::handleCriticalBattery(int percent)
+     auto cancelAction =
+         m_criticalBatteryNotification->addAction(i18nc("Cancel timeout that will automatically put system to sleep because of low battery", "Cancel"));
+     connect(cancelAction, &KNotificationAction::activated, this, [this] {
+-        m_criticalBatteryTimer->stop();
+-        if (m_criticalBatteryNotification) {
+-            m_criticalBatteryNotification->close();
+-            m_criticalBatteryNotification = nullptr;
+-        }
++        cancelCriticalBatteryNotification();
+     });
+ 
+     m_criticalBatteryNotification->sendEvent();
+@@ -679,10 +668,17 @@ void Core::handleCriticalBattery(int percent)
+ void Core::updateBatteryNotifications(int percent)
+ {
+     if (m_lowBatteryNotification) {
+-        m_lowBatteryNotification->setTitle(i18n("Battery Low (%1% Remaining)", percent));
++        if (percent > m_globalSettings->batteryLowLevel()) {
++            m_lowBatteryNotification->close();
++            m_lowBatteryNotification = nullptr;
++        } else {
++            m_lowBatteryNotification->setTitle(i18n("Battery Low (%1% Remaining)", percent));
++        }
+     }
+ 
+-    if (m_criticalBatteryNotification) {
++    if (percent > m_globalSettings->batteryCriticalLevel()) {
++        cancelCriticalBatteryNotification();
++    } else if (m_criticalBatteryNotification) {
+         m_criticalBatteryNotification->setTitle(i18n("Battery Critical (%1% Remaining)", percent));
+     }
+ }
+@@ -701,11 +697,6 @@ void Core::onAcAdapterStateChanged(BatteryController::AcAdapterState state)
+             m_lowBatteryNotification = nullptr;
+         }
+ 
+-        if (m_criticalBatteryNotification) {
+-            m_criticalBatteryNotification->close();
+-            m_criticalBatteryNotification = nullptr;
+-        }
+-
+         if (m_powerCordUnpluggedNotification) {
+             m_powerCordUnpluggedNotification->close();
+             m_powerCordUnpluggedNotification = nullptr;
+@@ -723,6 +714,9 @@ void Core::onAcAdapterStateChanged(BatteryController::AcAdapterState state)
+             m_powerCordPluggedInNotification->setTitle(i18n("Running on AC Power"));
+             m_powerCordPluggedInNotification->setText(i18n("The power cord has been plugged in."));
+         }
++        // This stops the timer, so for the notification we check if it was active before that.
++        cancelCriticalBatteryNotification();
++
+         m_powerCordPluggedInNotification->sendEvent();
+     } else if (state == BatteryController::Unplugged) {
+         if (m_powerCordPluggedInNotification) {
+@@ -765,6 +759,8 @@ void Core::onBatteryChargePercentChanged(int percent, const QString &udi)
+             // Only refresh status if a notification has actually been emitted
+             loadProfile();
+         }
++    } else if (currentPercent > previousPercent) {
++        updateBatteryNotifications(currentPercent);
+     }
+ }
+ 
+@@ -804,10 +800,7 @@ void Core::onBatteryChargeStateChanged(int state, const QString &udi)
+ 
+ void Core::onCriticalBatteryTimerExpired()
+ {
+-    if (m_criticalBatteryNotification) {
+-        m_criticalBatteryNotification->close();
+-        m_criticalBatteryNotification = nullptr;
+-    }
++    cancelCriticalBatteryNotification();
+ 
+     // Do that only if we're not on AC and battery level is still critical
+     if (m_batteryController->acAdapterState() == BatteryController::Unplugged && currentChargePercent() <= m_globalSettings->batteryCriticalLevel()) {
+@@ -826,6 +819,15 @@ void Core::triggerCriticalBatteryAction()
+     }
+ }
+ 
++void Core::cancelCriticalBatteryNotification()
++{
++    m_criticalBatteryTimer->stop();
++    if (m_criticalBatteryNotification) {
++        m_criticalBatteryNotification->close();
++        m_criticalBatteryNotification = nullptr;
++    }
++}
++
+ void Core::onBatteryRemainingTimeChanged(qulonglong time)
+ {
+     Q_EMIT batteryRemainingTimeChanged(time);
+diff --git a/daemon/powerdevilcore.h b/daemon/powerdevilcore.h
+index 599bfa3..0d16372 100644
+--- a/daemon/powerdevilcore.h
++++ b/daemon/powerdevilcore.h
+@@ -139,6 +139,7 @@ private:
+     void handleCriticalBattery(int percent);
+     void updateBatteryNotifications(int percent);
+     void triggerCriticalBatteryAction();
++    void cancelCriticalBatteryNotification();
+ 
+     void readChargeThreshold();
+     void readBatteryConservationMode();
+@@ -150,6 +151,7 @@ private:
+     int currentChargePercent() const;
+ 
+     friend class Action;
++    friend class BatteryNotificationsTest;
+ 
+     bool m_hasDualGpu;
+     bool m_batteryConservationModeEnabled = false;

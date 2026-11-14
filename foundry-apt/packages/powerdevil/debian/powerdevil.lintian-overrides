@@ -1,0 +1,16 @@
+# private library
+powerdevil: package-name-doesnt-match-sonames libpowerdevilconfigcommonprivate6
+# private library
+powerdevil: no-symbols-control-file
+#
+# systemsettings executable required for the KCM is provided by the Recommends: systemsettings dependency
+powerdevil: desktop-command-not-in-package systemsettings [usr/share/applications/kcm_powerdevilprofilesconfig.desktop]
+
+# Formatting will be fine with a list made of (-) prefixed paragraphs that the tools can feel free to word-wrap 
+powerdevil: possible-unindented-list-in-extended-description line 13
+
+# Preserve the historical postal addresses in the original license notices.
+powerdevil: old-fsf-address-in-copyright-file
+
+# This KCM uses systemsettings, supplied by the existing Recommends.
+powerdevil: desktop-command-not-in-package systemsettings [usr/share/applications/kcm_mobile_power.desktop]

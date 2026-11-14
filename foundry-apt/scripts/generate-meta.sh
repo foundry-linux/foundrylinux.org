@@ -182,10 +182,12 @@ def process(name, pkg_dir):
 
     deb_arch = pkg_stanza.get("Architecture", "all")
     letter   = name[0]
+    # Debian epochs belong in metadata versions, but never in archive filenames.
+    file_version = version.split(":", 1)[-1]
     if deb_arch == "all":
-        deb_url = f"/pool/main/{letter}/{name}/{name}_{version}_all.deb"
+        deb_url = f"/pool/main/{letter}/{name}/{name}_{file_version}_all.deb"
     else:
-        deb_url = f"/pool/main/{letter}/{name}/{name}_{version}_amd64.deb"
+        deb_url = f"/pool/main/{letter}/{name}/{name}_{file_version}_amd64.deb"
 
     meta = {
         "generated":         datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

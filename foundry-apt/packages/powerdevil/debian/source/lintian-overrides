@@ -1,0 +1,3 @@
+# Reuse the SHA256-pinned orig from Ubuntu’s signed source archive unchanged;
+# Ubuntu did not include a detached upstream signature in that source package.
+powerdevil source: orig-tarball-missing-upstream-signature [powerdevil_6.6.6.orig.tar.xz]

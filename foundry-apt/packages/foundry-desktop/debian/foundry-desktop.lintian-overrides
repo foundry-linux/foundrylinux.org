@@ -1,0 +1,2 @@
+# Keep the established command used by the desktop launcher and ISO task scripts.
+foundry-desktop: script-with-language-extension [usr/bin/foundry-create-usb.sh]
