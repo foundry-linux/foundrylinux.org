@@ -43,7 +43,7 @@ NAME="python3-inators"
 REPO_ROOT="$(cd ../.. && pwd)"
 mkdir -p "$REPO_ROOT/dist"
 
-if ! curl -fsI -o /dev/null https://files.pythonhosted.org/; then
+if ! curl -fsI -o /dev/null "$UPSTREAM_URL"; then
     echo "ERROR: cannot reach files.pythonhosted.org — skipping $NAME build" >&2
     exit 1
 fi

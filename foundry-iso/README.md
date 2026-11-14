@@ -1,12 +1,15 @@
 # Rebuild locally with current apt packages
 
-From the repository root, rebuild all Foundry apt packages, stage them into the
-ISO, and produce fresh local ISOs for both editions (no sync, upload, or
-publish):
+From the repository root, refresh APT indexes, build missing Foundry packages,
+stage them, rebuild the Anvil ISO, and run its boot smoke test:
 
 ```bash
-task --force iso-build EDITION=all
+task distro-refresh -- --edition anvil
 ```
+
+Use `task distro-refresh -- --edition atelier` for Atelier. The refresh does not
+upload or publish. The live-build archive stage also upgrades packages inherited
+from the bootstrap cache.
 
 # foundry-iso
 
@@ -49,6 +52,9 @@ also enables device nodes on that mount. The script stops if the workspace is
 read-only or Docker still sees it as `nodev`. Keep the external drive securely
 connected throughout the build; a USB disconnect can abort the ext4 journal and
 leave the workspace read-only.
+
+ISO assembly uses host networking and copies the host resolver configuration
+into the chroot, so local DNS and VPN routing work without relying on public DNS.
 
 ---
 

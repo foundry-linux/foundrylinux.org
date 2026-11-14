@@ -133,7 +133,7 @@ fetch_key https://packages.mozilla.org/apt/repo-signing-key.gpg              "$R
 echo "=== Building foundry-${EDITION} ISO (inside ubuntu:26.04 container) ==="
 docker run --rm \
   --privileged \
-  --dns 8.8.8.8 \
+  --network host \
   -e EDITION="$EDITION" \
   -e ISO_VERSION="$ISO_VERSION" \
   -v "$REPO_ROOT:/work" \
@@ -145,7 +145,7 @@ docker run --rm \
       echo "ERROR: Docker still sees /work as nodev; live-build cannot use /dev in the chroot" >&2
       exit 1
     fi
-    apt-get update -qq
+    apt-get update -qq -o APT::Update::Error-Mode=any
     apt-get install -y --no-install-recommends \
       live-build curl gpg apt-utils ca-certificates \
       xorriso genisoimage isolinux grub-efi-amd64-bin grub-pc-bin mtools dosfstools \
@@ -243,11 +243,11 @@ docker run --rm \
     # empty) before lb bootstrap, restore treats it as a cache hit, copies just our DNS
     # stub into chroot/, marks bootstrap done, and exits without running debootstrap.
     # Guard on cache/bootstrap/usr so a fresh or deleted cache does not trigger the bug.
-    # Docker containers run in a separate network namespace where the host resolver is
-    # unreachable; 8.8.8.8 ensures the restored chroot can reach archive.ubuntu.com.
+    # Host networking lets the chroot use the host resolver, including a local
+    # systemd-resolved stub. Hard-coded public DNS can be blocked by the host VPN.
     if [ -d cache/bootstrap/usr ]; then
       mkdir -p cache/bootstrap/run/systemd/resolve
-      echo "nameserver 8.8.8.8" > cache/bootstrap/run/systemd/resolve/stub-resolv.conf
+      cp /etc/resolv.conf cache/bootstrap/run/systemd/resolve/stub-resolv.conf
     fi
     # Stage 1: debootstrap only
     lb bootstrap
@@ -256,7 +256,7 @@ docker run --rm \
     # (where systemd writes its own stub-resolv.conf during package configure).
     # Either way, overwrite immediately so the gnupg install below succeeds.
     mkdir -p chroot/run/systemd/resolve
-    echo "nameserver 8.8.8.8" > chroot/run/systemd/resolve/stub-resolv.conf
+    cp /etc/resolv.conf chroot/run/systemd/resolve/stub-resolv.conf
     # Install custom apt keys now that chroot/ exists — live-build key
     # handling in ubuntu 3.0~a57 does not reliably copy *.key files before
     # running apt-get update, so we do it explicitly here.
