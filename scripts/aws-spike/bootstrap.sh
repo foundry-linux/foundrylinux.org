@@ -4,6 +4,11 @@ set -Eeuo pipefail
 exec > >(tee /var/log/foundry-spike-bootstrap.log) 2>&1
 trap 'r=$?; if ((r)); then shutdown -h +2 "Foundry bootstrap failed; disks retained"; fi' EXIT
 source /opt/foundry-spike/config.sh
+# Keep host changes outside measured workloads. Ubuntu's periodic upgrader can
+# otherwise restart transient controller services after updating libc.
+systemctl disable --now apt-daily.timer apt-daily-upgrade.timer
+printf 'APT::Periodic::Enable "0";\n' > /etc/apt/apt.conf.d/99foundry-spike-no-periodic
+export NEEDRESTART_MODE=l
 export DEBIAN_FRONTEND=noninteractive
 date -u +%FT%TZ > /opt/foundry-spike/bootstrap-started-at
 # Start before dependency downloads; retain bootstrap counters on the root disk.

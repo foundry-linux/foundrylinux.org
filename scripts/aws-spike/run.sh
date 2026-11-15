@@ -23,6 +23,8 @@ finish() {
     shutdown -h +2 "Foundry spike $mode finished (exit $result); disks retained"
     exit "$result"
 }
+trap 'exit 143' TERM
+trap 'exit 130' INT
 trap finish EXIT
 # Preserve every attempt instead of overwriting a failed run's measurements.
 if [[ -e "$run/started-at" ]]; then
@@ -42,6 +44,17 @@ stage() {
 }
 export DEBIAN_FRONTEND=noninteractive
 cd "$base"
+if [[ $mode == cold ]]; then
+    # A repaired checkout or cached image invalidates clean cold proof.
+    test ! -e source
+    test -z "$(docker image ls -q)"
+    test -z "$(docker container ls -aq)"
+    if [[ -d cache ]] && find cache -type f -print -quit | grep -q .; then
+        echo "Existing download cache invalidates clean cold proof" >&2
+        exit 1
+    fi
+    date -u +%FT%TZ > "$run/empty-inputs-verified-at"
+fi
 if [[ ! -d source/.git ]]; then
     stage clone git clone https://github.com/foundry-linux/foundrylinux.org.git source
 fi
@@ -61,6 +74,8 @@ git diff --binary > "$run/source.patch"
 cp /opt/foundry-spike/stacks-source.txt "$run/stacks-source.txt"
 docker images --digests > "$run/images-before.txt"
 df -h > "$run/disk-before.txt"
+uname -a > "$run/host-kernel.txt"
+dpkg-query -W > "$run/host-packages.tsv"
 sar -u -r -b -d 5 > "$run/resources.sar.txt" &
 monitor=$!
 
