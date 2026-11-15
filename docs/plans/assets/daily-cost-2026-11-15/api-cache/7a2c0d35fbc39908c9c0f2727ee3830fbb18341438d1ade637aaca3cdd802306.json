@@ -1,0 +1,40 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"SourMesen\",name:\"Mesen2\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:09.328361+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "2.1.1",
+              "target": {
+                "committedDate": "2025-07-06T06:37:59Z",
+                "oid": "137ae7ce3bf3f539d007e2c4ef3cb3b6c97672a1"
+              }
+            },
+            {
+              "name": "2.1.0",
+              "target": {
+                "committedDate": "2025-05-16T13:00:46Z",
+                "oid": "b21e273d85b348ce687fe322262fd527a6a6425f"
+              }
+            },
+            {
+              "name": "2.0.0-preview1",
+              "target": {
+                "committedDate": "2023-01-26T01:37:20Z",
+                "oid": "979132391b2c3f68550e5d62016618ca80679b5f"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Mw"
+          }
+        }
+      }
+    }
+  }
+}

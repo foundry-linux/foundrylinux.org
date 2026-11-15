@@ -1,0 +1,95 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"wbniv\",name:\"WorldFoundry\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:03.760750+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "android-2026-10-03",
+              "target": {
+                "committedDate": "2026-10-02T15:32:12Z",
+                "oid": "9cef6dded8e830ca0a3f8b80df4baf9a93dd52af"
+              }
+            },
+            {
+              "name": "android-2026-10-03-pairing-fix",
+              "target": {
+                "committedDate": "2026-10-02T23:19:21Z",
+                "oid": "a05b76db8816248431743563cbfc69aadd7b96a8"
+              }
+            },
+            {
+              "name": "android-2026-10-03-icon-v5",
+              "target": {
+                "committedDate": "2026-10-02T23:59:50Z",
+                "oid": "3903bba0efaefed06cfaa83cebb2b2ee3667c583"
+              }
+            },
+            {
+              "name": "android-2026-10-03-icon-v4",
+              "target": {
+                "committedDate": "2026-10-02T23:49:07Z",
+                "oid": "f48708c3951ad81a60b7c7cac3f6df705035017b"
+              }
+            },
+            {
+              "name": "site01-m5-hud",
+              "target": {
+                "tagger": {
+                  "date": "2026-08-07T16:29:15-07:00"
+                },
+                "target": {
+                  "committedDate": "2026-08-07T23:29:05Z",
+                  "oid": "f73d4fc6eefc6b64ee71d70f3572d07fd69094bc"
+                }
+              }
+            },
+            {
+              "name": "site01-m1-m3",
+              "target": {
+                "tagger": {
+                  "date": "2026-08-07T16:18:11-07:00"
+                },
+                "target": {
+                  "committedDate": "2026-08-07T23:17:56Z",
+                  "oid": "40073304ecd4b3adde0b23b2496fdd6e560e46d4"
+                }
+              }
+            },
+            {
+              "name": "pre-legacy-gl-retire",
+              "target": {
+                "tagger": {
+                  "date": "2026-04-17T23:58:12-07:00"
+                },
+                "target": {
+                  "committedDate": "2026-04-18T06:00:04Z",
+                  "oid": "807d1ea920bd1a90b37e64f562b17f2e6a89f744"
+                }
+              }
+            },
+            {
+              "name": "preserved/windows-1999-reference",
+              "target": {
+                "tagger": {
+                  "date": "2026-04-14T08:39:28-07:00"
+                },
+                "target": {
+                  "committedDate": "2026-04-14T15:38:49Z",
+                  "oid": "0e747d58ab4c8e2d0c2a1dffd66341a5a55a6cd0"
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "OA"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,579 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"hrydgard\",name:\"ppsspp\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:10.713507+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "v1.20.4",
+              "publishedAt": "2026-05-16T12:35:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.20.4"
+            },
+            {
+              "tagName": "v1.20.3",
+              "publishedAt": "2026-03-15T17:52:47Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.20.3"
+            },
+            {
+              "tagName": "v1.20.2",
+              "publishedAt": "2026-03-10T13:35:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.20.2"
+            },
+            {
+              "tagName": "v1.20.1",
+              "publishedAt": "2026-03-03T14:57:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.20.1"
+            },
+            {
+              "tagName": "v1.20",
+              "publishedAt": "2026-03-03T14:30:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.20"
+            },
+            {
+              "tagName": "v1.19.3",
+              "publishedAt": "2025-07-15T10:11:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.19.3"
+            },
+            {
+              "tagName": "v1.19.2",
+              "publishedAt": "2025-06-15T11:48:21Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.19.2"
+            },
+            {
+              "tagName": "v1.19.1",
+              "publishedAt": "2025-06-09T16:30:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.19.1"
+            },
+            {
+              "tagName": "v1.19",
+              "publishedAt": "2025-06-06T11:27:16Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.19"
+            },
+            {
+              "tagName": "v1.18.1",
+              "publishedAt": "2024-11-04T16:20:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.18.1"
+            },
+            {
+              "tagName": "v1.18",
+              "publishedAt": "2024-11-03T11:33:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.18"
+            },
+            {
+              "tagName": "v1.17.1",
+              "publishedAt": "2024-02-04T13:11:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.17.1"
+            },
+            {
+              "tagName": "v1.17",
+              "publishedAt": "2024-01-27T13:51:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.17"
+            },
+            {
+              "tagName": "v1.16.6",
+              "publishedAt": "2023-10-12T10:28:09Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.16.6"
+            },
+            {
+              "tagName": "v1.16.5",
+              "publishedAt": "2023-09-28T11:09:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.16.5"
+            },
+            {
+              "tagName": "v1.16.4",
+              "publishedAt": "2023-09-25T12:22:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.16.4"
+            },
+            {
+              "tagName": "v1.16.3",
+              "publishedAt": "2023-09-22T13:31:57Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.16.3"
+            },
+            {
+              "tagName": "v1.16.2",
+              "publishedAt": "2023-09-19T11:09:40Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.16.2"
+            },
+            {
+              "tagName": "v1.16.1",
+              "publishedAt": "2023-09-12T17:04:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.16.1"
+            },
+            {
+              "tagName": "v1.16",
+              "publishedAt": "2023-09-09T13:18:03Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.16"
+            },
+            {
+              "tagName": "v1.15.4",
+              "publishedAt": "2023-05-22T14:31:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.15.4"
+            },
+            {
+              "tagName": "v1.15.3",
+              "publishedAt": "2023-05-07T08:52:09Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.15.3"
+            },
+            {
+              "tagName": "v1.15.2",
+              "publishedAt": "2023-05-04T09:52:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.15.2"
+            },
+            {
+              "tagName": "v1.15.1",
+              "publishedAt": "2023-05-03T11:20:14Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.15.1"
+            },
+            {
+              "tagName": "v1.15",
+              "publishedAt": "2023-04-30T11:47:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.15"
+            },
+            {
+              "tagName": "v1.14.4",
+              "publishedAt": "2023-01-03T10:21:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.14.4"
+            },
+            {
+              "tagName": "v1.14.3",
+              "publishedAt": "2023-01-02T09:24:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.14.3"
+            },
+            {
+              "tagName": "v1.14.2",
+              "publishedAt": "2022-12-30T12:41:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.14.2"
+            },
+            {
+              "tagName": "v1.14.1",
+              "publishedAt": "2022-12-20T13:32:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.14.1"
+            },
+            {
+              "tagName": "v1.14",
+              "publishedAt": "2022-12-15T13:06:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.14"
+            },
+            {
+              "tagName": "v1.13.1b",
+              "publishedAt": "2022-09-10T14:24:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.13.1b"
+            },
+            {
+              "tagName": "v1.13.2",
+              "publishedAt": "2022-09-10T13:55:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.13.2"
+            },
+            {
+              "tagName": "v1.13.1",
+              "publishedAt": "2022-07-28T13:39:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.13.1"
+            },
+            {
+              "tagName": "v1.13",
+              "publishedAt": "2022-07-28T09:04:18Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.13"
+            },
+            {
+              "tagName": "v1.12.3",
+              "publishedAt": "2021-10-18T18:38:20Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.12.3"
+            },
+            {
+              "tagName": "v1.12.2",
+              "publishedAt": "2021-10-10T11:28:40Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.12.2"
+            },
+            {
+              "tagName": "v1.12.1",
+              "publishedAt": "2021-10-09T08:47:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.12.1"
+            },
+            {
+              "tagName": "v1.12",
+              "publishedAt": "2021-10-07T14:39:21Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.12"
+            },
+            {
+              "tagName": "v1.11",
+              "publishedAt": "2021-02-07T21:47:54Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.11"
+            },
+            {
+              "tagName": "v1.10.3",
+              "publishedAt": "2020-07-12T21:22:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.10.3"
+            },
+            {
+              "tagName": "v1.10.2",
+              "publishedAt": "2020-07-07T21:22:24Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.10.2"
+            },
+            {
+              "tagName": "v1.10.1",
+              "publishedAt": "2020-07-06T19:11:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.10.1"
+            },
+            {
+              "tagName": "v1.10",
+              "publishedAt": "2020-06-27T12:47:20Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.10"
+            },
+            {
+              "tagName": "v1.9",
+              "publishedAt": "2019-09-25T18:51:01Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.9"
+            },
+            {
+              "tagName": "v1.8.0",
+              "publishedAt": "2019-03-14T10:11:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.8.0"
+            },
+            {
+              "tagName": "v1.7.1",
+              "publishedAt": "2018-11-01T14:22:21Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.7.1"
+            },
+            {
+              "tagName": "v1.7",
+              "publishedAt": "2018-11-01T14:22:05Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.7"
+            },
+            {
+              "tagName": "v1.6.3",
+              "publishedAt": "2018-06-05T20:44:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.6.3"
+            },
+            {
+              "tagName": "v1.6.2",
+              "publishedAt": "2018-05-30T21:26:48Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.6.2"
+            },
+            {
+              "tagName": "v1.6.1",
+              "publishedAt": "2018-05-29T08:58:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.6.1"
+            },
+            {
+              "tagName": "v1.6",
+              "publishedAt": "2018-05-26T13:41:46Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.6"
+            },
+            {
+              "tagName": "v1.5.4",
+              "publishedAt": "2017-12-17T12:00:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.5.4"
+            },
+            {
+              "tagName": "v1.3",
+              "publishedAt": "2016-09-17T14:35:25Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.3"
+            },
+            {
+              "tagName": "v1.2.2",
+              "publishedAt": "2016-03-20T00:41:09Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.2.2"
+            },
+            {
+              "tagName": "v1.2.1",
+              "publishedAt": "2016-03-19T19:03:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.2.1"
+            },
+            {
+              "tagName": "v1.2",
+              "publishedAt": "2016-03-19T18:50:14Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.2"
+            },
+            {
+              "tagName": "v1.1.1",
+              "publishedAt": "2016-01-02T21:04:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.1.1"
+            },
+            {
+              "tagName": "v1.1.0",
+              "publishedAt": "2016-01-02T20:57:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.1.0"
+            },
+            {
+              "tagName": "v1.0.1",
+              "publishedAt": "2015-04-04T20:09:07Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.0.1"
+            },
+            {
+              "tagName": "v1.0",
+              "publishedAt": "2015-02-01T22:28:38Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v1.0"
+            },
+            {
+              "tagName": "v0.9.9.1",
+              "publishedAt": "2014-08-27T14:47:20Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.9.1"
+            },
+            {
+              "tagName": "v0.9.9",
+              "publishedAt": "2014-07-28T02:18:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.9"
+            },
+            {
+              "tagName": "v0.9.8",
+              "publishedAt": "2014-07-13T07:29:14Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.8"
+            },
+            {
+              "tagName": "v0.9.7.2",
+              "publishedAt": "2014-07-13T05:43:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.7.2"
+            },
+            {
+              "tagName": "v0.9.7.1",
+              "publishedAt": "2014-07-13T07:21:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.7.1"
+            },
+            {
+              "tagName": "v0.9.7",
+              "publishedAt": "2014-02-15T18:08:04Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.7"
+            },
+            {
+              "tagName": "v0.9.6",
+              "publishedAt": "2014-07-13T05:41:06Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.6"
+            },
+            {
+              "tagName": "v0.9.5",
+              "publishedAt": "2014-07-13T05:40:02Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.5"
+            },
+            {
+              "tagName": "v0.9.1",
+              "publishedAt": "2014-07-13T05:37:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9.1"
+            },
+            {
+              "tagName": "v0.9",
+              "publishedAt": "2014-07-13T05:42:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.9"
+            },
+            {
+              "tagName": "v0.8.1",
+              "publishedAt": "2014-07-13T05:23:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.8.1"
+            },
+            {
+              "tagName": "v0.8",
+              "publishedAt": "2014-07-13T05:21:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.8"
+            },
+            {
+              "tagName": "v0.7.6",
+              "publishedAt": "2014-07-13T05:16:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.7.6"
+            },
+            {
+              "tagName": "v0.7.5",
+              "publishedAt": "2014-07-13T05:13:20Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.7.5"
+            },
+            {
+              "tagName": "v0.7",
+              "publishedAt": "2014-07-13T05:11:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.7"
+            },
+            {
+              "tagName": "v0.6.1",
+              "publishedAt": "2014-07-13T05:09:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.6.1"
+            },
+            {
+              "tagName": "v0.6",
+              "publishedAt": "2014-07-13T05:08:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.6"
+            },
+            {
+              "tagName": "v0.5",
+              "publishedAt": "2014-07-13T05:07:35Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.5"
+            },
+            {
+              "tagName": "v0.4",
+              "publishedAt": "2014-07-13T05:05:36Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.4"
+            },
+            {
+              "tagName": "v0.3.1",
+              "publishedAt": "2014-08-27T21:23:17Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/hrydgard/ppsspp/releases/tag/v0.3.1"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAxMi0xMS0yMFQxNTo0OTowNVrOAAaBhA=="
+          }
+        }
+      }
+    }
+  }
+}

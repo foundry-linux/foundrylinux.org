@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-11-15T12:05:41.808725+00:00",
+  "source": "AWS Pricing GetProducts API",
+  "api_region": "us-east-1",
+  "product_region": "ap-south-1",
+  "instance_type": "m7i.xlarge",
+  "operating_system": "Linux",
+  "tenancy": "Shared",
+  "capacity_status": "Used",
+  "preinstalled_software": "NA",
+  "sku": "9F8VBK2QNNNBSF2Y",
+  "price_dimension": "9F8VBK2QNNNBSF2Y.JRTCKXETXF.6YS6EN2CT7",
+  "term": "OnDemand",
+  "unit": "Hrs",
+  "usd": "0.2121000000",
+  "effective_date": "2026-11-01T00:00:00Z",
+  "catalog_version": "20261114012926",
+  "publication_date": "2026-11-14T01:29:26Z",
+  "note": "Selected fields transcribed from successful GetProducts response; not an account invoice."
+}

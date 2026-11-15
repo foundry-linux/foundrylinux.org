@@ -1,0 +1,719 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"xemu-project\",name:\"xemu\") { releases(first:100,after:\"Y3Vyc29yOnYyOpK0MjAyNS0wMy0yMlQyMjoyNjoxMlrODGBrpA==\",orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:24.848382+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "v0.8.40",
+              "publishedAt": "2025-03-19T09:40:54Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.40"
+            },
+            {
+              "tagName": "v0.8.39",
+              "publishedAt": "2025-03-17T22:14:32Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.39"
+            },
+            {
+              "tagName": "v0.8.38",
+              "publishedAt": "2025-03-17T21:58:21Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.38"
+            },
+            {
+              "tagName": "v0.8.37",
+              "publishedAt": "2025-03-17T21:42:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.37"
+            },
+            {
+              "tagName": "v0.8.36",
+              "publishedAt": "2025-03-17T20:57:32Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.36"
+            },
+            {
+              "tagName": "v0.8.35",
+              "publishedAt": "2025-03-15T01:59:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.35"
+            },
+            {
+              "tagName": "v0.8.34",
+              "publishedAt": "2025-03-10T23:26:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.34"
+            },
+            {
+              "tagName": "v0.8.33",
+              "publishedAt": "2025-03-10T21:32:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.33"
+            },
+            {
+              "tagName": "v0.8.32",
+              "publishedAt": "2025-03-10T19:39:44Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.32"
+            },
+            {
+              "tagName": "v0.8.31",
+              "publishedAt": "2025-03-08T22:24:31Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.31"
+            },
+            {
+              "tagName": "v0.8.30",
+              "publishedAt": "2025-03-08T22:04:13Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.30"
+            },
+            {
+              "tagName": "v0.8.29",
+              "publishedAt": "2025-03-08T11:10:30Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.29"
+            },
+            {
+              "tagName": "v0.8.28",
+              "publishedAt": "2025-03-08T09:45:54Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.28"
+            },
+            {
+              "tagName": "v0.8.27",
+              "publishedAt": "2025-03-08T08:08:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.27"
+            },
+            {
+              "tagName": "v0.8.26",
+              "publishedAt": "2025-03-08T05:27:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.26"
+            },
+            {
+              "tagName": "v0.8.25",
+              "publishedAt": "2025-03-06T10:10:17Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.25"
+            },
+            {
+              "tagName": "v0.8.24",
+              "publishedAt": "2025-03-06T08:06:38Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.24"
+            },
+            {
+              "tagName": "v0.8.23",
+              "publishedAt": "2025-03-06T00:22:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.23"
+            },
+            {
+              "tagName": "v0.8.22",
+              "publishedAt": "2025-03-05T21:55:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.22"
+            },
+            {
+              "tagName": "v0.8.21",
+              "publishedAt": "2025-03-05T06:12:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.21"
+            },
+            {
+              "tagName": "v0.8.20",
+              "publishedAt": "2025-02-16T00:09:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.20"
+            },
+            {
+              "tagName": "v0.8.19",
+              "publishedAt": "2025-02-15T23:30:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.19"
+            },
+            {
+              "tagName": "v0.8.18",
+              "publishedAt": "2025-02-15T22:30:03Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.18"
+            },
+            {
+              "tagName": "v0.8.17",
+              "publishedAt": "2025-02-15T22:15:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.17"
+            },
+            {
+              "tagName": "v0.8.16",
+              "publishedAt": "2025-02-05T01:18:24Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.16"
+            },
+            {
+              "tagName": "v0.8.15",
+              "publishedAt": "2025-01-27T02:02:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.15"
+            },
+            {
+              "tagName": "v0.8.14",
+              "publishedAt": "2025-01-26T21:14:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.14"
+            },
+            {
+              "tagName": "v0.8.13",
+              "publishedAt": "2025-01-26T12:00:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.13"
+            },
+            {
+              "tagName": "v0.8.12",
+              "publishedAt": "2025-01-26T11:03:31Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.12"
+            },
+            {
+              "tagName": "v0.8.11",
+              "publishedAt": "2025-01-26T04:01:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.11"
+            },
+            {
+              "tagName": "v0.8.10",
+              "publishedAt": "2025-01-15T10:21:10Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.10"
+            },
+            {
+              "tagName": "v0.8.9",
+              "publishedAt": "2025-01-15T00:27:26Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.9"
+            },
+            {
+              "tagName": "v0.8.8",
+              "publishedAt": "2025-01-09T23:00:48Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.8"
+            },
+            {
+              "tagName": "v0.8.7",
+              "publishedAt": "2025-01-08T04:57:00Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.7"
+            },
+            {
+              "tagName": "v0.8.6",
+              "publishedAt": "2025-01-08T04:42:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.6"
+            },
+            {
+              "tagName": "v0.8.5",
+              "publishedAt": "2025-01-03T11:06:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.5"
+            },
+            {
+              "tagName": "v0.8.4",
+              "publishedAt": "2025-01-03T02:22:09Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.4"
+            },
+            {
+              "tagName": "v0.8.3",
+              "publishedAt": "2025-01-02T07:09:48Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.3"
+            },
+            {
+              "tagName": "v0.8.2",
+              "publishedAt": "2025-01-01T23:14:14Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.2"
+            },
+            {
+              "tagName": "v0.8.1",
+              "publishedAt": "2024-12-31T10:32:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.1"
+            },
+            {
+              "tagName": "v0.8.0",
+              "publishedAt": "2024-12-31T09:14:22Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.0"
+            },
+            {
+              "tagName": "v0.7.143",
+              "publishedAt": "2024-12-31T08:51:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.143"
+            },
+            {
+              "tagName": "v0.7.142",
+              "publishedAt": "2024-12-31T07:35:12Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.142"
+            },
+            {
+              "tagName": "v0.7.141",
+              "publishedAt": "2024-12-31T03:07:44Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.141"
+            },
+            {
+              "tagName": "v0.7.140",
+              "publishedAt": "2024-12-31T00:31:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.140"
+            },
+            {
+              "tagName": "v0.7.139",
+              "publishedAt": "2024-12-30T23:49:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.139"
+            },
+            {
+              "tagName": "v0.7.138",
+              "publishedAt": "2024-12-30T22:49:47Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.138"
+            },
+            {
+              "tagName": "v0.7.137",
+              "publishedAt": "2024-12-30T01:47:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.137"
+            },
+            {
+              "tagName": "v0.7.136",
+              "publishedAt": "2024-12-27T08:30:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.136"
+            },
+            {
+              "tagName": "v0.7.135",
+              "publishedAt": "2024-12-27T08:08:01Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.135"
+            },
+            {
+              "tagName": "v0.7.134",
+              "publishedAt": "2024-11-22T22:57:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.134"
+            },
+            {
+              "tagName": "v0.7.133",
+              "publishedAt": "2024-11-15T08:12:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.133"
+            },
+            {
+              "tagName": "v0.7.132",
+              "publishedAt": "2024-08-21T05:48:02Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.132"
+            },
+            {
+              "tagName": "v0.7.131",
+              "publishedAt": "2024-07-23T07:04:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.131"
+            },
+            {
+              "tagName": "v0.7.130",
+              "publishedAt": "2024-07-21T22:53:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.130"
+            },
+            {
+              "tagName": "v0.7.129",
+              "publishedAt": "2024-07-16T20:42:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.129"
+            },
+            {
+              "tagName": "v0.7.128",
+              "publishedAt": "2024-07-15T05:56:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.128"
+            },
+            {
+              "tagName": "v0.7.127",
+              "publishedAt": "2024-06-16T00:31:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.127"
+            },
+            {
+              "tagName": "v0.7.126",
+              "publishedAt": "2024-06-15T04:37:32Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.126"
+            },
+            {
+              "tagName": "v0.7.125",
+              "publishedAt": "2024-06-15T03:35:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.125"
+            },
+            {
+              "tagName": "v0.7.124",
+              "publishedAt": "2024-06-15T03:00:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.124"
+            },
+            {
+              "tagName": "v0.7.123",
+              "publishedAt": "2024-06-13T00:55:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.123"
+            },
+            {
+              "tagName": "v0.7.122",
+              "publishedAt": "2024-05-21T08:10:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.122"
+            },
+            {
+              "tagName": "v0.7.121",
+              "publishedAt": "2024-05-06T23:30:22Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.121"
+            },
+            {
+              "tagName": "v0.7.120",
+              "publishedAt": "2024-03-23T21:13:47Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.120"
+            },
+            {
+              "tagName": "v0.7.119",
+              "publishedAt": "2024-03-10T05:56:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.119"
+            },
+            {
+              "tagName": "v0.7.118",
+              "publishedAt": "2023-12-18T06:22:54Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.118"
+            },
+            {
+              "tagName": "v0.7.117",
+              "publishedAt": "2023-11-19T19:26:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.117"
+            },
+            {
+              "tagName": "v0.7.116",
+              "publishedAt": "2023-10-22T07:35:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.116"
+            },
+            {
+              "tagName": "v0.7.115",
+              "publishedAt": "2023-10-18T08:43:48Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.115"
+            },
+            {
+              "tagName": "v0.7.114",
+              "publishedAt": "2023-10-16T05:55:12Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.114"
+            },
+            {
+              "tagName": "v0.7.113",
+              "publishedAt": "2023-10-12T19:49:57Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.113"
+            },
+            {
+              "tagName": "v0.7.112",
+              "publishedAt": "2023-10-12T18:38:26Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.112"
+            },
+            {
+              "tagName": "v0.7.111",
+              "publishedAt": "2023-08-02T08:10:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.111"
+            },
+            {
+              "tagName": "v0.7.110",
+              "publishedAt": "2023-07-31T07:48:40Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.110"
+            },
+            {
+              "tagName": "v0.7.109",
+              "publishedAt": "2023-07-28T23:41:07Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.109"
+            },
+            {
+              "tagName": "v0.7.108",
+              "publishedAt": "2023-07-28T22:15:31Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.108"
+            },
+            {
+              "tagName": "v0.7.107",
+              "publishedAt": "2023-07-28T22:05:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.107"
+            },
+            {
+              "tagName": "v0.7.106",
+              "publishedAt": "2023-07-28T05:34:42Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.106"
+            },
+            {
+              "tagName": "v0.7.105",
+              "publishedAt": "2023-07-28T03:04:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.105"
+            },
+            {
+              "tagName": "v0.7.104",
+              "publishedAt": "2023-07-23T04:48:16Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.104"
+            },
+            {
+              "tagName": "v0.7.103",
+              "publishedAt": "2023-07-22T01:40:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.103"
+            },
+            {
+              "tagName": "v0.7.102",
+              "publishedAt": "2023-07-22T00:55:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.102"
+            },
+            {
+              "tagName": "v0.7.101",
+              "publishedAt": "2023-07-21T08:49:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.101"
+            },
+            {
+              "tagName": "v0.7.100",
+              "publishedAt": "2023-07-21T01:09:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.100"
+            },
+            {
+              "tagName": "v0.7.99",
+              "publishedAt": "2023-07-17T11:34:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.99"
+            },
+            {
+              "tagName": "v0.7.98",
+              "publishedAt": "2023-07-10T04:36:10Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.98"
+            },
+            {
+              "tagName": "v0.7.97",
+              "publishedAt": "2023-07-09T05:11:00Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.97"
+            },
+            {
+              "tagName": "v0.7.96",
+              "publishedAt": "2023-06-18T08:19:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.96"
+            },
+            {
+              "tagName": "v0.7.95",
+              "publishedAt": "2023-06-14T10:49:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.95"
+            },
+            {
+              "tagName": "v0.7.94",
+              "publishedAt": "2023-06-12T18:14:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.94"
+            },
+            {
+              "tagName": "v0.7.93",
+              "publishedAt": "2023-06-12T06:05:26Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.93"
+            },
+            {
+              "tagName": "v0.7.92",
+              "publishedAt": "2023-06-05T03:38:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.92"
+            },
+            {
+              "tagName": "v0.7.91",
+              "publishedAt": "2023-06-04T18:59:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.91"
+            },
+            {
+              "tagName": "v0.7.90",
+              "publishedAt": "2023-05-16T16:28:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.90"
+            },
+            {
+              "tagName": "v0.7.89",
+              "publishedAt": "2023-05-16T14:20:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.89"
+            },
+            {
+              "tagName": "v0.7.88",
+              "publishedAt": "2023-05-02T22:08:03Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.88"
+            },
+            {
+              "tagName": "v0.7.87",
+              "publishedAt": "2023-05-01T21:18:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.87"
+            },
+            {
+              "tagName": "v0.7.86",
+              "publishedAt": "2023-03-27T05:42:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.86"
+            },
+            {
+              "tagName": "v0.7.85",
+              "publishedAt": "2023-03-06T21:21:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/xemu-project/xemu/releases/tag/v0.7.85"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": true,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAyMy0wMy0wNlQyMTowMjo0MVrOBaTkjQ=="
+          }
+        }
+      }
+    }
+  }
+}

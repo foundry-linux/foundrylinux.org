@@ -1,0 +1,47 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"wbniv\",name:\"WorldFoundry\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:02.238355+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "android-2026-10-03-icon-v5",
+              "publishedAt": "2026-10-03T00:00:18Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/wbniv/WorldFoundry/releases/tag/android-2026-10-03-icon-v5"
+            },
+            {
+              "tagName": "android-2026-10-03-icon-v4",
+              "publishedAt": "2026-10-02T23:49:56Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/wbniv/WorldFoundry/releases/tag/android-2026-10-03-icon-v4"
+            },
+            {
+              "tagName": "android-2026-10-03-pairing-fix",
+              "publishedAt": "2026-10-02T23:20:00Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/wbniv/WorldFoundry/releases/tag/android-2026-10-03-pairing-fix"
+            },
+            {
+              "tagName": "android-2026-10-03",
+              "publishedAt": "2026-10-02T22:24:28Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/wbniv/WorldFoundry/releases/tag/android-2026-10-03"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAyNi0xMC0wMlQxNTozMjoxMlrOF_kBsQ=="
+          }
+        }
+      }
+    }
+  }
+}

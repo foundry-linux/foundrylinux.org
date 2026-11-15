@@ -1,0 +1,152 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"snes9xgit\",name:\"snes9x\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:16.236321+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "1.63",
+              "publishedAt": "2024-07-09T20:09:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.63"
+            },
+            {
+              "tagName": "1.62.3",
+              "publishedAt": "2023-03-30T16:59:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.62.3"
+            },
+            {
+              "tagName": "1.62.2",
+              "publishedAt": "2023-03-27T22:38:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.62.2"
+            },
+            {
+              "tagName": "1.62",
+              "publishedAt": "2023-03-23T20:51:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.62"
+            },
+            {
+              "tagName": "1.61",
+              "publishedAt": "2022-03-05T00:45:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.61"
+            },
+            {
+              "tagName": "1.60",
+              "publishedAt": "2019-04-23T19:20:29Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.60"
+            },
+            {
+              "tagName": "1.59.2",
+              "publishedAt": "2019-02-28T02:41:32Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.59.2"
+            },
+            {
+              "tagName": "1.59",
+              "publishedAt": "2019-02-27T20:51:47Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.59"
+            },
+            {
+              "tagName": "1.58",
+              "publishedAt": "2018-12-16T17:20:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.58"
+            },
+            {
+              "tagName": "1.57",
+              "publishedAt": "2018-11-10T01:24:18Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.57"
+            },
+            {
+              "tagName": "1.56.2",
+              "publishedAt": "2018-06-21T21:42:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.56.2"
+            },
+            {
+              "tagName": "1.56.1",
+              "publishedAt": "2018-06-07T21:50:02Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.56.1"
+            },
+            {
+              "tagName": "1.56",
+              "publishedAt": "2018-06-06T21:21:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.56"
+            },
+            {
+              "tagName": "1.55",
+              "publishedAt": "2017-11-20T14:53:12Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.55"
+            },
+            {
+              "tagName": "1.54.1",
+              "publishedAt": "2017-11-20T14:58:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.54.1"
+            },
+            {
+              "tagName": "1.54",
+              "publishedAt": "2017-11-20T14:58:02Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.54"
+            },
+            {
+              "tagName": "1.53",
+              "publishedAt": "2017-11-20T14:56:57Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.53"
+            },
+            {
+              "tagName": "1.52fix4",
+              "publishedAt": "2017-11-20T15:03:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.52fix4"
+            },
+            {
+              "tagName": "1.52",
+              "publishedAt": "2017-11-20T15:02:38Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/snes9xgit/snes9x/releases/tag/1.52"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAxMC0wOS0yNVQxNTo0NjoyN1rOAIMKtA=="
+          }
+        }
+      }
+    }
+  }
+}

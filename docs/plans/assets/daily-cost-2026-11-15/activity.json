@@ -1,0 +1,1050 @@
+{
+  "schema_version": 1,
+  "collected_at": "2026-11-15T11:47:29.987686+00:00",
+  "window": {
+    "start_date": "2026-10-16",
+    "end_date": "2026-11-14",
+    "days": 30,
+    "timezone": "Asia/Bangkok"
+  },
+  "repo_head": "7ee8194085986efbb015d6e925624c23fc93775f",
+  "policy": "Stable releases preferred; unmatched dated tags retained as explicit proxies. Snapshot commits are separate. Coalescing is a simulation decision. Only Foundry overlay recipes, not all Ubuntu dependencies. Dates grouped into local calendar days; not a replay of 03:00 scheduling.",
+  "coverage": [
+    {
+      "package": "asar-snes-assembler",
+      "watch_path": "foundry-apt/packages/asar-snes-assembler/debian/watch",
+      "watch_sha256": "feb4230ef9a4935848ed5503be8195f609df1ba96f3cc9526125b72675c94e22",
+      "stream": "release",
+      "provider": "github",
+      "source": "RPGHacker/asar",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/1d4134d8e71a918942b633ca3c34fcacef6415d54e71b17a511f3474c2a0e018.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/3210a7726d47a39c2590670e999581bb202b59393b4e16a6c939f0c0a2d5d3f0.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "blender-asset-finder",
+      "watch_path": "foundry-apt/packages/blender-asset-finder/debian/watch",
+      "watch_sha256": "f468c9448df0eca47a70efe5e32b60ffadff45642dddb1dbcaae1161871c0b10",
+      "stream": "release",
+      "provider": "github",
+      "source": "wbniv/WorldFoundry",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/54a5a23d84181db8798650554c54294460b5999c2869d661f7ba5f3920da6514.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/f5ebe497e723d0975d16808eca1ed2b08aae869b8eb982aefb839bbb047042cc.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "blender-asset-finder-cli",
+      "watch_path": "foundry-apt/packages/blender-asset-finder-cli/debian/watch",
+      "watch_sha256": "07d643988d0f8124e627fd895cceb46dd65053f27ea1397121b993166d0d43e0",
+      "stream": "release",
+      "provider": "github",
+      "source": "wbniv/WorldFoundry",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/54a5a23d84181db8798650554c54294460b5999c2869d661f7ba5f3920da6514.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/f5ebe497e723d0975d16808eca1ed2b08aae869b8eb982aefb839bbb047042cc.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "bsnes-jg",
+      "watch_path": "foundry-apt/packages/bsnes-jg/debian/watch",
+      "watch_sha256": "aec195a172f49eb50661ae18ae8dd90ed391c7d2555fec69cc56036de4d431ce",
+      "stream": "release",
+      "provider": "gitlab",
+      "source": "jgemu/bsnes",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/ba13c5b4746d17a50fec64be8b86b6bc63123d1d6130079eae3fb5698fbca9ba.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "calamares-settings-foundry-linux",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "drmon",
+      "watch_path": "foundry-apt/packages/drmon/debian/watch",
+      "watch_sha256": "49a795e08531bff77f5ffac7f0f14f813087285987a402ddfd926895c4974228",
+      "stream": "snapshot",
+      "provider": "github",
+      "source": "developer-resources-co/drdevtools",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/43d642636d60e9b4681fb4b32596c13aa1a8f2bb97a2f868f881bd0239a71178.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "f9dasm",
+      "watch_path": "foundry-apt/packages/f9dasm/debian/watch",
+      "watch_sha256": "a7a31be4d34723e920a618b44588188d4e283efeb76e3cc7ede3236b7badccaf",
+      "stream": "release",
+      "provider": "github",
+      "source": "Arakula/f9dasm",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/7868333660af517603fd51e9dfc41fb9849e72f8f2ecc8352f420e8ba2b1ecee.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/345039a924a52bfc6aa52d46d879b8c4092fd8b5646317e55833bfa81dc764d5.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "flycast",
+      "watch_path": "foundry-apt/packages/flycast/debian/watch",
+      "watch_sha256": "f7985e1100b82600740cbf97cb4070a41b2831d8b26a1d020396d02bf8af1513",
+      "stream": "release",
+      "provider": "github",
+      "source": "flyinghead/flycast",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/935f3e96a86b5dfbc387d975df92ef7792f924ce3c1eb038a83cae7027b21dd3.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/4f00b788ad3d90a80105d35318ffa27d3636c347157e28d93f6c10451a755a2f.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "foundry-android-development",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-anvil",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-art",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-atelier",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-core",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-cv",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-daw",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-desktop",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-emulators",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-emulators-computers",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-emulators-consoles",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-emulators-consoles-heavy",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-emulators-vintage",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-free-games",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-game-frameworks",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-game-reimplementations",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-image-cli",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-ios-development",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-kde-theme",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-pixel-art",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-python-gamedev",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-python-gamedev-extras",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-retro-tools",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-sprite",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-trackers",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "foundry-welcome",
+      "watch_path": null,
+      "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stream": "release",
+      "provider": "local",
+      "source": "repository commits",
+      "status": "local-only",
+      "receipts": []
+    },
+    {
+      "package": "ghidra",
+      "watch_path": "foundry-apt/packages/ghidra/debian/watch",
+      "watch_sha256": "0e151c4d1325664f553dbf8335d518919408ed96c028c10db0df8ff3b71cba25",
+      "stream": "release",
+      "provider": "github",
+      "source": "NationalSecurityAgency/ghidra",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/0aae092f3af62792cae9b820b77427dc8376703344aefc2a3b41995ca3dda998.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/f2c5ae551f988dabef7a7dce4d09b035ec3259cea47af7bec3662571487df587.json"
+      ],
+      "event_count": 1
+    },
+    {
+      "package": "halfempty",
+      "watch_path": "foundry-apt/packages/halfempty/debian/watch",
+      "watch_sha256": "38a4550366dfdb6243919a07631d9c42d0cc2ae213b18eb77b4532bc5c1d3b69",
+      "stream": "release",
+      "provider": "github",
+      "source": "googleprojectzero/halfempty",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/f455677071f440ad6168feb63aa7e01064974f6ff9026d2444ae538d64e0574a.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/afff2e12d5f8d833308452eb69b61d0ce8491e00f5d7e931700677199e56582a.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "ldtk",
+      "watch_path": "foundry-apt/packages/ldtk/debian/watch",
+      "watch_sha256": "cd276d800c2c984cd68e607f980e7783625cca9a0acdaade334e026c524cfbae",
+      "stream": "release",
+      "provider": "github",
+      "source": "deepnight/ldtk",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/806a70fc5448bed54818d9fe015289abf37ca01efc00e1459823986be94695a5.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/c29ce916ca0471bc74ecca8a864eb6a8a128910c2c8b8780f67450d04cb56e36.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "libvgm",
+      "watch_path": "foundry-apt/packages/libvgm/debian/watch",
+      "watch_sha256": "83161df9e88ae727ef1acfd71a027d46522aa4208dface488709e19943d99411",
+      "stream": "snapshot",
+      "provider": "github",
+      "source": "ValleyBell/libvgm",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/2177ce45bc0666183b21ef7f2980081ac5bcdcc14d79fd7d06d9bdcbe70fce2d.json"
+      ],
+      "event_count": 4
+    },
+    {
+      "package": "m8te",
+      "watch_path": "foundry-apt/packages/m8te/debian/watch",
+      "watch_sha256": "c0f314d6ee4bba8ed2e5180c6d22cb0c6cedce8be885c02facc6bc2b12316bf1",
+      "stream": "release",
+      "provider": "github",
+      "source": "nesdoug/M8TE",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/7ef63ce0bc7197a5e97b93799284bf41102e964f863e9af527423d95213d65ef.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/490a2e70d335f22d4294720b2b7561665042e72c53286a8e2a91b2b690b3738c.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "mesen2",
+      "watch_path": "foundry-apt/packages/mesen2/debian/watch",
+      "watch_sha256": "b76274332081621119077486b3b167ebc507832d2d343d25593af7914011c611",
+      "stream": "release",
+      "provider": "github",
+      "source": "SourMesen/Mesen2",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/a294c21db178c8467f82996445c4d1da13b978bd556c09470a146dea54ab49e5.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/7a2c0d35fbc39908c9c0f2727ee3830fbb18341438d1ade637aaca3cdd802306.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "powerdevil",
+      "watch_path": "foundry-apt/packages/powerdevil/debian/watch",
+      "watch_sha256": "97a304c1ba93e88e1a390630a3e5e617483ed64196ec527d2bc21827ae691a8b",
+      "stream": "release",
+      "provider": "github",
+      "source": "KDE/powerdevil",
+      "date_note": "KDE mirror tags; commit/tag dates are not release publication dates",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/9039bc8859a194c165a9fe47e20f8250a3ef00dc6d532c20794424ca590f3937.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/fde2d9787382c87566cddbbcba0845155e7b84b9ec2eaa823ed27767172d61e3.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/99438df294a1b13b08267ea6a19c613c9dc8fd79102190aba81e86827eff871e.json"
+      ],
+      "event_count": 5
+    },
+    {
+      "package": "ppsspp",
+      "watch_path": "foundry-apt/packages/ppsspp/debian/watch",
+      "watch_sha256": "286595c00e831561dee0691318d9ff909c1d6f15e6b6ae90e93b7d455fad2533",
+      "stream": "release",
+      "provider": "github",
+      "source": "hrydgard/ppsspp",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/d0d75827e44c2829b5112624cc59ac397c6d4d128511180159e9a471862dbe9d.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/5d12c9bfc6fb2e31f7390b221db6057bbe112a072b7bed5efd3c84d8d5531b72.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "pvsneslib",
+      "watch_path": "foundry-apt/packages/pvsneslib/debian/watch",
+      "watch_sha256": "cbd9cc09317f7b3117b95a91c71380f1ab26bb0177bdf197a93d3966f592efcc",
+      "stream": "release",
+      "provider": "github",
+      "source": "alekmaul/pvsneslib",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/795d39f9268d03c6de34437ef2e9d665e455705f695dae5689f9cbe1af357d9e.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/ea1114751616c7e6cdba870e3e06934bd755d900dcae17b9c92591fb73e34537.json"
+      ],
+      "event_count": 1
+    },
+    {
+      "package": "python3-glfw",
+      "watch_path": "foundry-apt/packages/python3-glfw/debian/watch",
+      "watch_sha256": "e5b9129a84f7efada06e862b71e242c4301eca9359e34d8c2ef7d5810c970c52",
+      "stream": "release",
+      "provider": "pypi",
+      "source": "glfw",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/3044d0ffa5b0e26432ae306ce466ca5541ba8390447d7855ef7339ac2480459b.json"
+      ],
+      "event_count": 1
+    },
+    {
+      "package": "python3-inators",
+      "watch_path": "foundry-apt/packages/python3-inators/debian/watch",
+      "watch_sha256": "1c9aaaf9f6938a3287e941fc08cda0280b46e02802fffedf14a045258cf18c03",
+      "stream": "release",
+      "provider": "pypi",
+      "source": "inators",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/703be41e08f3387e14d7eec80f10c2d4c611fa95fe3d5ee6dfa500f719c684c9.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "python3-librosa",
+      "watch_path": "foundry-apt/packages/python3-librosa/debian/watch",
+      "watch_sha256": "3bb7f006e822758e05036fae0fcf0ec8510ad94be894e0f30e0941b9af94e052",
+      "stream": "release",
+      "provider": "pypi",
+      "source": "librosa",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/eac895432a51177836f270cb224efa6d54dca0cfbd0eb028a2cd1dbb87968af3.json"
+      ],
+      "event_count": 1
+    },
+    {
+      "package": "python3-mss",
+      "watch_path": "foundry-apt/packages/python3-mss/debian/watch",
+      "watch_sha256": "732ee1490b3fa62cfd6b9700528558b72ce9a2061f4d49f6fa8f142a207e0f26",
+      "stream": "release",
+      "provider": "pypi",
+      "source": "mss",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/bc3a4a797f6550bb2a3b2cdd7f29f3eb7dbf2fa8cd37403b6b261f6565c8458d.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "python3-picire",
+      "watch_path": "foundry-apt/packages/python3-picire/debian/watch",
+      "watch_sha256": "17e09c52a6021cb326ae6164f29c1e28e60598ad4d8c918718cec0364886dab5",
+      "stream": "release",
+      "provider": "pypi",
+      "source": "picire",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/b5e5a60e3156af62f76eeab72419fd9128a8b816d2f942621cc5b298fb61c033.json"
+      ],
+      "event_count": 1
+    },
+    {
+      "package": "python3-pydub",
+      "watch_path": "foundry-apt/packages/python3-pydub/debian/watch",
+      "watch_sha256": "c39e40a0fd0a360f0dcb237604573d230b080a083457a0671f995c45964748c3",
+      "stream": "release",
+      "provider": "pypi",
+      "source": "pydub",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/81ad9832bff4dfc5a22c097b4edb2d0eb83dd6f1df75af4ee3b9793e9b063d6a.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "rpcs3",
+      "watch_path": "foundry-apt/packages/rpcs3/debian/watch",
+      "watch_sha256": "057ac10067fe5009827d1e6d8c3fbce015c39a15709c333a1a3dbd7129ef9566",
+      "stream": "release",
+      "provider": "github",
+      "source": "RPCS3/rpcs3",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/6af23864b44a0ceb76f437e75e687443f466bf4ff19ce4902c7998ef8e8a8a02.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/36f2a12aceed71e3565c1ed646f61806d7a80654a19d30d58d8611216b03f8cc.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "ruff",
+      "watch_path": "foundry-apt/packages/ruff/debian/watch",
+      "watch_sha256": "ad83f2a5b9d09e1a33bd106fbb930c0c5ae5665df00c68cfed6f2f3725aa7c4f",
+      "stream": "release",
+      "provider": "github",
+      "source": "astral-sh/ruff",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/be5abdebe9e666e43d390451211d68d450072c8968a622b70e4e55bfabf5030e.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/2b1929fec912203bdb2d64bcdbe760a5c7b9fb4b90e7ee103306f6aecd5113d2.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/3f3eae030780ca52504fee1054eddd573a3d7cbed9dc49ce4d878863d7657345.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/0c9198724fa6de30900b4706466b2618091df51dabac1208420e50c0b0e1e961.json"
+      ],
+      "event_count": 4
+    },
+    {
+      "package": "snes9x-gtk",
+      "watch_path": "foundry-apt/packages/snes9x-gtk/debian/watch",
+      "watch_sha256": "68431cd0ca6febc2e6bb8c46504dd0567317e9daccc80f140d25019e2c49b06d",
+      "stream": "release",
+      "provider": "github",
+      "source": "snes9xgit/snes9x",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/49bf02808c036f526ee1dfada5c0f3eeed4c3348821996b5a92006119344c330.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/23d5fd92ab302822320811df9340ce857c27f06dd5ea0ec9afbca6c8776b8e28.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "tilemap-studio",
+      "watch_path": "foundry-apt/packages/tilemap-studio/debian/watch",
+      "watch_sha256": "d9a1e23b5f6b40ad1c0f10d20208b7de3d949da51d2d18925f477d8844ebb1ef",
+      "stream": "release",
+      "provider": "github",
+      "source": "Rangi42/tilemap-studio",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/8ecd4580be049d65fcd93b74a0b44563f01f224873bdfe812c15764669200d31.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/324838be90214d78023ccb3825a1fa22cc6e3a28a5a49449575482f535fddaf1.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "uv",
+      "watch_path": "foundry-apt/packages/uv/debian/watch",
+      "watch_sha256": "0ac6d977e3480a7bae55059978b583c543fbda0166d15683c5d0446313da7c9f",
+      "stream": "release",
+      "provider": "github",
+      "source": "astral-sh/uv",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/019851c46899a0ceb9b478c6f633c2bb0e843f2e321b2f7d3566a7c7e480c7bf.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/0c0ebae4ad8e250f6162dceec02b3ea14b040ea0844ad9e1181ed0ffb366ed9e.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/b452a5e779d938efc0057b8186724fe8887467339098c64622d71ff676267413.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/e2fb9316fdd67eb3c5e2df2167a4e01f8252d1b5697fc179aafecbc8d9a3b625.json"
+      ],
+      "event_count": 7
+    },
+    {
+      "package": "vgmstream",
+      "watch_path": "foundry-apt/packages/vgmstream/debian/watch",
+      "watch_sha256": "f1a6c6a07612217c71ffaf041a0d4ae54b0062bba0d9c84d59bc92eca7e5a50f",
+      "stream": "release",
+      "provider": "github",
+      "source": "vgmstream/vgmstream",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/f7db5137c681fbc8660b877b0ff0ceecdc042eb2436a49373589269dc2485ced.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/2dfe8d6ee032f321011c2812f59aaf8ad931c32a2498aa531f13275d342bacea.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/a0f562efe347a33e86a35b4ffc925404998a8a8c54e5aa7840e9bc73600704e5.json"
+      ],
+      "event_count": 1
+    },
+    {
+      "package": "wla-dx",
+      "watch_path": "foundry-apt/packages/wla-dx/debian/watch",
+      "watch_sha256": "491f648439a32fe9af668aa7ff33e75f8b15689f93efb075ef437b49a1522874",
+      "stream": "release",
+      "provider": "github",
+      "source": "vhelin/wla-dx",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/16d96b72d41109f0e7714b80d767a5ead2cd83a217ea5c8e0d626d2956e4f623.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/c5ae903aae06237903f7570e40464718701ea7ad7134fd8a3e0ae6e847dc895d.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "xemu",
+      "watch_path": "foundry-apt/packages/xemu/debian/watch",
+      "watch_sha256": "3c18da3831b3f9fd6f5be474eae2d6cae5b51155811b6e41401c884996f2f734",
+      "stream": "snapshot",
+      "provider": "github",
+      "source": "lgblgblgb/xemu",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/1e532bb432cbfcfcce087f23c518ae2b374794d454c884d2e11e0165139a6641.json"
+      ],
+      "event_count": 0
+    },
+    {
+      "package": "xemu-xbox",
+      "watch_path": "foundry-apt/packages/xemu-xbox/debian/watch",
+      "watch_sha256": "c66df76914cb78d068660e4cfec349b0af697281f1f3e306762002eb1fc0834e",
+      "stream": "release",
+      "provider": "github",
+      "source": "xemu-project/xemu",
+      "status": "ok",
+      "receipts": [
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/13123c2ffe35e8ef5067ffa5c3236a5aa398c63031f0992b8b62d9d5fbf8d906.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/1586d22d9fff1344091f345528d8b889a641dad957b2fba24b65ef288ad3dea6.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/c8567e7d975e35e8101426456b971701ff31dc6c5b0b3f837c959778eca1889f.json",
+        "docs/plans/assets/daily-cost-2026-11-15/api-cache/b2041b12395466aaa5a5d5aa4226e0a481d7eb60be4813aec574e79ee50a74db.json"
+      ],
+      "event_count": 3
+    }
+  ],
+  "events": [
+    {
+      "package": "python3-glfw",
+      "kind": "release",
+      "version": "2.11.0",
+      "timestamp": "2026-10-16T08:46:24.538720+00:00",
+      "day": "2026-10-16",
+      "url": "https://pypi.org/project/glfw/2.11.0/",
+      "date_basis": "first non-yanked file upload"
+    },
+    {
+      "package": "xemu-xbox",
+      "kind": "release",
+      "version": "v0.8.137",
+      "timestamp": "2026-10-16T19:27:01+00:00",
+      "day": "2026-10-17",
+      "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.137",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "powerdevil",
+      "kind": "tag_proxy",
+      "version": "v6.6.7",
+      "timestamp": "2026-10-16T19:56:07+05:30",
+      "day": "2026-10-16",
+      "url": "https://github.com/KDE/powerdevil/releases/tag/v6.6.7",
+      "date_basis": "annotated-tag date or target commit date; NOT publication date"
+    },
+    {
+      "package": "libvgm",
+      "kind": "snapshot",
+      "version": "bad50c571db45b872304bdcd0603dd2214f0663e",
+      "timestamp": "2026-10-17T11:54:10+00:00",
+      "day": "2026-10-17",
+      "url": "https://github.com/ValleyBell/libvgm/commit/bad50c571db45b872304bdcd0603dd2214f0663e",
+      "date_basis": "default-branch commit timestamp"
+    },
+    {
+      "package": "uv",
+      "kind": "release",
+      "version": "0.13.2",
+      "timestamp": "2026-10-19T21:02:37+00:00",
+      "day": "2026-10-20",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.2",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "uv",
+      "kind": "release",
+      "version": "0.13.3",
+      "timestamp": "2026-10-20T01:15:17+00:00",
+      "day": "2026-10-20",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.3",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "xemu-xbox",
+      "kind": "release",
+      "version": "v0.8.138",
+      "timestamp": "2026-10-20T08:53:09+00:00",
+      "day": "2026-10-20",
+      "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.138",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "powerdevil",
+      "kind": "tag_proxy",
+      "version": "v6.8.1",
+      "timestamp": "2026-10-20T15:20:00+05:30",
+      "day": "2026-10-20",
+      "url": "https://github.com/KDE/powerdevil/releases/tag/v6.8.1",
+      "date_basis": "annotated-tag date or target commit date; NOT publication date"
+    },
+    {
+      "package": "uv",
+      "kind": "release",
+      "version": "0.13.4",
+      "timestamp": "2026-10-20T15:24:59+00:00",
+      "day": "2026-10-20",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.4",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "xemu-xbox",
+      "kind": "release",
+      "version": "v0.8.139",
+      "timestamp": "2026-10-21T21:43:18+00:00",
+      "day": "2026-10-22",
+      "url": "https://github.com/xemu-project/xemu/releases/tag/v0.8.139",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "uv",
+      "kind": "release",
+      "version": "0.13.5",
+      "timestamp": "2026-10-22T01:35:54+00:00",
+      "day": "2026-10-22",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.5",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "ghidra",
+      "kind": "release",
+      "version": "Ghidra_12.2_build",
+      "timestamp": "2026-10-22T08:31:12+00:00",
+      "day": "2026-10-22",
+      "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.2_build",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "ruff",
+      "kind": "release",
+      "version": "0.17.2",
+      "timestamp": "2026-10-22T18:39:46+00:00",
+      "day": "2026-10-23",
+      "url": "https://github.com/astral-sh/ruff/releases/tag/0.17.2",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "vgmstream",
+      "kind": "release",
+      "version": "r2168",
+      "timestamp": "2026-10-25T17:27:13+00:00",
+      "day": "2026-10-26",
+      "url": "https://github.com/vgmstream/vgmstream/releases/tag/r2168",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "libvgm",
+      "kind": "snapshot",
+      "version": "641d7ef38e16576b96510f078cc1c7740381f1bf",
+      "timestamp": "2026-10-26T20:37:16+00:00",
+      "day": "2026-10-27",
+      "url": "https://github.com/ValleyBell/libvgm/commit/641d7ef38e16576b96510f078cc1c7740381f1bf",
+      "date_basis": "default-branch commit timestamp"
+    },
+    {
+      "package": "libvgm",
+      "kind": "snapshot",
+      "version": "61b62d64455e039de2a1d01498afa9e9b5f1cb88",
+      "timestamp": "2026-10-26T22:57:11+00:00",
+      "day": "2026-10-27",
+      "url": "https://github.com/ValleyBell/libvgm/commit/61b62d64455e039de2a1d01498afa9e9b5f1cb88",
+      "date_basis": "default-branch commit timestamp"
+    },
+    {
+      "package": "ruff",
+      "kind": "release",
+      "version": "0.17.3",
+      "timestamp": "2026-10-27T00:35:07+00:00",
+      "day": "2026-10-27",
+      "url": "https://github.com/astral-sh/ruff/releases/tag/0.17.3",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "uv",
+      "kind": "release",
+      "version": "0.13.6",
+      "timestamp": "2026-10-27T00:47:49+00:00",
+      "day": "2026-10-27",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.6",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "powerdevil",
+      "kind": "tag_proxy",
+      "version": "v6.8.2",
+      "timestamp": "2026-10-27T17:47:58+05:30",
+      "day": "2026-10-27",
+      "url": "https://github.com/KDE/powerdevil/releases/tag/v6.8.2",
+      "date_basis": "annotated-tag date or target commit date; NOT publication date"
+    },
+    {
+      "package": "uv",
+      "kind": "release",
+      "version": "0.13.7",
+      "timestamp": "2026-11-03T02:45:04+00:00",
+      "day": "2026-11-03",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.7",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "powerdevil",
+      "kind": "tag_proxy",
+      "version": "v6.7.6",
+      "timestamp": "2026-11-03T16:47:54+01:00",
+      "day": "2026-11-03",
+      "url": "https://github.com/KDE/powerdevil/releases/tag/v6.7.6",
+      "date_basis": "annotated-tag date or target commit date; NOT publication date"
+    },
+    {
+      "package": "libvgm",
+      "kind": "snapshot",
+      "version": "c5c03a2c2514d38d2ab7b7e8dbd021af0b8292cb",
+      "timestamp": "2026-11-04T22:25:32+00:00",
+      "day": "2026-11-05",
+      "url": "https://github.com/ValleyBell/libvgm/commit/c5c03a2c2514d38d2ab7b7e8dbd021af0b8292cb",
+      "date_basis": "default-branch commit timestamp"
+    },
+    {
+      "package": "ruff",
+      "kind": "release",
+      "version": "0.17.4",
+      "timestamp": "2026-11-05T18:53:24+00:00",
+      "day": "2026-11-06",
+      "url": "https://github.com/astral-sh/ruff/releases/tag/0.17.4",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "pvsneslib",
+      "kind": "release",
+      "version": "4.7.0",
+      "timestamp": "2026-11-08T03:49:35+00:00",
+      "day": "2026-11-08",
+      "url": "https://github.com/alekmaul/pvsneslib/releases/tag/4.7.0",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "powerdevil",
+      "kind": "tag_proxy",
+      "version": "v6.8.3",
+      "timestamp": "2026-11-10T14:41:08+05:30",
+      "day": "2026-11-10",
+      "url": "https://github.com/KDE/powerdevil/releases/tag/v6.8.3",
+      "date_basis": "annotated-tag date or target commit date; NOT publication date"
+    },
+    {
+      "package": "python3-picire",
+      "kind": "release",
+      "version": "26.11",
+      "timestamp": "2026-11-10T18:51:06.291261+00:00",
+      "day": "2026-11-11",
+      "url": "https://pypi.org/project/picire/26.11/",
+      "date_basis": "first non-yanked file upload"
+    },
+    {
+      "package": "python3-librosa",
+      "kind": "release",
+      "version": "1.0.1",
+      "timestamp": "2026-11-12T16:58:27.304395+00:00",
+      "day": "2026-11-12",
+      "url": "https://pypi.org/project/librosa/1.0.1/",
+      "date_basis": "first non-yanked file upload"
+    },
+    {
+      "package": "uv",
+      "kind": "release",
+      "version": "0.13.8",
+      "timestamp": "2026-11-12T17:03:07+00:00",
+      "day": "2026-11-13",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.8",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "ruff",
+      "kind": "release",
+      "version": "0.17.5",
+      "timestamp": "2026-11-12T17:55:55+00:00",
+      "day": "2026-11-13",
+      "url": "https://github.com/astral-sh/ruff/releases/tag/0.17.5",
+      "date_basis": "release publishedAt"
+    },
+    {
+      "package": "foundry-desktop",
+      "kind": "repo_change",
+      "version": "cfa19fa59fcc225011e6093b2ba0586864284350",
+      "timestamp": "2026-11-14T20:37:25+07:00",
+      "day": "2026-11-14",
+      "url": "https://github.com/foundry-linux/foundrylinux.org/commit/cfa19fa59fcc225011e6093b2ba0586864284350",
+      "date_basis": "git committer timestamp",
+      "subject": "Package upstream PowerDevil battery recovery fixes for Foundry 6.6"
+    },
+    {
+      "package": "powerdevil",
+      "kind": "repo_change",
+      "version": "cfa19fa59fcc225011e6093b2ba0586864284350",
+      "timestamp": "2026-11-14T20:37:25+07:00",
+      "day": "2026-11-14",
+      "url": "https://github.com/foundry-linux/foundrylinux.org/commit/cfa19fa59fcc225011e6093b2ba0586864284350",
+      "date_basis": "git committer timestamp",
+      "subject": "Package upstream PowerDevil battery recovery fixes for Foundry 6.6"
+    },
+    {
+      "package": "powerdevil",
+      "kind": "repo_change",
+      "version": "3e3723f6a6cc2482c5df5dc7c4cf1703bb33192f",
+      "timestamp": "2026-11-14T20:44:22+07:00",
+      "day": "2026-11-14",
+      "url": "https://github.com/foundry-linux/foundrylinux.org/commit/3e3723f6a6cc2482c5df5dc7c4cf1703bb33192f",
+      "date_basis": "git committer timestamp",
+      "subject": "Match the PowerDevil source-signature lint annotation exactly"
+    },
+    {
+      "package": "python3-inators",
+      "kind": "repo_change",
+      "version": "ffa33dfbf41db6b31f0e750cda59b46e70bc1d96",
+      "timestamp": "2026-11-14T22:17:51+07:00",
+      "day": "2026-11-14",
+      "url": "https://github.com/foundry-linux/foundrylinux.org/commit/ffa33dfbf41db6b31f0e750cda59b46e70bc1d96",
+      "date_basis": "git committer timestamp",
+      "subject": "Fix package source probes and ISO build DNS for distro refresh"
+    },
+    {
+      "package": "python3-mss",
+      "kind": "repo_change",
+      "version": "ffa33dfbf41db6b31f0e750cda59b46e70bc1d96",
+      "timestamp": "2026-11-14T22:17:51+07:00",
+      "day": "2026-11-14",
+      "url": "https://github.com/foundry-linux/foundrylinux.org/commit/ffa33dfbf41db6b31f0e750cda59b46e70bc1d96",
+      "date_basis": "git committer timestamp",
+      "subject": "Fix package source probes and ISO build DNS for distro refresh"
+    },
+    {
+      "package": "python3-picire",
+      "kind": "repo_change",
+      "version": "ffa33dfbf41db6b31f0e750cda59b46e70bc1d96",
+      "timestamp": "2026-11-14T22:17:51+07:00",
+      "day": "2026-11-14",
+      "url": "https://github.com/foundry-linux/foundrylinux.org/commit/ffa33dfbf41db6b31f0e750cda59b46e70bc1d96",
+      "date_basis": "git committer timestamp",
+      "subject": "Fix package source probes and ISO build DNS for distro refresh"
+    },
+    {
+      "package": "python3-pydub",
+      "kind": "repo_change",
+      "version": "ffa33dfbf41db6b31f0e750cda59b46e70bc1d96",
+      "timestamp": "2026-11-14T22:17:51+07:00",
+      "day": "2026-11-14",
+      "url": "https://github.com/foundry-linux/foundrylinux.org/commit/ffa33dfbf41db6b31f0e750cda59b46e70bc1d96",
+      "date_basis": "git committer timestamp",
+      "subject": "Fix package source probes and ISO build DNS for distro refresh"
+    }
+  ]
+}

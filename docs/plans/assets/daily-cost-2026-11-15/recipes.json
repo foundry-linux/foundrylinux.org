@@ -1,0 +1,467 @@
+[
+  {
+    "package": "asar-snes-assembler",
+    "watch_path": "foundry-apt/packages/asar-snes-assembler/debian/watch",
+    "watch_sha256": "feb4230ef9a4935848ed5503be8195f609df1ba96f3cc9526125b72675c94e22",
+    "stream": "release",
+    "provider": "github",
+    "source": "RPGHacker/asar"
+  },
+  {
+    "package": "blender-asset-finder",
+    "watch_path": "foundry-apt/packages/blender-asset-finder/debian/watch",
+    "watch_sha256": "f468c9448df0eca47a70efe5e32b60ffadff45642dddb1dbcaae1161871c0b10",
+    "stream": "release",
+    "provider": "github",
+    "source": "wbniv/WorldFoundry"
+  },
+  {
+    "package": "blender-asset-finder-cli",
+    "watch_path": "foundry-apt/packages/blender-asset-finder-cli/debian/watch",
+    "watch_sha256": "07d643988d0f8124e627fd895cceb46dd65053f27ea1397121b993166d0d43e0",
+    "stream": "release",
+    "provider": "github",
+    "source": "wbniv/WorldFoundry"
+  },
+  {
+    "package": "bsnes-jg",
+    "watch_path": "foundry-apt/packages/bsnes-jg/debian/watch",
+    "watch_sha256": "aec195a172f49eb50661ae18ae8dd90ed391c7d2555fec69cc56036de4d431ce",
+    "stream": "release",
+    "provider": "gitlab",
+    "source": "jgemu/bsnes"
+  },
+  {
+    "package": "calamares-settings-foundry-linux",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "drmon",
+    "watch_path": "foundry-apt/packages/drmon/debian/watch",
+    "watch_sha256": "49a795e08531bff77f5ffac7f0f14f813087285987a402ddfd926895c4974228",
+    "stream": "snapshot",
+    "provider": "github",
+    "source": "developer-resources-co/drdevtools"
+  },
+  {
+    "package": "f9dasm",
+    "watch_path": "foundry-apt/packages/f9dasm/debian/watch",
+    "watch_sha256": "a7a31be4d34723e920a618b44588188d4e283efeb76e3cc7ede3236b7badccaf",
+    "stream": "release",
+    "provider": "github",
+    "source": "Arakula/f9dasm"
+  },
+  {
+    "package": "flycast",
+    "watch_path": "foundry-apt/packages/flycast/debian/watch",
+    "watch_sha256": "f7985e1100b82600740cbf97cb4070a41b2831d8b26a1d020396d02bf8af1513",
+    "stream": "release",
+    "provider": "github",
+    "source": "flyinghead/flycast"
+  },
+  {
+    "package": "foundry-android-development",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-anvil",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-art",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-atelier",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-core",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-cv",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-daw",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-desktop",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-emulators",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-emulators-computers",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-emulators-consoles",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-emulators-consoles-heavy",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-emulators-vintage",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-free-games",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-game-frameworks",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-game-reimplementations",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-image-cli",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-ios-development",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-kde-theme",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-pixel-art",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-python-gamedev",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-python-gamedev-extras",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-retro-tools",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-sprite",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-trackers",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "foundry-welcome",
+    "watch_path": null,
+    "watch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stream": "release",
+    "provider": "local",
+    "source": "repository commits"
+  },
+  {
+    "package": "ghidra",
+    "watch_path": "foundry-apt/packages/ghidra/debian/watch",
+    "watch_sha256": "0e151c4d1325664f553dbf8335d518919408ed96c028c10db0df8ff3b71cba25",
+    "stream": "release",
+    "provider": "github",
+    "source": "NationalSecurityAgency/ghidra"
+  },
+  {
+    "package": "halfempty",
+    "watch_path": "foundry-apt/packages/halfempty/debian/watch",
+    "watch_sha256": "38a4550366dfdb6243919a07631d9c42d0cc2ae213b18eb77b4532bc5c1d3b69",
+    "stream": "release",
+    "provider": "github",
+    "source": "googleprojectzero/halfempty"
+  },
+  {
+    "package": "ldtk",
+    "watch_path": "foundry-apt/packages/ldtk/debian/watch",
+    "watch_sha256": "cd276d800c2c984cd68e607f980e7783625cca9a0acdaade334e026c524cfbae",
+    "stream": "release",
+    "provider": "github",
+    "source": "deepnight/ldtk"
+  },
+  {
+    "package": "libvgm",
+    "watch_path": "foundry-apt/packages/libvgm/debian/watch",
+    "watch_sha256": "83161df9e88ae727ef1acfd71a027d46522aa4208dface488709e19943d99411",
+    "stream": "snapshot",
+    "provider": "github",
+    "source": "ValleyBell/libvgm"
+  },
+  {
+    "package": "m8te",
+    "watch_path": "foundry-apt/packages/m8te/debian/watch",
+    "watch_sha256": "c0f314d6ee4bba8ed2e5180c6d22cb0c6cedce8be885c02facc6bc2b12316bf1",
+    "stream": "release",
+    "provider": "github",
+    "source": "nesdoug/M8TE"
+  },
+  {
+    "package": "mesen2",
+    "watch_path": "foundry-apt/packages/mesen2/debian/watch",
+    "watch_sha256": "b76274332081621119077486b3b167ebc507832d2d343d25593af7914011c611",
+    "stream": "release",
+    "provider": "github",
+    "source": "SourMesen/Mesen2"
+  },
+  {
+    "package": "powerdevil",
+    "watch_path": "foundry-apt/packages/powerdevil/debian/watch",
+    "watch_sha256": "97a304c1ba93e88e1a390630a3e5e617483ed64196ec527d2bc21827ae691a8b",
+    "stream": "release",
+    "provider": "github",
+    "source": "KDE/powerdevil",
+    "date_note": "KDE mirror tags; commit/tag dates are not release publication dates"
+  },
+  {
+    "package": "ppsspp",
+    "watch_path": "foundry-apt/packages/ppsspp/debian/watch",
+    "watch_sha256": "286595c00e831561dee0691318d9ff909c1d6f15e6b6ae90e93b7d455fad2533",
+    "stream": "release",
+    "provider": "github",
+    "source": "hrydgard/ppsspp"
+  },
+  {
+    "package": "pvsneslib",
+    "watch_path": "foundry-apt/packages/pvsneslib/debian/watch",
+    "watch_sha256": "cbd9cc09317f7b3117b95a91c71380f1ab26bb0177bdf197a93d3966f592efcc",
+    "stream": "release",
+    "provider": "github",
+    "source": "alekmaul/pvsneslib"
+  },
+  {
+    "package": "python3-glfw",
+    "watch_path": "foundry-apt/packages/python3-glfw/debian/watch",
+    "watch_sha256": "e5b9129a84f7efada06e862b71e242c4301eca9359e34d8c2ef7d5810c970c52",
+    "stream": "release",
+    "provider": "pypi",
+    "source": "glfw"
+  },
+  {
+    "package": "python3-inators",
+    "watch_path": "foundry-apt/packages/python3-inators/debian/watch",
+    "watch_sha256": "1c9aaaf9f6938a3287e941fc08cda0280b46e02802fffedf14a045258cf18c03",
+    "stream": "release",
+    "provider": "pypi",
+    "source": "inators"
+  },
+  {
+    "package": "python3-librosa",
+    "watch_path": "foundry-apt/packages/python3-librosa/debian/watch",
+    "watch_sha256": "3bb7f006e822758e05036fae0fcf0ec8510ad94be894e0f30e0941b9af94e052",
+    "stream": "release",
+    "provider": "pypi",
+    "source": "librosa"
+  },
+  {
+    "package": "python3-mss",
+    "watch_path": "foundry-apt/packages/python3-mss/debian/watch",
+    "watch_sha256": "732ee1490b3fa62cfd6b9700528558b72ce9a2061f4d49f6fa8f142a207e0f26",
+    "stream": "release",
+    "provider": "pypi",
+    "source": "mss"
+  },
+  {
+    "package": "python3-picire",
+    "watch_path": "foundry-apt/packages/python3-picire/debian/watch",
+    "watch_sha256": "17e09c52a6021cb326ae6164f29c1e28e60598ad4d8c918718cec0364886dab5",
+    "stream": "release",
+    "provider": "pypi",
+    "source": "picire"
+  },
+  {
+    "package": "python3-pydub",
+    "watch_path": "foundry-apt/packages/python3-pydub/debian/watch",
+    "watch_sha256": "c39e40a0fd0a360f0dcb237604573d230b080a083457a0671f995c45964748c3",
+    "stream": "release",
+    "provider": "pypi",
+    "source": "pydub"
+  },
+  {
+    "package": "rpcs3",
+    "watch_path": "foundry-apt/packages/rpcs3/debian/watch",
+    "watch_sha256": "057ac10067fe5009827d1e6d8c3fbce015c39a15709c333a1a3dbd7129ef9566",
+    "stream": "release",
+    "provider": "github",
+    "source": "RPCS3/rpcs3"
+  },
+  {
+    "package": "ruff",
+    "watch_path": "foundry-apt/packages/ruff/debian/watch",
+    "watch_sha256": "ad83f2a5b9d09e1a33bd106fbb930c0c5ae5665df00c68cfed6f2f3725aa7c4f",
+    "stream": "release",
+    "provider": "github",
+    "source": "astral-sh/ruff"
+  },
+  {
+    "package": "snes9x-gtk",
+    "watch_path": "foundry-apt/packages/snes9x-gtk/debian/watch",
+    "watch_sha256": "68431cd0ca6febc2e6bb8c46504dd0567317e9daccc80f140d25019e2c49b06d",
+    "stream": "release",
+    "provider": "github",
+    "source": "snes9xgit/snes9x"
+  },
+  {
+    "package": "tilemap-studio",
+    "watch_path": "foundry-apt/packages/tilemap-studio/debian/watch",
+    "watch_sha256": "d9a1e23b5f6b40ad1c0f10d20208b7de3d949da51d2d18925f477d8844ebb1ef",
+    "stream": "release",
+    "provider": "github",
+    "source": "Rangi42/tilemap-studio"
+  },
+  {
+    "package": "uv",
+    "watch_path": "foundry-apt/packages/uv/debian/watch",
+    "watch_sha256": "0ac6d977e3480a7bae55059978b583c543fbda0166d15683c5d0446313da7c9f",
+    "stream": "release",
+    "provider": "github",
+    "source": "astral-sh/uv"
+  },
+  {
+    "package": "vgmstream",
+    "watch_path": "foundry-apt/packages/vgmstream/debian/watch",
+    "watch_sha256": "f1a6c6a07612217c71ffaf041a0d4ae54b0062bba0d9c84d59bc92eca7e5a50f",
+    "stream": "release",
+    "provider": "github",
+    "source": "vgmstream/vgmstream"
+  },
+  {
+    "package": "wla-dx",
+    "watch_path": "foundry-apt/packages/wla-dx/debian/watch",
+    "watch_sha256": "491f648439a32fe9af668aa7ff33e75f8b15689f93efb075ef437b49a1522874",
+    "stream": "release",
+    "provider": "github",
+    "source": "vhelin/wla-dx"
+  },
+  {
+    "package": "xemu",
+    "watch_path": "foundry-apt/packages/xemu/debian/watch",
+    "watch_sha256": "3c18da3831b3f9fd6f5be474eae2d6cae5b51155811b6e41401c884996f2f734",
+    "stream": "snapshot",
+    "provider": "github",
+    "source": "lgblgblgb/xemu"
+  },
+  {
+    "package": "xemu-xbox",
+    "watch_path": "foundry-apt/packages/xemu-xbox/debian/watch",
+    "watch_sha256": "c66df76914cb78d068660e4cfec349b0af697281f1f3e306762002eb1fc0834e",
+    "stream": "release",
+    "provider": "github",
+    "source": "xemu-project/xemu"
+  }
+]

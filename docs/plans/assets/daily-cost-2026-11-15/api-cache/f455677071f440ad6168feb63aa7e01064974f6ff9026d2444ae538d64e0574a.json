@@ -1,0 +1,40 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"googleprojectzero\",name:\"halfempty\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:05.183839+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "v0.40",
+              "publishedAt": "2020-12-15T21:20:03Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/googleprojectzero/halfempty/releases/tag/v0.40"
+            },
+            {
+              "tagName": "v0.30",
+              "publishedAt": "2019-03-16T18:46:25Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/googleprojectzero/halfempty/releases/tag/v0.30"
+            },
+            {
+              "tagName": "v0.20",
+              "publishedAt": "2019-03-08T19:40:25Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/googleprojectzero/halfempty/releases/tag/v0.20"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAxOS0wMy0wNlQwNTo0MToyOFrOAPQxUg=="
+          }
+        }
+      }
+    }
+  }
+}

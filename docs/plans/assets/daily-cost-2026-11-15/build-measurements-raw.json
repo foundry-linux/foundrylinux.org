@@ -1,0 +1,832 @@
+{
+  "markers": [
+    {
+      "package": "asar-snes-assembler",
+      "start": "2026-11-15T08:26:24.530303208Z",
+      "end": "2026-11-15T08:26:40.462021363Z",
+      "seconds": 15.931718
+    },
+    {
+      "package": "blender-asset-finder-cli",
+      "start": "2026-11-15T08:26:40.462021363Z",
+      "end": "2026-11-15T08:26:48.486456347Z",
+      "seconds": 8.024435
+    },
+    {
+      "package": "blender-asset-finder",
+      "start": "2026-11-15T08:26:48.486456347Z",
+      "end": "2026-11-15T08:26:56.054764666Z",
+      "seconds": 7.568308
+    },
+    {
+      "package": "bsnes-jg",
+      "start": "2026-11-15T08:26:56.054764666Z",
+      "end": "2026-11-15T08:27:43.834108616Z",
+      "seconds": 47.779344
+    },
+    {
+      "package": "calamares-settings-foundry-linux",
+      "start": "2026-11-15T08:27:43.834108616Z",
+      "end": "2026-11-15T08:27:47.315666856Z",
+      "seconds": 3.481558
+    },
+    {
+      "package": "drmon",
+      "start": "2026-11-15T08:27:47.315666856Z",
+      "end": "2026-11-15T08:28:26.202361183Z",
+      "seconds": 38.886695
+    },
+    {
+      "package": "f9dasm",
+      "start": "2026-11-15T08:28:26.202361183Z",
+      "end": "2026-11-15T08:28:31.252266884Z",
+      "seconds": 5.049905
+    },
+    {
+      "package": "flycast",
+      "start": "2026-11-15T08:28:31.252266884Z",
+      "end": "2026-11-15T08:36:47.507802696Z",
+      "seconds": 496.255536
+    },
+    {
+      "package": "foundry-android-development",
+      "start": "2026-11-15T08:36:47.507802696Z",
+      "end": "2026-11-15T08:36:49.100106531Z",
+      "seconds": 1.592304
+    },
+    {
+      "package": "foundry-anvil",
+      "start": "2026-11-15T08:36:49.100106531Z",
+      "end": "2026-11-15T08:36:50.677001387Z",
+      "seconds": 1.576895
+    },
+    {
+      "package": "foundry-art",
+      "start": "2026-11-15T08:36:50.677001387Z",
+      "end": "2026-11-15T08:36:52.250755745Z",
+      "seconds": 1.573754
+    },
+    {
+      "package": "foundry-atelier",
+      "start": "2026-11-15T08:36:52.250755745Z",
+      "end": "2026-11-15T08:36:53.828038705Z",
+      "seconds": 1.577283
+    },
+    {
+      "package": "foundry-core",
+      "start": "2026-11-15T08:36:53.828038705Z",
+      "end": "2026-11-15T08:36:55.406981441Z",
+      "seconds": 1.578943
+    },
+    {
+      "package": "foundry-cv",
+      "start": "2026-11-15T08:36:55.406981441Z",
+      "end": "2026-11-15T08:36:56.977767814Z",
+      "seconds": 1.570786
+    },
+    {
+      "package": "foundry-daw",
+      "start": "2026-11-15T08:36:56.977767814Z",
+      "end": "2026-11-15T08:36:58.574918890Z",
+      "seconds": 1.597151
+    },
+    {
+      "package": "foundry-desktop",
+      "start": "2026-11-15T08:36:58.574918890Z",
+      "end": "2026-11-15T08:37:00.260463444Z",
+      "seconds": 1.685545
+    },
+    {
+      "package": "foundry-emulators-computers",
+      "start": "2026-11-15T08:37:00.260463444Z",
+      "end": "2026-11-15T08:37:01.840108586Z",
+      "seconds": 1.579645
+    },
+    {
+      "package": "foundry-emulators-consoles-heavy",
+      "start": "2026-11-15T08:37:01.840108586Z",
+      "end": "2026-11-15T08:37:03.417496906Z",
+      "seconds": 1.577388
+    },
+    {
+      "package": "foundry-emulators-consoles",
+      "start": "2026-11-15T08:37:03.417496906Z",
+      "end": "2026-11-15T08:37:05.000986981Z",
+      "seconds": 1.58349
+    },
+    {
+      "package": "foundry-emulators-vintage",
+      "start": "2026-11-15T08:37:05.000986981Z",
+      "end": "2026-11-15T08:37:06.581640075Z",
+      "seconds": 1.580654
+    },
+    {
+      "package": "foundry-emulators",
+      "start": "2026-11-15T08:37:06.581640075Z",
+      "end": "2026-11-15T08:37:08.161533443Z",
+      "seconds": 1.579893
+    },
+    {
+      "package": "foundry-free-games",
+      "start": "2026-11-15T08:37:08.161533443Z",
+      "end": "2026-11-15T08:37:09.748886617Z",
+      "seconds": 1.587353
+    },
+    {
+      "package": "foundry-game-frameworks",
+      "start": "2026-11-15T08:37:09.748886617Z",
+      "end": "2026-11-15T08:37:11.326558078Z",
+      "seconds": 1.577672
+    },
+    {
+      "package": "foundry-game-reimplementations",
+      "start": "2026-11-15T08:37:11.326558078Z",
+      "end": "2026-11-15T08:37:12.903898728Z",
+      "seconds": 1.57734
+    },
+    {
+      "package": "foundry-image-cli",
+      "start": "2026-11-15T08:37:12.903898728Z",
+      "end": "2026-11-15T08:37:14.476165217Z",
+      "seconds": 1.572267
+    },
+    {
+      "package": "foundry-ios-development",
+      "start": "2026-11-15T08:37:14.476165217Z",
+      "end": "2026-11-15T08:37:16.048300803Z",
+      "seconds": 1.572135
+    },
+    {
+      "package": "foundry-kde-theme",
+      "start": "2026-11-15T08:37:16.048300803Z",
+      "end": "2026-11-15T08:37:19.741259202Z",
+      "seconds": 3.692959
+    },
+    {
+      "package": "foundry-pixel-art",
+      "start": "2026-11-15T08:37:19.741259202Z",
+      "end": "2026-11-15T08:37:21.315604735Z",
+      "seconds": 1.574345
+    },
+    {
+      "package": "foundry-python-gamedev-extras",
+      "start": "2026-11-15T08:37:21.315604735Z",
+      "end": "2026-11-15T08:37:22.892876537Z",
+      "seconds": 1.577272
+    },
+    {
+      "package": "foundry-python-gamedev",
+      "start": "2026-11-15T08:37:22.892876537Z",
+      "end": "2026-11-15T08:37:24.472026158Z",
+      "seconds": 1.57915
+    },
+    {
+      "package": "foundry-retro-tools",
+      "start": "2026-11-15T08:37:24.472026158Z",
+      "end": "2026-11-15T08:37:26.066199268Z",
+      "seconds": 1.594173
+    },
+    {
+      "package": "foundry-sprite",
+      "start": "2026-11-15T08:37:26.066199268Z",
+      "end": "2026-11-15T08:37:27.648066397Z",
+      "seconds": 1.581867
+    },
+    {
+      "package": "foundry-trackers",
+      "start": "2026-11-15T08:37:27.648066397Z",
+      "end": "2026-11-15T08:37:29.265390010Z",
+      "seconds": 1.617324
+    },
+    {
+      "package": "foundry-welcome",
+      "start": "2026-11-15T08:37:29.265390010Z",
+      "end": "2026-11-15T08:37:35.556193076Z",
+      "seconds": 6.290803
+    },
+    {
+      "package": "ghidra",
+      "start": "2026-11-15T08:37:35.556193076Z",
+      "end": "2026-11-15T08:42:43.029486304Z",
+      "seconds": 307.473293
+    },
+    {
+      "package": "halfempty",
+      "start": "2026-11-15T08:42:43.029486304Z",
+      "end": "2026-11-15T08:42:53.331259156Z",
+      "seconds": 10.301773
+    },
+    {
+      "package": "ldtk",
+      "start": "2026-11-15T08:42:53.331259156Z",
+      "end": "2026-11-15T08:43:56.641083874Z",
+      "seconds": 63.309824
+    },
+    {
+      "package": "libvgm",
+      "start": "2026-11-15T08:43:56.641083874Z",
+      "end": "2026-11-15T08:44:37.151161362Z",
+      "seconds": 40.510078
+    },
+    {
+      "package": "m8te",
+      "start": "2026-11-15T08:44:37.151161362Z",
+      "end": "2026-11-15T08:44:41.317669843Z",
+      "seconds": 4.166508
+    },
+    {
+      "package": "mesen2",
+      "start": "2026-11-15T08:44:41.317669843Z",
+      "end": "2026-11-15T08:45:00.869651727Z",
+      "seconds": 19.551982
+    },
+    {
+      "package": "powerdevil",
+      "start": "2026-11-15T08:45:00.869651727Z",
+      "end": "2026-11-15T08:49:30.102722450Z",
+      "seconds": 269.233071
+    },
+    {
+      "package": "ppsspp",
+      "start": "2026-11-15T08:49:30.102722450Z",
+      "end": "2026-11-15T09:03:59.187543293Z",
+      "seconds": 869.084821
+    },
+    {
+      "package": "pvsneslib",
+      "start": "2026-11-15T09:03:59.187543293Z",
+      "end": "2026-11-15T09:04:31.265935718Z",
+      "seconds": 32.078392
+    },
+    {
+      "package": "python3-glfw",
+      "start": "2026-11-15T09:04:31.265935718Z",
+      "end": "2026-11-15T09:04:39.231223376Z",
+      "seconds": 7.965288
+    },
+    {
+      "package": "python3-inators",
+      "start": "2026-11-15T09:04:39.231223376Z",
+      "end": "2026-11-15T09:04:45.160812500Z",
+      "seconds": 5.929589
+    },
+    {
+      "package": "python3-librosa",
+      "start": "2026-11-15T09:04:45.160812500Z",
+      "end": "2026-11-15T09:04:49.848618763Z",
+      "seconds": 4.687806
+    },
+    {
+      "package": "python3-mss",
+      "start": "2026-11-15T09:04:49.848618763Z",
+      "end": "2026-11-15T09:04:56.178466279Z",
+      "seconds": 6.329848
+    },
+    {
+      "package": "python3-picire",
+      "start": "2026-11-15T09:04:56.178466279Z",
+      "end": "2026-11-15T09:05:02.317270475Z",
+      "seconds": 6.138804
+    },
+    {
+      "package": "python3-pydub",
+      "start": "2026-11-15T09:05:02.317270475Z",
+      "end": "2026-11-15T09:05:06.442636744Z",
+      "seconds": 4.125366
+    },
+    {
+      "package": "rpcs3",
+      "start": "2026-11-15T09:05:06.442636744Z",
+      "end": "2026-11-15T09:35:11.550460507Z",
+      "seconds": 1805.107824
+    },
+    {
+      "package": "ruff",
+      "start": "2026-11-15T09:35:11.550460507Z",
+      "end": "2026-11-15T09:35:23.488087137Z",
+      "seconds": 11.937627
+    },
+    {
+      "package": "snes9x-gtk",
+      "start": "2026-11-15T09:35:23.488087137Z",
+      "end": "2026-11-15T09:37:35.764803069Z",
+      "seconds": 132.276716
+    },
+    {
+      "package": "tilemap-studio",
+      "start": "2026-11-15T09:37:35.764803069Z",
+      "end": "2026-11-15T09:38:42.083875311Z",
+      "seconds": 66.319072
+    },
+    {
+      "package": "uv",
+      "start": "2026-11-15T09:38:42.083875311Z",
+      "end": "2026-11-15T09:38:59.801448662Z",
+      "seconds": 17.717573
+    },
+    {
+      "package": "vgmstream",
+      "start": "2026-11-15T09:38:59.801448662Z",
+      "end": "2026-11-15T09:40:02.373319936Z",
+      "seconds": 62.571871
+    },
+    {
+      "package": "wla-dx",
+      "start": "2026-11-15T09:40:02.373319936Z",
+      "end": "2026-11-15T09:42:15.078113113Z",
+      "seconds": 132.704794
+    },
+    {
+      "package": "xemu-xbox",
+      "start": "2026-11-15T09:42:15.078113113Z",
+      "end": "2026-11-15T09:48:56.842282379Z",
+      "seconds": 401.764169
+    },
+    {
+      "package": "xemu",
+      "start": "2026-11-15T09:48:56.842282379Z",
+      "end": "2026-11-15T09:51:13.610457763Z",
+      "seconds": 136.768175
+    }
+  ],
+  "last_docker_timestamp": "2026-11-15T09:51:13.610457763Z",
+  "artifacts": [
+    {
+      "file": "foundry-game-frameworks_1.0.3_all.deb",
+      "bytes": 2876,
+      "package": "foundry-game-frameworks",
+      "version": "1.0.3",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-emulators_1.0.0_all.deb",
+      "bytes": 2006,
+      "package": "foundry-emulators",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-sprite_1.0.2_all.deb",
+      "bytes": 2430,
+      "package": "foundry-sprite",
+      "version": "1.0.2",
+      "arch": "all"
+    },
+    {
+      "file": "blender-asset-finder-cli_0.1.0+git0a19d26c-1foundry1_all.deb",
+      "bytes": 12456,
+      "package": "blender-asset-finder-cli",
+      "version": "0.1.0+git0a19d26c-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-game-reimplementations_1.0.0_all.deb",
+      "bytes": 2142,
+      "package": "foundry-game-reimplementations",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-pixel-art_1.0.1_all.deb",
+      "bytes": 1948,
+      "package": "foundry-pixel-art",
+      "version": "1.0.1",
+      "arch": "all"
+    },
+    {
+      "file": "python3-pydub_0.25.1-1foundry1_all.deb",
+      "bytes": 27500,
+      "package": "python3-pydub",
+      "version": "0.25.1-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-retro-tools_1.0.17_all.deb",
+      "bytes": 4686,
+      "package": "foundry-retro-tools",
+      "version": "1.0.17",
+      "arch": "all"
+    },
+    {
+      "file": "tilemap-studio_4.0.1-3foundry1_amd64.deb",
+      "bytes": 731352,
+      "package": "tilemap-studio",
+      "version": "4.0.1-3foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-kde-theme_1.0.10_all.deb",
+      "bytes": 5700918,
+      "package": "foundry-kde-theme",
+      "version": "1.0.10",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-art_1.0.0_all.deb",
+      "bytes": 2002,
+      "package": "foundry-art",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-daw_1.0.0_all.deb",
+      "bytes": 2100,
+      "package": "foundry-daw",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "blender-asset-finder_0.2.0+git0a19d26c-2foundry1_all.deb",
+      "bytes": 342032,
+      "package": "blender-asset-finder",
+      "version": "0.2.0+git0a19d26c-2foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "powerdevil-data_6.6.6-0ubuntu0.1+foundry1_all.deb",
+      "bytes": 888692,
+      "package": "powerdevil-data",
+      "version": "4:6.6.6-0ubuntu0.1+foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "python3-inators_2.1.1-1foundry1_all.deb",
+      "bytes": 9124,
+      "package": "python3-inators",
+      "version": "2.1.1-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "uv_0.12.19-1foundry1_amd64.deb",
+      "bytes": 14378748,
+      "package": "uv",
+      "version": "0.12.19-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-anvil_1.0.6_all.deb",
+      "bytes": 2594,
+      "package": "foundry-anvil",
+      "version": "1.0.6",
+      "arch": "all"
+    },
+    {
+      "file": "powerdevil-dev_6.6.6-0ubuntu0.1+foundry1_amd64.deb",
+      "bytes": 10096,
+      "package": "powerdevil-dev",
+      "version": "4:6.6.6-0ubuntu0.1+foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-atelier_0.9.6_all.deb",
+      "bytes": 3066,
+      "package": "foundry-atelier",
+      "version": "0.9.6",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-trackers_1.0.0_all.deb",
+      "bytes": 1906,
+      "package": "foundry-trackers",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-image-cli_1.0.0_all.deb",
+      "bytes": 1920,
+      "package": "foundry-image-cli",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "ldtk_1.5.3-1foundry1_amd64.deb",
+      "bytes": 87943512,
+      "package": "ldtk",
+      "version": "1.5.3-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "python3-glfw_2.10.2-1foundry1_all.deb",
+      "bytes": 29272,
+      "package": "python3-glfw",
+      "version": "2.10.2-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "libvgm_0.1+git20260905.c8b998b-1foundry1_amd64.deb",
+      "bytes": 707694,
+      "package": "libvgm",
+      "version": "0.1+git20260905.c8b998b-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-emulators-consoles-heavy_1.0.7_all.deb",
+      "bytes": 2960,
+      "package": "foundry-emulators-consoles-heavy",
+      "version": "1.0.7",
+      "arch": "all"
+    },
+    {
+      "file": "bsnes-jg_2.1.2-1foundry2_amd64.deb",
+      "bytes": 528264,
+      "package": "bsnes-jg",
+      "version": "2.1.2-1foundry2",
+      "arch": "amd64"
+    },
+    {
+      "file": "python3-picire_21.8-1foundry1_all.deb",
+      "bytes": 20846,
+      "package": "python3-picire",
+      "version": "21.8-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "python3-librosa_1.0.0-1foundry1_all.deb",
+      "bytes": 216342,
+      "package": "python3-librosa",
+      "version": "1.0.0-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "powerdevil_6.6.6-0ubuntu0.1+foundry1_amd64.deb",
+      "bytes": 547094,
+      "package": "powerdevil",
+      "version": "4:6.6.6-0ubuntu0.1+foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-emulators-vintage_1.0.0_all.deb",
+      "bytes": 2088,
+      "package": "foundry-emulators-vintage",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "vgmstream_2117-1foundry1_amd64.deb",
+      "bytes": 898172,
+      "package": "vgmstream",
+      "version": "2117-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "wla-dx_10.7-1foundry1_amd64.deb",
+      "bytes": 1226006,
+      "package": "wla-dx",
+      "version": "10.7-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "f9dasm_1.83-1foundry3_amd64.deb",
+      "bytes": 54424,
+      "package": "f9dasm",
+      "version": "1.83-1foundry3",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-free-games_1.0.0_all.deb",
+      "bytes": 2334,
+      "package": "foundry-free-games",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "pvsneslib_4.6.0-1foundry1_all.deb",
+      "bytes": 2272,
+      "package": "pvsneslib",
+      "version": "4.6.0-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-desktop_1.0.4_all.deb",
+      "bytes": 5832,
+      "package": "foundry-desktop",
+      "version": "1.0.4",
+      "arch": "all"
+    },
+    {
+      "file": "pvsneslib-examples_4.6.0-1foundry1_all.deb",
+      "bytes": 1656736,
+      "package": "pvsneslib-examples",
+      "version": "4.6.0-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "halfempty_0.40-1foundry1_amd64.deb",
+      "bytes": 22786,
+      "package": "halfempty",
+      "version": "0.40-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "ghidra_12.1.4-1foundry1_amd64.deb",
+      "bytes": 518857536,
+      "package": "ghidra",
+      "version": "12.1.4-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "drmon_1.0.3_amd64.deb",
+      "bytes": 192370,
+      "package": "drmon",
+      "version": "1.0.3",
+      "arch": "amd64"
+    },
+    {
+      "file": "m8te_1.5-1foundry1_all.deb",
+      "bytes": 40560,
+      "package": "m8te",
+      "version": "1.5-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "xemu-xbox_0.8.136-1foundry2_amd64.deb",
+      "bytes": 4271198,
+      "package": "xemu-xbox",
+      "version": "0.8.136-1foundry2",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-android-development_1.0.1_all.deb",
+      "bytes": 2186,
+      "package": "foundry-android-development",
+      "version": "1.0.1",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-ios-development_1.0.1_all.deb",
+      "bytes": 2306,
+      "package": "foundry-ios-development",
+      "version": "1.0.1",
+      "arch": "all"
+    },
+    {
+      "file": "libpowerdevilcore2_6.6.6-0ubuntu0.1+foundry1_amd64.deb",
+      "bytes": 249184,
+      "package": "libpowerdevilcore2",
+      "version": "4:6.6.6-0ubuntu0.1+foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "asar-snes-assembler_1.91-1foundry2_amd64.deb",
+      "bytes": 163730,
+      "package": "asar-snes-assembler",
+      "version": "1.91-1foundry2",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-core_1.0.7_all.deb",
+      "bytes": 3224,
+      "package": "foundry-core",
+      "version": "1.0.7",
+      "arch": "all"
+    },
+    {
+      "file": "pvsneslib-core_4.6.0-1foundry1_amd64.deb",
+      "bytes": 1843540,
+      "package": "pvsneslib-core",
+      "version": "4.6.0-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "xemu_0~git20260129.40dfef0d-1foundry3_amd64.deb",
+      "bytes": 1020874,
+      "package": "xemu",
+      "version": "0~git20260129.40dfef0d-1foundry3",
+      "arch": "amd64"
+    },
+    {
+      "file": "calamares-settings-foundry-linux_1.0.32_all.deb",
+      "bytes": 2510862,
+      "package": "calamares-settings-foundry-linux",
+      "version": "1.0.32",
+      "arch": "all"
+    },
+    {
+      "file": "rpcs3_0.0.42+dfsg-1foundry1_amd64.deb",
+      "bytes": 10994986,
+      "package": "rpcs3",
+      "version": "0.0.42+dfsg-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-python-gamedev-extras_1.0.1_all.deb",
+      "bytes": 2656,
+      "package": "foundry-python-gamedev-extras",
+      "version": "1.0.1",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-cv_1.0.0_all.deb",
+      "bytes": 2304,
+      "package": "foundry-cv",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "snes9x-gtk_1.63-1foundry1_amd64.deb",
+      "bytes": 2052710,
+      "package": "snes9x-gtk",
+      "version": "1.63-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-python-gamedev_1.0.0_all.deb",
+      "bytes": 2346,
+      "package": "foundry-python-gamedev",
+      "version": "1.0.0",
+      "arch": "all"
+    },
+    {
+      "file": "ruff_0.16.9-1foundry1_amd64.deb",
+      "bytes": 7775758,
+      "package": "ruff",
+      "version": "0.16.9-1foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-welcome_1.0.7_amd64.deb",
+      "bytes": 26946,
+      "package": "foundry-welcome",
+      "version": "1.0.7",
+      "arch": "amd64"
+    },
+    {
+      "file": "mesen2_2.1.1-1foundry2_amd64.deb",
+      "bytes": 31603624,
+      "package": "mesen2",
+      "version": "2.1.1-1foundry2",
+      "arch": "amd64"
+    },
+    {
+      "file": "foundry-emulators-consoles_1.0.6_all.deb",
+      "bytes": 3692,
+      "package": "foundry-emulators-consoles",
+      "version": "1.0.6",
+      "arch": "all"
+    },
+    {
+      "file": "foundry-emulators-computers_1.0.3_all.deb",
+      "bytes": 3192,
+      "package": "foundry-emulators-computers",
+      "version": "1.0.3",
+      "arch": "all"
+    },
+    {
+      "file": "python3-mss_10.2.0-1foundry1_all.deb",
+      "bytes": 52464,
+      "package": "python3-mss",
+      "version": "10.2.0-1foundry1",
+      "arch": "all"
+    },
+    {
+      "file": "ppsspp_1.20.4-2foundry1_amd64.deb",
+      "bytes": 16347320,
+      "package": "ppsspp",
+      "version": "1.20.4-2foundry1",
+      "arch": "amd64"
+    },
+    {
+      "file": "flycast_2.7-1foundry1_amd64.deb",
+      "bytes": 6511046,
+      "package": "flycast",
+      "version": "2.7-1foundry1",
+      "arch": "amd64"
+    }
+  ],
+  "iso_sizes": {
+    "cold": 4736024576,
+    "warm": 4736024576
+  },
+  "iso_initramfs": {
+    "cold": [
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic"
+    ],
+    "warm": [
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic",
+      "update-initramfs: Generating /boot/initrd.img-7.0.0-43-generic"
+    ]
+  },
+  "boot_metadata": {
+    "cold": {
+      "unix_time": 1794738274.177621,
+      "iso": "/srv/foundry-build/runs/cold/foundry-anvil-0.9.140-amd64.iso",
+      "guest_memory_mib": 4096,
+      "guest_vcpus": 2
+    },
+    "warm": {
+      "unix_time": 1794740789.7643974,
+      "iso": "/srv/foundry-build/runs/warm/foundry-anvil-0.9.140-amd64.iso",
+      "guest_memory_mib": 4096,
+      "guest_vcpus": 2
+    }
+  }
+}

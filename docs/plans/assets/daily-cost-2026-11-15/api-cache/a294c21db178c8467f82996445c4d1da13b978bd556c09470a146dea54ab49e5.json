@@ -1,0 +1,33 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"SourMesen\",name:\"Mesen2\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:08.083478+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "2.1.1",
+              "publishedAt": "2025-07-06T07:32:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/SourMesen/Mesen2/releases/tag/2.1.1"
+            },
+            {
+              "tagName": "2.1.0",
+              "publishedAt": "2025-05-16T13:44:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/SourMesen/Mesen2/releases/tag/2.1.0"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAyNS0wNS0xNlQxMzowMDo0NlrODQ9TRA=="
+          }
+        }
+      }
+    }
+  }
+}

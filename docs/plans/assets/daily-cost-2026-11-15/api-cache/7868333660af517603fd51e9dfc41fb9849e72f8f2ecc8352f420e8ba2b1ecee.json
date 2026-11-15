@@ -1,0 +1,40 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"Arakula\",name:\"f9dasm\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:05.033096+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "V1.83",
+              "publishedAt": "2023-07-04T11:25:46Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Arakula/f9dasm/releases/tag/V1.83"
+            },
+            {
+              "tagName": "V1.82",
+              "publishedAt": "2022-10-08T10:21:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Arakula/f9dasm/releases/tag/V1.82"
+            },
+            {
+              "tagName": "V1.81",
+              "publishedAt": "2022-10-07T06:13:29Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Arakula/f9dasm/releases/tag/V1.81"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAyMi0xMC0wN1QwNjowNzo0MFrOBLkHqQ=="
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,330 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"vgmstream\",name:\"vgmstream\") { refs(refPrefix:\"refs/tags/\",first:100,after:\"MTAw\",orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:23.294003+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "r1037",
+              "target": {
+                "committedDate": "2014-09-16T23:29:32Z",
+                "oid": "64bdd4c943d314d1fe10610a8df577ce7174e47c"
+              }
+            },
+            {
+              "name": "r1036",
+              "target": {
+                "committedDate": "2014-09-16T23:28:49Z",
+                "oid": "745889b61274595c8528dc6ebfcb983adbe41b80"
+              }
+            },
+            {
+              "name": "r1035",
+              "target": {
+                "committedDate": "2014-08-03T03:51:21Z",
+                "oid": "4a573f48a41428d679ef7676bdcb57ee3a2a2d42"
+              }
+            },
+            {
+              "name": "r1034",
+              "target": {
+                "committedDate": "2014-06-27T04:12:48Z",
+                "oid": "44075c4e911d713ad7277a6b2ee4b7cd9572f7ee"
+              }
+            },
+            {
+              "name": "r1033",
+              "target": {
+                "committedDate": "2014-06-27T03:53:49Z",
+                "oid": "1854d42e974152a58e3eba5aab0db49021849835"
+              }
+            },
+            {
+              "name": "r1032",
+              "target": {
+                "committedDate": "2014-06-02T03:12:32Z",
+                "oid": "a5843ef4706c8eceea59c852982d33e65fcd6b0e"
+              }
+            },
+            {
+              "name": "r1031",
+              "target": {
+                "committedDate": "2014-05-26T07:04:43Z",
+                "oid": "793f236cd19fdd3400328c13601315acd417138d"
+              }
+            },
+            {
+              "name": "r1030",
+              "target": {
+                "committedDate": "2014-05-23T23:41:38Z",
+                "oid": "d202c0a45a383c84fbe15793a8330a81e9df105d"
+              }
+            },
+            {
+              "name": "r1029",
+              "target": {
+                "committedDate": "2014-04-24T04:36:06Z",
+                "oid": "842c064b3b7cb518160bb1e3dabc406384557d9f"
+              }
+            },
+            {
+              "name": "r1028",
+              "target": {
+                "committedDate": "2014-04-24T04:35:08Z",
+                "oid": "b533969527ba43f7d23dfeff3ff6e54f7a13a919"
+              }
+            },
+            {
+              "name": "r1027",
+              "target": {
+                "committedDate": "2014-04-24T04:34:08Z",
+                "oid": "3be505428a3574feb9c9ee893a4942fb860779c7"
+              }
+            },
+            {
+              "name": "r1026",
+              "target": {
+                "committedDate": "2014-04-24T04:31:04Z",
+                "oid": "96301376ccd20c6a19ac070f739875baa58b5b39"
+              }
+            },
+            {
+              "name": "r1025",
+              "target": {
+                "committedDate": "2014-04-24T04:27:24Z",
+                "oid": "8ef55da3b62449a92bdd83c438ee8537993c5da4"
+              }
+            },
+            {
+              "name": "r1024",
+              "target": {
+                "committedDate": "2014-04-24T04:25:30Z",
+                "oid": "bb59d6a3894f76e1e3866d7610126b5269531f35"
+              }
+            },
+            {
+              "name": "r1023",
+              "target": {
+                "committedDate": "2014-03-15T05:42:06Z",
+                "oid": "b2c8e5cbacb8e3a16e56e33c6b5d8a6549a0fa83"
+              }
+            },
+            {
+              "name": "r1022",
+              "target": {
+                "committedDate": "2014-03-15T05:40:30Z",
+                "oid": "9148d4e14a44bd49d895263319df5f6f6532bc26"
+              }
+            },
+            {
+              "name": "r1021",
+              "target": {
+                "committedDate": "2014-03-15T05:39:21Z",
+                "oid": "633eb7b5456e0089a02b0aeba287ed3b3a9073a5"
+              }
+            },
+            {
+              "name": "r1020",
+              "target": {
+                "tagger": {
+                  "date": "2014-02-26T00:54:56-08:00"
+                },
+                "target": {
+                  "committedDate": "2014-02-26T06:31:28Z",
+                  "oid": "1ab759bd1910ed93914c40a2ae394ba627c497db"
+                }
+              }
+            },
+            {
+              "name": "r1019",
+              "target": {
+                "tagger": {
+                  "date": "2014-02-26T00:54:42-08:00"
+                },
+                "target": {
+                  "committedDate": "2014-02-26T06:26:02Z",
+                  "oid": "43866fd9ed51f0215678284ac71689458db5d3e0"
+                }
+              }
+            },
+            {
+              "name": "r1018",
+              "target": {
+                "tagger": {
+                  "date": "2014-02-26T00:54:16-08:00"
+                },
+                "target": {
+                  "committedDate": "2014-02-26T06:25:02Z",
+                  "oid": "9fc46bd877a172c95f7fffbc7839dca803b8f9ae"
+                }
+              }
+            },
+            {
+              "name": "r1017",
+              "target": {
+                "tagger": {
+                  "date": "2014-02-26T00:53:49-08:00"
+                },
+                "target": {
+                  "committedDate": "2014-02-26T06:14:13Z",
+                  "oid": "a095da3965f4ad6c3582e95963f381d3e99a260b"
+                }
+              }
+            },
+            {
+              "name": "r1016",
+              "target": {
+                "tagger": {
+                  "date": "2014-02-26T00:53:07-08:00"
+                },
+                "target": {
+                  "committedDate": "2014-02-26T06:13:07Z",
+                  "oid": "8a618d7a3d9ea2a8998a714e61a0dbd4151a1330"
+                }
+              }
+            },
+            {
+              "name": "r1015",
+              "target": {
+                "tagger": {
+                  "date": "2014-02-26T00:52:39-08:00"
+                },
+                "target": {
+                  "committedDate": "2014-02-26T06:12:24Z",
+                  "oid": "bd5cdb35dea3e52b98cccbd7320c4afc9b954e7f"
+                }
+              }
+            },
+            {
+              "name": "r1014",
+              "target": {
+                "tagger": {
+                  "date": "2013-09-03T11:27:43-07:00"
+                },
+                "target": {
+                  "committedDate": "2013-09-03T18:27:36Z",
+                  "oid": "dc4b7f553c36480d14a3b1945c89856da99463e9"
+                }
+              }
+            },
+            {
+              "name": "r1013",
+              "target": {
+                "tagger": {
+                  "date": "2013-09-03T11:17:23-07:00"
+                },
+                "target": {
+                  "committedDate": "2013-09-03T18:17:16Z",
+                  "oid": "a6b64189e0e557e693e0a76a0cdb8cdbc5f14a52"
+                }
+              }
+            },
+            {
+              "name": "r1012",
+              "target": {
+                "tagger": {
+                  "date": "2013-09-03T11:16:07-07:00"
+                },
+                "target": {
+                  "committedDate": "2013-09-03T18:16:00Z",
+                  "oid": "bf220dc112f6c3e758092b281cf550e504918a50"
+                }
+              }
+            },
+            {
+              "name": "r1011",
+              "target": {
+                "tagger": {
+                  "date": "2013-09-03T11:14:41-07:00"
+                },
+                "target": {
+                  "committedDate": "2013-09-03T18:14:14Z",
+                  "oid": "aa1d39a19e9c1c40b35e9e468f2b963cdf0a2cf7"
+                }
+              }
+            },
+            {
+              "name": "r1010",
+              "target": {
+                "tagger": {
+                  "date": "2013-09-03T10:59:54-07:00"
+                },
+                "target": {
+                  "committedDate": "2013-09-03T17:59:45Z",
+                  "oid": "c6ba2a32baef43c14e156bb9a4c0b957f9656929"
+                }
+              }
+            },
+            {
+              "name": "r1009",
+              "target": {
+                "tagger": {
+                  "date": "2013-09-03T10:57:57-07:00"
+                },
+                "target": {
+                  "committedDate": "2013-09-03T17:57:35Z",
+                  "oid": "aa8e2a92a5ab0906ce38dc35fb5307b619b7a2bc"
+                }
+              }
+            },
+            {
+              "name": "r1008",
+              "target": {
+                "tagger": {
+                  "date": "2013-09-03T10:55:25-07:00"
+                },
+                "target": {
+                  "committedDate": "2013-09-03T17:55:14Z",
+                  "oid": "684bd36ebc8f219a4cb9992779ec50bde20fab0c"
+                }
+              }
+            },
+            {
+              "name": "r1007",
+              "target": {
+                "tagger": {
+                  "date": "2013-09-03T10:50:11-07:00"
+                },
+                "target": {
+                  "committedDate": "2013-09-03T17:49:45Z",
+                  "oid": "a1ce18bbce3649f83c814fb7690aefb5890b80fe"
+                }
+              }
+            },
+            {
+              "name": "r1004",
+              "target": {
+                "tagger": {
+                  "date": "2013-08-12T19:47:52-07:00"
+                },
+                "target": {
+                  "committedDate": "2012-11-26T11:56:52Z",
+                  "oid": "b4f550037c85d5d8e56781a16f0a82268e620b8a"
+                }
+              }
+            },
+            {
+              "name": "r1002",
+              "target": {
+                "tagger": {
+                  "date": "2013-08-12T19:48:33-07:00"
+                },
+                "target": {
+                  "committedDate": "2012-10-02T10:00:02Z",
+                  "oid": "73178861993ab9a98006ca2680220e1bb5f691b2"
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "MTMz"
+          }
+        }
+      }
+    }
+  }
+}

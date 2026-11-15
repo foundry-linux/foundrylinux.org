@@ -1,0 +1,138 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"alekmaul\",name:\"pvsneslib\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:12.134956+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "4.7.0",
+              "target": {
+                "committedDate": "2026-11-08T03:31:16Z",
+                "oid": "a556c49bdd976cd951a385dd9c80e1b0ad356d6b"
+              }
+            },
+            {
+              "name": "4.6.0",
+              "target": {
+                "committedDate": "2026-07-28T14:11:45Z",
+                "oid": "1fab4b2a9d31a265805be58bb45c5a46480ea211"
+              }
+            },
+            {
+              "name": "4.5.0",
+              "target": {
+                "committedDate": "2025-12-28T07:16:39Z",
+                "oid": "fa758c9b2a0b850764f6ebc0fa00c05fe3af9e27"
+              }
+            },
+            {
+              "name": "4.4.0",
+              "target": {
+                "committedDate": "2025-03-08T08:08:02Z",
+                "oid": "a3b165d75df3280f44de9ee85a75cd02c6b62595"
+              }
+            },
+            {
+              "name": "4.3.0",
+              "target": {
+                "committedDate": "2024-06-10T14:01:02Z",
+                "oid": "9f278d4ec9b6a430fc9cf96b4db69d8d16ac7960"
+              }
+            },
+            {
+              "name": "4.2.0",
+              "target": {
+                "committedDate": "2024-03-04T05:05:16Z",
+                "oid": "600f5d6d6f293fdbb352ab4a36087b0af9dca1b3"
+              }
+            },
+            {
+              "name": "4.1.0",
+              "target": {
+                "committedDate": "2023-08-20T07:33:50Z",
+                "oid": "51fb52c37ded1b2eab8281c9b19c376de56a39b6"
+              }
+            },
+            {
+              "name": "4.0.2",
+              "target": {
+                "committedDate": "2023-02-22T04:46:35Z",
+                "oid": "6c7133f4b50d23c7e5f5557babf205814f5b95d6"
+              }
+            },
+            {
+              "name": "4.0.1",
+              "target": {
+                "committedDate": "2022-11-20T06:34:03Z",
+                "oid": "ab1bd779d41965dfe5187da2d8a8f969c7b69a73"
+              }
+            },
+            {
+              "name": "4.0.0",
+              "target": {
+                "committedDate": "2022-10-30T05:49:16Z",
+                "oid": "223793ce4caf8323badcccc9170d4251b995efd0"
+              }
+            },
+            {
+              "name": "3.5.0",
+              "target": {
+                "committedDate": "2022-05-29T05:48:30Z",
+                "oid": "0b1cb399d8f9a57ced8dae85b1cf83e4e3f56f1f"
+              }
+            },
+            {
+              "name": "3.4.0",
+              "target": {
+                "committedDate": "2021-06-19T04:15:04Z",
+                "oid": "239698af16f01d19df26c8fb3598a02dcfde4793"
+              }
+            },
+            {
+              "name": "3.3.0",
+              "target": {
+                "committedDate": "2021-05-28T07:21:07Z",
+                "oid": "0961690d99030114b74faaca336a8b75d8b0e199"
+              }
+            },
+            {
+              "name": "3.2.0",
+              "target": {
+                "committedDate": "2021-05-24T06:01:12Z",
+                "oid": "387f23ad02d829e4d308ccb615444d5d8e6f240c"
+              }
+            },
+            {
+              "name": "3.1.0",
+              "target": {
+                "committedDate": "2020-12-13T09:16:11Z",
+                "oid": "c91cb77ccd97bdb6185139e5776c81dbcc0d64ac"
+              }
+            },
+            {
+              "name": "3.0.0",
+              "target": {
+                "committedDate": "2020-11-21T05:31:05Z",
+                "oid": "4be209a12a9618589e8d6f619593cf07e726b417"
+              }
+            },
+            {
+              "name": "2.3.2",
+              "target": {
+                "committedDate": "2018-02-10T14:47:00Z",
+                "oid": "ba47074253b424d6d9fae5c3288eeed12f8dbb0d"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "MTc"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,764 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"xemu-project\",name:\"xemu\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:26.458492+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "pre-release",
+              "target": {
+                "committedDate": "2026-11-11T19:37:16Z",
+                "oid": "5759e9c0ee3fe0e699986f2aa939c11a69a497b1"
+              }
+            },
+            {
+              "name": "v0.8.139",
+              "target": {
+                "tagger": {
+                  "date": "2026-10-21T21:36:57Z"
+                },
+                "target": {
+                  "committedDate": "2026-10-21T21:27:52Z",
+                  "oid": "aa54c34cae1c09410d74c69a44210a9867fe2d16"
+                }
+              }
+            },
+            {
+              "name": "v0.8.138",
+              "target": {
+                "tagger": {
+                  "date": "2026-10-20T08:44:16Z"
+                },
+                "target": {
+                  "committedDate": "2026-10-20T08:21:15Z",
+                  "oid": "bf817de2b0354b7afe5e70efcd4f9c53bc7d4c67"
+                }
+              }
+            },
+            {
+              "name": "v0.8.137",
+              "target": {
+                "tagger": {
+                  "date": "2026-10-16T19:01:03Z"
+                },
+                "target": {
+                  "committedDate": "2026-10-12T19:40:50Z",
+                  "oid": "36334d95b86f9c3c6ae34efb9af06785273f8e1a"
+                }
+              }
+            },
+            {
+              "name": "v0.8.136",
+              "target": {
+                "tagger": {
+                  "date": "2026-06-08T05:38:43Z"
+                },
+                "target": {
+                  "committedDate": "2026-06-08T04:08:51Z",
+                  "oid": "fc24584ce88f0915ad7f04775bb7712c2e3f49ee"
+                }
+              }
+            },
+            {
+              "name": "v0.8.135",
+              "target": {
+                "tagger": {
+                  "date": "2026-05-20T00:02:01Z"
+                },
+                "target": {
+                  "committedDate": "2026-05-18T18:34:07Z",
+                  "oid": "6318bb112091635ef908255019e4d42956bc5fa8"
+                }
+              }
+            },
+            {
+              "name": "v0.8.134",
+              "target": {
+                "tagger": {
+                  "date": "2026-02-26T02:29:21Z"
+                },
+                "target": {
+                  "committedDate": "2026-02-26T00:17:51Z",
+                  "oid": "fc9980d2962cbec656253106ea2e121fab1e68d4"
+                }
+              }
+            },
+            {
+              "name": "v0.8.133",
+              "target": {
+                "tagger": {
+                  "date": "2026-01-20T07:22:04Z"
+                },
+                "target": {
+                  "committedDate": "2026-01-20T06:51:00Z",
+                  "oid": "26fcbe54f17e496bdf530dad9f237e74e2f943fc"
+                }
+              }
+            },
+            {
+              "name": "v0.8.132",
+              "target": {
+                "tagger": {
+                  "date": "2026-01-16T06:57:00Z"
+                },
+                "target": {
+                  "committedDate": "2026-01-15T21:04:14Z",
+                  "oid": "24087af22ab9df22a0fa214188266430c3cf1387"
+                }
+              }
+            },
+            {
+              "name": "v0.8.131",
+              "target": {
+                "tagger": {
+                  "date": "2026-01-13T03:38:34Z"
+                },
+                "target": {
+                  "committedDate": "2026-01-13T03:01:31Z",
+                  "oid": "739520523f8e2af494e8a769ffa3d73ed732bafc"
+                }
+              }
+            },
+            {
+              "name": "v0.8.130",
+              "target": {
+                "committedDate": "2026-01-02T05:19:54Z",
+                "oid": "a672d723b8156a5d5ea9ee7e50faa9b999535460"
+              }
+            },
+            {
+              "name": "v0.8.129",
+              "target": {
+                "committedDate": "2025-12-28T06:34:39Z",
+                "oid": "47b25fb8fb527eee8be3878aa60351cc33189a2d"
+              }
+            },
+            {
+              "name": "v0.8.128",
+              "target": {
+                "committedDate": "2025-12-27T20:36:44Z",
+                "oid": "289e4db0bd6f2c7077ac6c923c46f0a7eec454d5"
+              }
+            },
+            {
+              "name": "v0.8.127",
+              "target": {
+                "committedDate": "2025-12-26T21:57:31Z",
+                "oid": "c086cd107a0d407f4cfb7c4b8da1ba51e27b958e"
+              }
+            },
+            {
+              "name": "v0.8.126",
+              "target": {
+                "committedDate": "2025-12-26T21:22:28Z",
+                "oid": "0c2462c5d735fe619bd38ffcb7025bbe809ccabb"
+              }
+            },
+            {
+              "name": "v0.8.125",
+              "target": {
+                "committedDate": "2025-12-26T19:08:56Z",
+                "oid": "7b465bda3fa8209b7e4d997ed52a4072bc401fa2"
+              }
+            },
+            {
+              "name": "v0.8.124",
+              "target": {
+                "committedDate": "2025-12-25T22:24:42Z",
+                "oid": "e8b69b676a42c8d1979afa44080af6e2db29833c"
+              }
+            },
+            {
+              "name": "v0.8.123",
+              "target": {
+                "committedDate": "2025-12-25T21:54:30Z",
+                "oid": "aed1fa4ac6324e76f0ad88d8b051e914286274d6"
+              }
+            },
+            {
+              "name": "v0.8.122",
+              "target": {
+                "committedDate": "2025-12-23T21:46:51Z",
+                "oid": "d0478b6154f171e0b2ed1579e5561c674e55298b"
+              }
+            },
+            {
+              "name": "v0.8.121",
+              "target": {
+                "committedDate": "2025-12-18T23:53:55Z",
+                "oid": "2cf036ec7fb5a4ef1091d5438f28d63446cce975"
+              }
+            },
+            {
+              "name": "v0.8.120",
+              "target": {
+                "committedDate": "2025-12-18T23:11:23Z",
+                "oid": "658f01865f967eee2c12aa0d0b397a1910299c82"
+              }
+            },
+            {
+              "name": "v0.8.119",
+              "target": {
+                "committedDate": "2025-12-10T04:20:07Z",
+                "oid": "d7b3af14f60f3da47269803ed9ebf49263df66a2"
+              }
+            },
+            {
+              "name": "v0.8.118",
+              "target": {
+                "committedDate": "2025-11-29T20:56:36Z",
+                "oid": "eb8e4519edcc150e8bc6cbe1d2186f852e9c919a"
+              }
+            },
+            {
+              "name": "v0.8.117",
+              "target": {
+                "committedDate": "2025-11-28T22:17:11Z",
+                "oid": "aa496f863f174fa1bd488dabf7f4f0f2c3646a30"
+              }
+            },
+            {
+              "name": "v0.8.116",
+              "target": {
+                "committedDate": "2025-11-27T19:55:20Z",
+                "oid": "7ebabd852a3200d664271349956601778a06a26b"
+              }
+            },
+            {
+              "name": "v0.8.115",
+              "target": {
+                "committedDate": "2025-11-16T20:13:21Z",
+                "oid": "e6e828362e2b2e2d29c674fc104d5d3086a76f49"
+              }
+            },
+            {
+              "name": "v0.8.114",
+              "target": {
+                "committedDate": "2025-11-14T19:01:13Z",
+                "oid": "a4b8caf7439814cb8f6cc18e670e53bb2acd9490"
+              }
+            },
+            {
+              "name": "v0.8.113",
+              "target": {
+                "committedDate": "2025-11-10T17:50:21Z",
+                "oid": "febb54bd4d826636b7c63df9a4da82c5921f1a99"
+              }
+            },
+            {
+              "name": "v0.8.112",
+              "target": {
+                "committedDate": "2025-11-06T18:53:21Z",
+                "oid": "24b4b99a543bdd47c3794b61559515e9effcd4d7"
+              }
+            },
+            {
+              "name": "v0.8.111",
+              "target": {
+                "committedDate": "2025-10-29T20:21:58Z",
+                "oid": "db8d27b9f4a5f04352aa240e1cb223c7d1f126ea"
+              }
+            },
+            {
+              "name": "v0.8.110",
+              "target": {
+                "committedDate": "2025-10-28T18:39:19Z",
+                "oid": "dc672ab87b51e7c659e5c7781d3b88dcd54ef55d"
+              }
+            },
+            {
+              "name": "v0.8.109",
+              "target": {
+                "committedDate": "2025-10-24T19:31:28Z",
+                "oid": "5eb603b28d926bc145dcaca63cce173e1008a144"
+              }
+            },
+            {
+              "name": "v0.8.108",
+              "target": {
+                "committedDate": "2025-10-16T01:17:27Z",
+                "oid": "19f18873d9b35e2c802fd430a5901c8ee65b3fe0"
+              }
+            },
+            {
+              "name": "v0.8.107",
+              "target": {
+                "committedDate": "2025-10-15T23:20:54Z",
+                "oid": "5c30af2923a64e11caf4abff511cd3cdcccb5ca4"
+              }
+            },
+            {
+              "name": "v0.8.106",
+              "target": {
+                "committedDate": "2025-09-29T06:43:17Z",
+                "oid": "1973482781c120ceae88e2e0d89fa522b35b9639"
+              }
+            },
+            {
+              "name": "v0.8.105",
+              "target": {
+                "committedDate": "2025-09-25T19:12:28Z",
+                "oid": "518208e8494bb0a6189b677fe8f3f693cab41826"
+              }
+            },
+            {
+              "name": "v0.8.104",
+              "target": {
+                "committedDate": "2025-09-23T19:56:08Z",
+                "oid": "2d26f185a035da63a40c439c50bbd24f3bf21b61"
+              }
+            },
+            {
+              "name": "v0.8.103",
+              "target": {
+                "committedDate": "2025-09-19T23:54:08Z",
+                "oid": "ff1617d66468abd927f55f7082b3f53610ff26a4"
+              }
+            },
+            {
+              "name": "v0.8.102",
+              "target": {
+                "committedDate": "2025-09-18T18:26:02Z",
+                "oid": "c700b2a6474c82f743c0cf2985bf5070c04df8c9"
+              }
+            },
+            {
+              "name": "v0.8.101",
+              "target": {
+                "committedDate": "2025-09-16T20:24:19Z",
+                "oid": "234840d3423e5c08c0038546ae485f586d2d394f"
+              }
+            },
+            {
+              "name": "v0.8.100",
+              "target": {
+                "committedDate": "2025-09-16T20:12:49Z",
+                "oid": "fe030fdac96ce1974c77750d111e5e23db835fa0"
+              }
+            },
+            {
+              "name": "v0.8.99",
+              "target": {
+                "committedDate": "2025-09-16T19:56:19Z",
+                "oid": "1fb9e050a41cc81d848c62a89a2143de64b88886"
+              }
+            },
+            {
+              "name": "v0.8.98",
+              "target": {
+                "committedDate": "2025-09-08T20:34:42Z",
+                "oid": "c67843384031e0edaab3db91ec496464b931789b"
+              }
+            },
+            {
+              "name": "v0.8.97",
+              "target": {
+                "committedDate": "2025-09-03T22:44:33Z",
+                "oid": "22ea58291dab392a2316f1cf4ced3f52e05142f9"
+              }
+            },
+            {
+              "name": "v0.8.96",
+              "target": {
+                "committedDate": "2025-07-29T21:49:39Z",
+                "oid": "98a3974290618086de5132d27c8ede736f9d93ea"
+              }
+            },
+            {
+              "name": "v0.8.95",
+              "target": {
+                "committedDate": "2025-07-20T23:59:31Z",
+                "oid": "196726b898802b2a7ce0e5d859fdcf2a40bc6261"
+              }
+            },
+            {
+              "name": "v0.8.94",
+              "target": {
+                "committedDate": "2025-07-11T09:11:47Z",
+                "oid": "8f29452ca928ba52156bfff9f8102ee3dd14ad8a"
+              }
+            },
+            {
+              "name": "v0.8.93",
+              "target": {
+                "committedDate": "2025-07-09T19:37:12Z",
+                "oid": "d238766756736c4b41350595ced44bddac4c6c16"
+              }
+            },
+            {
+              "name": "v0.8.92",
+              "target": {
+                "committedDate": "2025-07-03T04:42:02Z",
+                "oid": "9d5cf0926aa6f8eb2221e63a2e92bd86b02afae0"
+              }
+            },
+            {
+              "name": "v0.8.91",
+              "target": {
+                "committedDate": "2025-07-03T04:26:17Z",
+                "oid": "ab811bf9878567d827be842ed1b90526ba4a87c9"
+              }
+            },
+            {
+              "name": "v0.8.90",
+              "target": {
+                "committedDate": "2025-07-03T03:22:18Z",
+                "oid": "62ab68b2ab57d15648d965ad130723b84b6fcd06"
+              }
+            },
+            {
+              "name": "v0.8.89",
+              "target": {
+                "committedDate": "2025-07-02T20:32:38Z",
+                "oid": "c11c098ec6c756ec1d9b6889721fe3b4cf5f5b4b"
+              }
+            },
+            {
+              "name": "v0.8.88",
+              "target": {
+                "committedDate": "2025-07-02T08:41:09Z",
+                "oid": "dcd524c4bc3cfa1459f88e859863c7ee8a3806b1"
+              }
+            },
+            {
+              "name": "v0.8.87",
+              "target": {
+                "committedDate": "2025-06-30T06:21:51Z",
+                "oid": "8ca6b769f5d280efd2b224239bf4efd216dd15f8"
+              }
+            },
+            {
+              "name": "v0.8.86",
+              "target": {
+                "committedDate": "2025-06-28T23:09:06Z",
+                "oid": "80f7efaba567a5c25c923e8df30ed5db17198f7a"
+              }
+            },
+            {
+              "name": "v0.8.85",
+              "target": {
+                "committedDate": "2025-06-28T07:18:28Z",
+                "oid": "8cc83dfc437312d31d20230383a99384edfe6bbd"
+              }
+            },
+            {
+              "name": "v0.8.84",
+              "target": {
+                "committedDate": "2025-06-26T21:20:20Z",
+                "oid": "634577c753be80d51072d3337c0de552c5de8072"
+              }
+            },
+            {
+              "name": "v0.8.83",
+              "target": {
+                "committedDate": "2025-06-23T22:14:45Z",
+                "oid": "1343d5873f9b9de251f41d7a8c99d37d1741e640"
+              }
+            },
+            {
+              "name": "v0.8.82",
+              "target": {
+                "committedDate": "2025-06-23T08:09:51Z",
+                "oid": "1fa242bd005467874bb169247c57450d7b3ddd30"
+              }
+            },
+            {
+              "name": "v0.8.81",
+              "target": {
+                "committedDate": "2025-06-22T23:44:14Z",
+                "oid": "a24296479321c5095a7c8ebbc1ebd87c3e5f9fc7"
+              }
+            },
+            {
+              "name": "v0.8.80",
+              "target": {
+                "committedDate": "2025-06-21T20:25:24Z",
+                "oid": "348b03d6cefbfacbc6fa99b1dc902f53f28f0fa1"
+              }
+            },
+            {
+              "name": "v0.8.79",
+              "target": {
+                "committedDate": "2025-06-21T16:55:26Z",
+                "oid": "14a0a5f48118f8f83a1a4aa2d7f3376c48ffb473"
+              }
+            },
+            {
+              "name": "v0.8.78",
+              "target": {
+                "committedDate": "2025-06-21T00:41:24Z",
+                "oid": "7d9739df4cf7c075b186e7d5835fae64f60b3df0"
+              }
+            },
+            {
+              "name": "v0.8.77",
+              "target": {
+                "committedDate": "2025-06-20T23:11:01Z",
+                "oid": "8881537de2047e492c658c637e19813788ba0605"
+              }
+            },
+            {
+              "name": "v0.8.76",
+              "target": {
+                "committedDate": "2025-06-20T10:34:28Z",
+                "oid": "0ea109bcf19a89f690e1798632ae037b9517bd3f"
+              }
+            },
+            {
+              "name": "v0.8.75",
+              "target": {
+                "committedDate": "2025-06-19T08:56:05Z",
+                "oid": "b22f42ff95968f63ad7f2967726d5db13feb6ff4"
+              }
+            },
+            {
+              "name": "v0.8.74",
+              "target": {
+                "committedDate": "2025-06-18T08:32:27Z",
+                "oid": "59cec6599df8010554e54132f2eb264ffbc7e97d"
+              }
+            },
+            {
+              "name": "v0.8.73",
+              "target": {
+                "committedDate": "2025-06-17T18:57:13Z",
+                "oid": "381bcfcf635cb8546383aea946945fef09613293"
+              }
+            },
+            {
+              "name": "v0.8.72",
+              "target": {
+                "committedDate": "2025-06-14T00:38:51Z",
+                "oid": "ae12bf4318141ee216da3524ba94dacd68ad2e3f"
+              }
+            },
+            {
+              "name": "v0.8.71",
+              "target": {
+                "committedDate": "2025-06-04T02:36:08Z",
+                "oid": "e02e41ccaaceffcad816cfb554dd1195767e952d"
+              }
+            },
+            {
+              "name": "v0.8.70",
+              "target": {
+                "committedDate": "2025-06-03T19:11:46Z",
+                "oid": "9732026aca24720ebb5c496d2f3992c42a144305"
+              }
+            },
+            {
+              "name": "v0.8.69",
+              "target": {
+                "committedDate": "2025-06-03T08:54:09Z",
+                "oid": "26c451fc36c378976f7dee1431ec279cc7df4515"
+              }
+            },
+            {
+              "name": "v0.8.68",
+              "target": {
+                "committedDate": "2025-06-01T00:16:54Z",
+                "oid": "344f7da1323ef22d9d131181b21762b149e345d3"
+              }
+            },
+            {
+              "name": "v0.8.67",
+              "target": {
+                "committedDate": "2025-05-28T02:38:54Z",
+                "oid": "38d33367eaf3425c6160ecb81ee8233f53304613"
+              }
+            },
+            {
+              "name": "v0.8.66",
+              "target": {
+                "committedDate": "2025-05-20T20:28:39Z",
+                "oid": "8667193001e4d9f20f9d5237d941f6f0ff3a2672"
+              }
+            },
+            {
+              "name": "v0.8.65",
+              "target": {
+                "committedDate": "2025-05-20T20:15:12Z",
+                "oid": "ce936bccdd70a18c28f35ffada8cb8c934fa0d74"
+              }
+            },
+            {
+              "name": "v0.8.64",
+              "target": {
+                "committedDate": "2025-05-20T18:37:29Z",
+                "oid": "ef1b08d79dd780bd4b019306996a6b8cdb7e92aa"
+              }
+            },
+            {
+              "name": "v0.8.63",
+              "target": {
+                "committedDate": "2025-05-20T05:34:54Z",
+                "oid": "c9cdd76102ae6345b4f3df20a8090186034e8bbb"
+              }
+            },
+            {
+              "name": "v0.8.62",
+              "target": {
+                "committedDate": "2025-05-15T19:54:56Z",
+                "oid": "c720af00bb9db153fc26e982ae379006fa7dbbc2"
+              }
+            },
+            {
+              "name": "v0.8.61",
+              "target": {
+                "committedDate": "2025-05-15T16:06:55Z",
+                "oid": "bd3cd78ae47498e03dae947a8c35a8dde66143db"
+              }
+            },
+            {
+              "name": "v0.8.60",
+              "target": {
+                "committedDate": "2025-05-15T15:37:13Z",
+                "oid": "428c975f098cf3c8914e07219be02bed56a0b8d1"
+              }
+            },
+            {
+              "name": "v0.8.59",
+              "target": {
+                "committedDate": "2025-05-15T14:14:36Z",
+                "oid": "f7e40b2b80ad08745d6ecbdd3ffca0b655d6d6fb"
+              }
+            },
+            {
+              "name": "v0.8.58",
+              "target": {
+                "committedDate": "2025-05-01T06:43:38Z",
+                "oid": "d59386942947eb7ae3087548bd7e273974af20c4"
+              }
+            },
+            {
+              "name": "v0.8.57",
+              "target": {
+                "committedDate": "2025-04-30T06:41:05Z",
+                "oid": "6e513ed94812246cba3b17954f8da049bb41fbcb"
+              }
+            },
+            {
+              "name": "v0.8.56",
+              "target": {
+                "committedDate": "2025-04-26T23:23:43Z",
+                "oid": "4dfbe29cbd5f45ce0b89467a3e273b963ecf2556"
+              }
+            },
+            {
+              "name": "v0.8.55",
+              "target": {
+                "committedDate": "2025-04-23T03:16:15Z",
+                "oid": "89185e6937c7d597ba353bc4d4800dde0015ea39"
+              }
+            },
+            {
+              "name": "v0.8.54",
+              "target": {
+                "committedDate": "2025-04-18T18:58:22Z",
+                "oid": "0c2a6178192043db8b30c4d61a96129b442102f5"
+              }
+            },
+            {
+              "name": "v0.8.53",
+              "target": {
+                "committedDate": "2025-04-17T03:26:22Z",
+                "oid": "5685a6290cfbf7b022ec5e58a8ffb09f664c04e8"
+              }
+            },
+            {
+              "name": "v0.8.52",
+              "target": {
+                "committedDate": "2025-04-17T01:24:46Z",
+                "oid": "679f6d06bd61ef8cb5c09c663c63bab36e76b899"
+              }
+            },
+            {
+              "name": "v0.8.51",
+              "target": {
+                "committedDate": "2025-04-16T21:09:13Z",
+                "oid": "86c85023e6f970a20c559f717a21dc263ed69dd6"
+              }
+            },
+            {
+              "name": "v0.8.50",
+              "target": {
+                "committedDate": "2025-04-16T18:39:49Z",
+                "oid": "1f876ce0da6e1b6b2396db494e10b8c0b5db8bb0"
+              }
+            },
+            {
+              "name": "v0.8.49",
+              "target": {
+                "committedDate": "2025-04-11T11:18:28Z",
+                "oid": "2cc926588b9fea2aa5bd5b4882cb7440c6553991"
+              }
+            },
+            {
+              "name": "v0.8.48",
+              "target": {
+                "committedDate": "2025-04-08T23:24:50Z",
+                "oid": "ebec5e30284a6ef2c55fe4f1d1c123eb88c19a74"
+              }
+            },
+            {
+              "name": "v0.8.47",
+              "target": {
+                "committedDate": "2025-04-02T19:00:53Z",
+                "oid": "f82c6865fc27a07f52470e0a1da30151b130b4a2"
+              }
+            },
+            {
+              "name": "v0.8.46",
+              "target": {
+                "committedDate": "2025-03-31T19:40:31Z",
+                "oid": "57cdee770e228409f1755b636d7075135e046f12"
+              }
+            },
+            {
+              "name": "v0.8.45",
+              "target": {
+                "committedDate": "2025-03-28T09:18:42Z",
+                "oid": "672e9cd553df9fa4629ecdc49efacf310d9994b0"
+              }
+            },
+            {
+              "name": "v0.8.44",
+              "target": {
+                "committedDate": "2025-03-28T06:52:03Z",
+                "oid": "1586b40b11c8bf5ee561d8fc4dba20f49112b0c4"
+              }
+            },
+            {
+              "name": "v0.8.43",
+              "target": {
+                "committedDate": "2025-03-28T00:25:59Z",
+                "oid": "0d06ce860379dfacfdf796d9e011427ded7e8302"
+              }
+            },
+            {
+              "name": "v0.8.42",
+              "target": {
+                "committedDate": "2025-03-27T23:21:44Z",
+                "oid": "9cf1483cd3c0c7b158d926c25935cf8c9b99f8f0"
+              }
+            },
+            {
+              "name": "v0.8.41",
+              "target": {
+                "committedDate": "2025-03-22T22:26:12Z",
+                "oid": "9e58abc95184320d830c3c11628b0d9605614abb"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": true,
+            "endCursor": "MTAw"
+          }
+        }
+      }
+    }
+  }
+}

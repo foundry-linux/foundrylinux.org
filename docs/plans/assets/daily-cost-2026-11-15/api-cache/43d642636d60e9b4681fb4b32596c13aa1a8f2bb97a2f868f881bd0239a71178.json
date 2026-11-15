@@ -1,0 +1,22 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"developer-resources-co\",name:\"drdevtools\") { defaultBranchRef { target { ... on Commit { history(first:100,since:\"2026-10-16T00:00:00+07:00\",until:\"2026-11-15T00:00:00+07:00\") { nodes { oid committedDate url } pageInfo { hasNextPage endCursor } } } } } } }",
+  "retrieved_at": "2026-11-15T11:47:03.602561+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "defaultBranchRef": {
+          "target": {
+            "history": {
+              "nodes": [],
+              "pageInfo": {
+                "hasNextPage": false,
+                "endCursor": null
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "Hypothetical c7i.large build stages, runtime multiplier 2; baseline validation host",
+  "activity": "both",
+  "iso_policy": "daily",
+  "include_tag_proxies": true,
+  "include_snapshots": true,
+  "compute_per_hour": 0.2121,
+  "ipv4_per_hour": 0.005,
+  "ebs_gib": 64,
+  "ebs_per_gib_month": 0.0912,
+  "billing_days_per_month": 30,
+  "warm_workflow_seconds": 1089,
+  "discovery_seconds": 60,
+  "startup_seconds": 60,
+  "validation_seconds": 180,
+  "publication_seconds": 120,
+  "egress_per_gb": 0.1093,
+  "available_egress_free_gb_per_calendar_month": 0,
+  "r2_per_gb_month": 0.015,
+  "artifact_retention_days": 30,
+  "existing_r2_gb": 0,
+  "package_upload_multiplier": 1,
+  "recipe_seconds_override": {},
+  "binary_to_recipe": {
+    "pvsneslib-core": "pvsneslib",
+    "pvsneslib-examples": "pvsneslib",
+    "libpowerdevilcore2": "powerdevil",
+    "powerdevil-data": "powerdevil",
+    "powerdevil-dev": "powerdevil"
+  },
+  "assumptions": {
+    "measured": "1089 s warm workflow, 64 GiB instance capacity, per-recipe cold timing intervals, current .deb sizes and warm ISO size",
+    "unmeasured_allowances": "60 s discovery + 60 s start + 180 s automated desktop/installer check + 120 s publication per daily run; edit for sensitivity, not established by spike",
+    "coverage": "Foundry overlay only; current recipe catalog projected backward; all upstream snapshot commit days selected, which may exceed eventual promotion policy",
+    "tag_dates": "Include matching tags without release records, but their tag/commit dates are publication proxies, not exact release dates",
+    "package_timings": "Changed recipe cost uses observed cold interval, including dependency and fetch work; no compiler-cache savings assumed",
+    "transfer": "Gross AWS egress without shared free allowance; current ISO/deb and verified local source sizes proxy historical versions; repo-only changes reuse existing orig tarballs; metadata indexes omitted",
+    "retention": "Start empty and keep each daily ISO/changed deb for 30 days; first month ramps up; repeat longer to see steady retention",
+    "excluded": "Legacy diagnostic 300 GiB disks, retries, taxes, request charges, signing/monitoring services, site deployment and initial cold bootstrap",
+    "powerdevil": "Stay on Foundry Plasma 6.6; later 6.7/6.8 tags remain in history but are excluded from this scenario",
+    "units": "Explicit conservative decimal GB for transfer and R2; EBS GiB as provisioned. Set egress_bytes_per_gb to1073741824 to compare binary billing units; this is a planning estimate, not invoice reconciliation."
+  },
+  "rate_sources": {
+    "ec2_ebs": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-south-1/index.csv",
+    "ipv4": "https://aws.amazon.com/vpc/pricing/",
+    "egress": "https://aws.amazon.com/ec2/pricing/on-demand/",
+    "r2": "https://developers.cloudflare.com/r2/pricing/"
+  },
+  "upstream_version_prefixes": {
+    "powerdevil": "v6.6."
+  },
+  "include_source_uploads": true,
+  "egress_bytes_per_gb": 1000000000,
+  "r2_bytes_per_gb": 1000000000,
+  "build_compute_per_hour": 0.08925,
+  "build_ipv4_per_hour": 0.005,
+  "build_runtime_multiplier": 2
+}

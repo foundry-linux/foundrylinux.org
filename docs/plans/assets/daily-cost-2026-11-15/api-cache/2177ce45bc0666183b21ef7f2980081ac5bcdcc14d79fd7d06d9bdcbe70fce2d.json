@@ -1,0 +1,43 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"ValleyBell\",name:\"libvgm\") { defaultBranchRef { target { ... on Commit { history(first:100,since:\"2026-10-16T00:00:00+07:00\",until:\"2026-11-15T00:00:00+07:00\") { nodes { oid committedDate url } pageInfo { hasNextPage endCursor } } } } } } }",
+  "retrieved_at": "2026-11-15T11:47:07.978742+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "defaultBranchRef": {
+          "target": {
+            "history": {
+              "nodes": [
+                {
+                  "oid": "c5c03a2c2514d38d2ab7b7e8dbd021af0b8292cb",
+                  "committedDate": "2026-11-04T22:25:32Z",
+                  "url": "https://github.com/ValleyBell/libvgm/commit/c5c03a2c2514d38d2ab7b7e8dbd021af0b8292cb"
+                },
+                {
+                  "oid": "61b62d64455e039de2a1d01498afa9e9b5f1cb88",
+                  "committedDate": "2026-10-26T22:57:11Z",
+                  "url": "https://github.com/ValleyBell/libvgm/commit/61b62d64455e039de2a1d01498afa9e9b5f1cb88"
+                },
+                {
+                  "oid": "641d7ef38e16576b96510f078cc1c7740381f1bf",
+                  "committedDate": "2026-10-26T20:37:16Z",
+                  "url": "https://github.com/ValleyBell/libvgm/commit/641d7ef38e16576b96510f078cc1c7740381f1bf"
+                },
+                {
+                  "oid": "bad50c571db45b872304bdcd0603dd2214f0663e",
+                  "committedDate": "2026-10-17T11:54:10Z",
+                  "url": "https://github.com/ValleyBell/libvgm/commit/bad50c571db45b872304bdcd0603dd2214f0663e"
+                }
+              ],
+              "pageInfo": {
+                "hasNextPage": false,
+                "endCursor": "c5c03a2c2514d38d2ab7b7e8dbd021af0b8292cb 3"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

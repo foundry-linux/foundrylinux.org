@@ -1,0 +1,331 @@
+{
+  "kind": "http",
+  "request": "https://gitlab.com/api/v4/projects/jgemu%2Fbsnes/repository/tags?per_page=100&page=1",
+  "retrieved_at": "2026-11-15T11:47:02.238719+00:00",
+  "response": [
+    {
+      "name": "2.1.2",
+      "message": "bsnes-jg Version 2.1.2",
+      "target": "7563872d2cfe58ea15c9bbb27236a55b3c3e6b4f",
+      "commit": {
+        "id": "27726438a6e11f9f0c7530c849ac932931d19e26",
+        "short_id": "27726438",
+        "created_at": "2026-09-12T13:09:16.000-04:00",
+        "parent_ids": [
+          "a5a910345b32c759e36e3b1661c73b533fb1119b"
+        ],
+        "title": "Version 2.1.2",
+        "message": "Version 2.1.2\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2026-09-12T13:09:16.000-04:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2026-09-12T13:09:16.000-04:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/27726438a6e11f9f0c7530c849ac932931d19e26"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2026-09-12T17:11:52.000Z"
+    },
+    {
+      "name": "2.1.1",
+      "message": "bsnes-jg Version 2.1.1",
+      "target": "1c7bedcd6fc339d084e96433fc7dd05b595b2f17",
+      "commit": {
+        "id": "b2be5a8df827dae1f0bf656c1070b9f6b6bafcbf",
+        "short_id": "b2be5a8d",
+        "created_at": "2026-07-02T11:23:15.000-04:00",
+        "parent_ids": [
+          "16fbff702ecaac62317d137c5e0cace7363e5bcb"
+        ],
+        "title": "Version 2.1.1",
+        "message": "Version 2.1.1\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2026-07-02T11:23:15.000-04:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2026-07-02T11:23:15.000-04:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/b2be5a8df827dae1f0bf656c1070b9f6b6bafcbf"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2026-07-02T15:23:29.000Z"
+    },
+    {
+      "name": "2.1.0",
+      "message": "bsnes-jg Version 2.1.0",
+      "target": "8a2278cab3ea6225591a89af169f72650ae26aca",
+      "commit": {
+        "id": "d8be08a6c0def2fd3af37944f0fe2cdf79a326f0",
+        "short_id": "d8be08a6",
+        "created_at": "2026-02-21T11:12:29.000-05:00",
+        "parent_ids": [
+          "5635dc2152fc91cdcac40eec391cd6af10d2e749"
+        ],
+        "title": "Version 2.1.0",
+        "message": "Version 2.1.0\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2026-02-21T11:12:29.000-05:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2026-02-21T11:12:29.000-05:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/d8be08a6c0def2fd3af37944f0fe2cdf79a326f0"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2026-02-21T16:13:00.000Z"
+    },
+    {
+      "name": "2.0.2",
+      "message": "bsnes-jg Version 2.0.2",
+      "target": "6e89f506f08413cdd08ea81c741e59da66ac560c",
+      "commit": {
+        "id": "cadf42555d12c270d5340c91af385255053afbd3",
+        "short_id": "cadf4255",
+        "created_at": "2025-07-14T14:30:38.000-04:00",
+        "parent_ids": [
+          "33e820b5e082eb62121dadb32d482e480a583ebb"
+        ],
+        "title": "Version 2.0.2",
+        "message": "Version 2.0.2\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2025-07-14T14:30:38.000-04:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2025-07-14T14:30:38.000-04:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/cadf42555d12c270d5340c91af385255053afbd3"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2025-07-14T18:30:58.000Z"
+    },
+    {
+      "name": "2.0.1",
+      "message": "bsnes-jg Version 2.0.1",
+      "target": "b7274453eaffdee1a3796815be952df0dc6f2200",
+      "commit": {
+        "id": "407a22802ecf9005425075ad1c4a429ea0fa78ae",
+        "short_id": "407a2280",
+        "created_at": "2025-01-27T14:48:58.000-05:00",
+        "parent_ids": [
+          "e61d2d387f2b4ddb6b9c56e5b41d03f5ff755a9b"
+        ],
+        "title": "Version 2.0.1",
+        "message": "Version 2.0.1\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2025-01-27T14:48:58.000-05:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2025-01-27T14:48:58.000-05:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/407a22802ecf9005425075ad1c4a429ea0fa78ae"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2025-01-27T19:49:17.000Z"
+    },
+    {
+      "name": "2.0.0",
+      "message": "bsnes-jg Version 2.0.0",
+      "target": "688703f9016080e7e463f77e382fb18a2fadaeba",
+      "commit": {
+        "id": "5376dc9e2154def98a3d1c4b867ccb7c632baaf7",
+        "short_id": "5376dc9e",
+        "created_at": "2024-09-22T12:23:38.000-04:00",
+        "parent_ids": [
+          "767e0a1e93ea205d7caacd4f626dd13a590d27d6"
+        ],
+        "title": "Version 2.0.0",
+        "message": "Version 2.0.0\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2024-09-22T12:23:38.000-04:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2024-09-22T12:23:38.000-04:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/5376dc9e2154def98a3d1c4b867ccb7c632baaf7"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2024-09-22T16:24:38.000Z"
+    },
+    {
+      "name": "1.2.0",
+      "message": "bsnes-jg Version 1.2.0",
+      "target": "5039d90a0e71046196b2dbe8e5bfbff3535481b3",
+      "commit": {
+        "id": "e7e6fce429adf8ac71ca0b36e0741bdc7a4a8f04",
+        "short_id": "e7e6fce4",
+        "created_at": "2024-03-30T11:56:14.000-04:00",
+        "parent_ids": [
+          "1da5b896004977f0e2e97a835e8da878435e4f42"
+        ],
+        "title": "Version 1.2.0",
+        "message": "Version 1.2.0\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2024-03-30T11:56:14.000-04:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2024-03-30T11:56:14.000-04:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/e7e6fce429adf8ac71ca0b36e0741bdc7a4a8f04"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2024-03-30T15:57:35.000Z"
+    },
+    {
+      "name": "1.1.2",
+      "message": "bsnes-jg Version 1.1.2",
+      "target": "2c9e4fbb895381cda6030ceb565a1466ec9e06d0",
+      "commit": {
+        "id": "757af02f80736d1d6f6708e3526007f603ea40eb",
+        "short_id": "757af02f",
+        "created_at": "2023-03-03T23:40:50.000-05:00",
+        "parent_ids": [
+          "114fe47710c79029057e12f05737b2a2e698e8dd"
+        ],
+        "title": "Version 1.1.2",
+        "message": "Version 1.1.2\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2023-03-03T23:40:50.000-05:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2023-03-03T23:40:50.000-05:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/757af02f80736d1d6f6708e3526007f603ea40eb"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2023-03-04T04:41:04.000Z"
+    },
+    {
+      "name": "1.1.1",
+      "message": "bsnes-jg Version 1.1.1",
+      "target": "688560a8753363bcf54c4e373935cbdbad2435b7",
+      "commit": {
+        "id": "5543b0d7507b4266021e4ec15b2aab40f962e230",
+        "short_id": "5543b0d7",
+        "created_at": "2023-02-25T16:56:27.000-05:00",
+        "parent_ids": [
+          "6b00ae94ffdf6bd55143f0cbcfb8bd452f3c24c0"
+        ],
+        "title": "Version 1.1.1",
+        "message": "Version 1.1.1\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2023-02-25T16:55:43.000-05:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2023-02-25T16:56:27.000-05:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/5543b0d7507b4266021e4ec15b2aab40f962e230"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2023-02-25T21:56:57.000Z"
+    },
+    {
+      "name": "1.1.0",
+      "message": "bsnes-jg Version 1.1.0",
+      "target": "cf122b155e3f5fecac6a25271d75a7436ce9f7a7",
+      "commit": {
+        "id": "177544aac881244bb6322eb036e28ce790b8e0e7",
+        "short_id": "177544aa",
+        "created_at": "2022-12-27T16:26:43.000-05:00",
+        "parent_ids": [
+          "e7fc701fc710f3aeb0d79eb7350fcc6396915c06"
+        ],
+        "title": "Version 1.1.0",
+        "message": "Version 1.1.0\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2022-12-27T16:26:43.000-05:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2022-12-27T16:26:43.000-05:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/177544aac881244bb6322eb036e28ce790b8e0e7"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2022-12-27T21:26:47.000Z"
+    },
+    {
+      "name": "1.0.1",
+      "message": "bsnes-jg Version 1.0.1",
+      "target": "4c7318f779ffecebc77f2d6e2c8475be26df439b",
+      "commit": {
+        "id": "b4283bc336e0654784183b10cc761c9c3dcb846a",
+        "short_id": "b4283bc3",
+        "created_at": "2022-05-27T20:32:33.000-04:00",
+        "parent_ids": [
+          "1acd3f58f0efdcbb8c973a52d843026a31b5ba0b"
+        ],
+        "title": "Version 1.0.1",
+        "message": "Version 1.0.1\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2022-05-27T20:32:33.000-04:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2022-05-27T20:32:33.000-04:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/b4283bc336e0654784183b10cc761c9c3dcb846a"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2022-05-28T00:32:51.000Z"
+    },
+    {
+      "name": "1.0.0",
+      "message": "bsnes-jg Version 1.0.0",
+      "target": "8e650bd2d121f950475393930495c80daf48eac2",
+      "commit": {
+        "id": "ada4bd7f7da20cf29c0c5b1cf524b62733d42ad9",
+        "short_id": "ada4bd7f",
+        "created_at": "2022-01-19T14:33:08.000-05:00",
+        "parent_ids": [
+          "1cbf3652e928a530722fdaae6b08812b1baf6cc2"
+        ],
+        "title": "Version 1.0.0",
+        "message": "Version 1.0.0\n",
+        "author_name": "Rupert Carmichael",
+        "author_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "authored_date": "2022-01-19T14:33:08.000-05:00",
+        "committer_name": "Rupert Carmichael",
+        "committer_email": "5050061-carmiker@users.noreply.gitlab.com",
+        "committed_date": "2022-01-19T14:33:08.000-05:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/jgemu/bsnes/-/commit/ada4bd7f7da20cf29c0c5b1cf524b62733d42ad9"
+      },
+      "release": null,
+      "protected": false,
+      "created_at": "2022-01-19T19:33:17.000Z"
+    }
+  ]
+}

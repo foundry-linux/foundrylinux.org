@@ -1,0 +1,724 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"vgmstream\",name:\"vgmstream\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:21.552582+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "r2168",
+              "target": {
+                "committedDate": "2026-10-25T17:11:52Z",
+                "oid": "d9875b1fff307e4759dfb85e49e3d5e6fb196f7c"
+              }
+            },
+            {
+              "name": "r2117",
+              "target": {
+                "committedDate": "2026-05-19T22:34:10Z",
+                "oid": "71e2361042531fe767fb98300cf8c1ee95e539a0"
+              }
+            },
+            {
+              "name": "r2083",
+              "target": {
+                "committedDate": "2026-01-25T16:20:56Z",
+                "oid": "57df2e179d929532094f4e4dd42ce5395514622b"
+              }
+            },
+            {
+              "name": "r2055",
+              "target": {
+                "committedDate": "2025-09-28T19:13:32Z",
+                "oid": "f499bf0c8b8d746ab2bd7feebd914d972ef40fec"
+              }
+            },
+            {
+              "name": "r2023",
+              "target": {
+                "committedDate": "2025-05-14T21:59:08Z",
+                "oid": "f96812ead1560b43ef56d1d388a5f01ed92a8cc0"
+              }
+            },
+            {
+              "name": "r1980",
+              "target": {
+                "committedDate": "2024-12-31T17:18:07Z",
+                "oid": "ed9a720221b4b0f2589a3860ad72631cec7145e9"
+              }
+            },
+            {
+              "name": "r1951",
+              "target": {
+                "committedDate": "2024-08-19T21:31:12Z",
+                "oid": "4b2dc01ccdcd3eeccb7b2ca0d7a32692dfdec947"
+              }
+            },
+            {
+              "name": "r1917",
+              "target": {
+                "committedDate": "2024-04-09T18:30:43Z",
+                "oid": "3ac217fad9989079d4fe92453b6f39c13f3261a0"
+              }
+            },
+            {
+              "name": "r1896",
+              "target": {
+                "committedDate": "2023-12-06T11:41:07Z",
+                "oid": "8e5dbc563a8822886d3d3e6abb4faa2585742cf7"
+              }
+            },
+            {
+              "name": "r1879",
+              "target": {
+                "committedDate": "2023-09-15T20:39:59Z",
+                "oid": "aa1db48b3687eae5194e3f9e879fa93a13b4354c"
+              }
+            },
+            {
+              "name": "r1866",
+              "target": {
+                "committedDate": "2023-07-26T20:42:57Z",
+                "oid": "90adcd5164b36e55ef5dbf7d5fc57ee7446ebc7b"
+              }
+            },
+            {
+              "name": "r1843",
+              "target": {
+                "committedDate": "2023-05-28T23:02:15Z",
+                "oid": "b158e8122384e174453ef526cd895411f7df80a2"
+              }
+            },
+            {
+              "name": "r1831",
+              "target": {
+                "committedDate": "2023-03-19T17:55:42Z",
+                "oid": "9f99e742df8115297cc265244f451e769a3ab23b"
+              }
+            },
+            {
+              "name": "r1810",
+              "target": {
+                "committedDate": "2023-01-10T21:23:35Z",
+                "oid": "8b0204f3fce845df91adc68e43669f9b660d7c63"
+              }
+            },
+            {
+              "name": "r1800",
+              "target": {
+                "committedDate": "2022-10-22T13:45:43Z",
+                "oid": "49af2cea7d6265a6e063f5d4e09e34df8f861998"
+              }
+            },
+            {
+              "name": "r1776",
+              "target": {
+                "committedDate": "2022-08-18T08:02:42Z",
+                "oid": "bcdba525bdcda370085f76ad0f48f5388c6ddef4"
+              }
+            },
+            {
+              "name": "r1745",
+              "target": {
+                "committedDate": "2022-05-01T21:35:00Z",
+                "oid": "72eb0e6b6fe2863be24650414a34ad504f56f2f8"
+              }
+            },
+            {
+              "name": "r1721",
+              "target": {
+                "committedDate": "2022-03-16T22:06:00Z",
+                "oid": "f2f0b3f84a9a93fc2623736e738df16a6050901e"
+              }
+            },
+            {
+              "name": "r1702",
+              "target": {
+                "committedDate": "2022-01-12T21:14:17Z",
+                "oid": "a76ac04dcd41f1926a721e626657397bd9656a74"
+              }
+            },
+            {
+              "name": "r1690",
+              "target": {
+                "committedDate": "2021-11-30T19:52:09Z",
+                "oid": "82d86c64b63f75c0a7d03c88487c7843bcd07dcb"
+              }
+            },
+            {
+              "name": "r1667",
+              "target": {
+                "committedDate": "2021-10-15T13:27:14Z",
+                "oid": "6b84f258e4238edd627e24ec8460a7040613d054"
+              }
+            },
+            {
+              "name": "r1640",
+              "target": {
+                "committedDate": "2021-09-03T20:12:10Z",
+                "oid": "17c9bdb7031c7beaf1af4cad3e7369821850704b"
+              }
+            },
+            {
+              "name": "r1626",
+              "target": {
+                "committedDate": "2021-08-15T20:03:21Z",
+                "oid": "da9c04551b67f6994ea81cf97f17291956d5dafd"
+              }
+            },
+            {
+              "name": "r1625",
+              "target": {
+                "committedDate": "2021-08-15T14:19:42Z",
+                "oid": "265391ca03a23f7769433642faf7fe8281c4b4f5"
+              }
+            },
+            {
+              "name": "r1050-3448-g77cc431b",
+              "target": {
+                "committedDate": "2020-11-29T19:22:34Z",
+                "oid": "77cc431be77846f95eccca49170878434935622f"
+              }
+            },
+            {
+              "name": "r1050-3312-g70d20924",
+              "target": {
+                "committedDate": "2020-10-12T21:38:45Z",
+                "oid": "70d20924341e1df3e4f76b4c4a6e414981950f8e"
+              }
+            },
+            {
+              "name": "r1050-3280-gba405509",
+              "target": {
+                "committedDate": "2020-09-26T17:32:41Z",
+                "oid": "ba405509cc3bb9fe1a6389d6d268475e2d567545"
+              }
+            },
+            {
+              "name": "r1050-3264-g86fbfffd",
+              "target": {
+                "committedDate": "2020-09-15T11:06:41Z",
+                "oid": "86fbfffd88abee07bf45ca1e6205c9435f8fd389"
+              }
+            },
+            {
+              "name": "r1050-3258-g0b7c3ce6",
+              "target": {
+                "committedDate": "2020-09-12T13:10:51Z",
+                "oid": "0b7c3ce61eeac60f8c60307f955a5dc63fee3d55"
+              }
+            },
+            {
+              "name": "r1050-3086-gc9dc860c",
+              "target": {
+                "committedDate": "2020-07-08T22:49:20Z",
+                "oid": "c9dc860c4e0fe053dee4dd8e82934b8e0d9a4fc1"
+              }
+            },
+            {
+              "name": "r1050-3084-ge114566b",
+              "target": {
+                "committedDate": "2020-07-05T20:02:27Z",
+                "oid": "e114566be30827259b3c1a531f00e00b189aa1ad"
+              }
+            },
+            {
+              "name": "r1050-3072-g39f38e0a",
+              "target": {
+                "committedDate": "2020-06-26T01:59:33Z",
+                "oid": "39f38e0ac8863d2b7a40c54c43a5ba92593b4646"
+              }
+            },
+            {
+              "name": "r1050-3022-g877d791d",
+              "target": {
+                "committedDate": "2020-06-03T10:11:47Z",
+                "oid": "877d791d90c20bfc426aa4be5b93cb9c8564f442"
+              }
+            },
+            {
+              "name": "r1050-2969-g9da8b93f",
+              "target": {
+                "committedDate": "2020-05-23T02:46:49Z",
+                "oid": "9da8b93f56c4085be3461b45fc488e87c2e831f1"
+              }
+            },
+            {
+              "name": "r1050-2955-g9aaba3b3",
+              "target": {
+                "committedDate": "2020-05-12T16:40:27Z",
+                "oid": "9aaba3b30cdf15497e71153ab0e1f452b4c7c5b4"
+              }
+            },
+            {
+              "name": "r1050-2946-g1e583645",
+              "target": {
+                "committedDate": "2020-05-01T20:37:00Z",
+                "oid": "1e5836453aa2972ce08e169e11cd243a903ade66"
+              }
+            },
+            {
+              "name": "r1050-2908-g14dc8566",
+              "target": {
+                "committedDate": "2020-04-12T18:43:57Z",
+                "oid": "14dc85664d57a13af32ea5af43ece935e6214f1d"
+              }
+            },
+            {
+              "name": "r1050-2893-g994ef884",
+              "target": {
+                "committedDate": "2020-04-05T20:44:37Z",
+                "oid": "994ef884094c1df814e03a12d7efe30090ae64ef"
+              }
+            },
+            {
+              "name": "r1050-2874-gcff06e38",
+              "target": {
+                "committedDate": "2020-04-04T17:55:26Z",
+                "oid": "cff06e3822c2a8a473a12d0dadeb0a01c332eacc"
+              }
+            },
+            {
+              "name": "r1050-2861-g126e3b41",
+              "target": {
+                "committedDate": "2020-03-09T00:05:28Z",
+                "oid": "126e3b4113b88c857bb6634d10ec654e86a3b2c1"
+              }
+            },
+            {
+              "name": "r1050-2838-g987641d8",
+              "target": {
+                "committedDate": "2020-03-06T11:41:39Z",
+                "oid": "987641d86676aea7b6ac314b7723f7ce337a8be0"
+              }
+            },
+            {
+              "name": "r1050-2819-gcec5b596",
+              "target": {
+                "committedDate": "2020-02-26T03:57:37Z",
+                "oid": "cec5b5962ca064f3077d9378cf66dba2ac007d62"
+              }
+            },
+            {
+              "name": "r1050-2797-g5ea57c08",
+              "target": {
+                "committedDate": "2020-02-10T23:55:39Z",
+                "oid": "5ea57c08d60a03e704097d0203ac5a608e5e70fc"
+              }
+            },
+            {
+              "name": "r1050-2792-gbbeb4e4b",
+              "target": {
+                "committedDate": "2020-02-03T00:02:54Z",
+                "oid": "bbeb4e4ba3c1b692642392019284c5fec766bda5"
+              }
+            },
+            {
+              "name": "r1050-2780-geea1c3b4",
+              "target": {
+                "committedDate": "2020-01-24T21:59:31Z",
+                "oid": "eea1c3b489648371fb08b4ce2735cbc422e857ff"
+              }
+            },
+            {
+              "name": "r1050-2771-ge58c73aa",
+              "target": {
+                "committedDate": "2020-01-13T20:55:42Z",
+                "oid": "e58c73aab1180f022157acaea13ea718369ff778"
+              }
+            },
+            {
+              "name": "r1050-2743-gc479bdb5",
+              "target": {
+                "committedDate": "2020-01-05T12:45:18Z",
+                "oid": "c479bdb590afaa04b63ccd76ffc5045a5915faf9"
+              }
+            },
+            {
+              "name": "r1050-2736-g71da1d5e",
+              "target": {
+                "committedDate": "2020-01-02T21:29:42Z",
+                "oid": "71da1d5e9b998a974f26fad8d96bf66511a1b1a4"
+              }
+            },
+            {
+              "name": "r1050-2696-g0a04a738",
+              "target": {
+                "committedDate": "2019-12-05T22:45:04Z",
+                "oid": "0a04a738dfd6f0f18e716d33d5047856df313a9f"
+              }
+            },
+            {
+              "name": "r1050-2651-g2ac2c0ce",
+              "target": {
+                "committedDate": "2019-11-23T12:37:39Z",
+                "oid": "2ac2c0ce28fd779e593653637e23905dba7be705"
+              }
+            },
+            {
+              "name": "r1050-2637-gd871302c",
+              "target": {
+                "committedDate": "2019-11-17T23:44:42Z",
+                "oid": "d871302c94e5b6a6011824992b13d048482798ab"
+              }
+            },
+            {
+              "name": "r1050-2625-g02efa7d7",
+              "target": {
+                "committedDate": "2019-11-11T21:43:44Z",
+                "oid": "02efa7d784d848093c9f67617fa4d857e27d2378"
+              }
+            },
+            {
+              "name": "r1050-2579-gcce259d4",
+              "target": {
+                "committedDate": "2019-10-27T23:06:40Z",
+                "oid": "cce259d4e0f8566679377ed2b514ba4b29e78d7b"
+              }
+            },
+            {
+              "name": "r1050-2574-g246222dd",
+              "target": {
+                "committedDate": "2019-10-20T22:00:52Z",
+                "oid": "246222dd52f454cf634d0acadd8322deefdfb3b1"
+              }
+            },
+            {
+              "name": "r1050-2553-gee3e1700",
+              "target": {
+                "committedDate": "2019-10-18T22:42:46Z",
+                "oid": "ee3e170026d9464ab072324d2f8825d6460649e1"
+              }
+            },
+            {
+              "name": "r1050-2552-g2b1de051",
+              "target": {
+                "committedDate": "2019-10-16T02:54:11Z",
+                "oid": "2b1de051e2fe9b3192ed2f9c12b20fa3377dc30a"
+              }
+            },
+            {
+              "name": "r1050-2551-g9c8dc69e",
+              "target": {
+                "committedDate": "2019-10-13T22:43:24Z",
+                "oid": "9c8dc69e4be2fa8cec650e612df9bac48cc4eb6e"
+              }
+            },
+            {
+              "name": "r1050-2543-g363b8143",
+              "target": {
+                "committedDate": "2019-10-09T15:33:32Z",
+                "oid": "363b814398e059728f481c61167ef4be53f9aeec"
+              }
+            },
+            {
+              "name": "r1050-2539-gc66fe3ee",
+              "target": {
+                "committedDate": "2019-10-06T22:33:56Z",
+                "oid": "c66fe3ee967e7a362fafff8a239d604b82d938ca"
+              }
+            },
+            {
+              "name": "r1050-2511-g3090c08e",
+              "target": {
+                "committedDate": "2019-09-21T19:02:01Z",
+                "oid": "3090c08e18455d556127774949a82ea05575e574"
+              }
+            },
+            {
+              "name": "r1050-2501-g15362e0b",
+              "target": {
+                "committedDate": "2019-09-16T03:42:33Z",
+                "oid": "15362e0b5933e56d025625595a6bfb1a72275734"
+              }
+            },
+            {
+              "name": "r1050-2466-ga349c26b",
+              "target": {
+                "committedDate": "2019-09-02T20:48:29Z",
+                "oid": "a349c26be64850632ef12d97c618ed3dd68a41e9"
+              }
+            },
+            {
+              "name": "r1050-2459-ga2fe3aa3",
+              "target": {
+                "committedDate": "2019-08-28T23:01:40Z",
+                "oid": "a2fe3aa343e9f543b5ff528b9a0a1a8f32f3dee6"
+              }
+            },
+            {
+              "name": "r1050-2441-gd64c3872",
+              "target": {
+                "committedDate": "2019-08-15T22:12:32Z",
+                "oid": "d64c3872af5213e081dd3ac2ace1203f9ad8f727"
+              }
+            },
+            {
+              "name": "r1050-2410-gead9ec4f",
+              "target": {
+                "committedDate": "2019-08-10T23:07:40Z",
+                "oid": "ead9ec4fb1a84ade1a0c45f16eaddba236b528ee"
+              }
+            },
+            {
+              "name": "r1050-2406-g66626b31",
+              "target": {
+                "committedDate": "2019-08-04T12:13:09Z",
+                "oid": "66626b31ebadee9e9d99905cc3ef8955f7cdc883"
+              }
+            },
+            {
+              "name": "r1050-2395-g056ee4fb",
+              "target": {
+                "committedDate": "2019-07-30T02:56:01Z",
+                "oid": "056ee4fbd8e31d0fd131bc1f47e3953f4ed2e8f6"
+              }
+            },
+            {
+              "name": "r1050-2384-g1fb124c2",
+              "target": {
+                "committedDate": "2019-07-24T15:12:55Z",
+                "oid": "1fb124c2b0f8235ca83f2e20bbadb5b9fe7c5ac3"
+              }
+            },
+            {
+              "name": "r1050-2366-ged57b41e",
+              "target": {
+                "committedDate": "2019-07-14T19:36:53Z",
+                "oid": "ed57b41e2111a13dd749ae6697cc8bed6f16f0bf"
+              }
+            },
+            {
+              "name": "r1050-2359-ge1184142",
+              "target": {
+                "committedDate": "2019-07-07T22:43:57Z",
+                "oid": "e118414287362861d4d1225962eb7bed83c6f9ea"
+              }
+            },
+            {
+              "name": "r1050-2349-g5fe83c0c",
+              "target": {
+                "committedDate": "2019-07-07T02:52:26Z",
+                "oid": "5fe83c0c02f633f069eddb3234b8fb5673cc116b"
+              }
+            },
+            {
+              "name": "r1050-2345-g1d28e0f5",
+              "target": {
+                "committedDate": "2019-06-29T18:42:41Z",
+                "oid": "1d28e0f58e47b3cbf1ee554d37dbf0661a7bf308"
+              }
+            },
+            {
+              "name": "r1050-2334-g0514807c",
+              "target": {
+                "committedDate": "2019-06-23T21:31:19Z",
+                "oid": "0514807c9e8b142ecb74d61ef068cfecb11dab51"
+              }
+            },
+            {
+              "name": "r1050-2327-ge003e2c2",
+              "target": {
+                "committedDate": "2019-06-22T02:55:23Z",
+                "oid": "e003e2c2bf6861d77b3068a2ef78077ad782b828"
+              }
+            },
+            {
+              "name": "r1050-2320-g7bc5b8b1",
+              "target": {
+                "committedDate": "2019-06-16T13:16:04Z",
+                "oid": "7bc5b8b1a925d15f7a896a1d35a1b81c2307acb2"
+              }
+            },
+            {
+              "name": "r1050-2318-g86c104c9",
+              "target": {
+                "committedDate": "2019-06-15T11:41:18Z",
+                "oid": "86c104c97e12b16bddba3f2c8e0fffb8a6a15641"
+              }
+            },
+            {
+              "name": "r1050-2307-gc0de147a",
+              "target": {
+                "committedDate": "2019-06-09T16:53:13Z",
+                "oid": "c0de147a70e9e84444083198ba3b4d89230a87a1"
+              }
+            },
+            {
+              "name": "r1050-2304-g50309c19",
+              "target": {
+                "committedDate": "2019-05-26T21:12:02Z",
+                "oid": "50309c195e0d441a72b293c6fcd11919c0374e00"
+              }
+            },
+            {
+              "name": "r1050-2297-g3f687f4f",
+              "target": {
+                "committedDate": "2019-05-17T20:37:58Z",
+                "oid": "3f687f4f1515ed45659fc1beaeccabd30fc71463"
+              }
+            },
+            {
+              "name": "1.0.121",
+              "target": {
+                "committedDate": "2019-05-01T21:27:32Z",
+                "oid": "041cfa3738d61a568a087298d8327c4e3266ae68"
+              }
+            },
+            {
+              "name": "r1050-2287-g9206295e",
+              "target": {
+                "committedDate": "2019-04-21T06:37:16Z",
+                "oid": "9206295e0993717f93b0cabb7893d484bd370c30"
+              }
+            },
+            {
+              "name": "r1050-2273-g224b4bba",
+              "target": {
+                "committedDate": "2019-04-09T18:46:10Z",
+                "oid": "224b4bba7aef24daa9978be5957ec87cb770d659"
+              }
+            },
+            {
+              "name": "r1050-2259-gcb9b9c0d",
+              "target": {
+                "committedDate": "2019-04-04T00:30:39Z",
+                "oid": "cb9b9c0d61a0f391a933692c311e60c07341a7ad"
+              }
+            },
+            {
+              "name": "r1050-2257-g95e65ea4",
+              "target": {
+                "committedDate": "2019-03-31T00:26:00Z",
+                "oid": "95e65ea4057ce2448fc9d416ecf8f8cfad11347c"
+              }
+            },
+            {
+              "name": "r1050-2208-g83b463bf",
+              "target": {
+                "committedDate": "2019-03-23T04:25:40Z",
+                "oid": "83b463bffd663c6f06f9f87e4918a056e97f0057"
+              }
+            },
+            {
+              "name": "r1050-2178-gd0de0119",
+              "target": {
+                "committedDate": "2019-03-16T07:00:02Z",
+                "oid": "d0de0119537fa8c7daff0f2cd2466634d3a72452"
+              }
+            },
+            {
+              "name": "r1050-2142-gd8ffd7f0",
+              "target": {
+                "committedDate": "2019-03-06T02:14:57Z",
+                "oid": "d8ffd7f0d50c46ee3095290278e13a794fe42287"
+              }
+            },
+            {
+              "name": "r1050-2141-g12ad4237",
+              "target": {
+                "committedDate": "2019-03-05T02:22:39Z",
+                "oid": "12ad42378a1d824c207fa3ab1e4521e9e6740d4a"
+              }
+            },
+            {
+              "name": "r1050-2085-gae0f1b61",
+              "target": {
+                "committedDate": "2019-02-18T09:20:47Z",
+                "oid": "ae0f1b6175895f2d360ef6a40df12e67dd61bd8b"
+              }
+            },
+            {
+              "name": "r1050-2066-g3dc52c5f",
+              "target": {
+                "committedDate": "2019-02-11T04:45:35Z",
+                "oid": "3dc52c5faec12751c20a94980dad80d80481a0b7"
+              }
+            },
+            {
+              "name": "r1050-2051-gc9d997f3",
+              "target": {
+                "committedDate": "2019-02-03T01:10:00Z",
+                "oid": "c9d997f355496ac57f6113be46e7998b704203fc"
+              }
+            },
+            {
+              "name": "r1050-2047-gcfb6b8fe",
+              "target": {
+                "committedDate": "2019-02-02T03:33:31Z",
+                "oid": "cfb6b8fe748dec3c181c66099d577fd57d538c12"
+              }
+            },
+            {
+              "name": "r1050-2045-gab807c34",
+              "target": {
+                "committedDate": "2019-01-28T23:53:14Z",
+                "oid": "ab807c3416e7d2097985e2eb6330a9afab01d052"
+              }
+            },
+            {
+              "name": "r1050-2037-ged397bbc",
+              "target": {
+                "committedDate": "2019-01-27T23:20:53Z",
+                "oid": "ed397bbc5a918ad2383680286816963edc624d51"
+              }
+            },
+            {
+              "name": "r1050",
+              "target": {
+                "tagger": {
+                  "date": "2019-01-20T18:19:04-08:00"
+                },
+                "target": {
+                  "committedDate": "2015-08-01T03:28:53Z",
+                  "oid": "6a9dadc5442309e10b532cf93b671124ee1f992f"
+                }
+              }
+            },
+            {
+              "name": "r1050-2028-gac28ccc5",
+              "target": {
+                "committedDate": "2019-01-21T02:25:32Z",
+                "oid": "ac28ccc50a4c1f62eaad558428bfd22ba52293de"
+              }
+            },
+            {
+              "name": "r1050-2014-g7a8726dd",
+              "target": {
+                "committedDate": "2019-01-16T22:18:12Z",
+                "oid": "7a8726dded7592049a6768f44a496ac844d13afe"
+              }
+            },
+            {
+              "name": "r1040",
+              "target": {
+                "committedDate": "2014-12-12T05:12:39Z",
+                "oid": "9f56443a09e6f55db5a6f9e329c454949d2dbef7"
+              }
+            },
+            {
+              "name": "r1039",
+              "target": {
+                "committedDate": "2014-09-16T23:34:08Z",
+                "oid": "9a03256df28c36b23855bb7cdee591d6f2d60dd6"
+              }
+            },
+            {
+              "name": "r1038",
+              "target": {
+                "committedDate": "2014-09-16T23:31:59Z",
+                "oid": "0ebc29f236b58eff6ee452cd2565737455136ad9"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": true,
+            "endCursor": "MTAw"
+          }
+        }
+      }
+    }
+  }
+}

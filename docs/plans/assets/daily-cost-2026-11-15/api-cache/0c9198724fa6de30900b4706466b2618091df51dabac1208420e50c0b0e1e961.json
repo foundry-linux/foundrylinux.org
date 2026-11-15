@@ -1,0 +1,999 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"astral-sh\",name:\"ruff\") { refs(refPrefix:\"refs/tags/\",first:100,after:\"MTAw\",orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:20.026303+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "0.8.2",
+              "target": {
+                "committedDate": "2024-12-05T12:36:35Z",
+                "oid": "b0e26e6fc8ad60e368b8b03b367b6ac408acf9f7"
+              }
+            },
+            {
+              "name": "0.8.1",
+              "target": {
+                "committedDate": "2024-11-29T03:15:36Z",
+                "oid": "b3b2c982cdfb487bec7c38ca4e04cebbe0f1964e"
+              }
+            },
+            {
+              "name": "0.8.0",
+              "target": {
+                "committedDate": "2024-11-22T07:47:14Z",
+                "oid": "a90e404c3f010446ab8c18b4793c78834eeb65b7"
+              }
+            },
+            {
+              "name": "0.7.4",
+              "target": {
+                "committedDate": "2024-11-15T11:17:32Z",
+                "oid": "ed7b98cf9b5ec915bc196a2cab84d4f735d77693"
+              }
+            },
+            {
+              "name": "0.7.3",
+              "target": {
+                "committedDate": "2024-11-08T11:09:37Z",
+                "oid": "fbf140a665629ce31191e56918bec6a724a24617"
+              }
+            },
+            {
+              "name": "0.7.2",
+              "target": {
+                "committedDate": "2024-11-01T15:55:19Z",
+                "oid": "11c3b52fd5e8a2f39d3e21faebd76fdbaf3d748b"
+              }
+            },
+            {
+              "name": "0.7.1",
+              "target": {
+                "committedDate": "2024-10-24T15:27:07Z",
+                "oid": "337af836d3b2d88413c1391495a94755af46f574"
+              }
+            },
+            {
+              "name": "0.7.0",
+              "target": {
+                "committedDate": "2024-10-17T16:14:21Z",
+                "oid": "5e6de4e0c69660e8ca8608d1ac965216197756ce"
+              }
+            },
+            {
+              "name": "0.6.9",
+              "target": {
+                "committedDate": "2024-10-04T13:21:13Z",
+                "oid": "975be9c1c6cc8f8f4e52bdad8123d151192c7123"
+              }
+            },
+            {
+              "name": "0.6.8",
+              "target": {
+                "committedDate": "2024-09-26T12:09:03Z",
+                "oid": "ae39ce56c0cc1f8ac15f980c0b457b16b67c1f2a"
+              }
+            },
+            {
+              "name": "0.6.7",
+              "target": {
+                "committedDate": "2024-09-21T17:16:36Z",
+                "oid": "17c4690b5ead2872ed8035d9a03a2af0cb0a1fa1"
+              }
+            },
+            {
+              "name": "0.6.6",
+              "target": {
+                "committedDate": "2024-09-20T03:09:57Z",
+                "oid": "d01cbf7f8f57cec8b790cdbb98f75172b64f2bc4"
+              }
+            },
+            {
+              "name": "0.6.5",
+              "target": {
+                "committedDate": "2024-09-13T14:42:26Z",
+                "oid": "8558126df1f2b49b4d6fb7b8f535b4dda51d5f50"
+              }
+            },
+            {
+              "name": "0.6.4",
+              "target": {
+                "committedDate": "2024-09-05T15:35:15Z",
+                "oid": "65cc6ec41db50879f7e9711e2b8c74b895ba68e8"
+              }
+            },
+            {
+              "name": "0.6.3",
+              "target": {
+                "committedDate": "2024-08-29T14:59:33Z",
+                "oid": "ee258caed72f729a6587bbf73aa25b1f6e9bcb7a"
+              }
+            },
+            {
+              "name": "0.6.2",
+              "target": {
+                "committedDate": "2024-08-22T13:29:27Z",
+                "oid": "02c4373a4927657a8825d18ae8f0877806cd1f15"
+              }
+            },
+            {
+              "name": "0.6.1",
+              "target": {
+                "committedDate": "2024-08-16T16:48:06Z",
+                "oid": "499c0bd875c3f53c65f542a217b4d9a0962191c3"
+              }
+            },
+            {
+              "name": "0.6.0",
+              "target": {
+                "committedDate": "2024-08-15T12:17:22Z",
+                "oid": "b9da31610a514ffa2100226a0515189a127e8cc2"
+              }
+            },
+            {
+              "name": "0.5.7",
+              "target": {
+                "committedDate": "2024-08-08T15:26:15Z",
+                "oid": "221ea662e0e19384f774c99e93a9fd08b6f14029"
+              }
+            },
+            {
+              "name": "0.5.6",
+              "target": {
+                "committedDate": "2024-08-02T15:35:14Z",
+                "oid": "da824ba316bd11de349479aaab06b6ab06560d38"
+              }
+            },
+            {
+              "name": "0.5.5",
+              "target": {
+                "committedDate": "2024-07-25T14:47:01Z",
+                "oid": "fc16d8d04d86aa94a8aac14bbb87089b64d443a1"
+              }
+            },
+            {
+              "name": "0.5.4",
+              "target": {
+                "committedDate": "2024-07-20T17:46:15Z",
+                "oid": "53b84ab05460d006b10e035fd6a4ffb62d9b608a"
+              }
+            },
+            {
+              "name": "0.5.3",
+              "target": {
+                "committedDate": "2024-07-18T16:49:38Z",
+                "oid": "f0d589d7a3fe34fa25ea066967851f5e71da690e"
+              }
+            },
+            {
+              "name": "0.5.2",
+              "target": {
+                "committedDate": "2024-07-14T14:47:51Z",
+                "oid": "dc8db1afb08704ad6a788c497068b01edf8b460d"
+              }
+            },
+            {
+              "name": "0.5.1",
+              "target": {
+                "committedDate": "2024-07-05T13:12:49Z",
+                "oid": "3a72400202642f0bb340fb2b1d1c31da2b6524dd"
+              }
+            },
+            {
+              "name": "0.5.0",
+              "target": {
+                "committedDate": "2024-06-27T15:16:05Z",
+                "oid": "244b923f615c2c162278fc0e06051853614760f3"
+              }
+            },
+            {
+              "name": "v0.4.10",
+              "target": {
+                "tagger": {
+                  "date": "2024-06-20T17:43:13Z"
+                },
+                "target": {
+                  "committedDate": "2024-06-20T17:07:44Z",
+                  "oid": "b54922fd7394c36cdc390fd21aaee99206ebc361"
+                }
+              }
+            },
+            {
+              "name": "v0.4.9",
+              "target": {
+                "tagger": {
+                  "date": "2024-06-14T15:19:47Z"
+                },
+                "target": {
+                  "committedDate": "2024-06-14T15:06:22Z",
+                  "oid": "4f49e918a9154de16145d77217a4af2b8ce38297"
+                }
+              }
+            },
+            {
+              "name": "v0.4.8",
+              "target": {
+                "tagger": {
+                  "date": "2024-06-05T15:34:08Z"
+                },
+                "target": {
+                  "committedDate": "2024-06-05T15:21:31Z",
+                  "oid": "a8cf7096ff1acbccf3af3aa37cd6e2170f1b1bc5"
+                }
+              }
+            },
+            {
+              "name": "v0.4.7",
+              "target": {
+                "tagger": {
+                  "date": "2024-05-31T20:44:31Z"
+                },
+                "target": {
+                  "committedDate": "2024-05-31T20:30:36Z",
+                  "oid": "1ad5f9c0382f5fa8ed4f38c972a3799be89a7172"
+                }
+              }
+            },
+            {
+              "name": "v0.4.6",
+              "target": {
+                "tagger": {
+                  "date": "2024-05-28T19:22:32Z"
+                },
+                "target": {
+                  "committedDate": "2024-05-28T19:10:53Z",
+                  "oid": "49a5a9ccc2b6b8f69bb64f87d3a915aff47eb02a"
+                }
+              }
+            },
+            {
+              "name": "v0.4.5",
+              "target": {
+                "tagger": {
+                  "date": "2024-05-23T01:30:45Z"
+                },
+                "target": {
+                  "committedDate": "2024-05-23T01:09:01Z",
+                  "oid": "550aa871d32b53a2f042fb0e7fea1080eadfa11d"
+                }
+              }
+            },
+            {
+              "name": "v0.4.4",
+              "target": {
+                "tagger": {
+                  "date": "2024-05-09T17:13:37Z"
+                },
+                "target": {
+                  "committedDate": "2024-05-09T17:00:46Z",
+                  "oid": "3e8878a1c852399dffedb0236097afcfb4780b81"
+                }
+              }
+            },
+            {
+              "name": "v0.4.3",
+              "target": {
+                "tagger": {
+                  "date": "2024-05-03T23:03:24Z"
+                },
+                "target": {
+                  "committedDate": "2024-05-03T22:48:31Z",
+                  "oid": "1e91a0991828382f24e9306894ca23a186ed9635"
+                }
+              }
+            },
+            {
+              "name": "v0.4.2",
+              "target": {
+                "tagger": {
+                  "date": "2024-04-25T17:52:35Z"
+                },
+                "target": {
+                  "committedDate": "2024-04-25T17:31:38Z",
+                  "oid": "77c93fd63c1c072501d297082aa59c741b2d5466"
+                }
+              }
+            },
+            {
+              "name": "v0.4.1",
+              "target": {
+                "tagger": {
+                  "date": "2024-04-19T12:28:12Z"
+                },
+                "target": {
+                  "committedDate": "2024-04-19T12:12:02Z",
+                  "oid": "0ff25a540c550d8d2f562844354f84eb292b9c4b"
+                }
+              }
+            },
+            {
+              "name": "v0.4.0",
+              "target": {
+                "tagger": {
+                  "date": "2024-04-18T19:51:35Z"
+                },
+                "target": {
+                  "committedDate": "2024-04-18T19:10:28Z",
+                  "oid": "e751b4ea8260ff83723345d1c7d39d5c776cc8ff"
+                }
+              }
+            },
+            {
+              "name": "v0.3.7",
+              "target": {
+                "tagger": {
+                  "date": "2024-04-12T03:54:56Z"
+                },
+                "target": {
+                  "committedDate": "2024-04-12T03:39:45Z",
+                  "oid": "2e37cf6b3b4b873ad9ffe9728bccdf134862b768"
+                }
+              }
+            },
+            {
+              "name": "v0.3.6",
+              "target": {
+                "tagger": {
+                  "date": "2024-04-11T16:24:59Z"
+                },
+                "target": {
+                  "committedDate": "2024-04-11T15:53:01Z",
+                  "oid": "4e8a84617c4f78b3ed86c3a09da4523ce44469d7"
+                }
+              }
+            },
+            {
+              "name": "v0.3.5",
+              "target": {
+                "tagger": {
+                  "date": "2024-04-01T17:36:53Z"
+                },
+                "target": {
+                  "committedDate": "2024-04-01T17:15:32Z",
+                  "oid": "200ebeebdc8ab8ee14f56922e21b218f41a5a7e4"
+                }
+              }
+            },
+            {
+              "name": "v0.3.4",
+              "target": {
+                "tagger": {
+                  "date": "2024-03-21T19:21:39Z"
+                },
+                "target": {
+                  "committedDate": "2024-03-21T18:08:21Z",
+                  "oid": "5062572aca9413670aafd018cb65037bcb4d6acb"
+                }
+              }
+            },
+            {
+              "name": "v0.3.3",
+              "target": {
+                "tagger": {
+                  "date": "2024-03-15T18:06:34Z"
+                },
+                "target": {
+                  "committedDate": "2024-03-15T17:51:49Z",
+                  "oid": "608df9a1bc0e6025049add877d1d833f1739e966"
+                }
+              }
+            },
+            {
+              "name": "v0.3.2",
+              "target": {
+                "tagger": {
+                  "date": "2024-03-09T00:51:15Z"
+                },
+                "target": {
+                  "committedDate": "2024-03-09T00:24:22Z",
+                  "oid": "a892fc755d6d4342c2f5a768aa50a401d704ae2c"
+                }
+              }
+            },
+            {
+              "name": "v0.3.1",
+              "target": {
+                "tagger": {
+                  "date": "2024-03-06T22:43:46Z"
+                },
+                "target": {
+                  "committedDate": "2024-03-06T21:50:40Z",
+                  "oid": "b9264a5a11508642954dab6d4f2672b4acbbeaa4"
+                }
+              }
+            },
+            {
+              "name": "v0.3.0",
+              "target": {
+                "tagger": {
+                  "date": "2024-02-29T15:20:51Z"
+                },
+                "target": {
+                  "committedDate": "2024-02-29T15:05:20Z",
+                  "oid": "b53118ed0016ac37233d3dadbcea9ed3ac1f538e"
+                }
+              }
+            },
+            {
+              "name": "v0.2.2",
+              "target": {
+                "tagger": {
+                  "date": "2024-02-17T22:36:50Z"
+                },
+                "target": {
+                  "committedDate": "2024-02-17T22:15:04Z",
+                  "oid": "235cfb79769da2c435b9c88d8bae4a79f1234857"
+                }
+              }
+            },
+            {
+              "name": "v0.2.1",
+              "target": {
+                "tagger": {
+                  "date": "2024-02-05T22:29:31Z"
+                },
+                "target": {
+                  "committedDate": "2024-02-05T20:31:05Z",
+                  "oid": "0ccca4083a533d28cb9f181974d787db22a8d315"
+                }
+              }
+            },
+            {
+              "name": "v0.2.0",
+              "target": {
+                "tagger": {
+                  "date": "2024-02-01T23:22:30Z"
+                },
+                "target": {
+                  "committedDate": "2024-02-01T23:10:33Z",
+                  "oid": "1fadefa67b26508cc59cf38e6130bde2243c929d"
+                }
+              }
+            },
+            {
+              "name": "v0.1.15",
+              "target": {
+                "tagger": {
+                  "date": "2024-01-29T23:06:20Z"
+                },
+                "target": {
+                  "committedDate": "2024-01-29T22:44:05Z",
+                  "oid": "a7755d7a8df9a4fdcf3ef1a819be374ecb2fd384"
+                }
+              }
+            },
+            {
+              "name": "v0.1.14",
+              "target": {
+                "tagger": {
+                  "date": "2024-01-19T20:19:50Z"
+                },
+                "target": {
+                  "committedDate": "2024-01-19T17:54:39Z",
+                  "oid": "866bea60a5de3c59d2537b0f3a634ae0ac9afd94"
+                }
+              }
+            },
+            {
+              "name": "v0.1.13",
+              "target": {
+                "tagger": {
+                  "date": "2024-01-12T15:04:21Z"
+                },
+                "target": {
+                  "committedDate": "2024-01-12T14:27:39Z",
+                  "oid": "d16c4a2d25a27dad1ef26c0e496471139adb4522"
+                }
+              }
+            },
+            {
+              "name": "v0.1.12",
+              "target": {
+                "tagger": {
+                  "date": "2024-01-11T22:48:02Z"
+                },
+                "target": {
+                  "committedDate": "2024-01-11T22:13:00Z",
+                  "oid": "55f8f3b2cc64188393e978af8e80a7309714eda4"
+                }
+              }
+            },
+            {
+              "name": "v0.1.11",
+              "target": {
+                "tagger": {
+                  "date": "2024-01-02T22:59:24Z"
+                },
+                "target": {
+                  "committedDate": "2024-01-02T22:46:06Z",
+                  "oid": "fefc7e81999fb504f4024f9f108c8c9e02e743b7"
+                }
+              }
+            },
+            {
+              "name": "v0.1.10",
+              "target": {
+                "tagger": {
+                  "date": "2024-01-02T18:23:00Z"
+                },
+                "target": {
+                  "committedDate": "2024-01-02T18:03:45Z",
+                  "oid": "2743387910d40bc107f2042527143a82d3b592a5"
+                }
+              }
+            },
+            {
+              "name": "v0.1.9",
+              "target": {
+                "tagger": {
+                  "date": "2023-12-21T18:42:56Z"
+                },
+                "target": {
+                  "committedDate": "2023-12-21T18:19:50Z",
+                  "oid": "0263f2715eba81aee471e3dd5a50ea5f9426cbb1"
+                }
+              }
+            },
+            {
+              "name": "v0.1.8",
+              "target": {
+                "tagger": {
+                  "date": "2023-12-13T18:43:48Z"
+                },
+                "target": {
+                  "committedDate": "2023-12-13T18:19:51Z",
+                  "oid": "c014622003e9b348310d7b7be862f6ccffae7137"
+                }
+              }
+            },
+            {
+              "name": "v0.1.7",
+              "target": {
+                "tagger": {
+                  "date": "2023-12-04T21:55:03Z"
+                },
+                "target": {
+                  "committedDate": "2023-12-04T21:28:23Z",
+                  "oid": "8d9912a83a4eb41d38b2d75d05b06ca6093a7f2d"
+                }
+              }
+            },
+            {
+              "name": "v0.1.6",
+              "target": {
+                "tagger": {
+                  "date": "2023-11-17T18:46:30Z"
+                },
+                "target": {
+                  "committedDate": "2023-11-17T18:29:19Z",
+                  "oid": "f460f9c5c0126f59b6a9641221ef0bdfa8afa74a"
+                }
+              }
+            },
+            {
+              "name": "v0.1.5",
+              "target": {
+                "tagger": {
+                  "date": "2023-11-08T23:11:34Z"
+                },
+                "target": {
+                  "committedDate": "2023-11-08T22:00:57Z",
+                  "oid": "3956f38999ff7c036e9d1ac9410b3eff834cb158"
+                }
+              }
+            },
+            {
+              "name": "v0.1.4",
+              "target": {
+                "tagger": {
+                  "date": "2023-11-03T21:30:36Z"
+                },
+                "target": {
+                  "committedDate": "2023-11-03T20:57:19Z",
+                  "oid": "c4889196e7e4d36517f29592e90e40ca991bc98d"
+                }
+              }
+            },
+            {
+              "name": "v0.1.3",
+              "target": {
+                "tagger": {
+                  "date": "2023-10-26T19:26:34Z"
+                },
+                "target": {
+                  "committedDate": "2023-10-26T18:57:05Z",
+                  "oid": "3e7b92991b996871cdbd674782732fcfc214a5e2"
+                }
+              }
+            },
+            {
+              "name": "v0.1.2",
+              "target": {
+                "tagger": {
+                  "date": "2023-10-24T15:52:15Z"
+                },
+                "target": {
+                  "committedDate": "2023-10-24T15:21:29Z",
+                  "oid": "3127c79b29d72f5b38d8a6bc81e069e14085ce11"
+                }
+              }
+            },
+            {
+              "name": "v0.1.1",
+              "target": {
+                "tagger": {
+                  "date": "2023-10-19T21:21:17Z"
+                },
+                "target": {
+                  "committedDate": "2023-10-19T20:49:53Z",
+                  "oid": "22cf451d517739da7dac9b50bd2cfffaa3a09697"
+                }
+              }
+            },
+            {
+              "name": "v0.1.0",
+              "target": {
+                "tagger": {
+                  "date": "2023-10-16T19:41:04Z"
+                },
+                "target": {
+                  "committedDate": "2023-10-16T18:48:06Z",
+                  "oid": "172ac2c9a27040e4a60726f82cabed6166af094a"
+                }
+              }
+            },
+            {
+              "name": "v0.0.292",
+              "target": {
+                "tagger": {
+                  "date": "2023-10-02T16:45:27Z"
+                },
+                "target": {
+                  "committedDate": "2023-10-02T16:14:47Z",
+                  "oid": "c6d0bdd5723e4c15b2b425e84fdb1b4ca5379700"
+                }
+              }
+            },
+            {
+              "name": "v0.0.291",
+              "target": {
+                "tagger": {
+                  "date": "2023-09-22T17:57:28Z"
+                },
+                "target": {
+                  "committedDate": "2023-09-22T17:25:37Z",
+                  "oid": "8bfe9bda41538e47fb9c46f190bc148b1db68515"
+                }
+              }
+            },
+            {
+              "name": "v0.0.290",
+              "target": {
+                "tagger": {
+                  "date": "2023-09-15T21:19:54Z"
+                },
+                "target": {
+                  "committedDate": "2023-09-15T18:51:46Z",
+                  "oid": "0c030b5bf31e425cb6070db7386243eca6dbd8f1"
+                }
+              }
+            },
+            {
+              "name": "v0.0.289",
+              "target": {
+                "tagger": {
+                  "date": "2023-09-12T16:42:34Z"
+                },
+                "target": {
+                  "committedDate": "2023-09-12T16:00:11Z",
+                  "oid": "e7a27794022e18b05136ce8e4fc121f14713ed02"
+                }
+              }
+            },
+            {
+              "name": "v0.0.288",
+              "target": {
+                "tagger": {
+                  "date": "2023-09-11T16:56:53Z"
+                },
+                "target": {
+                  "committedDate": "2023-09-11T16:18:11Z",
+                  "oid": "7c9bbcf4e2d173bde625aed26a0056d354f54545"
+                }
+              }
+            },
+            {
+              "name": "v0.0.287",
+              "target": {
+                "tagger": {
+                  "date": "2023-09-01T17:05:35Z"
+                },
+                "target": {
+                  "committedDate": "2023-09-01T16:32:26Z",
+                  "oid": "2f3a950f6f2e2060b6c083b08ad9adacfae87185"
+                }
+              }
+            },
+            {
+              "name": "v0.0.286",
+              "target": {
+                "tagger": {
+                  "date": "2023-08-25T19:34:29Z"
+                },
+                "target": {
+                  "committedDate": "2023-08-25T18:59:26Z",
+                  "oid": "91880b82738acb42d155369b44c20e70a5f5fd8c"
+                }
+              }
+            },
+            {
+              "name": "v0.0.285",
+              "target": {
+                "tagger": {
+                  "date": "2023-08-17T21:17:27Z"
+                },
+                "target": {
+                  "committedDate": "2023-08-17T20:46:28Z",
+                  "oid": "5892c691ea6389dcf53b2212bae7a3acd61ca15f"
+                }
+              }
+            },
+            {
+              "name": "v0.0.284",
+              "target": {
+                "tagger": {
+                  "date": "2023-08-09T19:03:59Z"
+                },
+                "target": {
+                  "committedDate": "2023-08-09T18:32:33Z",
+                  "oid": "3ecd263b4d1af3935b0f58e8a1dd4f4d2d8007ff"
+                }
+              }
+            },
+            {
+              "name": "v0.0.283",
+              "target": {
+                "tagger": {
+                  "date": "2023-08-08T19:00:05Z"
+                },
+                "target": {
+                  "committedDate": "2023-08-08T17:31:30Z",
+                  "oid": "fe9590f39f4d41deb1d4ed7c655cff0bcb02bdc4"
+                }
+              }
+            },
+            {
+              "name": "v0.0.282",
+              "target": {
+                "tagger": {
+                  "date": "2023-08-01T13:56:18Z"
+                },
+                "target": {
+                  "committedDate": "2023-08-01T13:21:33Z",
+                  "oid": "743118ae9ac9c56b7b276dce87291d8200286e43"
+                }
+              }
+            },
+            {
+              "name": "v0.0.281",
+              "target": {
+                "tagger": {
+                  "date": "2023-07-31T18:20:21Z"
+                },
+                "target": {
+                  "committedDate": "2023-07-31T17:21:43Z",
+                  "oid": "dbd60b2cf51282fbc3b0f866e566fda7b38514ef"
+                }
+              }
+            },
+            {
+              "name": "v0.0.280",
+              "target": {
+                "tagger": {
+                  "date": "2023-07-22T03:50:39Z"
+                },
+                "target": {
+                  "committedDate": "2023-07-22T02:51:37Z",
+                  "oid": "86b6a3e1ad1b6af1381bb6e7fb1521cd5dd9c1be"
+                }
+              }
+            },
+            {
+              "name": "v0.0.279",
+              "target": {
+                "tagger": {
+                  "date": "2023-07-21T20:45:29Z"
+                },
+                "target": {
+                  "committedDate": "2023-07-21T19:46:53Z",
+                  "oid": "f1f89f2a7e8eeb16334d8f0a30dfb9ae45425bee"
+                }
+              }
+            },
+            {
+              "name": "v0.0.278",
+              "target": {
+                "tagger": {
+                  "date": "2023-07-12T17:05:28Z"
+                },
+                "target": {
+                  "committedDate": "2023-07-12T16:39:56Z",
+                  "oid": "0ead9a16ac306bd17ab5951c0e4240c1ed71a208"
+                }
+              }
+            },
+            {
+              "name": "v0.0.277",
+              "target": {
+                "tagger": {
+                  "date": "2023-07-04T21:54:43Z"
+                },
+                "target": {
+                  "committedDate": "2023-07-04T21:31:32Z",
+                  "oid": "324455f580813a7c7721dc1d7ef1ee7721ae3e76"
+                }
+              }
+            },
+            {
+              "name": "v0.0.276",
+              "target": {
+                "tagger": {
+                  "date": "2023-07-03T18:34:07Z"
+                },
+                "target": {
+                  "committedDate": "2023-07-03T18:02:49Z",
+                  "oid": "3992c47c008df8f706e03a6ba0d7aa7f068ef0a9"
+                }
+              }
+            },
+            {
+              "name": "v0.0.275",
+              "target": {
+                "tagger": {
+                  "date": "2023-06-22T17:22:02Z"
+                },
+                "target": {
+                  "committedDate": "2023-06-22T16:31:22Z",
+                  "oid": "5dd00b19e6cbce8dc0b117a4cf41432ec61b9e46"
+                }
+              }
+            },
+            {
+              "name": "v0.0.274",
+              "target": {
+                "committedDate": "2023-06-21T03:16:35Z",
+                "oid": "a332f078db63c9e56e3e4d33526c376a5b619a8f"
+              }
+            },
+            {
+              "name": "v0.0.273",
+              "target": {
+                "committedDate": "2023-06-20T18:37:28Z",
+                "oid": "fde5dbc9aa967b086347f87fc61511c8dfe7ad0e"
+              }
+            },
+            {
+              "name": "v0.0.272",
+              "target": {
+                "committedDate": "2023-06-08T02:22:35Z",
+                "oid": "4b78141f6b7b00f11738691399041b995f732b1e"
+              }
+            },
+            {
+              "name": "v0.0.271",
+              "target": {
+                "committedDate": "2023-06-06T21:06:46Z",
+                "oid": "7cc205b5d6cce437caa460c78e295cd8b612ec45"
+              }
+            },
+            {
+              "name": "v0.0.270",
+              "target": {
+                "committedDate": "2023-05-24T17:14:58Z",
+                "oid": "09c50c311c727c6f6e7b19d982f838ef83d581b1"
+              }
+            },
+            {
+              "name": "v0.0.269",
+              "target": {
+                "committedDate": "2023-05-18T19:45:20Z",
+                "oid": "d4c0a41b00b0093dac3bcf79ee329e351a5583b4"
+              }
+            },
+            {
+              "name": "v0.0.268",
+              "target": {
+                "committedDate": "2023-05-18T17:02:22Z",
+                "oid": "a3aa841fc94cdc1973a97446108ae7468e2e9f71"
+              }
+            },
+            {
+              "name": "v0.0.267",
+              "target": {
+                "committedDate": "2023-05-12T19:46:42Z",
+                "oid": "7617519b4f6c7f726a2758a601206ca49308db2a"
+              }
+            },
+            {
+              "name": "v0.0.266",
+              "target": {
+                "committedDate": "2023-05-12T17:11:03Z",
+                "oid": "67076b2dcb8e4402da6f65fae570790fbae833b1"
+              }
+            },
+            {
+              "name": "v0.0.265",
+              "target": {
+                "committedDate": "2023-05-05T17:16:05Z",
+                "oid": "11e1380df412cd18eb8f6001e6164195bf90436b"
+              }
+            },
+            {
+              "name": "v0.0.264",
+              "target": {
+                "committedDate": "2023-05-02T06:33:38Z",
+                "oid": "8cb76f85eba1c970a8c800348fd1e0c874621a57"
+              }
+            },
+            {
+              "name": "v0.0.263",
+              "target": {
+                "committedDate": "2023-04-25T05:32:29Z",
+                "oid": "fd7ccb4c9e6d04770c9ac4e80bc279bd34e790de"
+              }
+            },
+            {
+              "name": "v0.0.262",
+              "target": {
+                "committedDate": "2023-04-19T20:04:22Z",
+                "oid": "eed6866b7ed7b458660a6b56810ef752085f86f6"
+              }
+            },
+            {
+              "name": "v0.0.261",
+              "target": {
+                "committedDate": "2023-04-05T02:31:01Z",
+                "oid": "255b094b33188e67e9bb9f10f702aa8ecda10132"
+              }
+            },
+            {
+              "name": "v0.0.260",
+              "target": {
+                "committedDate": "2023-03-29T19:13:12Z",
+                "oid": "cb588d1d6da9c5409c91ce0ae2aa41eafdd566f6"
+              }
+            },
+            {
+              "name": "v0.0.259",
+              "target": {
+                "committedDate": "2023-03-23T18:52:42Z",
+                "oid": "f58345dee32177d17ca323a2d60a020a3c7943a4"
+              }
+            },
+            {
+              "name": "v0.0.258",
+              "target": {
+                "committedDate": "2023-03-22T19:02:57Z",
+                "oid": "615887a7fe476d2fa6ed3a5462467466a3f608b8"
+              }
+            },
+            {
+              "name": "v0.0.257",
+              "target": {
+                "committedDate": "2023-03-18T02:34:10Z",
+                "oid": "0c4926ff7be0f251402edacb7a873ec104117ea0"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": true,
+            "endCursor": "MjAw"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,465 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"deepnight\",name:\"ldtk\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:09.409812+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "v1.5.3",
+              "target": {
+                "committedDate": "2024-01-15T15:08:16Z",
+                "oid": "72c75f1abfdc28f58522b858c6a69fe4af6a9522"
+              }
+            },
+            {
+              "name": "v1.5.2",
+              "target": {
+                "committedDate": "2024-01-12T08:26:25Z",
+                "oid": "686935f6dfea41d518ba2b23aa4e686d37e06223"
+              }
+            },
+            {
+              "name": "v1.5.1",
+              "target": {
+                "committedDate": "2024-01-11T10:14:24Z",
+                "oid": "d22282d55afb126d6e1d3d524781bf7b02502788"
+              }
+            },
+            {
+              "name": "v1.5.0",
+              "target": {
+                "committedDate": "2024-01-10T15:20:34Z",
+                "oid": "18f6a67ed831b7b977a8068fefebcf19eef5a489"
+              }
+            },
+            {
+              "name": "v1.4.1",
+              "target": {
+                "committedDate": "2023-09-25T15:33:12Z",
+                "oid": "5f22dbed4a28e0c34ce02cfe559c909e4e361819"
+              }
+            },
+            {
+              "name": "v1.4.0",
+              "target": {
+                "committedDate": "2023-09-22T13:42:39Z",
+                "oid": "bf1395ca80dcbb92eb4f079de82f97e4fbf922d0"
+              }
+            },
+            {
+              "name": "v1.3.4",
+              "target": {
+                "committedDate": "2023-08-21T18:10:53Z",
+                "oid": "72ec2a6d3878b6c936b5aa0efe2522a1af67809a"
+              }
+            },
+            {
+              "name": "v1.3.3",
+              "target": {
+                "committedDate": "2023-05-10T10:04:34Z",
+                "oid": "f875d1ebb69b5d608579da05a4b95adbf70bcadf"
+              }
+            },
+            {
+              "name": "v1.3.2",
+              "target": {
+                "committedDate": "2023-05-03T16:02:01Z",
+                "oid": "4f9d66694af0c9fea8877b9ec835fd60a1a123eb"
+              }
+            },
+            {
+              "name": "v1.3.1",
+              "target": {
+                "committedDate": "2023-05-03T15:04:57Z",
+                "oid": "fb1450c3e2f5ae22f97aa1cdf166113db09ec359"
+              }
+            },
+            {
+              "name": "v1.3.0",
+              "target": {
+                "committedDate": "2023-04-26T16:29:36Z",
+                "oid": "95555e676b4f9a71992edfa6bccec59de74793bf"
+              }
+            },
+            {
+              "name": "v1.2.5",
+              "target": {
+                "committedDate": "2023-01-12T14:23:44Z",
+                "oid": "c5027718f5c002daed27142f2eaf02510520ba1c"
+              }
+            },
+            {
+              "name": "v1.2.4",
+              "target": {
+                "committedDate": "2023-01-10T15:50:57Z",
+                "oid": "5fe40fb403bbfb30252a572b27b02ac394f18de3"
+              }
+            },
+            {
+              "name": "v1.2.3",
+              "target": {
+                "committedDate": "2023-01-06T14:25:15Z",
+                "oid": "169c3fec776d132290c6cd72439740170214c9ce"
+              }
+            },
+            {
+              "name": "v1.2.2",
+              "target": {
+                "committedDate": "2023-01-05T16:23:24Z",
+                "oid": "b9df7aca7e72d0752eaef13980d249b50101c1f9"
+              }
+            },
+            {
+              "name": "v1.2.1",
+              "target": {
+                "committedDate": "2023-01-03T13:12:40Z",
+                "oid": "b6a32ed586aa53da7ad658f8ebc6252f57db725c"
+              }
+            },
+            {
+              "name": "v1.2.0",
+              "target": {
+                "committedDate": "2023-01-02T15:08:18Z",
+                "oid": "62009b275dbda46c22f743f5d6b5768b0647d297"
+              }
+            },
+            {
+              "name": "v1.1.3",
+              "target": {
+                "committedDate": "2022-04-16T12:33:30Z",
+                "oid": "4dcfee0aa83bea868e83a4ab8576253aead53427"
+              }
+            },
+            {
+              "name": "v1.1.2",
+              "target": {
+                "committedDate": "2022-04-14T15:39:07Z",
+                "oid": "02b63290b05680872ca3b37ecd0fc2356044fd89"
+              }
+            },
+            {
+              "name": "v1.1.1",
+              "target": {
+                "committedDate": "2022-04-04T12:23:51Z",
+                "oid": "a8af930327a6437f36c087f9dce0db9b1d778a3d"
+              }
+            },
+            {
+              "name": "v1.1.0",
+              "target": {
+                "committedDate": "2022-04-01T13:34:36Z",
+                "oid": "1242f457c755af019571f8e6d7ee1a64991e8458"
+              }
+            },
+            {
+              "name": "v1.0.0",
+              "target": {
+                "committedDate": "2022-03-29T11:34:51Z",
+                "oid": "076c2fb9864f58270f9902ad0fede73111ab597f"
+              }
+            },
+            {
+              "name": "0.10.0-beta8",
+              "target": {
+                "tagger": {
+                  "date": "2022-03-28T16:19:48+02:00"
+                },
+                "target": {
+                  "committedDate": "2022-03-28T13:37:52Z",
+                  "oid": "e43cd890853b8f77bf663c6471660598aefc5a70"
+                }
+              }
+            },
+            {
+              "name": "0.10.0-beta6",
+              "target": {
+                "tagger": {
+                  "date": "2022-03-25T14:15:40+01:00"
+                },
+                "target": {
+                  "committedDate": "2022-03-24T13:25:33Z",
+                  "oid": "4e7cd494f2ed49baf762049204695bbbbdb56856"
+                }
+              }
+            },
+            {
+              "name": "0.10.0-beta5",
+              "target": {
+                "tagger": {
+                  "date": "2022-03-23T18:06:59+01:00"
+                },
+                "target": {
+                  "committedDate": "2022-03-23T16:27:50Z",
+                  "oid": "b0afbfc9843c64f9f6cf6612bb8dcda2ba5e394d"
+                }
+              }
+            },
+            {
+              "name": "0.10.0-beta3",
+              "target": {
+                "tagger": {
+                  "date": "2022-02-21T23:16:08+01:00"
+                },
+                "target": {
+                  "committedDate": "2022-02-21T22:10:32Z",
+                  "oid": "d15d4e79f2de31397d0504e00495f465fc5527df"
+                }
+              }
+            },
+            {
+              "name": "0.10.0-beta2",
+              "target": {
+                "tagger": {
+                  "date": "2022-02-21T23:16:30+01:00"
+                },
+                "target": {
+                  "committedDate": "2022-02-21T10:22:28Z",
+                  "oid": "f55cdd74f3d999f207a1d01e83ffa061df95c3b0"
+                }
+              }
+            },
+            {
+              "name": "0.10.0-beta1",
+              "target": {
+                "tagger": {
+                  "date": "2022-02-15T13:42:57+01:00"
+                },
+                "target": {
+                  "committedDate": "2022-02-15T12:42:13Z",
+                  "oid": "c6b6b7720a6a31fcdc2f18e06d230890eb25fed5"
+                }
+              }
+            },
+            {
+              "name": "v0.9.3",
+              "target": {
+                "committedDate": "2021-04-23T11:43:43Z",
+                "oid": "cc221a61888fedfc3a73f8d898370647d125615a"
+              }
+            },
+            {
+              "name": "v0.9.2",
+              "target": {
+                "committedDate": "2021-04-20T10:35:02Z",
+                "oid": "d3c800f1792f777fa2839aa9d896b76558597e61"
+              }
+            },
+            {
+              "name": "v0.9.1",
+              "target": {
+                "committedDate": "2021-04-16T21:14:14Z",
+                "oid": "4140b624abda1a27506f6b81e37e9ebf6b2294c5"
+              }
+            },
+            {
+              "name": "v0.9.0",
+              "target": {
+                "committedDate": "2021-04-16T09:26:04Z",
+                "oid": "cd7da1cc2a0846809af3a7f8a5496831de2cd7a7"
+              }
+            },
+            {
+              "name": "v0.8.1",
+              "target": {
+                "committedDate": "2021-03-01T15:37:25Z",
+                "oid": "d12222a7c46c7241e95a05bf0db858a68f3cf6f6"
+              }
+            },
+            {
+              "name": "v0.8.0",
+              "target": {
+                "committedDate": "2021-02-26T15:30:15Z",
+                "oid": "1979f8f75ba0099945506fe80d618bcb6a36c254"
+              }
+            },
+            {
+              "name": "v0.7.2",
+              "target": {
+                "committedDate": "2021-01-27T09:19:13Z",
+                "oid": "80ff53e9be9f488064b9566990cc723f2c4446f0"
+              }
+            },
+            {
+              "name": "v0.7.1",
+              "target": {
+                "committedDate": "2021-01-25T10:49:42Z",
+                "oid": "c2360e18ca358bcedce4c40af09e4dba255cc0a8"
+              }
+            },
+            {
+              "name": "v0.7.0",
+              "target": {
+                "committedDate": "2021-01-22T13:44:24Z",
+                "oid": "5fa6e38b6108e1f143485d89d513645c934756ae"
+              }
+            },
+            {
+              "name": "0.6.3-preview2",
+              "target": {
+                "tagger": {
+                  "date": "2021-01-07T13:11:13+01:00"
+                },
+                "target": {
+                  "committedDate": "2021-01-07T12:04:12Z",
+                  "oid": "3bc0c4b707c6426acf74079b95737318a860fd90"
+                }
+              }
+            },
+            {
+              "name": "v0.6.2",
+              "target": {
+                "committedDate": "2020-12-31T14:07:25Z",
+                "oid": "5be8688a9cc589e2dd4380e57066de6a8db362fa"
+              }
+            },
+            {
+              "name": "v0.6.1",
+              "target": {
+                "committedDate": "2020-12-03T15:55:26Z",
+                "oid": "66b8d8af973ecf30ccce0b97d284e2478b3ad482"
+              }
+            },
+            {
+              "name": "v0.6.0",
+              "target": {
+                "committedDate": "2020-11-27T15:41:07Z",
+                "oid": "d1e27c7ca59d8e93ee71560f317b2d5f659e088e"
+              }
+            },
+            {
+              "name": "v0.5.2-beta",
+              "target": {
+                "committedDate": "2020-11-10T09:12:00Z",
+                "oid": "2590e7ef6129edfd2a2ce17ddc544e6833c61f2f"
+              }
+            },
+            {
+              "name": "v0.5.1-beta",
+              "target": {
+                "committedDate": "2020-11-06T15:02:31Z",
+                "oid": "0cfd56f85313d25c0db08e41d698e8d4db02285c"
+              }
+            },
+            {
+              "name": "v0.5.0-beta",
+              "target": {
+                "committedDate": "2020-11-05T13:12:34Z",
+                "oid": "93016eee5296c0774df308171a4a0bc19700d0ca"
+              }
+            },
+            {
+              "name": "v0.4.1-beta-fix",
+              "target": {
+                "committedDate": "2020-10-26T15:57:43Z",
+                "oid": "aabdcbba513d3e576a577e3a486dc4f75c1033ac"
+              }
+            },
+            {
+              "name": "v0.4.0-beta",
+              "target": {
+                "committedDate": "2020-10-23T13:41:13Z",
+                "oid": "70c83d37323388a79a9e3f34a058a6f43abfa22c"
+              }
+            },
+            {
+              "name": "v0.3.2-beta",
+              "target": {
+                "committedDate": "2020-10-03T11:01:57Z",
+                "oid": "0c32e4f7c6f5c8bf4090fc7264cffbba169356b0"
+              }
+            },
+            {
+              "name": "v0.3.1-beta",
+              "target": {
+                "committedDate": "2020-10-02T14:32:56Z",
+                "oid": "914b58e4155aed075d4cff1c2065cf9520aaa046"
+              }
+            },
+            {
+              "name": "v0.3.0-beta",
+              "target": {
+                "committedDate": "2020-09-29T15:23:54Z",
+                "oid": "1b7cf6c8277488ef8d0a73deb35016e7db8b02af"
+              }
+            },
+            {
+              "name": "v0.2.1-beta",
+              "target": {
+                "committedDate": "2020-09-25T15:14:27Z",
+                "oid": "cdcdd317af62fcbfdb80609a419fb6b396df0058"
+              }
+            },
+            {
+              "name": "v0.2.0-beta",
+              "target": {
+                "committedDate": "2020-09-24T14:12:06Z",
+                "oid": "15aec083727238d70baa900f82a3fdb7095d6b4d"
+              }
+            },
+            {
+              "name": "v0.1.7-alpha",
+              "target": {
+                "committedDate": "2020-09-22T15:37:32Z",
+                "oid": "dc98a9d6d2a3d5953d712a2aef2fa3af35d6aaba"
+              }
+            },
+            {
+              "name": "v0.1.6-alpha",
+              "target": {
+                "committedDate": "2020-09-18T12:30:05Z",
+                "oid": "400b71b59b46b670543f838ea71d8be722f6ef79"
+              }
+            },
+            {
+              "name": "v0.1.5-alpha",
+              "target": {
+                "committedDate": "2020-09-15T15:00:31Z",
+                "oid": "e87cf3a750611b333592b2ec12029db57ca014ff"
+              }
+            },
+            {
+              "name": "v0.0.4-alpha",
+              "target": {
+                "committedDate": "2020-09-02T14:05:33Z",
+                "oid": "ce913e8a9d87af26e92ace6c4c108acad85c3f9b"
+              }
+            },
+            {
+              "name": "v0.0.3-alpha",
+              "target": {
+                "committedDate": "2020-08-31T15:29:43Z",
+                "oid": "fc955161da1aeafdc07676f8b0b2ee5302185e1f"
+              }
+            },
+            {
+              "name": "v0.0.2-alpha",
+              "target": {
+                "committedDate": "2020-08-28T11:00:43Z",
+                "oid": "7addbda930f3c4fcccf3c3e80f3de40717651154"
+              }
+            },
+            {
+              "name": "v0.0.1-alpha",
+              "target": {
+                "tagger": {
+                  "date": "2020-08-28T11:59:07+02:00"
+                },
+                "target": {
+                  "committedDate": "2020-08-27T19:51:35Z",
+                  "oid": "c5380b48f206cc1c44d62c4b5d210ec62e17c597"
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "NTg"
+          }
+        }
+      }
+    }
+  }
+}

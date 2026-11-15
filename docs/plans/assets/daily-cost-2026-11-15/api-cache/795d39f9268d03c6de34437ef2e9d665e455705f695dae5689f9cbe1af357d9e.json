@@ -1,0 +1,68 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"alekmaul\",name:\"pvsneslib\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:10.772934+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "4.7.0",
+              "publishedAt": "2026-11-08T03:49:35Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/alekmaul/pvsneslib/releases/tag/4.7.0"
+            },
+            {
+              "tagName": "4.6.0",
+              "publishedAt": "2026-07-28T14:23:17Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/alekmaul/pvsneslib/releases/tag/4.6.0"
+            },
+            {
+              "tagName": "4.5.0",
+              "publishedAt": "2025-12-28T07:31:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/alekmaul/pvsneslib/releases/tag/4.5.0"
+            },
+            {
+              "tagName": "4.4.0",
+              "publishedAt": "2025-03-08T08:30:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/alekmaul/pvsneslib/releases/tag/4.4.0"
+            },
+            {
+              "tagName": "4.3.0",
+              "publishedAt": "2024-06-10T14:12:13Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/alekmaul/pvsneslib/releases/tag/4.3.0"
+            },
+            {
+              "tagName": "4.2.0",
+              "publishedAt": "2024-03-04T05:14:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/alekmaul/pvsneslib/releases/tag/4.2.0"
+            },
+            {
+              "tagName": "4.1.0",
+              "publishedAt": "2023-08-20T07:35:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/alekmaul/pvsneslib/releases/tag/4.1.0"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAyMy0wOC0yMFQwNzozMzo1MFrOBwccgw=="
+          }
+        }
+      }
+    }
+  }
+}

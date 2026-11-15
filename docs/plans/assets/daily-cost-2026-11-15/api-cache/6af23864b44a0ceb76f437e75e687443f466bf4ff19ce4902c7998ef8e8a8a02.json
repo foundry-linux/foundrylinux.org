@@ -1,0 +1,334 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"RPCS3\",name:\"rpcs3\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:15.229126+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "v0.0.43",
+              "publishedAt": "2026-09-30T22:12:32Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.43"
+            },
+            {
+              "tagName": "v0.0.42",
+              "publishedAt": "2026-07-31T18:15:12Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.42"
+            },
+            {
+              "tagName": "v0.0.41",
+              "publishedAt": "2026-06-04T00:59:57Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.41"
+            },
+            {
+              "tagName": "v0.0.40",
+              "publishedAt": "2026-03-03T12:17:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.40"
+            },
+            {
+              "tagName": "v0.0.39",
+              "publishedAt": "2025-12-31T22:54:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.39"
+            },
+            {
+              "tagName": "v0.0.38",
+              "publishedAt": "2025-09-30T21:49:44Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.38"
+            },
+            {
+              "tagName": "v0.0.37",
+              "publishedAt": "2025-05-31T21:06:10Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.37"
+            },
+            {
+              "tagName": "v0.0.36",
+              "publishedAt": "2025-03-30T19:46:15Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.36"
+            },
+            {
+              "tagName": "v0.0.35",
+              "publishedAt": "2025-03-01T00:12:04Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.35"
+            },
+            {
+              "tagName": "v0.0.34",
+              "publishedAt": "2024-11-01T23:23:18Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.34"
+            },
+            {
+              "tagName": "v0.0.33",
+              "publishedAt": "2024-08-31T19:47:15Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.33"
+            },
+            {
+              "tagName": "v0.0.32",
+              "publishedAt": "2024-05-01T15:01:35Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.32"
+            },
+            {
+              "tagName": "v0.0.31",
+              "publishedAt": "2024-03-04T23:41:22Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.31"
+            },
+            {
+              "tagName": "v0.0.30",
+              "publishedAt": "2024-01-02T20:27:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.30"
+            },
+            {
+              "tagName": "v0.0.29",
+              "publishedAt": "2023-07-31T17:10:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.29"
+            },
+            {
+              "tagName": "v0.0.28",
+              "publishedAt": "2023-06-02T17:54:15Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.28"
+            },
+            {
+              "tagName": "v0.0.27",
+              "publishedAt": "2023-03-01T21:56:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.27"
+            },
+            {
+              "tagName": "v0.0.26",
+              "publishedAt": "2023-01-07T22:47:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.26"
+            },
+            {
+              "tagName": "v0.0.25",
+              "publishedAt": "2022-11-01T21:50:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.25"
+            },
+            {
+              "tagName": "v0.0.24",
+              "publishedAt": "2022-08-31T22:25:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.24"
+            },
+            {
+              "tagName": "v0.0.23",
+              "publishedAt": "2022-07-02T12:21:20Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.23"
+            },
+            {
+              "tagName": "v0.0.22",
+              "publishedAt": "2022-05-01T13:24:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.22"
+            },
+            {
+              "tagName": "v0.0.21",
+              "publishedAt": "2022-02-28T23:30:31Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.21"
+            },
+            {
+              "tagName": "v0.0.20",
+              "publishedAt": "2022-01-01T00:32:48Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.20"
+            },
+            {
+              "tagName": "v0.0.19",
+              "publishedAt": "2021-11-01T03:06:30Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.19"
+            },
+            {
+              "tagName": "v0.0.18",
+              "publishedAt": "2021-08-31T22:04:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.18"
+            },
+            {
+              "tagName": "v0.0.17",
+              "publishedAt": "2021-06-30T19:14:19Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.17"
+            },
+            {
+              "tagName": "v0.0.16",
+              "publishedAt": "2021-04-30T20:42:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.16"
+            },
+            {
+              "tagName": "v0.0.15",
+              "publishedAt": "2021-02-28T23:32:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.15"
+            },
+            {
+              "tagName": "v0.0.14",
+              "publishedAt": "2020-12-31T20:16:35Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.14"
+            },
+            {
+              "tagName": "v0.0.13",
+              "publishedAt": "2020-11-02T20:20:18Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.13"
+            },
+            {
+              "tagName": "v0.0.12",
+              "publishedAt": "2020-08-31T22:39:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.12"
+            },
+            {
+              "tagName": "v0.0.11",
+              "publishedAt": "2020-06-30T21:35:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.11"
+            },
+            {
+              "tagName": "v0.0.10",
+              "publishedAt": "2020-04-30T18:41:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.10"
+            },
+            {
+              "tagName": "v0.0.9",
+              "publishedAt": "2020-02-29T21:17:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.9"
+            },
+            {
+              "tagName": "v0.0.8",
+              "publishedAt": "2019-12-31T23:21:26Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.8"
+            },
+            {
+              "tagName": "v0.0.7",
+              "publishedAt": "2019-08-30T02:10:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.7"
+            },
+            {
+              "tagName": "v0.0.6",
+              "publishedAt": "2019-01-31T20:16:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.6"
+            },
+            {
+              "tagName": "v0.0.5",
+              "publishedAt": "2018-02-24T15:07:18Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.5"
+            },
+            {
+              "tagName": "v0.0.4",
+              "publishedAt": "2017-11-12T18:14:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.4"
+            },
+            {
+              "tagName": "v0.0.3",
+              "publishedAt": "2017-07-20T19:40:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.3"
+            },
+            {
+              "tagName": "v0.0.2",
+              "publishedAt": "2017-03-12T13:37:29Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.2"
+            },
+            {
+              "tagName": "v0.0.0.9",
+              "publishedAt": "2016-04-16T09:14:22Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.0.9"
+            },
+            {
+              "tagName": "v0.0.0.6",
+              "publishedAt": "2015-10-03T13:55:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.0.6"
+            },
+            {
+              "tagName": "v0.0.0.4",
+              "publishedAt": "2013-08-27T15:26:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPCS3/rpcs3/releases/tag/v0.0.0.4"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAxMy0wOC0yN1QxNToyMjowNFrNhDA="
+          }
+        }
+      }
+    }
+  }
+}

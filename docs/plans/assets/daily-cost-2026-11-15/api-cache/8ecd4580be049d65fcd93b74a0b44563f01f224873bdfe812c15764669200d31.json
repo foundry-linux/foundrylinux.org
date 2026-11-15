@@ -1,0 +1,152 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"Rangi42\",name:\"tilemap-studio\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:17.047721+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "v4.0.1",
+              "publishedAt": "2021-11-01T23:53:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v4.0.1"
+            },
+            {
+              "tagName": "v4.0.0",
+              "publishedAt": "2021-08-29T22:06:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v4.0.0"
+            },
+            {
+              "tagName": "v3.3.0",
+              "publishedAt": "2021-06-02T02:23:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v3.3.0"
+            },
+            {
+              "tagName": "v3.2.2",
+              "publishedAt": "2020-11-13T22:37:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v3.2.2"
+            },
+            {
+              "tagName": "v3.2.1",
+              "publishedAt": "2020-08-24T01:18:15Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v3.2.1"
+            },
+            {
+              "tagName": "v3.2.0",
+              "publishedAt": "2020-06-02T22:26:26Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v3.2.0"
+            },
+            {
+              "tagName": "v3.1.0",
+              "publishedAt": "2019-11-24T18:15:31Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v3.1.0"
+            },
+            {
+              "tagName": "v3.0.0",
+              "publishedAt": "2019-11-17T21:25:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v3.0.0"
+            },
+            {
+              "tagName": "v2.1.1",
+              "publishedAt": "2019-10-31T22:40:47Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v2.1.1"
+            },
+            {
+              "tagName": "v2.1.0",
+              "publishedAt": "2019-10-20T17:16:38Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v2.1.0"
+            },
+            {
+              "tagName": "v2.0.0",
+              "publishedAt": "2019-10-06T01:26:25Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v2.0.0"
+            },
+            {
+              "tagName": "v1.1.1",
+              "publishedAt": "2019-09-08T20:42:43Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v1.1.1"
+            },
+            {
+              "tagName": "v1.1.0",
+              "publishedAt": "2019-09-07T18:51:29Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v1.1.0"
+            },
+            {
+              "tagName": "v1.0.1",
+              "publishedAt": "2019-09-02T19:48:16Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v1.0.1"
+            },
+            {
+              "tagName": "v1.0.0",
+              "publishedAt": "2019-09-02T00:51:35Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v1.0.0"
+            },
+            {
+              "tagName": "v0.4.0",
+              "publishedAt": "2019-08-11T22:08:56Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v0.4.0"
+            },
+            {
+              "tagName": "v0.3.0",
+              "publishedAt": "2019-08-04T23:45:27Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v0.3.0"
+            },
+            {
+              "tagName": "v0.2.0",
+              "publishedAt": "2019-08-03T20:40:53Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v0.2.0"
+            },
+            {
+              "tagName": "v0.1.0",
+              "publishedAt": "2019-08-02T02:18:54Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/Rangi42/tilemap-studio/releases/tag/v0.1.0"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAxOS0wOC0wMlQwMjoxNjoyOVrOASJjjw=="
+          }
+        }
+      }
+    }
+  }
+}

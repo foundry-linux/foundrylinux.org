@@ -1,0 +1,684 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"vgmstream\",name:\"vgmstream\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:19.897606+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "r2168",
+              "publishedAt": "2026-10-25T17:27:13Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r2168"
+            },
+            {
+              "tagName": "r2117",
+              "publishedAt": "2026-05-19T22:37:30Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r2117"
+            },
+            {
+              "tagName": "r2083",
+              "publishedAt": "2026-01-25T16:23:05Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r2083"
+            },
+            {
+              "tagName": "r2055",
+              "publishedAt": "2025-09-28T19:16:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r2055"
+            },
+            {
+              "tagName": "r2023",
+              "publishedAt": "2025-05-14T22:02:22Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r2023"
+            },
+            {
+              "tagName": "r1980",
+              "publishedAt": "2024-12-31T17:21:17Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1980"
+            },
+            {
+              "tagName": "r1951",
+              "publishedAt": "2024-08-19T21:34:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1951"
+            },
+            {
+              "tagName": "r1917",
+              "publishedAt": "2024-04-09T18:33:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1917"
+            },
+            {
+              "tagName": "r1896",
+              "publishedAt": "2023-12-06T11:45:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1896"
+            },
+            {
+              "tagName": "r1879",
+              "publishedAt": "2023-09-15T20:40:57Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1879"
+            },
+            {
+              "tagName": "r1866",
+              "publishedAt": "2023-07-26T20:44:41Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1866"
+            },
+            {
+              "tagName": "r1843",
+              "publishedAt": "2023-05-28T23:02:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1843"
+            },
+            {
+              "tagName": "r1831",
+              "publishedAt": "2023-03-19T17:56:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1831"
+            },
+            {
+              "tagName": "r1810",
+              "publishedAt": "2023-01-10T21:25:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1810"
+            },
+            {
+              "tagName": "r1800",
+              "publishedAt": "2022-10-22T13:48:03Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1800"
+            },
+            {
+              "tagName": "r1776",
+              "publishedAt": "2022-08-18T08:04:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1776"
+            },
+            {
+              "tagName": "r1745",
+              "publishedAt": "2022-05-01T22:27:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1745"
+            },
+            {
+              "tagName": "r1721",
+              "publishedAt": "2022-03-16T22:07:18Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1721"
+            },
+            {
+              "tagName": "r1702",
+              "publishedAt": "2022-01-12T21:15:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1702"
+            },
+            {
+              "tagName": "r1690",
+              "publishedAt": "2021-11-30T19:53:32Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1690"
+            },
+            {
+              "tagName": "r1667",
+              "publishedAt": "2021-10-15T13:30:01Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1667"
+            },
+            {
+              "tagName": "r1640",
+              "publishedAt": "2021-09-03T20:12:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1640"
+            },
+            {
+              "tagName": "r1626",
+              "publishedAt": "2021-08-15T20:12:38Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1626"
+            },
+            {
+              "tagName": "r1050-3448-g77cc431b",
+              "publishedAt": "2020-12-01T02:49:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3448-g77cc431b"
+            },
+            {
+              "tagName": "r1050-3312-g70d20924",
+              "publishedAt": "2020-10-12T23:21:09Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3312-g70d20924"
+            },
+            {
+              "tagName": "r1050-3280-gba405509",
+              "publishedAt": "2020-09-27T01:11:30Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3280-gba405509"
+            },
+            {
+              "tagName": "r1050-3264-g86fbfffd",
+              "publishedAt": "2020-09-15T22:04:03Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3264-g86fbfffd"
+            },
+            {
+              "tagName": "r1050-3258-g0b7c3ce6",
+              "publishedAt": "2020-09-13T01:19:05Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3258-g0b7c3ce6"
+            },
+            {
+              "tagName": "r1050-3086-gc9dc860c",
+              "publishedAt": "2020-07-09T02:21:14Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3086-gc9dc860c"
+            },
+            {
+              "tagName": "r1050-3084-ge114566b",
+              "publishedAt": "2020-07-06T03:34:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3084-ge114566b"
+            },
+            {
+              "tagName": "r1050-3072-g39f38e0a",
+              "publishedAt": "2020-06-26T02:06:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3072-g39f38e0a"
+            },
+            {
+              "tagName": "r1050-3022-g877d791d",
+              "publishedAt": "2020-06-04T02:25:07Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-3022-g877d791d"
+            },
+            {
+              "tagName": "r1050-2969-g9da8b93f",
+              "publishedAt": "2020-05-23T06:47:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2969-g9da8b93f"
+            },
+            {
+              "tagName": "r1050-2955-g9aaba3b3",
+              "publishedAt": "2020-05-16T23:26:14Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2955-g9aaba3b3"
+            },
+            {
+              "tagName": "r1050-2946-g1e583645",
+              "publishedAt": "2020-05-02T00:55:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2946-g1e583645"
+            },
+            {
+              "tagName": "r1050-2908-g14dc8566",
+              "publishedAt": "2020-04-14T09:40:06Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2908-g14dc8566"
+            },
+            {
+              "tagName": "r1050-2893-g994ef884",
+              "publishedAt": "2020-04-06T02:36:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2893-g994ef884"
+            },
+            {
+              "tagName": "r1050-2874-gcff06e38",
+              "publishedAt": "2020-04-05T00:38:38Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2874-gcff06e38"
+            },
+            {
+              "tagName": "r1050-2861-g126e3b41",
+              "publishedAt": "2020-03-11T07:47:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2861-g126e3b41"
+            },
+            {
+              "tagName": "r1050-2838-g987641d8",
+              "publishedAt": "2020-03-06T23:54:17Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2838-g987641d8"
+            },
+            {
+              "tagName": "r1050-2819-gcec5b596",
+              "publishedAt": "2020-02-27T03:46:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2819-gcec5b596"
+            },
+            {
+              "tagName": "r1050-2797-g5ea57c08",
+              "publishedAt": "2020-02-11T09:01:13Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2797-g5ea57c08"
+            },
+            {
+              "tagName": "r1050-2792-gbbeb4e4b",
+              "publishedAt": "2020-02-03T00:39:07Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2792-gbbeb4e4b"
+            },
+            {
+              "tagName": "r1050-2780-geea1c3b4",
+              "publishedAt": "2020-01-25T00:14:02Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2780-geea1c3b4"
+            },
+            {
+              "tagName": "r1050-2771-ge58c73aa",
+              "publishedAt": "2020-01-15T08:26:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2771-ge58c73aa"
+            },
+            {
+              "tagName": "r1050-2743-gc479bdb5",
+              "publishedAt": "2020-01-06T04:46:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2743-gc479bdb5"
+            },
+            {
+              "tagName": "r1050-2736-g71da1d5e",
+              "publishedAt": "2020-01-04T01:54:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2736-g71da1d5e"
+            },
+            {
+              "tagName": "r1050-2696-g0a04a738",
+              "publishedAt": "2019-12-06T02:11:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2696-g0a04a738"
+            },
+            {
+              "tagName": "r1050-2651-g2ac2c0ce",
+              "publishedAt": "2019-11-24T01:46:42Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2651-g2ac2c0ce"
+            },
+            {
+              "tagName": "r1050-2637-gd871302c",
+              "publishedAt": "2019-11-18T22:37:12Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2637-gd871302c"
+            },
+            {
+              "tagName": "r1050-2625-g02efa7d7",
+              "publishedAt": "2019-11-11T23:45:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2625-g02efa7d7"
+            },
+            {
+              "tagName": "r1050-2579-gcce259d4",
+              "publishedAt": "2019-10-28T00:57:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2579-gcce259d4"
+            },
+            {
+              "tagName": "r1050-2574-g246222dd",
+              "publishedAt": "2019-10-21T00:17:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2574-g246222dd"
+            },
+            {
+              "tagName": "r1050-2553-gee3e1700",
+              "publishedAt": "2019-10-19T03:42:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2553-gee3e1700"
+            },
+            {
+              "tagName": "r1050-2552-g2b1de051",
+              "publishedAt": "2019-10-16T04:21:26Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2552-g2b1de051"
+            },
+            {
+              "tagName": "r1050-2551-g9c8dc69e",
+              "publishedAt": "2019-10-14T06:33:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2551-g9c8dc69e"
+            },
+            {
+              "tagName": "r1050-2543-g363b8143",
+              "publishedAt": "2019-10-10T00:40:24Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2543-g363b8143"
+            },
+            {
+              "tagName": "r1050-2539-gc66fe3ee",
+              "publishedAt": "2019-10-06T23:19:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2539-gc66fe3ee"
+            },
+            {
+              "tagName": "r1050-2511-g3090c08e",
+              "publishedAt": "2019-09-21T21:32:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2511-g3090c08e"
+            },
+            {
+              "tagName": "r1050-2501-g15362e0b",
+              "publishedAt": "2019-09-16T03:56:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2501-g15362e0b"
+            },
+            {
+              "tagName": "r1050-2466-ga349c26b",
+              "publishedAt": "2019-09-03T00:10:51Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2466-ga349c26b"
+            },
+            {
+              "tagName": "r1050-2459-ga2fe3aa3",
+              "publishedAt": "2019-08-31T21:31:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2459-ga2fe3aa3"
+            },
+            {
+              "tagName": "r1050-2441-gd64c3872",
+              "publishedAt": "2019-08-15T22:55:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2441-gd64c3872"
+            },
+            {
+              "tagName": "r1050-2410-gead9ec4f",
+              "publishedAt": "2019-08-11T06:22:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2410-gead9ec4f"
+            },
+            {
+              "tagName": "r1050-2406-g66626b31",
+              "publishedAt": "2019-08-05T00:13:42Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2406-g66626b31"
+            },
+            {
+              "tagName": "r1050-2395-g056ee4fb",
+              "publishedAt": "2019-07-30T03:20:21Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2395-g056ee4fb"
+            },
+            {
+              "tagName": "r1050-2384-g1fb124c2",
+              "publishedAt": "2019-07-25T03:53:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2384-g1fb124c2"
+            },
+            {
+              "tagName": "r1050-2366-ged57b41e",
+              "publishedAt": "2019-07-15T02:57:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2366-ged57b41e"
+            },
+            {
+              "tagName": "r1050-2359-ge1184142",
+              "publishedAt": "2019-07-07T23:25:44Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2359-ge1184142"
+            },
+            {
+              "tagName": "r1050-2349-g5fe83c0c",
+              "publishedAt": "2019-07-07T07:54:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2349-g5fe83c0c"
+            },
+            {
+              "tagName": "r1050-2345-g1d28e0f5",
+              "publishedAt": "2019-06-30T22:29:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2345-g1d28e0f5"
+            },
+            {
+              "tagName": "r1050-2334-g0514807c",
+              "publishedAt": "2019-06-23T21:51:21Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2334-g0514807c"
+            },
+            {
+              "tagName": "r1050-2327-ge003e2c2",
+              "publishedAt": "2019-06-22T03:32:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2327-ge003e2c2"
+            },
+            {
+              "tagName": "r1050-2320-g7bc5b8b1",
+              "publishedAt": "2019-06-16T22:10:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2320-g7bc5b8b1"
+            },
+            {
+              "tagName": "r1050-2318-g86c104c9",
+              "publishedAt": "2019-06-15T21:14:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2318-g86c104c9"
+            },
+            {
+              "tagName": "r1050-2307-gc0de147a",
+              "publishedAt": "2019-06-09T21:34:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2307-gc0de147a"
+            },
+            {
+              "tagName": "r1050-2304-g50309c19",
+              "publishedAt": "2019-05-26T22:33:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2304-g50309c19"
+            },
+            {
+              "tagName": "r1050-2297-g3f687f4f",
+              "publishedAt": "2019-05-19T01:14:46Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2297-g3f687f4f"
+            },
+            {
+              "tagName": "1.0.121",
+              "publishedAt": "2019-05-02T00:04:42Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/1.0.121"
+            },
+            {
+              "tagName": "r1050-2287-g9206295e",
+              "publishedAt": "2019-04-21T07:20:30Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2287-g9206295e"
+            },
+            {
+              "tagName": "r1050-2273-g224b4bba",
+              "publishedAt": "2019-04-09T21:04:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2273-g224b4bba"
+            },
+            {
+              "tagName": "r1050-2259-gcb9b9c0d",
+              "publishedAt": "2019-04-04T01:58:29Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2259-gcb9b9c0d"
+            },
+            {
+              "tagName": "r1050-2257-g95e65ea4",
+              "publishedAt": "2019-03-31T06:34:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2257-g95e65ea4"
+            },
+            {
+              "tagName": "r1050-2208-g83b463bf",
+              "publishedAt": "2019-03-23T06:55:32Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2208-g83b463bf"
+            },
+            {
+              "tagName": "r1050-2178-gd0de0119",
+              "publishedAt": "2019-03-17T04:07:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2178-gd0de0119"
+            },
+            {
+              "tagName": "r1050-2142-gd8ffd7f0",
+              "publishedAt": "2019-03-06T02:24:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2142-gd8ffd7f0"
+            },
+            {
+              "tagName": "r1050-2141-g12ad4237",
+              "publishedAt": "2019-03-05T04:48:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2141-g12ad4237"
+            },
+            {
+              "tagName": "r1050-2085-gae0f1b61",
+              "publishedAt": "2019-02-18T23:30:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2085-gae0f1b61"
+            },
+            {
+              "tagName": "r1050-2066-g3dc52c5f",
+              "publishedAt": "2019-02-11T07:54:13Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2066-g3dc52c5f"
+            },
+            {
+              "tagName": "r1050-2051-gc9d997f3",
+              "publishedAt": "2019-02-03T01:49:31Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2051-gc9d997f3"
+            },
+            {
+              "tagName": "r1050-2047-gcfb6b8fe",
+              "publishedAt": "2019-02-02T04:23:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2047-gcfb6b8fe"
+            },
+            {
+              "tagName": "r1050-2045-gab807c34",
+              "publishedAt": "2019-01-29T01:52:55Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2045-gab807c34"
+            },
+            {
+              "tagName": "r1050-2037-ged397bbc",
+              "publishedAt": "2019-01-27T23:35:18Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2037-ged397bbc"
+            },
+            {
+              "tagName": "r1050-2028-gac28ccc5",
+              "publishedAt": "2019-01-21T03:06:11Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2028-gac28ccc5"
+            },
+            {
+              "tagName": "r1050-2014-g7a8726dd",
+              "publishedAt": "2019-01-16T22:50:28Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/vgmstream/vgmstream/releases/tag/r1050-2014-g7a8726dd"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAxOS0wMS0xNlQyMjoxODoxMlrOAOUrtQ=="
+          }
+        }
+      }
+    }
+  }
+}

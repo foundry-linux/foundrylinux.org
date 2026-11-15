@@ -1,0 +1,89 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"RPGHacker\",name:\"asar\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:02.236324+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "v1.91",
+              "publishedAt": "2024-03-13T10:34:10Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.91"
+            },
+            {
+              "tagName": "v1.90",
+              "publishedAt": "2024-02-23T17:59:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.90"
+            },
+            {
+              "tagName": "v1.90RC1",
+              "publishedAt": "2024-02-09T09:22:04Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.90RC1"
+            },
+            {
+              "tagName": "v1.81",
+              "publishedAt": "2021-01-20T16:20:12Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.81"
+            },
+            {
+              "tagName": "v1.80",
+              "publishedAt": "2021-01-18T11:26:00Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.80"
+            },
+            {
+              "tagName": "v1.71",
+              "publishedAt": "2019-01-06T21:30:14Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.71"
+            },
+            {
+              "tagName": "v1.70",
+              "publishedAt": "2019-01-04T16:12:56Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.70"
+            },
+            {
+              "tagName": "v1.61",
+              "publishedAt": "2018-08-22T11:10:38Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.61"
+            },
+            {
+              "tagName": "v1.60",
+              "publishedAt": "2018-07-06T14:24:24Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.60"
+            },
+            {
+              "tagName": "v1.60b1",
+              "publishedAt": "2018-05-13T17:30:30Z",
+              "isPrerelease": true,
+              "isDraft": false,
+              "url": "https://github.com/RPGHacker/asar/releases/tag/v1.60b1"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAxOC0wNS0xMlQyMzoxMjozMlrOAKd-fw=="
+          }
+        }
+      }
+    }
+  }
+}

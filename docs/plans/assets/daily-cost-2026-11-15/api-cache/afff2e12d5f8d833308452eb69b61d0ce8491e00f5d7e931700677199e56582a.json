@@ -1,0 +1,40 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"googleprojectzero\",name:\"halfempty\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:06.479031+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "v0.40",
+              "target": {
+                "committedDate": "2020-12-15T21:15:12Z",
+                "oid": "d02166af101517dd55717a04f1c2dc052fca7b93"
+              }
+            },
+            {
+              "name": "v0.30",
+              "target": {
+                "committedDate": "2019-03-16T17:55:00Z",
+                "oid": "aecf25c616abe678427e0c3574c73a19068be8a5"
+              }
+            },
+            {
+              "name": "v0.20",
+              "target": {
+                "committedDate": "2019-03-06T05:41:28Z",
+                "oid": "50e28ddc5060c5720e556a5eb6a71aa832ae9ad6"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Mw"
+          }
+        }
+      }
+    }
+  }
+}

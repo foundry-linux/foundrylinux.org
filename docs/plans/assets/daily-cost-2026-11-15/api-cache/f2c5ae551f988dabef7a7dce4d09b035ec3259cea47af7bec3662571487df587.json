@@ -1,0 +1,474 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"NationalSecurityAgency\",name:\"ghidra\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:06.556477+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "Ghidra_12.2_build",
+              "target": {
+                "committedDate": "2026-10-15T16:31:14Z",
+                "oid": "8ca9077040cc43cd790babcfccf19475622a3e9a"
+              }
+            },
+            {
+              "name": "Ghidra_12.1.4_build",
+              "target": {
+                "committedDate": "2026-09-11T10:14:59Z",
+                "oid": "8b6bbb857accdfa20dc5b2f5dea471178c2e9fbc"
+              }
+            },
+            {
+              "name": "Ghidra_12.1.3_build",
+              "target": {
+                "committedDate": "2026-08-14T18:02:49Z",
+                "oid": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+              }
+            },
+            {
+              "name": "Ghidra_12.1.2_build",
+              "target": {
+                "committedDate": "2026-06-02T21:19:03Z",
+                "oid": "c0f584bf229fffba61b36431f3ce30c0c3e4e682"
+              }
+            },
+            {
+              "name": "Ghidra_12.1.1_build",
+              "target": {
+                "committedDate": "2026-05-27T18:21:37Z",
+                "oid": "443b972a420667a4f76c25db0e434deed6609a9f"
+              }
+            },
+            {
+              "name": "Ghidra_12.1_build",
+              "target": {
+                "committedDate": "2026-05-12T13:41:26Z",
+                "oid": "7e89d94e3478f0b1931c34882a0f606fdb06961f"
+              }
+            },
+            {
+              "name": "Ghidra_12.0.4_build",
+              "target": {
+                "committedDate": "2026-03-03T18:33:57Z",
+                "oid": "e40ed13014025f82488b1f8f7bca566894ac376b"
+              }
+            },
+            {
+              "name": "Ghidra_12.0.3_build",
+              "target": {
+                "committedDate": "2026-02-10T18:16:51Z",
+                "oid": "09f14c92d3da6e5d5f6b7dea115409719db3cce1"
+              }
+            },
+            {
+              "name": "Ghidra_12.0.2_build",
+              "target": {
+                "committedDate": "2026-01-29T20:26:44Z",
+                "oid": "2f79e05065a59b513aa561e84f499685a746e15d"
+              }
+            },
+            {
+              "name": "Ghidra_12.0.1_build",
+              "target": {
+                "committedDate": "2026-01-14T16:15:21Z",
+                "oid": "0a2b6329eef36c70c9dc261a613f94992a887296"
+              }
+            },
+            {
+              "name": "Ghidra_12.0_build",
+              "target": {
+                "committedDate": "2025-12-05T18:05:21Z",
+                "oid": "6452eb3a07a382c20eb6e9d845b72e555dcbb059"
+              }
+            },
+            {
+              "name": "Ghidra_11.4.3_build",
+              "target": {
+                "committedDate": "2025-12-02T22:03:05Z",
+                "oid": "a8c0ec7e221699249595143eb8e528a34676a93c"
+              }
+            },
+            {
+              "name": "Ghidra_11.4.2_build",
+              "target": {
+                "committedDate": "2025-08-26T16:34:13Z",
+                "oid": "0b61b34bb9c98108eefd9404f45446dae6a1c5eb"
+              }
+            },
+            {
+              "name": "Ghidra_11.4.1_build",
+              "target": {
+                "committedDate": "2025-07-31T15:21:23Z",
+                "oid": "da059ed907eb77838253b09dc08e27362635d400"
+              }
+            },
+            {
+              "name": "Ghidra_11.4_build",
+              "target": {
+                "committedDate": "2025-06-18T19:22:22Z",
+                "oid": "aed1cf1c4e060af395af241f0e6027be783b9591"
+              }
+            },
+            {
+              "name": "Ghidra_11.3.2_build",
+              "target": {
+                "committedDate": "2025-04-15T15:05:38Z",
+                "oid": "3a503048975ac134d9d4efecaa09f143bbc6b3b9"
+              }
+            },
+            {
+              "name": "Ghidra_11.3.1_build",
+              "target": {
+                "committedDate": "2025-02-18T17:03:45Z",
+                "oid": "5b017d065e217eabc67b92a532c53069c9540237"
+              }
+            },
+            {
+              "name": "Ghidra_11.3_build",
+              "target": {
+                "committedDate": "2025-02-05T19:21:55Z",
+                "oid": "1bccb8ac6072a8a641475e2308c8dd177dd0577b"
+              }
+            },
+            {
+              "name": "Ghidra_11.2.1_build",
+              "target": {
+                "committedDate": "2024-11-05T21:03:00Z",
+                "oid": "a34349b6958bb6da18a17843b644a00b733b885c"
+              }
+            },
+            {
+              "name": "Ghidra_11.2_build",
+              "target": {
+                "committedDate": "2024-09-26T17:37:37Z",
+                "oid": "7e6daf45e1c6a541bddeb8733eb21c4baa354c08"
+              }
+            },
+            {
+              "name": "Ghidra_11.1.2_build",
+              "target": {
+                "committedDate": "2024-07-09T15:05:37Z",
+                "oid": "68cad06ddfae2b92c03054357c67c32f2d0553a8"
+              }
+            },
+            {
+              "name": "Ghidra_11.1.1_build",
+              "target": {
+                "committedDate": "2024-06-14T14:18:58Z",
+                "oid": "febbeb447af1f059d583b11d7cefc8758b99f887"
+              }
+            },
+            {
+              "name": "Ghidra_11.1_build",
+              "target": {
+                "committedDate": "2024-06-07T18:10:51Z",
+                "oid": "dee48e96c13d6ff2e773c81d59d2708979400216"
+              }
+            },
+            {
+              "name": "Ghidra_11.0.3_build",
+              "target": {
+                "committedDate": "2024-04-10T18:33:00Z",
+                "oid": "ec868c12b688636db73ab569fb24599a8cf9d470"
+              }
+            },
+            {
+              "name": "Ghidra_11.0.2_build",
+              "target": {
+                "committedDate": "2024-03-26T16:40:34Z",
+                "oid": "ec34e0ed6e2773b9d33a7490047d87a8928596e1"
+              }
+            },
+            {
+              "name": "Ghidra_11.0.1_build",
+              "target": {
+                "committedDate": "2024-01-30T15:01:47Z",
+                "oid": "9afec7d5f89a85f55071e6282c20f93fd097a5e0"
+              }
+            },
+            {
+              "name": "Ghidra_11.0_build",
+              "target": {
+                "committedDate": "2023-12-22T14:34:08Z",
+                "oid": "4d856572319837d1419833b84fe1c59fd43d1d77"
+              }
+            },
+            {
+              "name": "Ghidra_10.4_build",
+              "target": {
+                "committedDate": "2023-09-28T16:24:51Z",
+                "oid": "1801dc1ee62be73faae29961ec2f17a59423f156"
+              }
+            },
+            {
+              "name": "Ghidra_10.3.3_build",
+              "target": {
+                "committedDate": "2023-08-29T17:38:53Z",
+                "oid": "d7fdac39363fe4f449503b5e75ec18a7e13c0d9a"
+              }
+            },
+            {
+              "name": "Ghidra_10.3.2_build",
+              "target": {
+                "committedDate": "2023-07-11T20:09:00Z",
+                "oid": "1e9ed15e0be5d21b7a2a8e955467d0980805f7bd"
+              }
+            },
+            {
+              "name": "Ghidra_10.3.1_build",
+              "target": {
+                "committedDate": "2023-06-14T19:41:04Z",
+                "oid": "69289358f2f4f0ba180fd44b6b4af69290763086"
+              }
+            },
+            {
+              "name": "Ghidra_10.3_build",
+              "target": {
+                "committedDate": "2023-05-10T18:05:10Z",
+                "oid": "104d9592485c2fb6c7ab5177c71d8d70140a3d03"
+              }
+            },
+            {
+              "name": "Ghidra_10.2.3_build",
+              "target": {
+                "committedDate": "2023-02-08T16:31:14Z",
+                "oid": "4ed65cc0db1a4397ebb8f8d122fe216418ab0afc"
+              }
+            },
+            {
+              "name": "Ghidra_10.2.2_build",
+              "target": {
+                "committedDate": "2022-11-15T16:07:27Z",
+                "oid": "9813cde2db1f31f92fed49a4dd8aa29b21d72581"
+              }
+            },
+            {
+              "name": "Ghidra_10.2.1_build",
+              "target": {
+                "committedDate": "2022-11-10T20:23:20Z",
+                "oid": "3cf13c25331a4d49184c05d58418e1978abba6cf"
+              }
+            },
+            {
+              "name": "Ghidra_10.2_build",
+              "target": {
+                "committedDate": "2022-11-01T16:35:05Z",
+                "oid": "17884b878680e640dd5c30210736a1d062ae5ba2"
+              }
+            },
+            {
+              "name": "Ghidra_10.1.5_build",
+              "target": {
+                "committedDate": "2022-07-26T19:12:21Z",
+                "oid": "9c724c1add630100969cd9347b6437e0697f86fa"
+              }
+            },
+            {
+              "name": "Ghidra_10.1.4_build",
+              "target": {
+                "committedDate": "2022-05-19T12:48:20Z",
+                "oid": "68a34fda2f456cf21ff4768774e240028cb5f2bf"
+              }
+            },
+            {
+              "name": "Ghidra_10.1.3_build",
+              "target": {
+                "committedDate": "2022-04-20T18:35:30Z",
+                "oid": "74f83c9a9bd79d6850312029398ac95b0541d286"
+              }
+            },
+            {
+              "name": "Ghidra_10.1.2_build",
+              "target": {
+                "committedDate": "2022-01-25T19:52:03Z",
+                "oid": "63bb30ac8bee0e3ff34c9812d751edcfdc70dbe4"
+              }
+            },
+            {
+              "name": "Ghidra_10.1.1_build",
+              "target": {
+                "committedDate": "2021-12-20T19:12:43Z",
+                "oid": "7f2675c9c16bc42ac6a32e19b192d01d909cd388"
+              }
+            },
+            {
+              "name": "Ghidra_10.1_build",
+              "target": {
+                "committedDate": "2021-12-10T18:03:38Z",
+                "oid": "2fcf0d21bf360af68dd87e5d8ed270ea1e72554c"
+              }
+            },
+            {
+              "name": "Ghidra_10.1-BETA_build",
+              "target": {
+                "committedDate": "2021-11-16T23:20:34Z",
+                "oid": "53e4f2ff9bd48b23404dd9caf747ded0d40c9e06"
+              }
+            },
+            {
+              "name": "Ghidra_10.0.4_build",
+              "target": {
+                "committedDate": "2021-09-28T18:47:24Z",
+                "oid": "5b07797cb859d8801ca3a1e08bda1321ca3ce002"
+              }
+            },
+            {
+              "name": "Ghidra_10.0.3_build",
+              "target": {
+                "committedDate": "2021-09-08T16:02:04Z",
+                "oid": "fddd5d260b7b3dc579e4417b30f747c17cf16314"
+              }
+            },
+            {
+              "name": "Ghidra_10.0.2_build",
+              "target": {
+                "committedDate": "2021-08-04T15:31:51Z",
+                "oid": "c186cafe01cbc3969484aefad5971532492c7cd5"
+              }
+            },
+            {
+              "name": "Ghidra_10.0.1_build",
+              "target": {
+                "committedDate": "2021-07-08T17:16:19Z",
+                "oid": "3c1e51d0c0036c1b4c1d6f6a8e48f4a49c774b97"
+              }
+            },
+            {
+              "name": "Ghidra_10.0_build",
+              "target": {
+                "committedDate": "2021-06-17T20:46:40Z",
+                "oid": "51254872ba1abb884049586c2b41ca201a2a503b"
+              }
+            },
+            {
+              "name": "Ghidra_9.2.4_build",
+              "target": {
+                "committedDate": "2021-04-21T19:48:15Z",
+                "oid": "fbc8a6fb05d3a4ee9df19ed2dc5cdb98e4a402d9"
+              }
+            },
+            {
+              "name": "Ghidra_9.2.3_build",
+              "target": {
+                "committedDate": "2021-03-24T19:49:36Z",
+                "oid": "9880b3dcef7b1c2441083a964ba42209cb94c52d"
+              }
+            },
+            {
+              "name": "Ghidra_9.2.2_build",
+              "target": {
+                "committedDate": "2020-12-29T21:00:22Z",
+                "oid": "cfaf865567f69194c24405660d7bdf4354e4dc38"
+              }
+            },
+            {
+              "name": "Ghidra_9.2.1_build",
+              "target": {
+                "committedDate": "2020-12-14T20:25:46Z",
+                "oid": "fd5c61f394faa04bc6b5763762ff10514cf2f5d4"
+              }
+            },
+            {
+              "name": "Ghidra_9.2_build",
+              "target": {
+                "committedDate": "2020-11-13T01:22:24Z",
+                "oid": "7bd149cb8459607df5854a6fea038a4fed467a27"
+              }
+            },
+            {
+              "name": "Ghidra_9.1.2_build",
+              "target": {
+                "tagger": {
+                  "date": "2020-02-12T11:03:17-05:00"
+                },
+                "target": {
+                  "committedDate": "2020-02-11T20:52:10Z",
+                  "oid": "687ce7f529d17f0fa215c2d8193b39b6ea8f636a"
+                }
+              }
+            },
+            {
+              "name": "Ghidra_9.1.1_build",
+              "target": {
+                "tagger": {
+                  "date": "2019-12-18T10:54:04-05:00"
+                },
+                "target": {
+                  "committedDate": "2019-12-18T15:52:22Z",
+                  "oid": "c4f31ba4bd2ccce5914a09004601543865e8c7ca"
+                }
+              }
+            },
+            {
+              "name": "Ghidra_9.1_build",
+              "target": {
+                "tagger": {
+                  "date": "2019-10-29T13:54:49-04:00"
+                },
+                "target": {
+                  "committedDate": "2019-10-23T20:54:54Z",
+                  "oid": "abe9d83690701c61109211f3bf9e4363b3e6380a"
+                }
+              }
+            },
+            {
+              "name": "Ghidra_9.0.4_build",
+              "target": {
+                "tagger": {
+                  "date": "2019-05-16T15:42:35-04:00"
+                },
+                "target": {
+                  "committedDate": "2019-05-16T19:36:27Z",
+                  "oid": "6b4d64a2ac07f154bf1fca307ad99aaa522d41e4"
+                }
+              }
+            },
+            {
+              "name": "Ghidra_9.0.3_build",
+              "target": {
+                "tagger": {
+                  "date": "2019-05-01T11:10:14-04:00"
+                },
+                "target": {
+                  "committedDate": "2019-05-01T15:08:50Z",
+                  "oid": "837c4641c301784238f15fdc1220edbba48ca8f3"
+                }
+              }
+            },
+            {
+              "name": "Ghidra_9.0.2_build",
+              "target": {
+                "tagger": {
+                  "date": "2019-04-03T13:42:13-04:00"
+                },
+                "target": {
+                  "committedDate": "2019-04-03T17:38:23Z",
+                  "oid": "31b449327aba0150876db7f5476436db3e759320"
+                }
+              }
+            },
+            {
+              "name": "Ghidra_9.0.1_build",
+              "target": {
+                "tagger": {
+                  "date": "2019-03-26T15:18:24-04:00"
+                },
+                "target": {
+                  "committedDate": "2019-03-26T17:46:51Z",
+                  "oid": "79d8f164f8bb8b15cfb60c5d4faeb8e1c25d15ca"
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "NjA"
+          }
+        }
+      }
+    }
+  }
+}

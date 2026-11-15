@@ -1,0 +1,418 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"NationalSecurityAgency\",name:\"ghidra\") { releases(first:100,orderBy:{field:CREATED_AT,direction:DESC}) { nodes { tagName publishedAt isPrerelease isDraft url } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:05.154726+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "releases": {
+          "nodes": [
+            {
+              "tagName": "Ghidra_12.2_build",
+              "publishedAt": "2026-10-22T08:31:12Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.2_build"
+            },
+            {
+              "tagName": "Ghidra_12.1.4_build",
+              "publishedAt": "2026-09-21T17:38:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.4_build"
+            },
+            {
+              "tagName": "Ghidra_12.1.3_build",
+              "publishedAt": "2026-08-18T16:19:52Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.3_build"
+            },
+            {
+              "tagName": "Ghidra_12.1.2_build",
+              "publishedAt": "2026-06-05T18:24:35Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.2_build"
+            },
+            {
+              "tagName": "Ghidra_12.1_build",
+              "publishedAt": "2026-05-13T19:48:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1_build"
+            },
+            {
+              "tagName": "Ghidra_12.0.4_build",
+              "publishedAt": "2026-03-04T09:55:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0.4_build"
+            },
+            {
+              "tagName": "Ghidra_12.0.3_build",
+              "publishedAt": "2026-02-11T10:30:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0.3_build"
+            },
+            {
+              "tagName": "Ghidra_12.0.2_build",
+              "publishedAt": "2026-01-30T18:13:31Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0.2_build"
+            },
+            {
+              "tagName": "Ghidra_12.0.1_build",
+              "publishedAt": "2026-01-15T10:15:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0.1_build"
+            },
+            {
+              "tagName": "Ghidra_12.0_build",
+              "publishedAt": "2025-12-08T18:41:17Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0_build"
+            },
+            {
+              "tagName": "Ghidra_11.4.3_build",
+              "publishedAt": "2025-12-03T18:27:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.4.3_build"
+            },
+            {
+              "tagName": "Ghidra_11.4.2_build",
+              "publishedAt": "2025-08-27T15:37:33Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.4.2_build"
+            },
+            {
+              "tagName": "Ghidra_11.4.1_build",
+              "publishedAt": "2025-07-31T18:41:47Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.4.1_build"
+            },
+            {
+              "tagName": "Ghidra_11.4_build",
+              "publishedAt": "2025-06-24T20:01:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.4_build"
+            },
+            {
+              "tagName": "Ghidra_11.3.2_build",
+              "publishedAt": "2025-04-15T19:33:16Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.3.2_build"
+            },
+            {
+              "tagName": "Ghidra_11.3.1_build",
+              "publishedAt": "2025-02-19T20:01:59Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.3.1_build"
+            },
+            {
+              "tagName": "Ghidra_11.3_build",
+              "publishedAt": "2025-02-06T11:34:48Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.3_build"
+            },
+            {
+              "tagName": "Ghidra_11.2.1_build",
+              "publishedAt": "2024-11-06T11:40:29Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.2.1_build"
+            },
+            {
+              "tagName": "Ghidra_11.2_build",
+              "publishedAt": "2024-09-27T10:10:42Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.2_build"
+            },
+            {
+              "tagName": "Ghidra_11.1.2_build",
+              "publishedAt": "2024-07-09T20:06:29Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.1.2_build"
+            },
+            {
+              "tagName": "Ghidra_11.1.1_build",
+              "publishedAt": "2024-06-14T17:21:02Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.1.1_build"
+            },
+            {
+              "tagName": "Ghidra_11.1_build",
+              "publishedAt": "2024-06-07T20:51:54Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.1_build"
+            },
+            {
+              "tagName": "Ghidra_11.0.3_build",
+              "publishedAt": "2024-04-11T10:09:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.0.3_build"
+            },
+            {
+              "tagName": "Ghidra_11.0.2_build",
+              "publishedAt": "2024-03-27T10:30:22Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.0.2_build"
+            },
+            {
+              "tagName": "Ghidra_11.0.1_build",
+              "publishedAt": "2024-01-30T20:52:02Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.0.1_build"
+            },
+            {
+              "tagName": "Ghidra_11.0_build",
+              "publishedAt": "2023-12-22T19:02:53Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_11.0_build"
+            },
+            {
+              "tagName": "Ghidra_10.4_build",
+              "publishedAt": "2023-09-29T13:14:36Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.4_build"
+            },
+            {
+              "tagName": "Ghidra_10.3.3_build",
+              "publishedAt": "2023-08-30T10:52:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.3.3_build"
+            },
+            {
+              "tagName": "Ghidra_10.3.2_build",
+              "publishedAt": "2023-07-12T10:45:21Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.3.2_build"
+            },
+            {
+              "tagName": "Ghidra_10.3.1_build",
+              "publishedAt": "2023-06-15T19:56:14Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.3.1_build"
+            },
+            {
+              "tagName": "Ghidra_10.3_build",
+              "publishedAt": "2023-05-11T14:06:09Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.3_build"
+            },
+            {
+              "tagName": "Ghidra_10.2.3_build",
+              "publishedAt": "2023-02-09T14:02:57Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.2.3_build"
+            },
+            {
+              "tagName": "Ghidra_10.2.2_build",
+              "publishedAt": "2022-11-15T21:15:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.2.2_build"
+            },
+            {
+              "tagName": "Ghidra_10.2.1_build",
+              "publishedAt": "2022-11-12T05:46:10Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.2.1_build"
+            },
+            {
+              "tagName": "Ghidra_10.2_build",
+              "publishedAt": "2022-11-03T13:59:13Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.2_build"
+            },
+            {
+              "tagName": "Ghidra_10.1.5_build",
+              "publishedAt": "2022-07-26T22:43:17Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.1.5_build"
+            },
+            {
+              "tagName": "Ghidra_10.1.4_build",
+              "publishedAt": "2022-05-20T15:20:45Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.1.4_build"
+            },
+            {
+              "tagName": "Ghidra_10.1.3_build",
+              "publishedAt": "2022-04-21T21:25:58Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.1.3_build"
+            },
+            {
+              "tagName": "Ghidra_10.1.2_build",
+              "publishedAt": "2022-01-26T20:12:20Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.1.2_build"
+            },
+            {
+              "tagName": "Ghidra_10.1.1_build",
+              "publishedAt": "2021-12-21T20:49:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.1.1_build"
+            },
+            {
+              "tagName": "Ghidra_10.1_build",
+              "publishedAt": "2021-12-10T22:21:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.1_build"
+            },
+            {
+              "tagName": "Ghidra_10.0.4_build",
+              "publishedAt": "2021-10-01T14:35:22Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.0.4_build"
+            },
+            {
+              "tagName": "Ghidra_10.0.3_build",
+              "publishedAt": "2021-09-09T03:47:50Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.0.3_build"
+            },
+            {
+              "tagName": "Ghidra_10.0.2_build",
+              "publishedAt": "2021-08-06T14:39:22Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.0.2_build"
+            },
+            {
+              "tagName": "Ghidra_10.0.1_build",
+              "publishedAt": "2021-07-09T13:39:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.0.1_build"
+            },
+            {
+              "tagName": "Ghidra_10.0_build",
+              "publishedAt": "2021-06-23T19:43:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_10.0_build"
+            },
+            {
+              "tagName": "Ghidra_9.2.4_build",
+              "publishedAt": "2021-06-21T16:53:08Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.2.4_build"
+            },
+            {
+              "tagName": "Ghidra_9.2.3_build",
+              "publishedAt": "2021-06-21T16:55:29Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.2.3_build"
+            },
+            {
+              "tagName": "Ghidra_9.2.2_build",
+              "publishedAt": "2021-06-21T16:57:27Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.2.2_build"
+            },
+            {
+              "tagName": "Ghidra_9.2.1_build",
+              "publishedAt": "2021-06-21T16:59:57Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.2.1_build"
+            },
+            {
+              "tagName": "Ghidra_9.2_build",
+              "publishedAt": "2021-06-21T17:02:34Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.2_build"
+            },
+            {
+              "tagName": "Ghidra_9.1.2_build",
+              "publishedAt": "2021-06-21T17:04:37Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.1.2_build"
+            },
+            {
+              "tagName": "Ghidra_9.1.1_build",
+              "publishedAt": "2021-06-21T17:07:04Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.1.1_build"
+            },
+            {
+              "tagName": "Ghidra_9.1_build",
+              "publishedAt": "2021-06-21T17:08:49Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.1_build"
+            },
+            {
+              "tagName": "Ghidra_9.0.4_build",
+              "publishedAt": "2021-06-21T17:11:09Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.0.4_build"
+            },
+            {
+              "tagName": "Ghidra_9.0.2_build",
+              "publishedAt": "2021-06-21T17:13:23Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.0.2_build"
+            },
+            {
+              "tagName": "Ghidra_9.0.1_build",
+              "publishedAt": "2021-06-21T17:15:13Z",
+              "isPrerelease": false,
+              "isDraft": false,
+              "url": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_9.0.1_build"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAxOS0wMy0yNlQxOToxODoyNFrOAq5N5w=="
+          }
+        }
+      }
+    }
+  }
+}

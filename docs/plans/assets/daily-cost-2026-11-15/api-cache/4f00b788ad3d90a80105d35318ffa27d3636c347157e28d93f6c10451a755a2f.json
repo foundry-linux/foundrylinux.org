@@ -1,0 +1,129 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"flyinghead\",name:\"flycast\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:06.472998+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "v2.7",
+              "target": {
+                "committedDate": "2026-08-14T22:37:38Z",
+                "oid": "5aa091fde632fb332c8d8c34e280d62dc951954c"
+              }
+            },
+            {
+              "name": "v2.6",
+              "target": {
+                "committedDate": "2026-01-07T13:28:32Z",
+                "oid": "392a429e8b040b3e5bf6696cb4f984274fc44123"
+              }
+            },
+            {
+              "name": "v2.5",
+              "target": {
+                "committedDate": "2025-05-06T18:04:11Z",
+                "oid": "5f4eefab5852d1c832ad8ffdf514fef8c217f1ac"
+              }
+            },
+            {
+              "name": "v2.4",
+              "target": {
+                "committedDate": "2024-10-21T14:13:00Z",
+                "oid": "8108e63907fc676f898522d20c762a4de3cd2a21"
+              }
+            },
+            {
+              "name": "v2.3.2",
+              "target": {
+                "committedDate": "2024-05-11T15:06:31Z",
+                "oid": "f13d7ad2dcf141f59a999090dbc0f78be196e665"
+              }
+            },
+            {
+              "name": "v2.3",
+              "target": {
+                "committedDate": "2024-03-15T22:19:31Z",
+                "oid": "966ff3767dc6c7a8c84b123fcaa94b4bddced48a"
+              }
+            },
+            {
+              "name": "v2.2",
+              "target": {
+                "committedDate": "2023-10-27T22:19:54Z",
+                "oid": "c1f0a5a15f07ba82ccb974e5c7dc82206324b0a3"
+              }
+            },
+            {
+              "name": "V2.1",
+              "target": {
+                "committedDate": "2023-02-15T17:59:44Z",
+                "oid": "a21b79cfbe9770d6718cb9ef6068de698e3d7f98"
+              }
+            },
+            {
+              "name": "v2.0",
+              "target": {
+                "committedDate": "2022-08-25T17:34:23Z",
+                "oid": "aa97a6d64fb47d3ce0febaa575b26d975dd916e4"
+              }
+            },
+            {
+              "name": "v1.3",
+              "target": {
+                "committedDate": "2022-04-09T10:06:17Z",
+                "oid": "3d5fd61285a2b57ed4ac7b2b25bc2b830cf43d57"
+              }
+            },
+            {
+              "name": "v1.2",
+              "target": {
+                "committedDate": "2021-12-17T10:55:17Z",
+                "oid": "7555263e38722ea0e3f2b736b92ad0a91389f4b4"
+              }
+            },
+            {
+              "name": "v1.1",
+              "target": {
+                "committedDate": "2021-08-26T11:30:23Z",
+                "oid": "a51f310e96a0605b25e8fb59fd0007245335d46b"
+              }
+            },
+            {
+              "name": "v1.0",
+              "target": {
+                "committedDate": "2021-05-28T08:35:44Z",
+                "oid": "d6e15544bcdb99112f72f0a08acf38268c21a5ae"
+              }
+            },
+            {
+              "name": "r7-rc1",
+              "target": {
+                "tagger": {
+                  "date": "2018-04-20T00:09:52+02:00"
+                },
+                "target": {
+                  "committedDate": "2014-12-11T02:26:13Z",
+                  "oid": "22e95de2d14842b0ec4f5f930aebea74f32d6da3"
+                }
+              }
+            },
+            {
+              "name": "r6",
+              "target": {
+                "committedDate": "2014-01-27T18:23:24Z",
+                "oid": "382f2e5c19c85627f23bdc8e6cc2c59c97262bc3"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "MTU"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "kind": "graphql",
+  "request": "query { repository(owner:\"RPGHacker\",name:\"asar\") { refs(refPrefix:\"refs/tags/\",first:100,orderBy:{field:TAG_COMMIT_DATE,direction:DESC}) { nodes { name target { ... on Commit { committedDate oid } ... on Tag { tagger { date } target { ... on Commit { committedDate oid } } } } } pageInfo { hasNextPage endCursor } } } }",
+  "retrieved_at": "2026-11-15T11:47:03.709106+00:00",
+  "response": {
+    "data": {
+      "repository": {
+        "refs": {
+          "nodes": [
+            {
+              "name": "v1.91",
+              "target": {
+                "committedDate": "2024-03-13T10:08:00Z",
+                "oid": "6a6dbdaed8cb773e583052ce4f66375bd896c3a1"
+              }
+            },
+            {
+              "name": "v1.90",
+              "target": {
+                "tagger": {
+                  "date": "2024-02-23T19:47:51+02:00"
+                },
+                "target": {
+                  "committedDate": "2024-02-23T17:29:10Z",
+                  "oid": "21ede02418a779ff53c948e0438589edcd4405c1"
+                }
+              }
+            },
+            {
+              "name": "v1.90RC1",
+              "target": {
+                "tagger": {
+                  "date": "2024-02-09T10:16:37+01:00"
+                },
+                "target": {
+                  "committedDate": "2024-02-09T08:54:50Z",
+                  "oid": "938b10c64ac991fc912d411523cbc72e2f61a031"
+                }
+              }
+            },
+            {
+              "name": "v1.81",
+              "target": {
+                "committedDate": "2021-01-20T15:55:14Z",
+                "oid": "a8538ca8582cdc81de6941223b358aa851e3b7b1"
+              }
+            },
+            {
+              "name": "v1.80",
+              "target": {
+                "committedDate": "2021-01-18T11:19:15Z",
+                "oid": "271b9e16a553a4fed51527792db23cb9a0d5e9af"
+              }
+            },
+            {
+              "name": "v1.71",
+              "target": {
+                "committedDate": "2019-01-06T21:28:28Z",
+                "oid": "217a93ffd44a44f196a06cff9b96ddb7dc892b8b"
+              }
+            },
+            {
+              "name": "v1.70",
+              "target": {
+                "committedDate": "2019-01-04T15:43:32Z",
+                "oid": "1dbf2c9b189cd551813bdd6f7f0edbf246d53d77"
+              }
+            },
+            {
+              "name": "v1.61",
+              "target": {
+                "committedDate": "2018-08-22T10:49:04Z",
+                "oid": "6ff85d416ff41661ef72633f97d86d33bf177692"
+              }
+            },
+            {
+              "name": "v1.60",
+              "target": {
+                "committedDate": "2018-07-06T14:14:05Z",
+                "oid": "6c6fa1db62b8cedc3c3bcb2ab3e430b13370eedb"
+              }
+            },
+            {
+              "name": "v1.60b1",
+              "target": {
+                "committedDate": "2018-05-12T23:12:32Z",
+                "oid": "f069cb071cf2813bbefee993f6fd490ecad3ac9e"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "MTA"
+          }
+        }
+      }
+    }
+  }
+}
