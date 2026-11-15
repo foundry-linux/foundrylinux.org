@@ -207,7 +207,7 @@ flowchart LR
     W[wald3n.com/open-source update records] --> D
 ```
 
-The [30-day replay](2026-11-15-daily-build-cost-history.md) now gives **$10.46 first month / $12.07 with retention full**, before public delivery and request fees. Compute/IP $2.88, EBS $5.84, S3 storage $1.74 initially / $3.35 steady, publication transfer $0. The earlier four-hour/300-GB/R2 forecasts are superseded by these measured workload proxies. Retained diagnostic disks remain a separate $27.36/month while kept.
+The [30-day replay](2026-11-15-daily-build-cost-history.md) now gives **$8.87 per 30 days with one current ISO plus the current package/source catalog**, before public delivery and request fees. Compute/IP $2.88, EBS $5.84, S3 storage $0.16, publication transfer $0. The earlier four-hour/300-GB/R2 forecasts are superseded by these measured workload proxies. Retained diagnostic disks remain a separate $27.36/month while kept.
 
 Public download cost depends on users. Direct-S3 transfer at the saved Mumbai planning rate adds $0.1093 per billing GB before the shared account allowance; 500 GB costs $54.65 gross or $43.72 if all 100 GB of monthly allowance is available. GET/PUT/multipart requests and a future CDN have separate charges. Same-region publication is free without consuming this internet allowance. Use the regional endpoint directly, without a NAT gateway; if private subnets are introduced, use an S3 gateway endpoint. See [S3 transfer rules](https://aws.amazon.com/s3/faqs/) and [S3 pricing](https://aws.amazon.com/s3/pricing/).
 
@@ -253,4 +253,4 @@ AI assistance: Codex CLI 0.169.0; model gpt-6-astra; reasoning effort medium, ve
 
 ## Activity-based budget update — 2026-11-15
 
-The [30-day replay and reusable simulator](2026-11-15-daily-build-cost-history.md) replace the earlier four-hour sensitivity assumption with measured timing proxies and observed upstream/repository events. Budget $10.46 for the first 30 daily runs, or $12.07 with full artifact retention, before public download traffic, request fees and excluded ancillary costs. A successful 4-GiB build trial at unchanged runtime would save $1.20 per 30 days; runtime and transition costs still need measurement. Next trial is deferred to 2026-11-16, not automatically scheduled.
+The [30-day replay and reusable simulator](2026-11-15-daily-build-cost-history.md) replace the earlier four-hour sensitivity assumption with measured timing proxies and observed upstream/repository events. Budget $8.87 per 30 daily runs with latest-only ISO retention, before public download traffic, request fees and excluded ancillary costs. A successful 4-GiB build trial at unchanged runtime would save $1.20 per 30 days; runtime and transition costs still need measurement. Next trial is deferred to 2026-11-16, not automatically scheduled.

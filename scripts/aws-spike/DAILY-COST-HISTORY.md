@@ -52,3 +52,7 @@ To refresh source-size evidence without AWS, use `import-sizes --measurements <r
 
 
 Stage-specific hardware scenarios use `build_compute_per_hour`, `build_ipv4_per_hour`, and `build_runtime_multiplier`. They apply only to the ISO workflow and changed-package build intervals. Discovery, startup, validation and publication retain `compute_per_hour`/`ipv4_per_hour`. Leaving build-specific keys absent reproduces the baseline. Runtime multipliers are explicit what-if assumptions until measured; a cheaper host is never assumed to have equal speed automatically. Separate build/test hosts can add transfer/startup work beyond these allowances; the sensitivity table is not proof that a 4-GiB host can run the validation guest.
+
+## Latest-only publication retention
+
+The production baseline uses `retention_policy: "latest"`: one current validated ISO plus the full current binary/source package catalog, including unchanged recipes. It does not multiply ISO storage by 30 or discard unchanged packages. Current measured sizes proxy replacement versions. `rolling` remains a simulation option for explicit historical scenarios. Retain the previous ISO during candidate validation/promotion, then remove it after public verification; overlap, object version history, multipart leftovers and package compatibility/license retention add storage if present. Historical release records remain metadata even when old ISO downloads are retired. Configure bucket versioning/noncurrent versions and cleanup explicitly; changing this model does not delete existing objects.

@@ -62,6 +62,13 @@ class SimulationTests(unittest.TestCase):
         result = history_tool.simulate(self.history, self.measured, self.scenario)
         self.assertAlmostEqual(result['totals']['egress_usd'], .4)
 
+    def test_latest_retention_preserves_current_catalog_without_accumulating_isos(self):
+        self.scenario['retention_policy'] = 'latest'
+        self.measured['artifacts'].append({'package': 'unchanged', 'bytes': 300_000_000})
+        result = history_tool.simulate(self.history, self.measured, self.scenario, 90)
+        self.assertTrue(all(row['artifact_retained_gb_model'] == 1.5 for row in result['daily']))
+        self.assertAlmostEqual(result['totals']['artifact_storage_usd'], .135)
+
     def test_policy_filters_preserve_local_fixes(self):
         self.scenario['upstream_version_prefixes'] = {'example': 'v1.1'}
         selected = history_tool.selected_events(self.history, self.scenario)

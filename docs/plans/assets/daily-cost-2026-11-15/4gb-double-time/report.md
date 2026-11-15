@@ -1,6 +1,6 @@
 # Daily Foundry build cost simulation
 
-**Modeled total: $10.18 over 30 days; average $0.339/day.**
+**Modeled total: $8.59 over 30 days; average $0.286/day.**
 
 Historical activity replay with current measured timing proxies
 
@@ -9,7 +9,7 @@ Historical activity replay with current measured timing proxies
 | Compute + IPv4 | 2.599 |
 | Retained EBS | 5.837 |
 | Publication/download transfer | 0.000 |
-| S3 artifact storage | 1.744 |
+| S3 artifact storage | 0.155 |
 
 ## Assumptions and coverage
 
@@ -19,39 +19,39 @@ Historical activity replay with current measured timing proxies
 - Ubuntu archive updates are outside overlay activity coverage; daily ISO still refreshes dependencies.
 - Validation/startup/publication/discovery inputs are explicit scenario allowances, not measured automated stage durations.
 - No automatic CPU-count timing scaling; hardware changes require explicit measured timing overrides.
-- Shared account free allowances are zero by default; retention starts empty unless existing_storage_gb is supplied. Requests, taxes, failures, signing/monitoring services and website operations are excluded.
+- Shared account free allowances are zero by default; rolling retention starts empty; latest retention includes one ISO and the current measured package/source catalog. existing_storage_gb adds other retained content. Requests, taxes, failures, signing/monitoring services and website operations are excluded.
 
 ## Per-day calculation
 
 | Date | Packages to rebuild (coalesced) | Build proxy min | Compute | EBS | Egress | S3 | Total USD |
 |---|---|---:|---:|---:|---:|---:|---:|
-| 2026-10-16 | powerdevil, python3-glfw | 4.62 | 0.097 | 0.195 | 0.000 | 0.004 | **0.295** |
-| 2026-10-17 | libvgm, xemu-xbox | 7.37 | 0.106 | 0.195 | 0.000 | 0.008 | **0.308** |
-| 2026-10-18 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.011 | **0.288** |
-| 2026-10-19 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.015 | **0.292** |
-| 2026-10-20 | uv, xemu-xbox | 6.99 | 0.104 | 0.195 | 0.000 | 0.019 | **0.318** |
-| 2026-10-21 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.022 | **0.299** |
-| 2026-10-22 | ghidra, uv, xemu-xbox | 12.12 | 0.120 | 0.195 | 0.000 | 0.027 | **0.342** |
-| 2026-10-23 | ruff | 0.20 | 0.083 | 0.195 | 0.000 | 0.031 | **0.308** |
-| 2026-10-24 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.034 | **0.311** |
-| 2026-10-25 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.038 | **0.315** |
-| 2026-10-26 | vgmstream | 1.04 | 0.086 | 0.195 | 0.000 | 0.042 | **0.322** |
-| 2026-10-27 | libvgm, ruff, uv | 1.17 | 0.086 | 0.195 | 0.000 | 0.046 | **0.326** |
-| 2026-10-28 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.049 | **0.326** |
-| 2026-10-29 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.053 | **0.330** |
-| 2026-10-30 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.057 | **0.333** |
-| 2026-10-31 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.060 | **0.337** |
-| 2026-11-01 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.064 | **0.341** |
-| 2026-11-02 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.068 | **0.344** |
-| 2026-11-03 | uv | 0.30 | 0.083 | 0.195 | 0.000 | 0.071 | **0.349** |
-| 2026-11-04 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.075 | **0.352** |
-| 2026-11-05 | libvgm | 0.68 | 0.084 | 0.195 | 0.000 | 0.079 | **0.358** |
-| 2026-11-06 | ruff | 0.20 | 0.083 | 0.195 | 0.000 | 0.082 | **0.360** |
-| 2026-11-07 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.086 | **0.363** |
-| 2026-11-08 | pvsneslib | 0.53 | 0.084 | 0.195 | 0.000 | 0.090 | **0.368** |
-| 2026-11-09 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.093 | **0.370** |
-| 2026-11-10 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.097 | **0.374** |
-| 2026-11-11 | python3-picire | 0.10 | 0.083 | 0.195 | 0.000 | 0.101 | **0.378** |
-| 2026-11-12 | python3-librosa | 0.08 | 0.083 | 0.195 | 0.000 | 0.104 | **0.382** |
-| 2026-11-13 | ruff, uv | 0.49 | 0.084 | 0.195 | 0.000 | 0.108 | **0.387** |
-| 2026-11-14 | foundry-desktop, powerdevil, python3-inators, python3-mss, python3-picire, python3-pydub | 4.89 | 0.098 | 0.195 | 0.000 | 0.112 | **0.404** |
+| 2026-10-16 | powerdevil, python3-glfw | 4.62 | 0.097 | 0.195 | 0.000 | 0.005 | **0.297** |
+| 2026-10-17 | libvgm, xemu-xbox | 7.37 | 0.106 | 0.195 | 0.000 | 0.005 | **0.305** |
+| 2026-10-18 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-10-19 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-10-20 | uv, xemu-xbox | 6.99 | 0.104 | 0.195 | 0.000 | 0.005 | **0.304** |
+| 2026-10-21 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-10-22 | ghidra, uv, xemu-xbox | 12.12 | 0.120 | 0.195 | 0.000 | 0.005 | **0.320** |
+| 2026-10-23 | ruff | 0.20 | 0.083 | 0.195 | 0.000 | 0.005 | **0.283** |
+| 2026-10-24 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-10-25 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-10-26 | vgmstream | 1.04 | 0.086 | 0.195 | 0.000 | 0.005 | **0.285** |
+| 2026-10-27 | libvgm, ruff, uv | 1.17 | 0.086 | 0.195 | 0.000 | 0.005 | **0.286** |
+| 2026-10-28 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-10-29 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-10-30 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-10-31 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-01 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-02 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-03 | uv | 0.30 | 0.083 | 0.195 | 0.000 | 0.005 | **0.283** |
+| 2026-11-04 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-05 | libvgm | 0.68 | 0.084 | 0.195 | 0.000 | 0.005 | **0.284** |
+| 2026-11-06 | ruff | 0.20 | 0.083 | 0.195 | 0.000 | 0.005 | **0.283** |
+| 2026-11-07 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-08 | pvsneslib | 0.53 | 0.084 | 0.195 | 0.000 | 0.005 | **0.284** |
+| 2026-11-09 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-10 | — | 0.00 | 0.082 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-11 | python3-picire | 0.10 | 0.083 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-12 | python3-librosa | 0.08 | 0.083 | 0.195 | 0.000 | 0.005 | **0.282** |
+| 2026-11-13 | ruff, uv | 0.49 | 0.084 | 0.195 | 0.000 | 0.005 | **0.284** |
+| 2026-11-14 | foundry-desktop, powerdevil, python3-inators, python3-mss, python3-picire, python3-pydub | 4.89 | 0.098 | 0.195 | 0.000 | 0.005 | **0.297** |

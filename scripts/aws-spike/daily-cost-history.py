@@ -312,6 +312,8 @@ def simulate(history, measured, scenario, projection_days=None):
     validate_number('build runtime multiplier', scenario.get('build_runtime_multiplier',1), positive=True)
     if scenario.get('iso_policy', 'daily') not in ('daily', 'changed'):
         raise ValueError('iso_policy must be daily or changed')
+    if scenario.get('retention_policy', 'rolling') not in ('rolling', 'latest'):
+        raise ValueError('retention_policy must be rolling or latest')
     timings = {x['package']: x['seconds'] for x in measured['markers']}
     timings.update(scenario.get('recipe_seconds_override', {}))
     bytes_by_pkg = {}
@@ -371,7 +373,13 @@ def simulate(history, measured, scenario, projection_days=None):
         transfer = upload_gb * scenario['egress_per_gb'] + (download_gb - free) * scenario.get('public_download_per_gb', 0)
         retained.append((i, upload_bytes))
         retained = [(j, size) for j, size in retained if i - j < scenario['artifact_retention_days']]
-        storage_gb = sum(size for _, size in retained) / scenario.get('storage_bytes_per_gb', 1e9) + scenario.get('existing_storage_gb', 0)
+        retained_bytes = sum(size for _, size in retained)
+        if scenario.get('retention_policy', 'rolling') == 'latest':
+            # Current catalog sizes proxy replacements; unchanged recipes stay available.
+            retained_bytes = iso_bytes + sum(bytes_by_pkg.values())
+            if scenario.get('include_source_uploads', False):
+                retained_bytes += sum(source_bytes.values()) + sum(orig_bytes.values())
+        storage_gb = retained_bytes / scenario.get('storage_bytes_per_gb', 1e9) + scenario.get('existing_storage_gb', 0)
         storage_cost = storage_gb * scenario['storage_per_gb_month'] / scenario.get('billing_days_per_month', 30)
         build_compute = modeled_build_seconds / 3600 * build_rate
         other_compute = other_seconds / 3600 * cpu_rate
@@ -384,7 +392,7 @@ def simulate(history, measured, scenario, projection_days=None):
     if missing:warnings.append('Unpriced rebuilds due to missing timing: ' + ', '.join(sorted(missing)))
     if missing_sources:warnings.append('Unpriced source transfers/storage due to missing verified source sizes: ' + ', '.join(sorted(missing_sources)))
     if missing_sizes:warnings.append('Unpriced package transfers/storage due to missing artifact sizes: ' + ', '.join(sorted(missing_sizes)))
-    warnings += ['Current package catalog is projected backward; deleted releases and historical promotion eligibility cannot be reconstructed from current feeds.', 'Per-recipe cold intervals are proxies for future changed-source builds, not measured historical runtimes.', 'Current artifact sizes proxy historical uploads. Verified local source sizes are included only when include_source_uploads is enabled; metadata indexes are not sized.', 'Ubuntu archive updates are outside overlay activity coverage; daily ISO still refreshes dependencies.', 'Validation/startup/publication/discovery inputs are explicit scenario allowances, not measured automated stage durations.', 'No automatic CPU-count timing scaling; hardware changes require explicit measured timing overrides.', 'Shared account free allowances are zero by default; retention starts empty unless existing_storage_gb is supplied. Requests, taxes, failures, signing/monitoring services and website operations are excluded.']
+    warnings += ['Current package catalog is projected backward; deleted releases and historical promotion eligibility cannot be reconstructed from current feeds.', 'Per-recipe cold intervals are proxies for future changed-source builds, not measured historical runtimes.', 'Current artifact sizes proxy historical uploads. Verified local source sizes are included only when include_source_uploads is enabled; metadata indexes are not sized.', 'Ubuntu archive updates are outside overlay activity coverage; daily ISO still refreshes dependencies.', 'Validation/startup/publication/discovery inputs are explicit scenario allowances, not measured automated stage durations.', 'No automatic CPU-count timing scaling; hardware changes require explicit measured timing overrides.', 'Shared account free allowances are zero by default; rolling retention starts empty; latest retention includes one ISO and the current measured package/source catalog. existing_storage_gb adds other retained content. Requests, taxes, failures, signing/monitoring services and website operations are excluded.']
     totals = {key: sum(row[key] for row in rows) for key in ['build_compute_usd', 'other_compute_usd', 'compute_usd', 'ebs_usd', 'egress_usd', 'artifact_storage_usd', 'total_usd', 'upload_gb_proxy', 'package_build_seconds_proxy']}
     totals.update(days=count, average_daily_usd=totals['total_usd']/count, package_builds=sum(len(x['packages']) for x in rows), active_package_days=sum(bool(x['packages']) for x in rows))
     return {'schema_version': VERSION, 'is_partial': bool(gaps or missing or missing_sizes or missing_sources), 'generated_at': utcnow(), 'history_window': history['window'], 'projection': 'Repeat the observed daily sequence cyclically; not a release forecast' if count != days else 'Historical activity replay with current measured timing proxies', 'scenario': scenario, 'warnings': warnings, 'totals': totals, 'daily': rows}

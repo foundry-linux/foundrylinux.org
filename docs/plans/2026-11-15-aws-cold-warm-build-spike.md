@@ -6,15 +6,15 @@
 
 ## Daily cost and the 4-GiB trial
 
-Replaying the previous 30 complete Bangkok days of upstream and repository activity gives **$10.46 for 30 daily runs ($0.35/day)**, starting with empty artifact retention, or **$12.07 per 30 days once retention is full**. Publication uses same-region S3 with $0 transfer; public downloads and request fees are additional traffic-dependent costs. See the [daily table, graph, saved JSON and reusable simulator](2026-11-15-daily-build-cost-history.md).
+Replaying the previous 30 complete Bangkok days of upstream and repository activity gives **$8.87 for 30 daily runs ($0.30/day)**, keeping one current ISO and the current package/source catalog. Publication uses same-region S3 with $0 transfer; public downloads and request fees are additional traffic-dependent costs. See the [daily table, graph, saved JSON and reusable simulator](2026-11-15-daily-build-cost-history.md).
 
 | 4-GiB build runtime versus measured baseline | Total for the first 30 days | Monthly decrease |
 |---|---:|---:|
-| Same runtime | $9.26 | **$1.20 (11.5%)** |
-| 50% longer | $9.72 | **$0.74 (7.1%)** |
-| Twice as long | $10.18 | **$0.28 (2.7%)** |
+| Same runtime | $7.67 | **$1.20 (13.5%)** |
+| 50% longer | $8.13 | **$0.74 (8.3%)** |
+| Twice as long | $8.59 | **$0.28 (3.1%)** |
 
-These compare Mumbai c7i.large build stages with the measured m7i.xlarge rates, including public IPv4. Validation and control stages keep the larger-host rate. Storage and uploads are unchanged, so the absolute decrease also applies with full artifact retention. Break-even is about 2.30× build runtime, before extra host transitions or transfers. A successful trial must establish both correctness and actual runtime; simply avoiding an out-of-memory failure does not establish savings. The next AWS run remains deferred until 2026-11-16 and is not automatically scheduled.
+These compare Mumbai c7i.large build stages with the measured m7i.xlarge rates, including public IPv4. Validation and control stages keep the larger-host rate. Storage and uploads are unchanged, so the absolute decrease is independent of artifact retention. Break-even is about 2.30× build runtime, before extra host transitions or transfers. A successful trial must establish both correctness and actual runtime; simply avoiding an out-of-memory failure does not establish savings. The next AWS run remains deferred until 2026-11-16 and is not automatically scheduled.
 
 ## Measured results — graphs
 

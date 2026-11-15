@@ -35,7 +35,7 @@
     "tag_dates": "Include matching tags without release records, but their tag/commit dates are publication proxies, not exact release dates",
     "package_timings": "Changed recipe cost uses observed cold interval, including dependency and fetch work; no compiler-cache savings assumed",
     "transfer": "EC2 to S3 in ap-south-1 is free. Public downloads are separate, default zero traffic; edit public_download_gb_per_day and available monthly allowance. Request charges excluded.",
-    "retention": "Start empty and keep each daily ISO/changed deb for 30 days; first month ramps up; repeat longer to see steady retention",
+    "retention": "Keep one validated ISO plus the current package/source catalog; replace only after validation and public verification. Release history retains metadata, not old ISO bytes. Temporary candidate overlap and required package upgrade/license retention are additional.",
     "excluded": "Legacy diagnostic 300 GiB disks, retries, taxes, request charges, signing/monitoring services, site deployment and initial cold bootstrap",
     "powerdevil": "Stay on Foundry Plasma 6.6; later 6.7/6.8 tags remain in history but are excluded from this scenario",
     "units": "S3 storage uses binary GB (2^30 bytes); public_download_gb_per_day is in billing GB. EBS uses provisioned GiB."
@@ -53,5 +53,6 @@
   "egress_bytes_per_gb": 1000000000,
   "storage_bytes_per_gb": 1073741824,
   "public_download_gb_per_day": 0,
-  "public_download_per_gb": 0.1093
+  "public_download_per_gb": 0.1093,
+  "retention_policy": "latest"
 }

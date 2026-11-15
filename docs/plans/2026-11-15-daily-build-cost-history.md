@@ -2,7 +2,7 @@
 
 **Evidence window:** 16 October–14 November 2026, Asia/Bangkok. **Corrected publication architecture:** EC2 builds and S3 Standard artifact storage are both in Mumbai (`ap-south-1`). Publication no longer copies AWS-built artifacts to R2.
 
-**Build and publication estimate: $10.46 for the first 30 days ($0.35/day), or $12.07 per 30 days with retention full.** These totals exclude public download traffic and request charges. The earlier $25.58 estimate incorrectly assumed uploading every daily build out of AWS to R2; it is superseded.
+**Build and publication estimate: $8.87 per 30 days ($0.30/day), keeping one validated ISO and the current package/source catalog.** These totals exclude public download traffic and request charges. The earlier $25.58 estimate incorrectly assumed uploading every daily build out of AWS to R2; it is superseded.
 
 ![Daily cost components](assets/daily-cost-2026-11-15/daily-costs.png)
 
@@ -28,10 +28,12 @@ EC2-to-S3 transfer within the same region is free. Use the regional S3 endpoint 
 | Compute + public IPv4 | $0.096 | $2.88 |
 | Retained 64-GiB EBS | $0.195 | $5.84 |
 | EC2 → S3 publication transfer | $0 | **$0** |
-| S3 Standard, 30-day retention starting empty | $0.058 | $1.74 |
-| **Build/publication subtotal** | **$0.349** | **$10.46** |
+| S3 Standard, one ISO plus current package/source catalog | $0.005 | $0.16 |
+| **Build/publication subtotal** | **$0.296** | **$8.87** |
 
-Mumbai S3 Standard costs $0.025 per binary GB-month for the first 50 TB; the [Pricing API receipt](assets/daily-cost-2026-11-15/aws-s3-rate.json) is saved. Storage uses 2^30 bytes per billed GB. Approximately 144.02 decimal GB of new artifacts arrive during the 30-day replay. With retention full, S3 costs about $3.35 per 30 days, bringing the subtotal to $12.07. Existing published storage is additional unless entered as `existing_storage_gb`. Retention is a modeled policy, not authorization to delete existing releases.
+Mumbai S3 Standard costs $0.025 per binary GB-month for the first 50 TB; the [Pricing API receipt](assets/daily-cost-2026-11-15/aws-s3-rate.json) is saved. Storage uses 2^30 bytes per billed GB. One measured ISO is 4,736,024,576 bytes; the current binary/source catalog adds 1,933,081,528 bytes. Total retained payload is about **6.67 decimal GB / 6.21 binary GB**, costing **$0.155/month** at the saved S3 rate, before billing rounding and temporary promotion overlap. This replaces the earlier 30-daily-ISO retention assumption. A full current catalog is included even for unchanged recipes. Existing unrelated repository content, package upgrade/source-license retention and noncurrent object versions add storage if required.
+
+Keep the last good ISO until its replacement passes validation and public verification, then retire its bytes. Preserve dated release metadata; do not promise permanent downloads of retired ISOs. Publish immutable candidate names and update the latest manifest after verification. Configure cleanup for old ISO versions and failed multipart uploads; do not use versioning to retain hidden copies indefinitely. No existing bucket objects were deleted by this estimate change.
 
 ### Public download sensitivity
 
@@ -50,11 +52,11 @@ These are direct-S3 delivery scenarios, not assumed audience traffic or a CDN qu
 
 | Build runtime on c7i.large | First 30-day subtotal | Monthly decrease |
 |---|---:|---:|
-| Same time | $9.26 | **$1.20 (11.5%)** |
-| 50% longer | $9.72 | **$0.74 (7.1%)** |
-| Twice as long | $10.18 | **$0.28 (2.7%)** |
+| Same time | $7.67 | **$1.20 (13.5%)** |
+| 50% longer | $8.13 | **$0.74 (8.3%)** |
+| Twice as long | $8.59 | **$0.28 (3.1%)** |
 
-The absolute savings are unchanged: c7i.large build compute/IP costs $0.09425/hour versus m7i.xlarge $0.2171/hour. Control and validation retain the larger-host rate. Break-even is about 2.30× build runtime before added transitions/transfers. With full retention and equal runtime, the subtotal falls from $12.07 to $10.87. Tomorrow's trial must measure runtime and correctness; these are scenarios, not a successful 4-GiB measurement.
+The absolute savings are unchanged: c7i.large build compute/IP costs $0.09425/hour versus m7i.xlarge $0.2171/hour. Control and validation retain the larger-host rate. Break-even is about 2.30× build runtime before added transitions/transfers. With equal runtime, the subtotal falls from $8.87 to $7.67. Tomorrow's trial must measure runtime and correctness; these are scenarios, not a successful 4-GiB measurement.
 
 ## What was measured and what is modeled
 
@@ -75,40 +77,40 @@ Each row estimates one fresh ISO publication plus the selected recipe changes. C
 
 | Bangkok date | Upstream recipe updates | Repo recipe changes | Build proxy min | Compute/IP | EBS | Egress | S3 | Total USD |
 |---|---|---|---:|---:|---:|---:|---:|---:|
-| 2026-10-16 | powerdevil, python3-glfw | — | 4.62 | 0.108 | 0.195 | 0.000 | 0.004 | **0.306** |
-| 2026-10-17 | libvgm, xemu-xbox | — | 7.37 | 0.118 | 0.195 | 0.000 | 0.008 | **0.320** |
-| 2026-10-18 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.011 | **0.297** |
-| 2026-10-19 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.015 | **0.300** |
-| 2026-10-20 | uv, xemu-xbox | — | 6.99 | 0.116 | 0.195 | 0.000 | 0.019 | **0.330** |
-| 2026-10-21 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.022 | **0.308** |
-| 2026-10-22 | ghidra, uv, xemu-xbox | — | 12.12 | 0.135 | 0.195 | 0.000 | 0.027 | **0.356** |
-| 2026-10-23 | ruff | — | 0.20 | 0.092 | 0.195 | 0.000 | 0.031 | **0.317** |
-| 2026-10-24 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.034 | **0.320** |
-| 2026-10-25 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.038 | **0.324** |
-| 2026-10-26 | vgmstream | — | 1.04 | 0.095 | 0.195 | 0.000 | 0.042 | **0.331** |
-| 2026-10-27 | libvgm, ruff, uv | — | 1.17 | 0.095 | 0.195 | 0.000 | 0.046 | **0.335** |
-| 2026-10-28 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.049 | **0.335** |
-| 2026-10-29 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.053 | **0.338** |
-| 2026-10-30 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.057 | **0.342** |
-| 2026-10-31 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.060 | **0.346** |
-| 2026-11-01 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.064 | **0.349** |
-| 2026-11-02 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.068 | **0.353** |
-| 2026-11-03 | uv | — | 0.30 | 0.092 | 0.195 | 0.000 | 0.071 | **0.358** |
-| 2026-11-04 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.075 | **0.361** |
-| 2026-11-05 | libvgm | — | 0.68 | 0.093 | 0.195 | 0.000 | 0.079 | **0.367** |
-| 2026-11-06 | ruff | — | 0.20 | 0.092 | 0.195 | 0.000 | 0.082 | **0.369** |
-| 2026-11-07 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.086 | **0.372** |
-| 2026-11-08 | pvsneslib | — | 0.53 | 0.093 | 0.195 | 0.000 | 0.090 | **0.377** |
-| 2026-11-09 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.093 | **0.379** |
-| 2026-11-10 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.097 | **0.383** |
-| 2026-11-11 | python3-picire | — | 0.10 | 0.091 | 0.195 | 0.000 | 0.101 | **0.387** |
-| 2026-11-12 | python3-librosa | — | 0.08 | 0.091 | 0.195 | 0.000 | 0.104 | **0.390** |
-| 2026-11-13 | ruff, uv | — | 0.49 | 0.093 | 0.195 | 0.000 | 0.108 | **0.395** |
-| 2026-11-14 | — | foundry-desktop, powerdevil, python3-inators, python3-mss, python3-picire, python3-pydub | 4.89 | 0.109 | 0.195 | 0.000 | 0.112 | **0.415** |
+| 2026-10-16 | powerdevil, python3-glfw | — | 4.62 | 0.108 | 0.195 | 0.000 | 0.005 | **0.307** |
+| 2026-10-17 | libvgm, xemu-xbox | — | 7.37 | 0.118 | 0.195 | 0.000 | 0.005 | **0.317** |
+| 2026-10-18 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-19 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-20 | uv, xemu-xbox | — | 6.99 | 0.116 | 0.195 | 0.000 | 0.005 | **0.316** |
+| 2026-10-21 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-22 | ghidra, uv, xemu-xbox | — | 12.12 | 0.135 | 0.195 | 0.000 | 0.005 | **0.335** |
+| 2026-10-23 | ruff | — | 0.20 | 0.092 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-24 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-25 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-26 | vgmstream | — | 1.04 | 0.095 | 0.195 | 0.000 | 0.005 | **0.295** |
+| 2026-10-27 | libvgm, ruff, uv | — | 1.17 | 0.095 | 0.195 | 0.000 | 0.005 | **0.295** |
+| 2026-10-28 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-29 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-30 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-10-31 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-01 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-02 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-03 | uv | — | 0.30 | 0.092 | 0.195 | 0.000 | 0.005 | **0.292** |
+| 2026-11-04 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-05 | libvgm | — | 0.68 | 0.093 | 0.195 | 0.000 | 0.005 | **0.293** |
+| 2026-11-06 | ruff | — | 0.20 | 0.092 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-07 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-08 | pvsneslib | — | 0.53 | 0.093 | 0.195 | 0.000 | 0.005 | **0.293** |
+| 2026-11-09 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-10 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-11 | python3-picire | — | 0.10 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-12 | python3-librosa | — | 0.08 | 0.091 | 0.195 | 0.000 | 0.005 | **0.291** |
+| 2026-11-13 | ruff, uv | — | 0.49 | 0.093 | 0.195 | 0.000 | 0.005 | **0.293** |
+| 2026-11-14 | — | foundry-desktop, powerdevil, python3-inators, python3-mss, python3-picire, python3-pydub | 4.89 | 0.109 | 0.195 | 0.000 | 0.005 | **0.308** |
 
 
 ## Reproducibility and assumptions
 
 The simulator saves activity, measurements and policy/rates separately. It uses the measured 1,089-second warm workflow each day and cold per-recipe intervals for changed packages. Startup/discovery/validation/publication total seven minutes/day of explicit unmeasured allowances. Compile-cache and ISO optimization savings await measurement. No new AWS build was run for this correction.
 
-All scenarios and graphs have been regenerated for S3. `egress_per_gb=0` models same-region publication. `public_download_gb_per_day` and `public_download_per_gb` model direct public delivery independently; `available_egress_free_gb_per_calendar_month` applies to those downloads. Storage keys are provider-neutral: `storage_per_gb_month`, `storage_bytes_per_gb`, `existing_storage_gb`.
+All scenarios and graphs have been regenerated for latest-only S3 retention. `egress_per_gb=0` models same-region publication. `public_download_gb_per_day` and `public_download_per_gb` model direct public delivery independently; `available_egress_free_gb_per_calendar_month` applies to those downloads. Storage keys are provider-neutral: `storage_per_gb_month`, `storage_bytes_per_gb`, `existing_storage_gb`.
