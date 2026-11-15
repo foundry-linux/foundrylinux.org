@@ -30,6 +30,13 @@ installed=()
 skipped=()
 for deb in /tmp/local-debs/*.deb; do
     pkg=$(dpkg-deb --field "$deb" Package)
+    version=$(dpkg-deb --field "$deb" Version)
+    current=$(dpkg-query -W -f='${Version}' "$pkg" 2>/dev/null || true)
+    if [[ "${FOUNDRY_ALLOW_OLDER_LOCAL:-0}" != 1 && -n "$current" ]] \
+       && dpkg --compare-versions "$version" lt "$current"; then
+        echo "  Skipping older local build: $pkg ($version < installed $current)"
+        continue
+    fi
     # Always install: the edition metapackage itself and calamares-settings
     # (installer config is always needed regardless of dep closure).
     if [[ "$pkg" == "foundry-${EDITION}" ]] \
@@ -50,7 +57,9 @@ if [[ ${#installed[@]} -gt 0 ]]; then
     # Differing conffiles would otherwise prompt and halt an unattended build.
     # Force the package (new) version — these are all our own packages, so our
     # shipped conffile is always the one we want.
-    apt-get install -y --reinstall --allow-downgrades \
+    extra_options=()
+    [[ "${FOUNDRY_ALLOW_OLDER_LOCAL:-0}" != 1 ]] || extra_options+=(--allow-downgrades)
+    apt-get install -y --reinstall "${extra_options[@]}" \
         -o Dpkg::Options::=--force-confdef \
         -o Dpkg::Options::=--force-confnew \
         "${installed[@]}"

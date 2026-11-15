@@ -291,3 +291,7 @@ Supervision continues in `runs/diagnostic-continuation`, with Docker log timesta
 - [ ] Actual ISO desktop/installer validation, clean cold proof and warm comparison remain pending.
 
 After package-build scratch cleanup, the build filesystem used about 9.4 GiB, down from an observed 17 GiB near package completion. These observations do not yet include the ISO-stage peak. The completed inventory is retained at `runs/diagnostic-continuation/package-inventory.json` on the runner and copied with SHA256 verification to `/home/will/powerdevil-upgrade/aws-spike/evidence/package-inventory-63-of-63.json`.
+
+### Same-version preference and frozen-input downgrades
+
+The diagnostic ISO hook reinstalled 25 same-version packages but also selected six older frozen local builds: foundry-core, halfempty, powerdevil, tilemap-studio and xemu/xemu-xbox. The permanent default now skips local versions older than the installed repository version and does not permit implicit APT downgrades. Same-version local replacement remains enabled. An explicit spike patch sets `FOUNDRY_ALLOW_OLDER_LOCAL=1` so the controlled cold/warm comparison tests its frozen source inputs even when publication has advanced. This is candidate validation, not production publication. An isolated Ubuntu container test passed same-version replacement, default rejection of older local builds, and the explicit controlled override.
