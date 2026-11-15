@@ -1,7 +1,7 @@
 # AWS Mumbai spike: cold build, then warm build on the same disk
 
 **Date:** 2026-11-15
-**Status:** Diagnostic package/ISO build and desktop/installer launch passed; its instance is stopped with disks retained. A separate empty-volume cold run completed all 63 expected packages and ISO assembly without build intervention. Its post-build inventory collector failed because the ISO builder removes the staging chroot. This is a cold workload success, **not an error-free end-to-end runner pass**. The ISO inventory was recovered from the artifact; cold desktop boot and installer launch are visually verified; warm comparison is next.
+**Status:** Diagnostic package/ISO build and desktop/installer launch passed; its instance is stopped with disks retained. A separate empty-volume cold run completed all 63 expected packages and ISO assembly without build intervention. Its post-build inventory collector failed because the ISO builder removes the staging chroot. This is a cold workload success, **not an error-free end-to-end runner pass**. The ISO inventory was recovered from the artifact; cold desktop boot and installer launch are visually verified; warm build, inventory comparison, desktop boot and installer launch passed. Both EC2 instances are confirmed stopped; all four disks are retained.
 **Related:** [Daily packages, ISO and public update history](2026-11-15-daily-packages-and-iso.md).
 
 ## Question and outcome
@@ -336,3 +336,42 @@ The cold ISO is hard-linked into its run directory before a warm rebuild can rep
 The installer screenshot is retained at `/home/will/powerdevil-upgrade/aws-spike/evidence/cold-installer.png`, SHA256 `6f1254fe453ae9d1b8823426f231e3cbe2255d007c84cc55b669c526c54557da`. The collector now reads the package database from the finished ISO through a temporary read-only loop mount, after preserving the artifact and hash. Its output matched the independently recovered cold inventory byte-for-byte. This correction changes post-build evidence collection only; warm source, recipe, builder and package-artifact fingerprints must still match the cold receipt.
 
 The cold observer recorded 6,982 samples from 15:19:38.252 to 17:15:59.950 Bangkok. Maximum sampled filesystem usage was **34,310,283,264 bytes (32.0 GiB)** on the build volume and **2,984,787,968 bytes (2.8 GiB)** on root. Package-container cgroup memory peak was 12,301,942,784 bytes, including file cache; its sampled anonymous-memory maximum was 3,393,347,584 bytes. These different counters must not be conflated into a RAM requirement. Hardware downsizing still needs an actual trial; no final stage-specific instance selection is proven yet.
+
+
+### Matched warm build passed — 18:01:44 Bangkok
+
+After a confirmed stop/restart with the same volumes, the warm runner started at 17:43:35 and finished at 18:01:44 with **exit 0**. Its source remains pinned to `4664e52`; the only runner correction is post-build evidence extraction, committed separately as `5db61c2`. All four image builds reused their Docker layers. Package-cache verification passed, including unchanged inputs, builder image, complete artifact inventory and file hashes. A fresh ISO filesystem and image were built; this was not an existing-ISO shortcut.
+
+| Measured stage | Cold | Warm | Interpretation |
+|---|---:|---:|---|
+| Package build / verified unchanged-output reuse | 1 h 24 min 55 s | 14 s | Warm checks cached artifacts; it does not compile changed sources |
+| ISO assembly | 24 min 33 s | 17 min 43 s | 27.8% shorter with retained downloads; filesystem setup and compression still run |
+| Runner start through finish | 1 h 56 min 22 s | 18 min 9 s | 84.4% shorter; excludes instance provisioning and separate visual validation; cold ends with the documented collector error |
+| Peak sampled build-filesystem usage | 32.0 GiB | 36.3 GiB | Warm includes the preserved cold ISO; this is peak workspace, not permanent cache size |
+
+Warm ISO SHA256: `6426d7bb0b549aa2cc3b69cd1ced80560598210f8ac072c77529acba20fd9767`. Both ISO inventories contain **2,812 installed packages with exactly matching names, architectures and versions**. All Foundry package-output hashes match. Neither ISO has installed LibreOffice packages. Different ISO hashes are recorded; byte-for-byte reproducibility was not established. The verified local receipt is `/home/will/powerdevil-upgrade/aws-spike/evidence/cold-warm-comparison.json`, SHA256 `9c89816701486a121774c7e01135f2d52d2a56068827274df4d8c543dc848ad5`.
+
+At the recorded Mumbai m7i.xlarge + public IPv4 rate of $0.2171/hour, the measured runner intervals correspond to approximately **$0.421 cold and $0.066 warm** in compute/IP alone. These are stage-duration cost estimates, **not total spike charges or an AWS invoice**: bootstrap, diagnostic attempts, validation, transfers and idle supervision are additional. New 64-GiB disks cost $5.8368/month; the retained diagnostic 300-GiB disks add $27.36/month. All retained disks together cost $33.1968/month, about $1.11/day on a 30-day planning basis, until a retention decision.
+
+Before the warm run, measured allocated content included 474,464,256 bytes in shared package download caches, 5,559,844,864 bytes in containerd storage, 17,375,232 bytes in Docker storage, 1,933,627,392 bytes of package outputs, and 4,222,672,896 bytes in live-build's ISO cache. These are separate directory measurements, not a complete disjoint accounting of every workspace byte. Unchanged outputs are useful to this comparison; obsolete release outputs do not become permanent production caches.
+
+Compression was observed using approximately four CPU cores. The package container accumulated about 9,192 CPU-seconds over its roughly 5,095-second stage with a two-job compile cap. These support separating compilation, download/configuration and compression when choosing offerings, but **do not prove performance on a smaller instance**. A 2-vCPU/8-GiB build candidate and a brief KVM-capable validation runner still need a controlled hardware trial before selection. Cgroup memory peaks include substantial file cache and cannot alone establish minimum host RAM. No-change discovery latency and publication costs have not been measured in this spike.
+
+
+### Warm visual validation complete
+
+The warm ISO displayed the Foundry desktop and opened the branded Calamares installer in the same offline, diskless 2-vCPU/4096-MiB UEFI guest. The expected no-partitions warning is visible; full disk installation remains outside the completed checks. Verified local evidence:
+
+- Desktop: `/home/will/powerdevil-upgrade/aws-spike/evidence/warm-desktop.png`, SHA256 `4e9e8c129c6279e94bc3abccb260a971d72b577d24c0ce600787711c694dc3b4`.
+- Installer: `/home/will/powerdevil-upgrade/aws-spike/evidence/warm-installer.png`, SHA256 `23caf66ceea86706d97eca63c06b463ecb7b6ede0c6e4fc826fe51e06e4233d2`.
+
+The validation VM and observer were stopped at 18:14 Bangkok. Post-run filesystem usage was about 22 GiB on build/cache and 2.9 GiB on root. Both cold/warm ISOs, source/cache receipts, raw metrics and screenshots remain on the retained build volume. The daily scheduler and production publication remain disabled.
+
+- [x] Fresh empty-volume package/ISO workload measurement and matched retained-cache comparison.
+- [x] Identical installed package-version inventories and unchanged Foundry output hashes confirmed.
+- [x] Cold and warm UEFI desktop plus installer-launch checks.
+- [x] Post-build evidence collector corrected and validated on cold artifact and warm runner.
+- [ ] Fresh error-free end-to-end cold runner proof, including the corrected collector; do not silently treat the recorded cold exit 1 as pass.
+- [ ] Smaller per-stage hardware trials, changed-source rebuild behavior, no-change discovery and publication measurements before production sizing.
+
+Final EC2 API verification confirmed both `i-09ed2b15f19ac5b71` and `i-0dbf1f3dfdb62cc29` in `stopped` state, with `DeleteOnTermination=false` for all four recorded volumes.

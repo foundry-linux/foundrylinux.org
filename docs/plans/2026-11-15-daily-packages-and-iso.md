@@ -3,6 +3,12 @@
 **Date:** 2026-11-15
 **Status:** Proposal for Will’s review; scheduling and publication are not enabled by this document.
 
+## Measured spike checkpoint — 2026-11-15
+
+The [Mumbai spike](2026-11-15-aws-cold-warm-build-spike.md) has measured a fresh empty-volume build and a matched retained-cache rebuild on m7i.xlarge (4 vCPUs, 16 GiB), with 16-GiB root and 48-GiB build volumes. Cold package work took 1 h 24 min 55 s; warm verification reused identical outputs in 14 s. Forced ISO assembly took 24 min 33 s cold and 17 min 43 s warm. Both ISOs have 2,812 installed packages with identical versions. The cold runner's post-build inventory collector failed after ISO success; that error is preserved and the collector correction passed during warm. An error-free unattended cold runner is still a separate proof gate.
+
+Measured runner intervals correspond to approximately $0.421 cold / $0.066 warm in compute plus IPv4, excluding provisioning, validation, diagnostic/idle time, storage and uploads. These are not invoices or a complete daily budget. The 64-GiB paired-run disks cost approximately $5.84/month; the separate diagnostic 300-GiB allocation is retained temporarily and is not a production cache recommendation. No package/ISO publication occurred in the spike. Smaller hardware, changed-source rebuilds, no-change discovery and publication remain to be measured before final stage-specific service selection. The four-hour scenarios below remain historical sensitivity models, not observed timings.
+
 ## Outcome
 
 Check for updates every day, publish tested package updates, and produce a fresh Anvil ISO from the resulting repository snapshot. Publish a dated record of **every package and ISO update under https://wald3n.com/open-source**, with permanent links, downloads, checksums, change summaries and validation results. A run is complete only after the artifacts and their public update records are verified live.

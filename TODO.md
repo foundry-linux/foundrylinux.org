@@ -5,7 +5,8 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
-- [ ] **Benchmark cold and warm AWS Mumbai builds** — fresh runner, then a second run on the same retained disk/cache later today; measure package and full Anvil ISO stages before choosing a daily budget. Stop EC2 between runs; retain disks. See [spike plan](docs/plans/2026-11-15-aws-cold-warm-build-spike.md).
+- [x] **Measure cold and warm AWS Mumbai workloads** — cold package/ISO workflow 1 h 56 min 22 s; warm 18 min 9 s; both desktop/installer launches verified. Cold post-build collector failed and was corrected; do not call its full runner error-free. Disks retained. See [spike results](docs/plans/2026-11-15-aws-cold-warm-build-spike.md).
+- [ ] **Close AWS spike proof and sizing gaps** — repeat a fresh end-to-end cold run with the corrected evidence collector; measure smaller stage-specific hardware, changed-source builds, discovery and publication before activating daily production. See [remaining gates](docs/plans/2026-11-15-aws-cold-warm-build-spike.md).
 
 - [ ] **Daily package and Anvil ISO publication, with every update recorded on wald3n.com/open-source** — AWS Mumbai option (home lab not set up), container builds, upstream discovery, signed publication, real boot checks, daily scheduling and freshness monitoring without GitHub Actions. See [plan](docs/plans/2026-11-15-daily-packages-and-iso.md).
 
