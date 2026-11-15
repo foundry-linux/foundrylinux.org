@@ -1,7 +1,7 @@
 # AWS Mumbai spike: cold build, then warm build on the same disk
 
 **Date:** 2026-11-15
-**Status:** Will authorized the spike on 2026-11-15; preparation is in progress, Will authorized any account with the needed permissions. Preflight succeeded with wf-terraform; the Mumbai runner is ready to launch.
+**Status:** Will authorized the spike on 2026-11-15; preparation is in progress, Will authorized any account with the needed permissions. The cold run launched in Mumbai using wf-terraform at 11:58 Bangkok on 2026-11-15. Build stages are running; validation and warm-run results are pending.
 **Related:** [Daily packages, ISO and public update history](2026-11-15-daily-packages-and-iso.md).
 
 ## Question and outcome
@@ -210,7 +210,11 @@ AI assistance: Codex CLI 0.169.0; model gpt-6-astra; reasoning effort medium, ve
 
 - [x] AWS wf-terraform identity verified; Mumbai M7i nested virtualization and Canonical Ubuntu 26.04 AMI checked.
 - [x] Added [launch controller](../../scripts/aws-spike/launch.py), [host bootstrap](../../scripts/aws-spike/bootstrap.sh), and [measurement runner](../../scripts/aws-spike/run.sh). Launch payload fits EC2 user-data; Python syntax checked in the pinned test container and shell scripts pass bash syntax checks.
-- [ ] Launch and record instance/volume IDs in the private receipt `/home/will/powerdevil-upgrade/aws-spike/resources.json`.
+- [x] Launch and record instance/volume IDs in the private receipt `/home/will/powerdevil-upgrade/aws-spike/resources.json`.
 - [ ] Finish cold package/ISO stages, then run the separate measured UEFI desktop/installer validation.
 
 The launcher creates only a dedicated security group, SSM instance role/profile, runner with retained volumes, and a scoped deadline role/schedule in the existing default VPC. It records every created resource and stops a launched instance if later provisioning fails. No signing or production publication credentials are sent to the runner. The automatic build service stops the instance after build success or failure; test and warm-run starts are explicit.
+
+## Live cold run — 2026-11-15
+
+Runner `i-09ed2b15f19ac5b71`, m7i.xlarge, ap-south-1a, launched at 11:58 Bangkok. Root volume `vol-0926caa68cf02bb0f` and build/cache volume `vol-00d37a922a21b2381` both have DeleteOnTermination=false. Nested virtualization is enabled; cloud-init completed and the cold-run service is active. Independent stop deadline: 19:58 Bangkok. Build inputs: Foundry `96906db229416a053959db58d43f54471336b0dc`, home-lab stacks `a0d9ec5279b5f63662889f3db1153284aed752ea`. No production publication is part of this spike.
