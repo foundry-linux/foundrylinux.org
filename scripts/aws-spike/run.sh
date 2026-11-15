@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Temporary measurement runner. Keep all outputs/caches for the paired run.
 set -Eeuo pipefail
-mode=${1:?cold or warm}
-[[ $mode == cold || $mode == warm ]]
+mode=${1:?cold, warm or incremental}
+[[ $mode == cold || $mode == warm || $mode == incremental ]]
 base=/srv/foundry-build
 source /opt/foundry-spike/config.sh
 run="$base/runs/$mode"
@@ -88,7 +88,8 @@ stage stack-deb docker build --pull=false --build-arg STACK_BASE=foundry-spike/s
 sed 's|^FROM registry.lab.home.arpa:5000/stacks/stack-deb@.*|FROM foundry-spike/stack-deb:run|' foundry-apt/docker/package-builder.Dockerfile > "$base/package-builder.Dockerfile"
 stage package-builder docker build --pull=false -f "$base/package-builder.Dockerfile" -t foundry-spike/packages:run foundry-apt/docker
 docker image inspect foundry-spike/packages:run > "$run/builder-image.json"
-mkdir -p "$base/cache/apt" "$base/cache/npm" "$base/cache/pnpm" "$base/cache/yarn"
+mkdir -p "$base/cache/apt" "$base/cache/npm" "$base/cache/pnpm" "$base/cache/yarn" "$base/cache/ccache"
+builder_id=$(docker image inspect --format '{{.Id}}' foundry-spike/packages:run)
 if [[ $mode == warm ]]; then
     stage packages-cache python3 /opt/foundry-spike/cache.py verify --repo "$PWD" --receipt "$base/packages-cache.json"
 elif docker container inspect "foundry-spike-packages-$mode" >/dev/null 2>&1; then
@@ -98,12 +99,15 @@ else
 stage packages docker run --name "foundry-spike-packages-$mode" \
     -v "$PWD/foundry-apt:/work" -v "$base/cache/apt:/var/cache/apt/archives" \
     -v "$base/cache/npm:/root/.npm" -v "$base/cache/pnpm:/root/.local/share/pnpm/store" \
-    -v "$base/cache/yarn:/root/.cache/yarn" -w /work \
-    -e DEBIAN_FRONTEND=noninteractive -e CMAKE_BUILD_PARALLEL_LEVEL=2 \
-    -e DEB_BUILD_OPTIONS=parallel=2 -e CARGO_BUILD_JOBS=2 \
+    -v "$base/cache/yarn:/root/.cache/yarn" -v "$base/cache/ccache:/cache/ccache" -w /work \
+    -e DEBIAN_FRONTEND=noninteractive -e FOUNDRY_BUILDER_ID="$builder_id" \
+    -e FOUNDRY_BUILD_JOBS="${FOUNDRY_BUILD_JOBS:-2}" \
+    -e FOUNDRY_COMPRESSION_THREADS="${FOUNDRY_COMPRESSION_THREADS:-2}" \
+    -e FOUNDRY_XZ_MEMLIMIT="${FOUNDRY_XZ_MEMLIMIT:-512MiB}" \
+    -e CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-2G}" \
     foundry-spike/packages:run bash -c 'set -euo pipefail; rm -f /etc/apt/apt.conf.d/docker-clean; apt-get update; bash scripts/build-all.sh'
 fi
-if [[ $mode == cold ]]; then
+if [[ $mode != warm ]]; then
     # docker start -a may return success even when the container command failed.
     test "$(docker inspect -f '{{.State.ExitCode}}' "foundry-spike-packages-$mode")" = 0
     docker cp "foundry-spike-packages-$mode:/var/lib/dpkg/status" "$run/package-builder-dpkg-status"
@@ -113,8 +117,8 @@ fi
 find foundry-apt/dist -maxdepth 1 -type f -print0 | sort -z | xargs -0 -r sha256sum > "$run/packages.sha256"
 mkdir -p foundry-iso/local-debs
 cp foundry-apt/dist/*.deb foundry-iso/local-debs/
-stage iso env EDITION=anvil bash foundry-iso/scripts/build-iso.sh
-docker image inspect ubuntu:26.04 > "$run/iso-builder-image.json"
+stage iso env EDITION=anvil FOUNDRY_ALLOW_OLDER_LOCAL=1 bash foundry-iso/scripts/build-iso.sh
+cp foundry-iso/dist/iso-builder-image.json "$run/iso-builder-image.json"
 find foundry-iso/dist -maxdepth 1 -name '*.iso' -exec cp -al '{}' "$run/" \;
 find "$run" -maxdepth 1 -name '*.iso' -exec sha256sum '{}' \; > "$run/iso.sha256"
 isos=("$run"/*.iso)

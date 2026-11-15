@@ -1,0 +1,5 @@
+# Camera applications belong in Atelier, and hook 0020 already removes them
+# from Anvil. Applied only when building Anvil.
+Package: digikam showfoto
+Pin: release *
+Pin-Priority: -1

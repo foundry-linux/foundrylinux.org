@@ -23,7 +23,8 @@ _purge kontact kmail 'akonadi-*' \
     'kdepim-*' kaddressbook kalarm kjots knotes korganizer merkuro-calendar
 # digikam/showfoto belong in sprite and atelier; only strip them from anvil
 [[ "$EDITION" == "anvil" ]] && _purge digikam showfoto || true
-_purge 'kde-games-*' kalgebra kgeography kig kbruch
+# Kig is an explicit Depends of foundry-anvil, and must survive both editions.
+_purge 'kde-games-*' kalgebra kgeography kbruch
 # Primary guard: config/apt/preferences.d/no-snapd.pref pins snapd/snap-store/
 # plasma-discover-backend-snap at -1 (applied before packages install).
 # This _purge is belt-and-suspenders.

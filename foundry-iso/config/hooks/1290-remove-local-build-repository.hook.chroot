@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+# Keep the selected local metadata available throughout all customization
+# hooks, then omit the archive copies and local APT source from the ISO.
+if [[ -f /opt/foundry-local-apt/manifest.json ]]; then
+    python3 /opt/foundry-local-apt/verify.py --verify
+    rm -f /etc/apt/sources.list.d/00-foundry-local.list
+    rm -f /etc/apt/preferences.d/foundry-local.pref
+    # live-build backs up pre-existing preferences before its chroot pass.
+    # Remove this build-only pin from that backup too, so it cannot reappear.
+    rm -f /etc/apt/preferences.d.save/foundry-local.pref
+    rm -f /var/lib/apt/lists/_opt_foundry-local-apt_*
+    rm -rf /opt/foundry-local-apt
+fi

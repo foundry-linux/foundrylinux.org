@@ -17,11 +17,8 @@ if [[ -f "$THEME" ]]; then
     update-alternatives --set default.plymouth "$THEME"
     echo "Plymouth default theme → $THEME"
 
-    # Rebuild initramfs so the theme is embedded before squashfs is snapshotted.
-    # Tolerates missing kernel / plymouth tooling (Docker test environments).
-    if ! update-initramfs -u -k all 2>/dev/null; then
-        echo "NOTE: update-initramfs skipped — live-build regenerates it later"
-    fi
+    # Hook 1100 writes the Casper/autologin/network configuration and then
+    # generates all installed initramfs images once, including this theme.
 else
     echo "NOTE: $THEME absent (minimal build) — skipping Plymouth theme"
 fi

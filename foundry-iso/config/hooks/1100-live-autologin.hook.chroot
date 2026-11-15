@@ -330,4 +330,4 @@ chmod +x /usr/share/initramfs-tools/scripts/casper-bottom/17foundry-nm
 # - /etc/casper.conf (USERNAME=user for 25adduser)
 # casper's postinst runs update-initramfs before we write casper.conf,
 # so a second pass is always required regardless.
-update-initramfs -u
+update-initramfs -u -k all

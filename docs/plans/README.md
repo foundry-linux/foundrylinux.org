@@ -121,6 +121,7 @@ rows on commit.*
 | [Daily Foundry package and ISO updates](2026-11-15-daily-packages-and-iso.md) | Schedule tested package and Anvil ISO publication outside Actions, with every update recorded and verified on wald3n.com/open-source. | _PENDING_ | Infra |
 
 | [AWS Mumbai cold/warm build spike](2026-11-15-aws-cold-warm-build-spike.md) | Measure a fresh package/Anvil build and a second build using the same retained disk and caches before budgeting daily automation. | _PENDING_ | Infra |
+| [Daily build activity and cost projections](2026-11-15-daily-build-cost-history.md) | Replay 30 days of upstream and recipe activity with saved JSON, daily costs and stage-specific 4-GiB sensitivity. | [`ea19779`](https://github.com/foundry-linux/foundrylinux.org/commit/ea19779) | Infra |
 
 ---
 

@@ -2,7 +2,19 @@
 
 **Date:** 2026-11-15
 **Status:** Diagnostic package/ISO build and desktop/installer launch passed; its instance is stopped with disks retained. A separate empty-volume cold run completed all 63 expected packages and ISO assembly without build intervention. Its post-build inventory collector failed because the ISO builder removes the staging chroot. This is a cold workload success, **not an error-free end-to-end runner pass**. The ISO inventory was recovered from the artifact; cold desktop boot and installer launch are visually verified; warm build, inventory comparison, desktop boot and installer launch passed. Both EC2 instances are confirmed stopped; all four disks are retained.
-**Related:** [Daily packages, ISO and public update history](2026-11-15-daily-packages-and-iso.md).
+**Related:** [Daily publication plan](2026-11-15-daily-packages-and-iso.md) · [30-day activity and cost simulation](2026-11-15-daily-build-cost-history.md).
+
+## Daily cost and the 4-GiB trial
+
+Replaying the previous 30 complete Bangkok days of upstream and repository activity gives **$25.58 for 30 daily runs ($0.85/day)**, starting with empty artifact retention, or **$26.62 per 30 days once retention is full**. This includes gross outbound transfer; an available account-wide free allowance is a separate scenario. See the [daily table, graph, saved JSON and reusable simulator](2026-11-15-daily-build-cost-history.md).
+
+| 4-GiB build runtime versus measured baseline | Total for the first 30 days | Monthly decrease |
+|---|---:|---:|
+| Same runtime | $24.38 | **$1.20 (4.7%)** |
+| 50% longer | $24.84 | **$0.74 (2.9%)** |
+| Twice as long | $25.30 | **$0.28 (1.1%)** |
+
+These compare Mumbai c7i.large build stages with the measured m7i.xlarge rates, including public IPv4. Validation and control stages keep the larger-host rate. Storage and uploads are unchanged, so the absolute decrease also applies with full artifact retention. Break-even is about 2.30× build runtime, before extra host transitions or transfers. A successful trial must establish both correctness and actual runtime; simply avoiding an out-of-memory failure does not establish savings. The next AWS run remains deferred until 2026-11-16 and is not automatically scheduled.
 
 ## Measured results — graphs
 
@@ -16,16 +28,17 @@
 
 Measure how long the actual package-and-Anvil pipeline takes on AWS, then how much faster it becomes with persistent caches. **Four hours/day was a sensitivity assumption, not a forecast.** Replace it with measured cold and warm timings before choosing the daily schedule’s budget or machine size.
 
-Will requested a fresh AWS run and a second run later today using the same retained disk. Use Mumbai (`ap-south-1`), not Singapore. The home lab is not set up and must not be a dependency. This spike produces validated candidate artifacts and timings; enabling the daily scheduler and publishing production updates remain separate steps in the parent plan.
+Will requested a fresh AWS run and a second run on the same retained disk; both workload measurements are now complete. Use Mumbai (`ap-south-1`), not Singapore. The home lab is not set up and must not be a dependency. This spike produces validated candidate artifacts and timings; enabling the daily scheduler and publishing production updates remain separate steps in the parent plan.
 
 ## Experiment design
 
-| Run | Starting state | Work performed | Evidence needed |
+| Run | Actual starting state | Result | Remaining qualification |
 |---|---|---|---|
-| Diagnostic (completed) | Fresh initial VM, subsequently repaired in place | Resolve build and runner defects, then validate the ISO | Preserve failures, interventions and all elapsed cost separately; not a clean benchmark |
-| A: clean cold proof | Newly provisioned VM and empty build/cache disk; normal OS AMI only | Bootstrap tools and pinned container stacks, fetch sources, build the current Foundry package set, build Anvil, boot and inspect installer | Separate provisioning, downloads, compilation, ISO assembly and validation timings |
-| Between runs | VM stopped; **all disks and caches retained** | Flush logs/cache writes; record disk and cache inventory | EC2 stopped state, volume IDs, cache sizes and run-A receipts |
-| B: warm | Restart the same VM with the same EBS volumes and committed inputs | Check inputs, reuse valid package outputs and caches, **force a new Anvil filesystem/ISO build**, repeat boot/installer checks | Cache hits/misses, bytes fetched, per-stage times, actual speedup |
+| Diagnostic | Fresh initial VM, repaired in place; 40 + 260 GiB disks | 63 binaries, ISO, desktop and installer launch passed; stopped | Repair time is not clean-build evidence |
+| A: cold workloads | Separate fresh VM and empty 16 + 48 GiB disks | Packages 84m 55s; ISO 24m 33s; desktop and installer launch passed | Post-build inventory collector failed; whole runner exit 1 is preserved |
+| Between runs | Confirmed stop/restart, same retained disks and package hashes | Cache and inputs retained | No cache pruning or restored diagnostic artifacts |
+| B: warm | Same instance/disks and workload inputs; corrected evidence collector | Package verification 14s; fresh ISO 17m 43s; desktop/installer passed; runner exit 0 | Collector change documented separately from unchanged workload inputs |
+| Next trial — 2026-11-16, not automatically scheduled | Optimizations prepared with container checks; proposed 4-GiB build host | Pending; no new AWS build today | Prove complete corrected runner, validate outputs, measure memory pressure/runtime; validation host separate |
 
 ### Clean cold proof gate (Will’s additional requirement)
 
@@ -34,9 +47,9 @@ Will requested a fresh AWS run and a second run later today using the same retai
 - [x] Stop the diagnostic instance and preserve both of its disks and caches.
 - [x] Launch a separate instance with newly created empty root/build volumes from the recorded standard OS AMI. Do not restore diagnostic snapshots, Docker layers, Foundry packages or ISO artifacts.
 - [x] Capture new instance/volume IDs, empty cache inventories, launch/bootstrap timestamps and resource counters before workloads start.
-- [ ] Complete all package and ISO stages without interventions, then capture actual desktop and installer evidence and artifact hashes.
-- [ ] If a repair is required, label that attempt diagnostic and repeat clean proof after fixing it.
-- [ ] Run the warm comparison against this successful cold proof using its retained disks and matching inputs.
+- [x] Complete cold package and ISO workloads without interventions; capture actual desktop/installer evidence and artifact hashes. The later collector error is separate and remains recorded.
+- [ ] Repeat an error-free end-to-end cold runner with the corrected collector; current cold runner exit 1 is not a full pass.
+- [x] Complete the matched warm workload comparison using retained disks and matching package inputs; document the post-build collector correction.
 
 ```mermaid
 flowchart LR
@@ -51,7 +64,7 @@ flowchart LR
 
 Review state: `DIAGNOSTIC → INPUTS FROZEN → EMPTY VOLUMES VERIFIED → COLD BUILD PASS → BOOT/INSTALLER PASS → WARM COMPARISON`. Each transition requires its corresponding receipt; a successful repaired build cannot advance directly to cold proof.
 
-Keep diagnostic elapsed time and estimated charges, successful stage timings, clean cold totals and warm totals separate. GNU `time` around Docker measures useful wall time but its CPU/RSS describe the client, not the container workload. Use host and cgroup counters for resource claims. The diagnostic raw recorder started after package compilation began, so its coverage is partial; do not present observed peaks as full-run peaks. Charge calculations from rates and running intervals are estimates, not an AWS invoice. The existing diagnostic disks total 300 GiB and cost $27.36 per month at the recorded gp3 rate. Fresh-proof disk capacity will be chosen from measured peak usage, and its retention cost reported separately; do not assume a second 300-GiB allocation. Stop compute after use.
+Keep diagnostic elapsed time and estimated charges, successful stage timings, clean cold totals and warm totals separate. GNU `time` around Docker measures useful wall time but its CPU/RSS describe the client, not the container workload. Use host and cgroup counters for resource claims. The diagnostic raw recorder started after package compilation began, so its coverage is partial; do not present observed peaks as full-run peaks. Charge calculations from rates and running intervals are estimates, not an AWS invoice. The existing diagnostic disks total 300 GiB and cost $27.36 per month at the recorded gp3 rate. The paired-run instance used 64 GiB (16 root + 48 build), selected from measured peaks; its retention costs $5.84/month separately. Stop compute after use.
 
 For run A, use the current package set invoked by the existing full-build workflow; do not silently substitute only PowerDevil or download published Foundry binaries and call that a complete source rebuild. Classify upstream binary-repack packages honestly. Record any recipes that restore prebuilt outputs remotely. If this full bootstrap is much larger than a normal daily update, report that distinction using stage timings rather than treating its total as the daily forecast.
 
@@ -91,27 +104,27 @@ Pass immutable artifacts with checksums and input fingerprints between stages. K
 
 ## Runner and storage
 
-Use a configurable On-Demand measurement runner in Mumbai. Start with **m7i.xlarge: 4 vCPUs, 16 GiB RAM** as a provisional cold/warm baseline, with nested virtualization enabled and 300 GB encrypted gp3. Record this choice in both receipts; increase memory only if measured failures require it, and restart the comparison if hardware changes between A and B. The earlier m7i.2xlarge estimates below remain a labelled reference, not a selected permanent size. Use an Ubuntu 26.04 host image validated at provisioning, with builds in the established Ubuntu-compatible container stacks. Record AMI ID and instance/AZ identifiers. Verify `/dev/kvm` and a nested VM before doing the expensive build.
+The completed cold/warm baseline used **m7i.xlarge: 4 vCPUs, 16 GiB RAM**, nested virtualization, and **16 GiB root + 48 GiB build/cache**. The earlier diagnostic instance used 40 + 260 GiB. Both are stopped and their disks remain retained. Next, implement the reviewed optimizations and test a **4-GiB build host on 2026-11-16**, keeping the 4-GiB validation guest on a sufficiently larger host. No new AWS build will start today and tomorrow's test is not automatically scheduled. No 4-GiB performance or reliability claim has been established.
 
-The diagnostic allocation was an unmeasured capacity allowance, not a calculated cache requirement. Do not carry 300 GB into the daily design or automatically duplicate it for cold proof. Measure peak filesystem usage through the diagnostic package and ISO stages, then choose fresh-proof capacity with explicit headroom. Separate transient source/build trees and ISO work space from useful reusable downloads/toolchains. Superseded build outputs are not permanent caches; the paired experiment's unchanged-output reuse does not justify retaining obsolete outputs in production.
+| Paired-run allocation | Provisioned | Cold sampled peak used | Warm sampled peak used |
+|---|---:|---:|---:|
+| OS/root | 16 GiB | 2.8 GiB | 2.8 GiB |
+| Build workspace and caches | 48 GiB | 32.0 GiB | 36.3 GiB |
+| Total provisioned | **64 GiB** | Peaks are per-filesystem, not simultaneous totals | Warm includes the preserved cold ISO |
 
-| Diagnostic allocation | Provisioned capacity | Observed usage at 12:55 Bangkok | Basis |
-|---|---:|---:|---|
-| OS/root | 40 GiB | 2.8 GiB | Initial allowance, not measured sizing |
-| Build workspace and caches | 260 GiB | 7.4 GiB | Initial allowance, not a component estimate |
-| Total | 300 GiB | About 10.2 GiB | Build is incomplete; these are not peak requirements |
+The separate diagnostic 300-GiB allocation was an initial capacity allowance, not a production cache requirement. Useful retained cache content, transient build space and published artifact retention are separate costs. Do not automatically retain obsolete outputs as production caches.
 
 AWS bills provisioned capacity, including unused space. Record peak used bytes separately from capacity, filesystem reserve and available bytes. Retain the current experimental disks as requested; select production cache retention and capacity from measured reusable content, rather than all generated data.
 
-The existing diagnostic runner uses 40 GB root + 260 GB build/cache. Mount the latter at `/srv/foundry-build` by filesystem UUID. Set **DeleteOnTermination=false on both volumes**, tag them with the spike/run owner, and make the stop/cleanup workflow explicitly retain them. Stop the instance between and after runs; do not terminate it, run `terraform destroy`, prune caches, or delete the volumes. Disk retention is intentional and billed until a later decision.
+The paired-run instance uses 16 GiB root + 48 GiB build/cache; the stopped diagnostic retains its separate 40 + 260 GiB. Mount the build volume at `/srv/foundry-build` by filesystem UUID. Set **DeleteOnTermination=false on both volumes**, tag them with the spike/run owner, and make the stop/cleanup workflow explicitly retain them. Stop the instance between and after runs; do not terminate it, run `terraform destroy`, prune caches, or delete the volumes. Disk retention is intentional and billed until a later decision.
 
 ```mermaid
 flowchart TB
     W[Will reviews spike plan] --> T[AWS CLI resource plan — Mumbai runner and retained volumes]
     T --> V[Configurable EC2 measurement runner]
     subgraph Disk["Persistent EBS — survives stop/start"]
-        O[Root 40 GB — OS and runner service]
-        D[Build 260 GB — /srv/foundry-build]
+        O[Root 16 GiB — OS and runner service]
+        D[Build 48 GiB — /srv/foundry-build]
         C[Container layers, sources, APT cache, compiler caches]
         P[Verified package outputs and build receipts]
         I[ISO outputs, logs and screenshots]
@@ -130,38 +143,41 @@ flowchart TB
 
 Use an automatically assigned IPv4 address, no inbound security-group rules, and SSM for management. Bootstrap pinned container images from an accessible verified source/export; the home-lab registry is unavailable. Keep downloaded images and build caches on the retained disk. Record the one-time bootstrap separately, but include it in the cold end-to-end total.
 
-| Persisted data | Proposed location | Reuse rule |
+| Persisted data | Actual baseline location | Reuse rule |
 |---|---|---|
-| Container image/layer store | `/srv/foundry-build/docker` | Verify image digests; preserve across stop/start |
-| Source archives and Git mirrors | `/srv/foundry-build/sources` | Match committed upstream pins and checksums |
-| Package-manager downloads | `/srv/foundry-build/apt-cache` plus live-build’s cache directory | Retain authenticated metadata evidence; validate package hashes |
-| Compiler caches, where recipes support them | `/srv/foundry-build/compiler-cache` | Key by compiler/toolchain and build inputs; do not pretend unsupported recipes use ccache |
-| Package outputs and manifests | `/srv/foundry-build/packages` | Reuse only verified artifacts with matching input fingerprints |
-| Live-build download cache | `/srv/foundry-build/iso/cache` | Preserve downloads while regenerating the live root and ISO |
-| Logs, receipts and ISO artifacts | `/srv/foundry-build/runs/<run-id>` | Keep A and B evidence separately |
+| Docker/containerd image stores | `/srv/foundry-build/docker` and `/srv/foundry-build/containerd` | Verified image IDs; preserved across stop/start |
+| Package-manager downloads | `/srv/foundry-build/cache/{apt,npm,pnpm,yarn}` | Download integrity checks remain required |
+| Package outputs and manifests | `/srv/foundry-build/source/foundry-apt/dist`, `/srv/foundry-build/packages-cache.json` | Baseline verifies complete unchanged input/output hashes |
+| Live-build download cache | `/srv/foundry-build/source/foundry-iso/cache` | Downloads retained; root and ISO regenerated |
+| Logs, receipts and ISO artifacts | `/srv/foundry-build/runs/{cold,warm,cold-boot,warm-boot}` | Cold/warm evidence kept separately |
+| Compiler cache and finer source-cache policy | Optimization implementation in progress | Not part of the measured baseline; validate before claiming reuse |
 
 Map these stores into the existing recipes rather than assuming proposed directory names automatically enable caching. Audit source scripts for cleanup that discards downloads or useful outputs. Fresh live-build roots still need package unpack/configuration, initramfs generation and filesystem compression; caching downloads cannot remove those costs. Do not resume a partial build by invoking `lb bootstrap` over a configured root: the earlier local attempt showed that it can restore the base cache and discard the installed desktop.
 
 ## Dated agenda
 
-### 2026-11-15 — run A, after plan review and account access
+### 2026-11-15 — completed baseline
 
-- [ ] Select the AWS account/profile and confirm the resource plan. The earlier CLI Pricing query had no credentials; public pricing was verified without account access. Check available instance capacity, Ubuntu AMI, quotas and nested virtualization support.
-- [ ] Provision the temporary runner and retained volumes using Git-managed AWS CLI scripts and a resource-ID receipt. Will explicitly accepted avoiding Terraform for this disposable experiment; no distro Terraform configuration exists. Record the exact proposed billable resources; no NAT Gateway, load balancer or always-on Kubernetes control plane is needed.
-- [ ] Install a runner timeout and an independent external stop guard scoped to this instance. Use an initial eight-hour maximum per run, with explicit adjustment if the measured full build needs more time; hitting the limit is an incomplete run, not a benchmark success.
-- [ ] Record empty cache inventory, runner specs and input manifest. Start the cold clock before bootstrap/downloads; capture a second clock for the build-only stages.
-- [ ] Build packages in containers, validate them, then build Anvil from those outputs. Measure each stage; record package skips/repack cases instead of hiding them.
-- [ ] Inspect the ISO package manifest, fixed PowerDevil version and installer branding. Boot with QEMU/UEFI to a real desktop, launch Calamares without installing onto a real disk, and save screenshots/logs. QEMU process survival is insufficient.
-- [ ] Flush writes, persist evidence and cache inventories, confirm retained-volume settings, then stop EC2. Preserve every cache and candidate artifact for run B.
+- [x] Selected `wf-terraform`, Mumbai, verified Ubuntu AMI and nested KVM, and installed scoped stop guards.
+- [x] Recorded new empty-volume inputs and separate provisioning/workload clocks.
+- [x] Built all expected packages and Anvil without workload repair on the fresh instance.
+- [x] Recovered ISO inventory after the collector error; visually verified desktop and installer launch.
+- [x] Stopped/restarted the same instance and retained disks; verified unchanged package-cache hashes.
+- [x] Forced a warm ISO rebuild and repeated desktop/installer checks; corrected runner exited 0.
+- [x] Saved measurements and stopped compute; all four experimental disks retained.
+- [ ] Finish optimization implementation and local container checks; update the reusable 30-day cost simulation. No new AWS build today.
 
-### 2026-11-15 — run B, later today after run A completes
+### 2026-11-16 — next trial, not automatically scheduled
 
-- [ ] Restart the same instance and verify the same volume IDs, mounts, cache manifests and builder inputs. Do not recreate or pre-clean the runner.
-- [ ] Time the update check and package-cache validation. Record reused packages, actual compilation work and bytes transferred.
-- [ ] Force a fresh Anvil build using cached inputs, then repeat the identical ISO and VM validation gates.
-- [ ] Save the A/B comparison, cost calculation and a proposed daily budget. Stop the runner, retain both volumes and leave the scheduler disabled.
+- [ ] Run the optimized build on a 4-GiB host with explicit compile/compressor limits.
+- [ ] Measure anonymous memory, reclaim pressure, swap/OOM events, CPU time, runtime and cost per completed artifact; use 8 GiB as a fallback comparison if needed.
+- [ ] Complete error-free cold-run proof with the corrected collector and validate both desktop and installer on a sufficiently larger KVM host.
+- [ ] Feed measured optimized timings into a separate simulation scenario; preserve the current baseline.
 
-If run A or account access overruns today, mark run B pending and preserve its disk; do not claim a same-day result that did not happen. After A/B, a separately identified small package-change experiment can test incremental invalidation; it is not a substitute for either requested run.
+### Separate remaining measurements
+
+- [ ] No-change discovery latency, changed-source compiler-cache hit rates, signing/upload time and actual publication bytes.
+- [ ] Full disk installation if added to the validation scope; current tests prove desktop and installer launch only.
 
 ## Run controls and review screen
 
@@ -172,8 +188,9 @@ AWS build spike — Mumbai
   Runner:        configurable baseline m7i.xlarge / 4 vCPU / 16 GiB
   Stage sizing:  measure separately, choose offerings after A/B
   Input:         <Git SHA> / <builder digest> / <package snapshot>
-  Run A:         pending — empty cache
-  Run B:         pending — same disk, later today
+  Run A:         workloads passed; collector exit 1 recorded
+  Run B:         passed — fresh ISO, verified retained inputs
+  Next trial:    2026-11-16 — 4 GiB builds, not scheduled
   Retention:     KEEP root, build disk, container layers and caches
   End action:    STOP instance
   Daily timer:   DISABLED
@@ -208,15 +225,18 @@ sequenceDiagram
 
 | Metric | Cold A | Warm B |
 |---|---|---|
-| Provision/bootstrap and image pulls | To measure | To measure |
-| Source/APT download bytes and time | To measure | To measure |
-| Package validation, compilation and cache hits | To measure | To measure |
-| Live root unpack/configuration | To measure | To measure |
-| Initramfs, squashfs compression and ISO assembly | To measure | To measure |
-| UEFI desktop and installer validation | To measure | To measure |
-| Peak RAM, disk use and CPU utilization | To measure | To measure |
-| End-to-end elapsed and billable EC2 time | To measure | To measure |
-| Artifact sizes, checksums and exact package versions | To record | To record |
+| Stack-base / build / deb / project-builder | 34s / 57s / 49s / 4m 17s | Cached; four stages completed within the same recorded second |
+| Package work / verified reuse | 84m 55s; all 63 expected binaries | 14s; unchanged artifact hashes |
+| ISO assembly | 24m 33s | 17m 43s |
+| Initramfs generations observed in ISO log | 6 | 6 |
+| Desktop and installer launch | Visually verified | Visually verified |
+| Sampled build-disk peak | 32.0 GiB | 36.3 GiB, including preserved cold ISO |
+| Package-container sampled anonymous-memory peak | 3.16 GiB | No compilation; artifact reuse |
+| ISO-container sampled anonymous-memory peak | 2.53 GiB | 2.51 GiB |
+| Runner start to finish, excluding provisioning/VM validation | 1h 56m 22s; exit 1 after build at collector | 18m 09s; exit 0 |
+| Installed ISO package versions | 2,812 installed | Same 2,812 versions; no differences |
+| Download bytes and detailed substage timings | Raw counters/logs retained; not fully analyzed | Raw counters/logs retained; not fully analyzed |
+| Full disk installation / publication | Not tested | Not tested |
 
 Report `cold_seconds / warm_seconds` for comparable stages and the whole pipeline. Do not mix provisioning with steady-state timings or infer speedup from differing package sets. Two runs establish a baseline, not a statistical reliability guarantee. Production signing, upload and live wald3n verification are not measured by this build-only spike; include an explicit remaining allowance and measure those stages before setting the production budget.
 
@@ -224,34 +244,35 @@ Success means both ISOs pass the same real boot/installer checks, warm cache hit
 
 ## Spike costs and retention
 
-**Reference scenario for the earlier 8-vCPU runner, not the selected baseline:** rates verified on 2026-11-15 in the [AWS pricing evidence](2026-11-15-daily-packages-and-iso-aws-rates.json): compute $0.4242/hour; public IPv4 $0.005/hour; gp3 $0.0912/GB-month. Combined running compute/IP is **$0.4292/hour**. A retained 300 GB disk allocation costs **$27.36/month**, roughly **$0.91/day** using a 30-day planning month, including while EC2 is stopped. No production artifact upload is required for these two benchmarks.
+The measured instance rate is **$0.2121/hour compute + $0.005/hour public IPv4 = $0.2171/hour**. Rates are recorded in the pricing evidence and model inputs; interval charges below are estimates, not AWS invoices.
 
-| Combined running time across A and B | Compute + IPv4 | Plus one day’s 300 GB storage |
-|---|---:|---:|
-| 1 hour | $0.43 | $1.34 |
-| 2 hours | $0.86 | $1.77 |
-| 4 hours | $1.72 | $2.63 |
-| 8 hours | $3.43 | $4.34 |
-| 16 hours — both initial run deadlines exhausted | $6.87 | $7.78 |
+| Cost item | Per day (30-day convention) | Per 30 days | Scope |
+|---|---:|---:|---|
+| Paired-run retained 64-GiB EBS | $0.195 | $5.84 | Current candidate build capacity, billed while stopped |
+| Separate diagnostic retained 300-GiB EBS | $0.912 | $27.36 | Temporary historical experiment, excluded from daily production simulation |
+| All disks currently retained | **$1.107** | **$33.20** | No disks deleted |
+| Unchanged warm workflow compute/IP, once daily | $0.066 | $1.97 | 18m 09s each day; excludes changed-package builds, startup, validation, publication and transfers |
 
-These are scenarios, not predicted runtimes; exclude tax, logs, optional snapshots and internet egress. Downloading the two approximately 5 GB ISOs out of AWS would add up to about $1.09 at $0.1093/GB if the shared egress allowance is already used. Retaining more outputs increases storage needs; monitor free space and fail before exhaustion rather than deleting caches. Budget alerts are not a hard cap; the independent stop guard bounds accidental runtime, while EBS remains chargeable by design.
+The once-daily total must also account for upstream activity and artifact publication. The [30-day history simulation](2026-11-15-daily-build-cost-history.md) provides the daily table and breakdown from saved activity, measured recipe times and explicit scenario assumptions. It separates gross AWS outbound transfer, retained EBS and R2 artifact storage. A smaller instance or optimized runtime is not substituted until measured or explicitly labeled a hypothetical scenario.
 
-After the second run, leave the instance stopped and disks intact. Present measured results and the ongoing $27.36/month storage obligation before any future decision to keep, resize, migrate or remove them. Do not delete resources automatically at the end of this spike.
-
-The provisional m7i.xlarge baseline is $0.2121/hour compute in the Mumbai price query, or $0.2171/hour including one public IPv4. Confirm the current rate before launch. For example, two combined running hours would be about $0.43 compute/IP plus about $0.91 for one day of retained 300 GB storage. Stage-specific production cost will be the sum of each stage's measured billable time and rate, plus shared storage and artifact transfer; it cannot be inferred from one hourly rate.
+No production artifacts were uploaded during the spike. Both instances are stopped; disks remain as requested. Production scheduling stays disabled. Retained storage costs continue until a later retention decision; nothing is deleted automatically.
 
 ## Deliverables
 
 - [ ] Git-managed AWS CLI runner scripts, exact resource-ID receipts and runnable cold/warm/stop/report entry points; Terraform is unnecessary for this temporary spike.
 - [ ] Stage-by-stage resource profiles and a comparison of candidate service offerings, including artifact handoff costs.
-- [ ] Input and artifact manifests, cache inventories, per-stage timing/resource data, and actual AWS instance/volume IDs in private runtime evidence.
-- [ ] ISO desktop and installer-launch screenshots for both runs.
+- [x] Input/artifact manifests, cache inventories, timing/resource data and private instance/volume receipts saved.
+- [x] ISO desktop and installer-launch screenshots for both runs.
 - [ ] A comparison report replacing the parent plan’s four-hour budgeting assumption with measured data and stated publication overhead still to measure.
-- [ ] Confirmation that EC2 is stopped, both disks retained, and the daily scheduler remains disabled.
+- [x] Both EC2 instances stopped; all four disks retained; daily scheduler disabled.
 
 AI assistance: Codex CLI 0.169.0; model gpt-6-astra; reasoning effort medium, verified from session metadata.
 
-## Execution preparation — 2026-11-15
+## Historical execution journal
+
+The following dated checkpoints preserve what was known at the time. Current results, tables and remaining work are above; historical “pending” statements below are not the current status.
+
+### Execution preparation — 2026-11-15
 
 - [x] AWS wf-terraform identity verified; Mumbai M7i nested virtualization and Canonical Ubuntu 26.04 AMI checked.
 - [x] Added [launch controller](../../scripts/aws-spike/launch.py), [host bootstrap](../../scripts/aws-spike/bootstrap.sh), and [measurement runner](../../scripts/aws-spike/run.sh). Launch payload fits EC2 user-data; Python syntax checked in the pinned test container and shell scripts pass bash syntax checks.
@@ -363,7 +384,7 @@ At the recorded Mumbai m7i.xlarge + public IPv4 rate of $0.2171/hour, the measur
 
 Before the warm run, measured allocated content included 474,464,256 bytes in shared package download caches, 5,559,844,864 bytes in containerd storage, 17,375,232 bytes in Docker storage, 1,933,627,392 bytes of package outputs, and 4,222,672,896 bytes in live-build's ISO cache. These are separate directory measurements, not a complete disjoint accounting of every workspace byte. Unchanged outputs are useful to this comparison; obsolete release outputs do not become permanent production caches.
 
-Compression was observed using approximately four CPU cores. The package container accumulated about 9,192 CPU-seconds over its roughly 5,095-second stage with a two-job compile cap. These support separating compilation, download/configuration and compression when choosing offerings, but **do not prove performance on a smaller instance**. A 2-vCPU/8-GiB build candidate and a brief KVM-capable validation runner still need a controlled hardware trial before selection. Cgroup memory peaks include substantial file cache and cannot alone establish minimum host RAM. No-change discovery latency and publication costs have not been measured in this spike.
+Compression was observed using approximately four CPU cores. The package container accumulated about 9,192 CPU-seconds over its roughly 5,095-second stage with a two-job compile cap. These support separating compilation, download/configuration and compression when choosing offerings, but **do not prove performance on a smaller instance**. Will selected a 4-GiB build trial next, with 8 GiB as a comparison/fallback; a separate KVM-capable validation runner still needs measured sizing. Cgroup memory peaks include substantial file cache and cannot alone establish minimum host RAM. No-change discovery latency and publication costs have not been measured in this spike.
 
 
 ### Warm visual validation complete
@@ -387,7 +408,7 @@ Final EC2 API verification confirmed both `i-09ed2b15f19ac5b71` and `i-0dbf1f3df
 
 ## CPU and memory optimization review — 2026-11-15
 
-These are source-backed candidates, not implemented changes or measured savings. Historical cost simulation must use the measured current process until a candidate has its own benchmark. Keep activity JSON, measurement JSON and scenario assumptions separate so projections can be regenerated.
+The table records the baseline evidence and validation requirements. Package caching, bounded compiler caching, compression limits and ISO changes are implemented with container-level checks; full optimized-build and boot validation remain for 2026-11-16. No optimization saving is included in the cost baseline before measurement. Keep activity JSON, measurement JSON and scenario assumptions separate so projections can be regenerated.
 
 | Priority | Change | Evidence in the current process | Expected benefit and validation |
 |---|---|---|---|
@@ -395,12 +416,27 @@ These are source-backed candidates, not implemented changes or measured savings.
 | 2 | Prevent unwanted desktop applications from entering the chroot | `--apt-recommends true` plus `kubuntu-desktop` brings applications that hook 0020 purges, including LibreOffice and KDE PIM; Anvil also removes camera applications | Avoid downloading, unpacking, configuring and removing these applications, reducing transient disk and CPU work. Start with narrowly scoped exclusions for packages currently purged; check APT's proposed solution and preserve required KDE/QML modules, firmware and installer components. Do not indiscriminately disable all recommended packages. |
 | 3 | Select verified local packages during initial dependency installation | Hook 0030 installs the edition from published APT; hook 1000 later reinstalls selected local files | Avoid duplicate installations and package triggers. Prepare a build-local repository before resolving edition dependencies, without live-build's broken interactive key generation. Preserve exact hashes, edition filtering, default rejection of older candidates and explicit spike-only downgrade policy. Compare package inventories and boot behavior. |
 | 4 | Cache the ISO tool container | `build-iso.sh` starts a disposable plain `ubuntu:26.04` container, then installs live-build, xorriso, GRUB, mtools and other tools on every run | Build a pinned tool image and rebuild it when tool/base inputs change. This saves repeated setup, without caching an indefinitely stale final desktop filesystem. Retain authenticated repository freshness checks and track tool image provenance. |
-| 5 | Consolidate customization-triggered initramfs generation | Hook 1050 runs `update-initramfs -u -k all`; hook 1100 modifies Casper and then runs `update-initramfs -u` again | Keep all customizations before one final required generation. Do not suppress the final Casper/autologin/network rebuild or assume package-maintainer triggers can simply be disabled. Inspect generated initramfs contents and boot both desktop and installer. Exact saved duration needs instrumentation. |
+| 5 | Consolidate customization-triggered initramfs generation | Both cold and warm ISO logs contain six `update-initramfs: Generating` entries. Hook 1050 runs `update-initramfs -u -k all`; hook 1100 modifies Casper and then runs `update-initramfs -u` again | Keep all customizations before one final required generation. Do not suppress the final Casper/autologin/network rebuild or assume package-maintainer triggers can simply be disabled. Inspect generated initramfs contents and boot both desktop and installer. Exact saved duration needs instrumentation. |
 | 6 | Add bounded compiler caching for changed-source rebuilds | No explicit ccache/sccache configuration or mounted compiler cache exists in the spike build runner; large C/C++ recipes build in temporary directories | Reuse matching translation units across upstream versions while compiling changed inputs. Stabilize source paths and retain compiler/flag identity; measure cache hits and CPU-seconds across a real version update. C++ module handling, especially RPCS3, needs validation. Bound cache size and evict unused entries; keep useful cross-version results rather than entire obsolete build trees. |
 | 7 | Benchmark compression settings and memory limits | Warm `mksquashfs` used roughly four CPU cores; RPCS3's source archive explicitly uses `xz -6 -T0`, independently of the two-job compile cap | Compare current output with supported compressor/level/thread settings, recording CPU-seconds, peak anonymous memory, wall time, ISO bytes, boot compatibility and transfer/storage cost. A faster but larger image may cost more to publish. Thread limits can reduce memory while increasing runtime; no saving is assumed. |
-| 8 | Size compile, ISO and validation stages separately | Compilation was capped at two jobs on a four-vCPU host, while compression saturated all four; 4-GiB guest validation ran after builds | Trial an 8-GiB host with controlled build/compressor parallelism and retain a KVM-capable validation environment. Keep stages sequential when sharing a small host. Do not infer minimum RAM from cgroup peaks dominated by file cache, or assume a smaller machine is cheaper per completed build. |
+| 8 | Size compile, ISO and validation stages separately | Compilation was capped at two jobs on a four-vCPU host, while compression saturated all four; 4-GiB guest validation ran after builds | Trial a 4-GiB build host next, with 8 GiB as a comparison/fallback and controlled build/compressor parallelism and retain a KVM-capable validation environment. Keep stages sequential when sharing a small host. Do not infer minimum RAM from cgroup peaks dominated by file cache, or assume a smaller machine is cheaper per completed build. |
 
 Compiler cache behavior and configuration are documented in the [ccache manual](https://ccache.dev/manual/latest.html); thread and memory-limit tradeoffs are documented in the [XZ manual](https://tukaani.org/xz/man/xz.1.html). These explain available mechanisms, not performance measured on this repository.
+
+### Implementation and remaining proof
+
+- [x] Per-recipe cache receipts include recipe/builder/dependency inputs and complete binary/source hashes; seven fixture cases and a real `foundry-core` build followed by a verified cache hit passed in containers.
+- [x] Bounded 2-GB compiler cache and two-job build/compression controls prepared. A two-compilation fixture produced a direct cache hit across temporary directories. RPCS3 compiler caching stays disabled pending C++ module validation.
+- [x] RPCS3 XZ thread/memory controls passed a 64-MiB byte-equivalence fixture; the actual pinned source archive still needs verification in the full run.
+- [x] Full signed-repository APT simulation for Kubuntu + Anvil passed with exclusions, preserving required Kig and Kirigami/QML packages. Kig is also preserved by the cleanup hook. Atelier and full built-ISO inventories remain pending.
+- [x] Cached ISO tools image built; local APT fixtures verify same-version local selection, default rejection of older packages, explicit benchmark override and payload metadata checks. Bounded SquashFS roundtrip passed.
+- [x] Combined GRUB/EFI edit passed a tiny synthetic ISO test after explicitly preserving existing boot entries; this checks BIOS and EFI catalog entries and menu content, not actual firmware boot.
+- [x] Custom initramfs passes consolidated so the final Casper/autologin customization updates all kernels; full initramfs/boot validation remains pending.
+- [x] Cost simulator passes 12 offline tests, including stage-specific pricing, source-upload accounting, event coalescing, retention and calendar-month allowances.
+- [ ] Validate the complete optimized ISO dependency solution, final initramfs, inventory, desktop and installer together; isolated container checks do not establish a full ISO pass.
+- [ ] On 2026-11-16, measure the optimized full pipeline on 4 GiB, with 8 GiB as fallback/comparison, and replace runtime assumptions in the saved scenarios. No run is automatically scheduled.
+
+Persistent APT downloads are retained; no generic source-download cache was added. No full optimized build, 4-GiB success, compiler-cache benefit across an actual upstream update, or production publication is claimed yet.
 
 ### Benchmark and projection workflow
 

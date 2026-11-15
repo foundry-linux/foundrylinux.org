@@ -1,68 +1,8 @@
 #!/bin/bash
-# Install .deb files dropped into /tmp/local-debs/ by the build script.
-# Local builds take precedence even when the repository has the same version.
-# We use this instead of config/packages.chroot/ to avoid lb's local signed-repo
-# path, which calls "gpg --batch --gen-key" inside the chroot — broken in
-# gnupg 2.4+ containers where agent_genkey fails without a controlling TTY.
-#
-# Safety: only install debs whose Package field is in the dependency closure of
-# the target edition metapackage (foundry-${EDITION}).  This prevents upper-tier
-# packages staged for atelier/sprite from contaminating an anvil build if they
-# were left in local-debs/ by mistake.
+# Local candidates now enter the initial edition installation. Verify the exact
+# selected payload metadata instead of reinstalling every package and rerunning
+# its triggers. The later cleanup hook removes the build-local repository.
 set -euo pipefail
-
-source /root/config/hook-env.sh   # sets $EDITION
-
-if ! ls /tmp/local-debs/*.deb &>/dev/null 2>&1; then
-    exit 0
+if [[ -f /opt/foundry-local-apt/manifest.json ]]; then
+    python3 /opt/foundry-local-apt/verify.py --verify
 fi
-
-echo "=== Installing local debs (EDITION=${EDITION}) ==="
-
-# Build the full recursive dep closure of the edition metapackage.
-# apt-cache depends --recurse prints all transitive Depends.
-closure=$(apt-cache depends --recurse --no-recommends --no-suggests \
-              --no-conflicts --no-breaks --no-replaces --no-enhances \
-              "foundry-${EDITION}" 2>/dev/null \
-          | grep '^\w' | sort -u || true)
-
-installed=()
-skipped=()
-for deb in /tmp/local-debs/*.deb; do
-    pkg=$(dpkg-deb --field "$deb" Package)
-    version=$(dpkg-deb --field "$deb" Version)
-    current=$(dpkg-query -W -f='${Version}' "$pkg" 2>/dev/null || true)
-    if [[ "${FOUNDRY_ALLOW_OLDER_LOCAL:-0}" != 1 && -n "$current" ]] \
-       && dpkg --compare-versions "$version" lt "$current"; then
-        echo "  Skipping older local build: $pkg ($version < installed $current)"
-        continue
-    fi
-    # Always install: the edition metapackage itself and calamares-settings
-    # (installer config is always needed regardless of dep closure).
-    if [[ "$pkg" == "foundry-${EDITION}" ]] \
-       || [[ "$pkg" == calamares-settings-* ]] \
-       || echo "$closure" | grep -qx "$pkg"; then
-        installed+=("$deb")
-    else
-        skipped+=("$pkg")
-    fi
-done
-
-if [[ ${#skipped[@]} -gt 0 ]]; then
-    echo "  Skipping (not in foundry-${EDITION} closure): ${skipped[*]}"
-fi
-
-if [[ ${#installed[@]} -gt 0 ]]; then
-    # Local builds may replace same-version published files. Reinstall explicitly.
-    # Differing conffiles would otherwise prompt and halt an unattended build.
-    # Force the package (new) version — these are all our own packages, so our
-    # shipped conffile is always the one we want.
-    extra_options=()
-    [[ "${FOUNDRY_ALLOW_OLDER_LOCAL:-0}" != 1 ]] || extra_options+=(--allow-downgrades)
-    apt-get install -y --reinstall "${extra_options[@]}" \
-        -o Dpkg::Options::=--force-confdef \
-        -o Dpkg::Options::=--force-confnew \
-        "${installed[@]}"
-fi
-
-rm -rf /tmp/local-debs

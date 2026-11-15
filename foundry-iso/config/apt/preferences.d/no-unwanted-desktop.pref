@@ -1,0 +1,6 @@
+# These applications are already removed by hook 0020. Prevent recommended
+# applications from being downloaded/configured before they are purged.
+# Do not broaden this to KDE libraries, QML modules, Breeze or firmware.
+Package: libreoffice-* kontact kmail akonadi-* kdepim-* kaddressbook kalarm kjots knotes korganizer merkuro-calendar kalgebra kgeography kbruch plasma-workspace-wallpapers plasma-welcome
+Pin: release *
+Pin-Priority: -1

@@ -26,13 +26,28 @@ if [[ -z "${_FOUNDRY_SG_REEXEC:-}" ]] \
    && ! docker info >/dev/null 2>&1 \
    && getent group docker | grep -qw "${USER:-$(id -un)}"; then
   echo "=== docker group not active in this shell; activating via sg for this run ==="
-  exec sg docker -c "_FOUNDRY_SG_REEXEC=1 EDITION=$(printf %q "$EDITION") bash $(printf %q "$0")"
+  reexec_env=("_FOUNDRY_SG_REEXEC=1" "EDITION=$EDITION")
+  for option in FOUNDRY_ISO_TOOLS_IMAGE FOUNDRY_ISO_TOOLS_REVISION FOUNDRY_ISO_THREADS FOUNDRY_ISO_MEMORY_MIB FOUNDRY_ALLOW_OLDER_LOCAL; do
+    [[ ! -v "$option" ]] || reexec_env+=("$option=${!option}")
+  done
+  printf -v reexec_command '%q ' env "${reexec_env[@]}" bash "$0"
+  exec sg docker -c "$reexec_command"
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ISO_VERSION="$(cat "$SCRIPT_DIR/../VERSION")"
 DIST_DIR="$REPO_ROOT/dist"
+ISO_TOOLS_IMAGE="${FOUNDRY_ISO_TOOLS_IMAGE:-foundry-iso-tools:local}"
+# The pinned Dockerfile layer is reused until its digest/revision changes.
+# Set this revision when deliberately refreshing APT toolchain packages.
+ISO_TOOLS_REVISION="${FOUNDRY_ISO_TOOLS_REVISION:-2026-11-15}"
+ISO_THREADS="${FOUNDRY_ISO_THREADS:-2}"
+ISO_MEMORY_MIB="${FOUNDRY_ISO_MEMORY_MIB:-512}"
+[[ "$ISO_THREADS" =~ ^[1-9][0-9]*$ && "$ISO_MEMORY_MIB" =~ ^[1-9][0-9]*$ ]] || {
+  echo "ERROR: FOUNDRY_ISO_THREADS and FOUNDRY_ISO_MEMORY_MIB must be positive integers" >&2
+  exit 1
+}
 
 # A disconnected or failed external drive can return as read-only after an I/O
 # error. Stop before Docker or live-build modifies the workspace.
@@ -54,6 +69,11 @@ if [[ "$(id -u)" != 0 ]] \
     FOUNDRY_HOST_UID="$(id -u)" \
     FOUNDRY_HOST_GID="$(id -g)" \
     EDITION="$EDITION" \
+    FOUNDRY_ISO_TOOLS_IMAGE="$ISO_TOOLS_IMAGE" \
+    FOUNDRY_ISO_TOOLS_REVISION="$ISO_TOOLS_REVISION" \
+    FOUNDRY_ISO_THREADS="$ISO_THREADS" \
+    FOUNDRY_ISO_MEMORY_MIB="$ISO_MEMORY_MIB" \
+    FOUNDRY_ALLOW_OLDER_LOCAL="${FOUNDRY_ALLOW_OLDER_LOCAL:-0}" \
     /bin/bash "$SCRIPT_DIR/build-iso.sh"
 fi
 
@@ -79,7 +99,12 @@ if [[ ",$MOUNT_OPTIONS," == *,nodev,* ]]; then
   exit 1
 fi
 
+docker build --pull=false --build-arg "TOOLCHAIN_REVISION=$ISO_TOOLS_REVISION" \
+  -t "$ISO_TOOLS_IMAGE" -f "$REPO_ROOT/docker/iso-builder.Dockerfile" "$REPO_ROOT/docker"
+ISO_TOOLS_ID=$(docker image inspect --format '{{.Id}}' "$ISO_TOOLS_IMAGE")
 mkdir -p "$DIST_DIR"
+docker image inspect "$ISO_TOOLS_ID" > "$DIST_DIR/iso-builder-image.json"
+printf 'threads=%s\nmemory_mib=%s\n' "$ISO_THREADS" "$ISO_MEMORY_MIB" > "$DIST_DIR/iso-compression-settings.txt"
 
 # Prune old local ISOs for this edition before building to prevent disk exhaustion.
 # Keeps build logs (tiny); removes ISO + sidecars (.sha256 .asc .torrent) only.
@@ -95,11 +120,8 @@ find "$DIST_DIR" -maxdepth 1 \( \
 # and leaves root-owned files in config/ (and dist/). Chown them back to the invoking
 # user on exit -- success OR failure -- so later edits and git work without sudo. A
 # tiny root container does the chown since the host user cannot chown files it does not
-# own. GRUB_PATCH (a host tmp file set later) is cleaned here too, so this one EXIT
-# trap covers both (bash has a single EXIT slot).
-GRUB_PATCH=""
+# own. All temporary bootloader files live inside the disposable build container.
 _cleanup() {
-  [[ -n "$GRUB_PATCH" ]] && rm -f "$GRUB_PATCH"
   # In rootless Docker, container UID 0 maps to the invoking host user.
   # Chowning to the host UID inside that container instead maps files to a
   # subordinate host UID and makes subsequent builds unable to update keys.
@@ -107,7 +129,7 @@ _cleanup() {
   if docker info --format '{{.SecurityOptions}}' 2>/dev/null | grep -q rootless; then
     owner="0:0"
   fi
-  docker run --rm -v "$REPO_ROOT:/work" ubuntu:26.04 \
+  docker run --rm -v "$REPO_ROOT:/work" "$ISO_TOOLS_ID" \
     chown -R "$owner" /work/config /work/dist >/dev/null 2>&1 || true
 }
 trap _cleanup EXIT
@@ -130,26 +152,24 @@ fetch_key https://dl.cloudsmith.io/public/task/task/gpg.046FD1186CA342F0.key "$R
 # keys in trusted.gpg.d/, and live-build copies config/archives/*.key verbatim.
 fetch_key https://packages.mozilla.org/apt/repo-signing-key.gpg              "$REPO_ROOT/config/archives/mozilla.key"
 
-echo "=== Building foundry-${EDITION} ISO (inside ubuntu:26.04 container) ==="
+echo "=== Building foundry-${EDITION} ISO (tools $ISO_TOOLS_ID) ==="
 docker run --rm \
   --privileged \
   --network host \
   -e EDITION="$EDITION" \
   -e ISO_VERSION="$ISO_VERSION" \
+  -e FOUNDRY_ALLOW_OLDER_LOCAL="${FOUNDRY_ALLOW_OLDER_LOCAL:-0}" \
+  -e MKSQUASHFS_OPTIONS="-processors $ISO_THREADS -mem ${ISO_MEMORY_MIB}M" \
   -v "$REPO_ROOT:/work" \
   -w /work \
-  ubuntu:26.04 \
+  "$ISO_TOOLS_ID" \
   bash -c '
     set -euo pipefail
     if [[ ",$(findmnt -no OPTIONS -T /work)," == *,nodev,* ]]; then
       echo "ERROR: Docker still sees /work as nodev; live-build cannot use /dev in the chroot" >&2
       exit 1
     fi
-    apt-get update -qq -o APT::Update::Error-Mode=any
-    apt-get install -y --no-install-recommends \
-      live-build curl gpg apt-utils ca-certificates \
-      xorriso genisoimage isolinux grub-efi-amd64-bin grub-pc-bin mtools dosfstools \
-      e2fsprogs
+    cp /usr/local/share/foundry-iso-toolchain.tsv /work/dist/iso-toolchain.tsv
     cp /work/scripts/genisoimage-wrapper.sh /usr/local/bin/genisoimage
     chmod +x /usr/local/bin/genisoimage
     # Wipe sentinels + chroot so every run starts clean.  live-build sets chattr +i
@@ -161,39 +181,9 @@ docker run --rm \
     rm -f .lock
     rm -rf config/includes.chroot/tmp
     bash config/auto/config
-    # Inject local .debs (built but not yet published to apt.foundrylinux.org)
-    # via config/includes.chroot/ rather than config/packages.chroot/:
-    # packages.chroot/ triggers the lb local signed-repo code, which calls
-    # "gpg --batch --gen-key" inside the chroot - broken in gnupg 2.4+ containers
-    # (agent_genkey fails with "Inappropriate ioctl" and --secret-keyring is
-    # obsolete).  includes.chroot/ copies files verbatim; a hook installs them.
-    mkdir -p config/includes.chroot/tmp/local-debs
-    if ls /work/local-debs/*.deb &>/dev/null; then
-      # Deduplicate: for each package name keep only the newest version.
-      # local-debs/ can accumulate stale builds; blindly copying all would
-      # install an old version when a newer one is also present.
-      declare -A _latest_deb
-      for _deb in /work/local-debs/*.deb; do
-        _pkg=$(dpkg-deb --field "$_deb" Package)
-        _ver=$(dpkg-deb --field "$_deb" Version)
-        if [[ -n "${_latest_deb[$_pkg]+x}" ]]; then
-          _cur=$(dpkg-deb --field "${_latest_deb[$_pkg]}" Version)
-          dpkg --compare-versions "$_ver" gt "$_cur" && _latest_deb[$_pkg]="$_deb"
-        else
-          _latest_deb[$_pkg]="$_deb"
-        fi
-      done
-      # Prefer available local builds, including same-version rebuilds. Version
-      # equality does not establish identical contents. The install hook filters
-      # these candidates to the target edition dependency closure.
-      for _deb in "${_latest_deb[@]}"; do
-        _pkg=$(dpkg-deb --field "$_deb" Package)
-        _ver=$(dpkg-deb --field "$_deb" Version)
-        echo "  staging local build: $(basename "$_deb")"
-        cp "$_deb" config/includes.chroot/tmp/local-debs/
-      done
-      unset _latest_deb _deb _pkg _ver _cur
-    fi
+    # Local packages are indexed before the initial edition installation, rather
+    # than installed a second time from an includes.chroot payload.
+    : > config/package-lists/local-builds.list.chroot
     # Patch bootstrap cache DNS before lb bootstrap runs, but ONLY when the cache
     # actually contains a real Ubuntu base system.  lb_bootstrap_cache restore checks
     # `if [ -d cache/bootstrap ]` — if we unconditionally create that directory (even
@@ -228,10 +218,25 @@ docker run --rm \
     # seen by apt during package installation and snapd enters the chroot.
     mkdir -p chroot/etc/apt/preferences.d/
     cp config/apt/preferences.d/*.pref chroot/etc/apt/preferences.d/
+    if [[ -f "config/apt/exclusions/$EDITION.pref" ]]; then
+      cp "config/apt/exclusions/$EDITION.pref" chroot/etc/apt/preferences.d/foundry-edition-exclusions.pref
+    fi
     # Pre-install gnupg so apt-utils postinst finds gpg during lb_chroot_archives.
     # Debootstrap minbase does not include gpg; lb_chroot_archives installs apt-utils
     # whose postinst calls gpg and exits non-zero if not found, aborting the build.
     chroot chroot apt-get install -y --no-install-recommends gnupg
+    if compgen -G "/work/local-debs/*.deb" >/dev/null; then
+      mkdir -p chroot/etc/apt/sources.list.d/
+      for archive in config/archives/*.list.chroot; do
+        cp "$archive" "chroot/etc/apt/sources.list.d/$(basename "$archive" .list.chroot).list"
+      done
+      chroot chroot apt-get update -o APT::Update::Error-Mode=any
+      local_options=()
+      [[ "$FOUNDRY_ALLOW_OLDER_LOCAL" != 1 ]] || local_options+=(--allow-older)
+      python3 scripts/prepare-local-apt.py --root chroot --archives /work/local-debs \
+        --edition "$EDITION" --package-list config/package-lists/local-builds.list.chroot \
+        "${local_options[@]}"
+    fi
     # Stage 2
     lb chroot
 
@@ -321,10 +326,18 @@ GCFG
     mmd -i "$EFI_IMG" ::/EFI ::/EFI/BOOT
     mcopy -i "$EFI_IMG" "$EFI_WORK/EFI/BOOT/BOOTX64.EFI" ::/EFI/BOOT/BOOTX64.EFI
 
-    echo "=== Injecting EFI partition into ISO ==="
+    echo "=== Preparing Foundry boot menu ==="
+    GRUB_PATCH="$EFI_WORK/boot-menu.cfg"
+    xorriso -osirrox on -dev binary.hybrid.iso -extract /boot/grub/grub.cfg "$GRUB_PATCH"
+    chmod +w "$GRUB_PATCH"
+    python3 /work/scripts/patch-grub.py "$GRUB_PATCH"
+
+    echo "=== Injecting EFI partition and boot menu into ISO ==="
     xorriso \
       -dev binary.hybrid.iso \
+      -boot_image any replay \
       -map "$EFI_IMG" /boot/grub/efi.img \
+      -map "$GRUB_PATCH" /boot/grub/grub.cfg \
       -boot_image any next \
       -boot_image any bin_path=/boot/grub/efi.img \
       -boot_image any platform_id=0xef \
@@ -336,60 +349,8 @@ GCFG
     chmod a+rw binary.hybrid.iso
   '
 
-# Patch grub.cfg on the host (avoids bash -c single-quote escaping issues).
-# -boot_image any keep preserves El Torito entries from the EFI injection above.
 ISO_SRC="$REPO_ROOT/binary.hybrid.iso"
 ISO_DST="$DIST_DIR/foundry-${EDITION}-${ISO_VERSION}-amd64.iso"
-GRUB_PATCH="/tmp/foundry-grub-$$.cfg"   # cleaned by _cleanup (single EXIT trap above)
-echo "=== Patching grub.cfg ==="
-xorriso -osirrox on -dev "$ISO_SRC" -extract /boot/grub/grub.cfg "$GRUB_PATCH"
-chmod +w "$GRUB_PATCH"
-sed -i 's/^set default=0$/set default=0\nset timeout=5\nset gfxmode=auto\nset gfxpayload=keep/' "$GRUB_PATCH"
-# Rename boot entries from live-build's generic "Debian GNU/Linux" labels.
-# The full menuentry line is: menuentry "Debian GNU/Linux - live" {
-# so match the quoted title including surrounding quotes, not just the title.
-sed -i 's/menuentry "Debian GNU\/Linux - live" {/menuentry "Foundry Linux - Live" {/' "$GRUB_PATCH"
-sed -i 's/menuentry "Debian GNU\/Linux - live (fail-safe mode)" {/menuentry "Foundry Linux - Live (safe mode)" {/' "$GRUB_PATCH"
-sed -i 's/menuentry "Debian GNU\/Linux - live, kernel/menuentry "Foundry Linux - Live, kernel/' "$GRUB_PATCH"
-# Insert "Install Foundry Linux" entry immediately after the first menuentry
-# block, reusing its linux/initrd lines with automatic-calamares appended.
-# Note: live-build uses tabs (not spaces) between linux/initrd and their args,
-# so the regex must use \s+ not ' +' to match whitespace.
-python3 - "$GRUB_PATCH" <<'PYEOF'
-import sys, re
-path = sys.argv[1]
-with open(path) as f:
-    content = f.read()
-linux_match  = re.search(r'^(linux\s+.+)$',  content, re.MULTILINE)
-initrd_match = re.search(r'^(initrd\s+.+)$', content, re.MULTILINE)
-if not linux_match or not initrd_match:
-    print('ERROR: could not find linux/initrd lines in grub.cfg', file=sys.stderr)
-    sys.exit(1)
-linux_line  = linux_match.group(1)
-initrd_line = initrd_match.group(1)
-install_entry = (
-    '\nmenuentry "Install Foundry Linux" {\n'
-    f'{linux_line} automatic-calamares\n'
-    f'{initrd_line}\n'
-    '}\n'
-)
-# Inject after the closing brace of the first menuentry block.
-idx = content.index('\n}') + 2
-content = content[:idx] + install_entry + content[idx:]
-with open(path, 'w') as f:
-    f.write(content)
-print('Injected Install Foundry Linux GRUB entry')
-PYEOF
-# Strip live-build's default tga background lines — tga.mod is absent from the
-# EFI grub image, causing "file not found" noise on every boot.
-sed -i '/^insmod tga$/d' "$GRUB_PATCH"
-sed -i '/^background_image /d' "$GRUB_PATCH"
-xorriso -dev "$ISO_SRC" \
-  -map "$GRUB_PATCH" /boot/grub/grub.cfg \
-  -boot_image any keep \
-  -commit
-rm -f "$GRUB_PATCH"
-echo "=== grub.cfg patched ==="
 
 if [[ -f "$ISO_SRC" ]]; then
   mv "$ISO_SRC" "$ISO_DST"

@@ -260,3 +260,7 @@ Daily Foundry runner — proposed configuration
 Reference: [systemd timer documentation](https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html) describes calendar scheduling and `Persistent=true` catch-up. The historical [daily APT audit plan](2026-06-13-audit-apt-repos-scheduled-daily-snapshots.md) uses Actions; this plan supersedes that scheduling approach for this work.
 
 AI assistance: Codex CLI 0.169.0; model gpt-6-astra; reasoning effort medium, verified from session metadata.
+
+## Activity-based budget update — 2026-11-15
+
+The [30-day replay and reusable simulator](2026-11-15-daily-build-cost-history.md) replace the earlier four-hour sensitivity assumption with measured timing proxies and observed upstream/repository events. Budget $25.58 for the first 30 daily runs, or $26.62 with full artifact retention, before account-wide free allowances and excluded ancillary costs. A successful 4-GiB build trial at unchanged runtime would save $1.20 per 30 days; runtime and transition costs still need measurement. Next trial is deferred to 2026-11-16, not automatically scheduled.
