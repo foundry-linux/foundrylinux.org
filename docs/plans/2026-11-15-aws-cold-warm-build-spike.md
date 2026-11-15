@@ -85,7 +85,17 @@ Pass immutable artifacts with checksums and input fingerprints between stages. K
 
 Use a configurable On-Demand measurement runner in Mumbai. Start with **m7i.xlarge: 4 vCPUs, 16 GiB RAM** as a provisional cold/warm baseline, with nested virtualization enabled and 300 GB encrypted gp3. Record this choice in both receipts; increase memory only if measured failures require it, and restart the comparison if hardware changes between A and B. The earlier m7i.2xlarge estimates below remain a labelled reference, not a selected permanent size. Use an Ubuntu 26.04 host image validated at provisioning, with builds in the established Ubuntu-compatible container stacks. Record AMI ID and instance/AZ identifiers. Verify `/dev/kvm` and a nested VM before doing the expensive build.
 
-Use 40 GB root + 260 GB build/cache as an initial split. Mount the latter at `/srv/foundry-build` by filesystem UUID. Set **DeleteOnTermination=false on both volumes**, tag them with the spike/run owner, and make the stop/cleanup workflow explicitly retain them. Stop the instance between and after runs; do not terminate it, run `terraform destroy`, prune caches, or delete the volumes. Disk retention is intentional and billed until a later decision.
+The diagnostic allocation was an unmeasured capacity allowance, not a calculated cache requirement. Do not carry 300 GB into the daily design or automatically duplicate it for cold proof. Measure peak filesystem usage through the diagnostic package and ISO stages, then choose fresh-proof capacity with explicit headroom. Separate transient source/build trees and ISO work space from useful reusable downloads/toolchains. Superseded build outputs are not permanent caches; the paired experiment's unchanged-output reuse does not justify retaining obsolete outputs in production.
+
+| Diagnostic allocation | Provisioned capacity | Observed usage at 12:55 Bangkok | Basis |
+|---|---:|---:|---|
+| OS/root | 40 GiB | 2.8 GiB | Initial allowance, not measured sizing |
+| Build workspace and caches | 260 GiB | 7.4 GiB | Initial allowance, not a component estimate |
+| Total | 300 GiB | About 10.2 GiB | Build is incomplete; these are not peak requirements |
+
+AWS bills provisioned capacity, including unused space. Record peak used bytes separately from capacity, filesystem reserve and available bytes. Retain the current experimental disks as requested; select production cache retention and capacity from measured reusable content, rather than all generated data.
+
+The existing diagnostic runner uses 40 GB root + 260 GB build/cache. Mount the latter at `/srv/foundry-build` by filesystem UUID. Set **DeleteOnTermination=false on both volumes**, tag them with the spike/run owner, and make the stop/cleanup workflow explicitly retain them. Stop the instance between and after runs; do not terminate it, run `terraform destroy`, prune caches, or delete the volumes. Disk retention is intentional and billed until a later decision.
 
 ```mermaid
 flowchart TB

@@ -8,6 +8,7 @@ import argparse
 import datetime
 import json
 import pathlib
+import os
 import time
 
 p = argparse.ArgumentParser()
@@ -28,6 +29,13 @@ with a.output.open("a", buffering=1) as output:
         started = time.monotonic()
         sample = {"utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                   "monotonic_ns": time.monotonic_ns(), "containers": {}}
+        sample["filesystems"] = {}
+        for mount in ["/", "/srv/foundry-build"]:
+            if pathlib.Path(mount).exists():
+                fs = os.statvfs(mount)
+                sample["filesystems"][mount] = {"total_bytes": fs.f_blocks * fs.f_frsize,
+                    "used_bytes": (fs.f_blocks - fs.f_bfree) * fs.f_frsize,
+                    "available_bytes": fs.f_bavail * fs.f_frsize}
         for name in ["stat", "meminfo", "diskstats", "net/dev"]:
             sample[name] = read(pathlib.Path("/proc") / name)
         for group in pathlib.Path("/sys/fs/cgroup/system.slice").glob("docker-*.scope"):

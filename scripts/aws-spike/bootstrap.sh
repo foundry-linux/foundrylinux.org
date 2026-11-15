@@ -3,6 +3,7 @@
 set -Eeuo pipefail
 exec > >(tee /var/log/foundry-spike-bootstrap.log) 2>&1
 trap 'r=$?; if ((r)); then shutdown -h +2 "Foundry bootstrap failed; disks retained"; fi' EXIT
+source /opt/foundry-spike/config.sh
 export DEBIAN_FRONTEND=noninteractive
 date -u +%FT%TZ > /opt/foundry-spike/bootstrap-started-at
 # Start before dependency downloads; retain bootstrap counters on the root disk.
@@ -10,13 +11,13 @@ python3 /opt/foundry-spike/observe.py --output /opt/foundry-spike/bootstrap-metr
 bootstrap_monitor=$!
 apt-get update
 apt-get install -y --no-install-recommends ca-certificates curl docker.io git jq ovmf python3 rsync sysstat time xorriso qemu-system-x86 squashfs-tools
-# Select only the new, empty 260-GiB EBS device. Never format by guessed NVMe order.
+# Select only the new, empty configured EBS device. Never format by guessed NVMe order.
 device=$(lsblk -J -b -o PATH,TYPE,SIZE,FSTYPE,MOUNTPOINTS | python3 -c '
 import json,sys
-ds=[d for d in json.load(sys.stdin)["blockdevices"] if d["type"]=="disk" and d["size"]==260*1024**3 and not d.get("children") and not d.get("fstype") and not any(d.get("mountpoints") or [])]
-assert len(ds)==1, "Expected exactly one new empty 260-GiB disk"
+ds=[d for d in json.load(sys.stdin)["blockdevices"] if d["type"]=="disk" and d["size"]==int(sys.argv[1])*1024**3 and not d.get("children") and not d.get("fstype") and not any(d.get("mountpoints") or [])]
+assert len(ds)==1, "Expected exactly one new empty disk matching BUILD_GIB"
 print(ds[0]["path"])
-')
+' "$BUILD_GIB")
 mkfs.ext4 -L foundry-spike-cache "$device"
 mkdir -p /srv/foundry-build
 uuid=$(blkid -s UUID -o value "$device")

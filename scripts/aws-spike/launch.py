@@ -24,8 +24,12 @@ parser.add_argument("--vpc", required=True)
 parser.add_argument("--ami", required=True)
 parser.add_argument("--stacks-repo", type=pathlib.Path, required=True)
 parser.add_argument("--instance-type", default="m7i.xlarge")
+parser.add_argument("--root-gib", type=int, required=True)
+parser.add_argument("--build-gib", type=int, required=True)
 parser.add_argument("--prepare-only", action="store_true")
 args = parser.parse_args()
+if args.root_gib < 8 or args.build_gib < 8 or args.root_gib == args.build_gib:
+    parser.error("Use distinct root/build capacities of at least 8 GiB for unambiguous device selection")
 region = "ap-south-1"
 root = pathlib.Path(__file__).resolve().parents[2]
 now = dt.datetime.now(dt.timezone.utc)
@@ -62,7 +66,7 @@ stacks_commit = git(args.stacks_repo, "rev-parse", "HEAD").decode().strip()
 files = {
     "run.sh": (root / "scripts/aws-spike/run.sh").read_bytes(),
     "bootstrap.sh": (root / "scripts/aws-spike/bootstrap.sh").read_bytes(),
-    "config.sh": f"SOURCE_COMMIT={source_commit}\n".encode(),
+    "config.sh": f"SOURCE_COMMIT={source_commit}\nBUILD_GIB={args.build_gib}\n".encode(),
     "stacks-source.txt": f"{stacks_commit}\n".encode(),
 }
 for filename in ["stacks/stacks.lock.json", "stacks/stack-base-ubuntu/Dockerfile",
@@ -90,7 +94,8 @@ bash /opt/foundry-spike/bootstrap.sh
 """.encode())
 assert len(userdata) <= 16384, "EC2 user-data exceeds its size limit"
 state.update(source_commit=source_commit, stacks_commit=stacks_commit,
-             instance_type=args.instance_type, ami=args.ami, subnet=args.subnet)
+             instance_type=args.instance_type, ami=args.ami, subnet=args.subnet,
+             root_gib=args.root_gib, build_gib=args.build_gib)
 if args.prepare_only:
     print(json.dumps({**state, "compressed_userdata_bytes": len(userdata)}, indent=2))
     raise SystemExit(0)
@@ -124,9 +129,9 @@ try:
         CpuOptions={"NestedVirtualization": "enabled"},
         MetadataOptions={"HttpTokens": "required", "HttpEndpoint": "enabled", "HttpPutResponseHopLimit": 1},
         InstanceInitiatedShutdownBehavior="stop", UserData=base64.b64encode(userdata).decode(),
-        BlockDeviceMappings=[{"DeviceName": "/dev/sda1", "Ebs": {"VolumeSize": 40,
+        BlockDeviceMappings=[{"DeviceName": "/dev/sda1", "Ebs": {"VolumeSize": args.root_gib,
             "VolumeType": "gp3", "Encrypted": True, "DeleteOnTermination": False}},
-            {"DeviceName": "/dev/sdf", "Ebs": {"VolumeSize": 260, "VolumeType": "gp3",
+            {"DeviceName": "/dev/sdf", "Ebs": {"VolumeSize": args.build_gib, "VolumeType": "gp3",
              "Encrypted": True, "DeleteOnTermination": False}}],
         TagSpecifications=[{"ResourceType": kind, "Tags": [{"Key": "Name", "Value": name},
             {"Key": "Project", "Value": "foundry-spike"}, {"Key": "Retention", "Value": "keep-for-warm-run"}]}
