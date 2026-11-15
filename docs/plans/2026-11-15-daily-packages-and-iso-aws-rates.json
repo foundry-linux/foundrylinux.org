@@ -1,0 +1,93 @@
+{
+  "checked": "2026-11-15",
+  "region": "ap-south-1",
+  "ec2_catalog_publication": "2026-11-14T01:29:26Z",
+  "sources": {
+    "ec2": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-south-1/index.csv",
+    "transfer": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSDataTransfer/current/index.csv"
+  },
+  "ec2_rates": [
+    {
+      "SKU": "AKQDZ544ZV5R8ZGE",
+      "Instance Type": "c7i.2xlarge",
+      "vCPU": "8",
+      "Memory": "16 GiB",
+      "usageType": "APS3-BoxUsage:c7i.2xlarge",
+      "PriceDescription": "$0.357 per On Demand Linux c7i.2xlarge Instance Hour",
+      "Unit": "Hrs",
+      "PricePerUnit": "0.3570000000",
+      "StartingRange": "0",
+      "EndingRange": "Inf"
+    },
+    {
+      "SKU": "D7RMW443YWTMZ4V5",
+      "Instance Type": "",
+      "vCPU": "",
+      "Memory": "",
+      "usageType": "APS3-EBS:VolumeUsage.gp3",
+      "PriceDescription": "$0.0912 per GB-month of General Purpose (gp3) provisioned storage - Asia Pacific (Mumbai)",
+      "Unit": "GB-Mo",
+      "PricePerUnit": "0.0912000000",
+      "StartingRange": "0",
+      "EndingRange": "Inf"
+    },
+    {
+      "SKU": "JJ4UKFHYSKQFC9AM",
+      "Instance Type": "m7i.4xlarge",
+      "vCPU": "16",
+      "Memory": "64 GiB",
+      "usageType": "APS3-BoxUsage:m7i.4xlarge",
+      "PriceDescription": "$0.8484 per On Demand Linux m7i.4xlarge Instance Hour",
+      "Unit": "Hrs",
+      "PricePerUnit": "0.8484000000",
+      "StartingRange": "0",
+      "EndingRange": "Inf"
+    },
+    {
+      "SKU": "MP9N4DW9CKGYV4HM",
+      "Instance Type": "m8i.2xlarge",
+      "vCPU": "8",
+      "Memory": "32 GiB",
+      "usageType": "APS3-BoxUsage:m8i.2xlarge",
+      "PriceDescription": "$0.4454 per On Demand Linux m8i.2xlarge Instance Hour",
+      "Unit": "Hrs",
+      "PricePerUnit": "0.4454000000",
+      "StartingRange": "0",
+      "EndingRange": "Inf"
+    },
+    {
+      "SKU": "T52424QKCYEW5XW5",
+      "Instance Type": "m7i.2xlarge",
+      "vCPU": "8",
+      "Memory": "32 GiB",
+      "usageType": "APS3-BoxUsage:m7i.2xlarge",
+      "PriceDescription": "$0.4242 per On Demand Linux m7i.2xlarge Instance Hour",
+      "Unit": "Hrs",
+      "PricePerUnit": "0.4242000000",
+      "StartingRange": "0",
+      "EndingRange": "Inf"
+    }
+  ],
+  "internet_egress": {
+    "SKU": "UKQ34C8EAAJUUK8Q",
+    "RateCode": "UKQ34C8EAAJUUK8Q.JRTCKXETXF.Q3Z75P77EN",
+    "EffectiveDate": "2026-11-01",
+    "PriceDescription": "$0.1093 per GB - first 10 TB / month data transfer out beyond the global free tier",
+    "Unit": "GB",
+    "PricePerUnit": "0.1093000000",
+    "StartingRange": "0",
+    "EndingRange": "10240"
+  },
+  "assumptions": {
+    "gp3_gb": 300,
+    "monthly_outbound_gb": 200,
+    "r2_added_storage_gb": 200,
+    "monitoring_secrets_allowance_usd": 5,
+    "runtime_hours_per_day": [
+      2,
+      4,
+      6
+    ],
+    "runtime_measured": false
+  }
+}

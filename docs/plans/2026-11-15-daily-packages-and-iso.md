@@ -7,7 +7,7 @@
 
 Check for updates every day, publish tested package updates, and produce a fresh Anvil ISO from the resulting repository snapshot. Publish a dated record of **every package and ISO update under https://wald3n.com/open-source**, with permanent links, downloads, checksums, change summaries and validation results. A run is complete only after the artifacts and their public update records are verified live.
 
-Use local/lab container builds and independently runnable publishing commands. GitHub remains a Git remote; GitHub Actions is excluded. Will agreed on 2026-11-15 to a dedicated build VM on an always-on home-lab machine, with builds running in containers and a systemd timer inside the VM; the same Task commands can become Kubernetes jobs when the lab scheduler exists. An always-on host is required for a dependable daily service; a sleeping or disconnected laptop can only catch up later.
+Use container builds and independently runnable publishing commands. GitHub remains a Git remote; GitHub Actions is excluded. **Will clarified on 2026-11-15 that the home lab is not set up.** The earlier agreement to a lab build VM cannot be implemented there yet. Evaluate the AWS Mumbai option below for the first deployment; a dedicated home-lab VM and later Kubernetes remain migration targets. No AWS resources have been provisioned or spending authorized by this plan. The agreed daily time remains 03:00 Asia/Bangkok.
 
 ## Evidence and existing work
 
@@ -22,7 +22,7 @@ Use local/lab container builds and independently runnable publishing commands. G
 
 ## Daily schedule and update policy
 
-Agreed schedule (Will, 2026-11-15): **03:00 Asia/Bangkok each day**, with a persistent timer to catch up after downtime. Lock the entire run, bound retries and runtime, and report a skipped overlapping run. Never mark a failed or missed run green.
+Agreed schedule (Will, 2026-11-15): **03:00 Asia/Bangkok each day**, with an external AWS schedule for a stopped cloud VM, or a persistent systemd timer when an always-on lab host exists. Track missed runs and retry explicitly in either deployment. Lock the entire run, bound retries and runtime, and report a skipped overlapping run. Never mark a failed or missed run green.
 
 | Input | Daily action | Publication gate |
 |---|---|---|
@@ -101,7 +101,7 @@ These Task names are proposed interfaces. Promotion operates on the exact tested
 
 ## Implementation checklist
 
-- [ ] Select the physical lab host and provision the dedicated build VM with storage, network capacity and nested KVM for ISO boot tests; measure a complete Anvil run. Use the established container stacks and Ubuntu 26.04 where required. Resolve interactive `pkexec` steps through a narrowly scoped build service before scheduling.
+- [ ] Select and provision the initial AWS Mumbai build VM after cost review (home lab unavailable), with storage, network capacity and nested KVM for ISO boot tests; measure a complete Anvil run. Use the established container stacks and Ubuntu 26.04 where required. Resolve interactive `pkexec` steps through a narrowly scoped build service before scheduling.
 - [ ] Add a Task include and a single resumable orchestration command with stage receipts, a lock, deadlines and bounded retries. Use isolated checkouts and pinned builder images; record all input revisions and resolved package versions.
 - [ ] Add upstream discovery and reviewable pin/version updates. Define the unattended-update policy and dependency rebuild rules. Reuse verified cached outputs keyed by source, recipe and builder inputs.
 - [ ] Make signed APT publication independently runnable outside Actions. Preserve complete package/source inventories and durable artifacts; upload content before metadata, use by-hash indexes or an equivalent consistent snapshot scheme, and verify from a fresh client. Never replace different bytes under the same package version.
@@ -112,7 +112,7 @@ These Task names are proposed interfaces. Promotion operates on the exact tested
 - [ ] Extend the wald3n data model, history/detail pages and publisher with package/ISO records and exact-version live checks. Reuse its container development workflow and isolated publishing checkout; keep compiler updates independent enough that an unrelated compiler refresh cannot block Foundry history publication.
 - [ ] Add durable pending-publication receipts and idempotent retries across repositories. Verify the exact ledger hash/release IDs through the deployed site before clearing completion markers.
 - [ ] Add a freshness monitor independent of the build process: alert on failures, missed checks and no successful daily ISO for more than 36 hours. Select an existing authorized notification destination before enabling outbound messages. Show separate package-check, ISO and website timestamps.
-- [ ] Install the 03:00 timer with catch-up behavior, validate a manual full run, then observe two scheduled runs. Later migrate the same commands to lab Kubernetes jobs when that platform is ready.
+- [ ] Install the 03:00 scheduler and missed-run handling, validate a manual full run, then observe two scheduled runs. Later migrate the same commands to lab Kubernetes jobs when that platform is ready.
 
 ## Validation and operational limits
 
@@ -122,10 +122,116 @@ Success requires two consecutive scheduled runs, signed artifacts installable/do
 
 Do not automatically install daily packages on Will’s laptop or write removable media as part of this job. Ventoy remains an explicit, checksum-verified sync using `../home-lab/Taskfile.distros.yml` and `home-lab/boot/foundry/`. Do not delete Docker images, caches or volumes. Choose and approve artifact retention separately; retain published release records even if an older downloadable artifact is eventually retired.
 
+## AWS Mumbai option — first deployment candidate
+
+**Recommendation for review:** one On-Demand Linux `m7i.2xlarge` in **Mumbai (`ap-south-1`)**, started for the daily job and stopped afterwards. It provides 8 vCPUs and 32 GiB RAM. Start with 300 GB total encrypted gp3 storage (for example 40 GB OS + 260 GB build/cache). Measure peak disk and memory before final sizing. Stopped EC2 compute stops accruing instance hours; persistent disks continue to cost money. Do not assume a home registry or any other lab service is available.
+
+AWS documents nested KVM support for M7i, so the ISO can boot inside this VM without renting a large bare-metal server. Explicitly enable nested virtualization, verify the region/account offering and `/dev/kvm`, then demonstrate a full desktop boot before accepting the runner. The public price list confirms a Mumbai price, not account capacity or a successful benchmark. The account Pricing API query had no available credentials in this session; costs below use AWS’s public catalogs. [Nested virtualization documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-ec2-nested-virtualization.html).
+
+### Architecture
+
+```mermaid
+flowchart TB
+    S[EventBridge Scheduler — 03:00 Asia/Bangkok] --> E[Start dedicated EC2 VM — Mumbai]
+    W[Independent deadline and freshness monitor] --> E
+    subgraph AWS["AWS ap-south-1"]
+        E --> B[systemd boot service — lock and run Task pipeline]
+        B --> C[Ubuntu 26.04 build containers]
+        C --> Q[QEMU and nested KVM — ISO desktop and installer test]
+        D[(300 GB encrypted gp3 — retained while stopped)] --- B
+        K[Scoped publishing credentials] --> P[Publishing stage after validation]
+        Q --> P
+        P --> R[Persist receipts and logs]
+        R --> X[Stop EC2 — success or failure]
+    end
+    G[Git repositories and public upstream sources] --> C
+    P --> A[Existing APT and ISO object storage]
+    P --> H[wald3n.com/open-source — each package and ISO update]
+    W --> F[Failure or stale-run notification]
+    A --> U[Downloads and explicit Ventoy sync]
+```
+
+Use an external schedule because a stopped VM cannot run its own timer. EventBridge can invoke EC2 StartInstances/StopInstances directly. A systemd service runs at boot, checks the run ledger and invokes the shared Task pipeline. Install a separate eight-hour deadline stop plus an external freshness check so a hung build cannot run indefinitely or hide its own failure. Set instance-initiated shutdown to **stop**, not terminate. The deadline is a cost guard, not a success signal; interrupted publication remains pending. [AWS start/stop scheduling guidance](https://repost.aws/knowledge-center/start-stop-lambda-eventbridge).
+
+```mermaid
+sequenceDiagram
+    participant S as AWS scheduler
+    participant V as Mumbai build VM
+    participant P as Public repositories and wald3n
+    participant M as Independent monitor
+    S->>V: 03:00 Bangkok — start
+    V->>V: Restore cache, discover updates, build and test
+    V->>P: Publish tested packages, ISO and individual update records
+    P-->>V: Verify exact versions, hashes and release IDs
+    V->>M: Durable completion or failure receipt
+    V->>V: Flush evidence, stop instance
+    M->>M: Flag stale receipts; enforce 11:00 Bangkok deadline
+    Note over S,V: VM is stopped between runs; EBS cache remains billed
+```
+
+Provision with Terraform and the existing container workflow. Use SSM for administration, a public subnet with an automatically assigned public IPv4 address and a security group with no inbound access. Outbound access supplies APT, Git and Cloudflare. This avoids a dedicated NAT Gateway and its standing charges. Do not reserve an Elastic IP: its idle charge would continue when the VM stops. Keep the build host dedicated because live-build needs elevated container access.
+
+Bootstrap the pinned standard container stacks without the home lab: export verified OCI images to accessible storage, restore and verify their digests on the runner, and retain them in its persistent cache. Count initial image upload, storage and cold-cache downloads separately. Keep signing/upload credentials out of source builds; fetch them only for the publishing stage using the instance role and a narrowly scoped secret policy. The full job, including site builds, stays runnable without Actions or the home registry.
+
+### Costs checked on 2026-11-15
+
+USD, before taxes and support charges. Linux On-Demand, shared tenancy, no Savings Plan, Reserved Instance, Spot discount or promotional credits assumed. Rates come from the AWS Mumbai EC2 catalog published 2026-11-14 and AWS transfer catalog; selected rows are retained in [the pricing evidence file](2026-11-15-daily-packages-and-iso-aws-rates.json).
+
+| Component | Rate or assumption | Monthly cost at 4 hours/day |
+|---|---|---:|
+| `m7i.2xlarge` compute | $0.4242/hour × 120 hours | $50.90 |
+| gp3 storage, retained all month | 300 GB × $0.0912/GB-month; baseline performance | $27.36 |
+| Automatically assigned public IPv4 | $0.005/hour × 120 hours | $0.60 |
+| AWS outbound uploads | Model 200 GB/month; $0.1093/GB beyond available shared free allowance | $10.93–21.86 |
+| Scheduler, logs, secrets and monitoring | $5 planning allowance, not a quoted service bundle | $5.00 |
+| Additional R2 Standard storage | Model 200 GB retained × $0.015/GB-month, no free storage credit assumed | $3.00 |
+| **Illustrative total** | Existing site/domain charges excluded | **$97.79–108.72** |
+
+The outbound scenario rounds each ISO to 5 GB × 30 days = 150 GB and allows another 50 GB for changed packages and other uploads. The low end assumes the account-wide 100 GB/month internet egress allowance is available; the high end assumes other workloads used it. More package uploads increase the bill. Initial bootstrapping and package rebuilds may exceed this model. Sources: [AWS Mumbai EC2/gp3 catalog](https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-south-1/index.csv), [AWS transfer catalog](https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSDataTransfer/current/index.csv), [EC2 egress allowance](https://aws.amazon.com/ec2/pricing/on-demand/), [IPv4 pricing](https://aws.amazon.com/vpc/pricing/).
+
+| Runtime scenario | Compute hours/month | Compute alone | Total with the same storage/upload assumptions |
+|---|---:|---:|---:|
+| 2 hours/day | 60 | $25.45 | $72.04–82.97 |
+| **4 hours/day — initial planning case** | **120** | **$50.90** | **$97.79–108.72** |
+| 6 hours/day | 180 | $76.36 | $123.55–134.48 |
+| Left running continuously | 730 | $309.67 | $359.61–370.54 |
+
+Daily scenarios use 30 builds/month; the continuous comparison uses the conventional 730-hour month. These are sensitivity calculations, **not measured AWS build times**. Four hours is a budgeting assumption for incremental package work plus Anvil; rebuilding all large packages can take substantially longer. Each additional hour on every daily run adds about $12.88/month for compute and IPv4. Each additional 100 GB of persistent gp3 adds $9.12/month. A smaller `c7i.2xlarge` costs $0.357/hour but has only 16 GiB RAM; benchmark before choosing it for package builds. A `m7i.4xlarge` doubles memory/CPU and costs $0.8484/hour; it saves money only if its speedup justifies the higher rate.
+
+EventBridge’s published allowance covers 14 million scheduler invocations monthly, far above this workload. Four Secrets Manager secrets at its example $0.40/secret-month would consume $1.60 of the $5 allowance; measure log ingestion and monitoring charges during the pilot. Additional snapshot backups, increased gp3 performance, paid support and any dedicated customer-managed KMS key are excluded and must be added if selected. [Scheduler pricing](https://aws.amazon.com/eventbridge/pricing/), [Secrets Manager pricing](https://aws.amazon.com/secrets-manager/pricing/).
+
+Continue serving public binaries from the existing R2-backed APT/ISO storage. AWS still charges to upload there; R2 has no internet egress charge for subsequent public downloads. The $3 storage line models only 200 GB of added artifacts, not the existing account bill or unlimited history. Without pruning, 150 GB of new ISO data each month adds about $2.25 to the ongoing monthly R2 storage bill per month of retained history. Retention is still a review decision; do not silently delete old releases or Docker caches. R2 operations above the account’s free allowances are additional. [R2 pricing](https://developers.cloudflare.com/r2/pricing/).
+
+### Deployment review screen and pilot
+
+```text
+Daily Foundry runner — proposed configuration
+  Region:        Mumbai / ap-south-1
+  Machine:       m7i.2xlarge — 8 vCPU / 32 GiB
+  Persistent:    300 GB encrypted gp3
+  Start:         03:00 Asia/Bangkok (01:30 Mumbai)
+  Stop:          after completion/failure; independent 11:00 Bangkok deadline
+  Estimate:      $98–109/month at 4 hours/day, before tax
+  Publication:   existing APT/ISO storage + wald3n update history
+  State:         NOT PROVISIONED
+
+  [Review infrastructure diff] -> proposed task daily:infra:plan
+  [Run one benchmark]          -> proposed task daily:pilot
+  [Inspect cost and evidence]  -> proposed task daily:status
+  [Enable schedule]           -> only after pilot and cost review
+```
+
+- [ ] Review the Terraform resource plan and AWS account/region; verify M7i nested virtualization support and capacity in the chosen AZ.
+- [ ] Run one timed cold-cache build and one warm-cache daily cycle, capturing CPU, RAM, disk peaks, actual upload bytes and billable runtime. Verify the standard stacks are available without lab services.
+- [ ] Test the successful stop, failed-build stop, external deadline stop and missed-run alarm. Configure a $150/month planning alert initially; AWS budget alerts are notifications, not a hard spending cap.
+- [ ] Review the resulting monthly forecast before enabling the schedule. Initial provisioning and account credentials remain outstanding; this document creates no cloud resources.
+- [ ] Keep the home-lab VM migration in the backlog until hardware/network/storage are actually configured; move the same Task pipeline after an equivalent validation run.
+
 ## Review decisions
 
-- [x] Will agreed on 2026-11-15: dedicated build VM on an always-on home-lab machine, container builds, and a systemd timer at 03:00 Asia/Bangkok.
-- [ ] Select the physical lab machine, size/provision the VM and verify nested KVM; no machine has been assigned or scheduler activated yet.
+- [x] Daily start time: 03:00 Asia/Bangkok; builds run in containers.
+- [x] Will clarified that the home lab is not set up and requested the AWS alternative in a cheaper region, using Mumbai for this proposal.
+- [ ] Review the AWS Mumbai budget, benchmark and deployment before provisioning; lab migration remains future work.
 - [ ] Confirm per-package automatic promotion policy and initial Anvil-only daily scope.
 - [ ] Confirm the proposed `/open-source/foundry` history and release-detail routes.
 - [ ] Confirm signing service, notification destination and artifact retention policy before activation.

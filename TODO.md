@@ -5,7 +5,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
-- [ ] **Daily package and Anvil ISO publication, with every update recorded on wald3n.com/open-source** — container builds, upstream discovery, signed publication, real boot checks, daily scheduling and freshness monitoring without GitHub Actions. See [plan](docs/plans/2026-11-15-daily-packages-and-iso.md).
+- [ ] **Daily package and Anvil ISO publication, with every update recorded on wald3n.com/open-source** — AWS Mumbai option (home lab not set up), container builds, upstream discovery, signed publication, real boot checks, daily scheduling and freshness monitoring without GitHub Actions. See [plan](docs/plans/2026-11-15-daily-packages-and-iso.md).
 
 ### apt-repo resilience — `task` vendored + source health-check
 
