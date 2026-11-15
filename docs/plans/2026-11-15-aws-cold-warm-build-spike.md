@@ -312,3 +312,9 @@ The 4,923 filesystem samples from 12:56:36 to 14:18:39 Bangkok cover the complet
 ### Fresh-launch rejection before instance creation
 
 The first fresh-launch request was rejected because user data exceeded 16,384 bytes. No EC2 instance or EBS volumes were created. Inspection of the diagnostic instance’s stored user data confirmed an extra base64 layer: the CLI already encodes `run-instances` user data. The launcher now passes the raw compressed file using `--user-data fileb://...`, records its SHA256, and retains the exact payload beside the resource receipt. See [AWS user-data documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html). The failed launch receipt is preserved; its unused instance role/profile and security group are cleaned up before retry. This is a provisioning failure, not a completed cold-build attempt.
+
+### Clean cold proof launched — 15:18 Bangkok
+
+Instance `i-0dbf1f3dfdb62cc29` launched at 15:18:53 Bangkok in ap-south-1a with frozen source `4664e52e1cb104f30be09e4df294cc0269b0e1b0`. New retained volumes are root `vol-0ba1c9a2cc663aab7` (16 GiB) and build/cache `vol-0a8ddc6eb2371c5a4` (48 GiB); neither is a diagnostic volume. The diagnostic instance is stopped. The private proof receipt is `/home/will/powerdevil-upgrade/aws-spike/cold-proof-v2-resources.json`, including exact payload hashes. Independent stop deadline: 23:18:59 Bangkok.
+
+Bootstrap completed without intervention. The cold runner verified absent source checkout, Docker images/containers and populated download cache at 15:19:38. Its initial image inventory contains only the column header. Source clone passed at 15:19:41, the base stack passed at 15:20:15, and the next stack layer is building. These establish the empty starting state; **clean cold completion is still pending**.
