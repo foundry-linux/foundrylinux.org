@@ -308,3 +308,7 @@ The 4,923 filesystem samples from 12:56:36 to 14:18:39 Bangkok cover the complet
 - [ ] Stop diagnostic compute while retaining its disks and evidence.
 - [ ] Launch a separate empty 64-GiB runner with frozen corrected inputs; complete uninterrupted cold proof.
 - [ ] Run the matched warm comparison on the proof runner’s retained disks.
+
+### Fresh-launch rejection before instance creation
+
+The first fresh-launch request was rejected because user data exceeded 16,384 bytes. No EC2 instance or EBS volumes were created. Inspection of the diagnostic instance’s stored user data confirmed an extra base64 layer: the CLI already encodes `run-instances` user data. The launcher now passes the raw compressed file using `--user-data fileb://...`, records its SHA256, and retains the exact payload beside the resource receipt. See [AWS user-data documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html). The failed launch receipt is preserved; its unused instance role/profile and security group are cleaned up before retry. This is a provisioning failure, not a completed cold-build attempt.

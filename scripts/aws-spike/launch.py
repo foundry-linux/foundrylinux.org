@@ -51,6 +51,9 @@ def aws(service, action, **kwargs):
                "--no-cli-pager", "--output", "json", service, action]
     if kwargs:
         command += ["--cli-input-json", json.dumps(kwargs)]
+    if service == "ec2" and action == "run-instances":
+        # run-instances performs base64 encoding itself. Supply raw gzip bytes.
+        command += ["--user-data", "fileb://" + str(userdata_file)]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode:
         raise RuntimeError(f"{service} {action}: {result.stderr.strip()}")
@@ -100,6 +103,11 @@ if args.prepare_only:
     print(json.dumps({**state, "compressed_userdata_bytes": len(userdata)}, indent=2))
     raise SystemExit(0)
 
+userdata_file = args.state.with_suffix(".userdata.gz").resolve()
+userdata_file.write_bytes(userdata)
+userdata_file.chmod(0o600)
+state["userdata_file"] = str(userdata_file)
+state["userdata_sha256"] = hashlib.sha256(userdata).hexdigest()
 identity = aws("sts", "get-caller-identity")
 state["account"] = identity["Account"]
 save()
@@ -128,7 +136,7 @@ try:
                             "Groups": [group["GroupId"]], "AssociatePublicIpAddress": True}],
         CpuOptions={"NestedVirtualization": "enabled"},
         MetadataOptions={"HttpTokens": "required", "HttpEndpoint": "enabled", "HttpPutResponseHopLimit": 1},
-        InstanceInitiatedShutdownBehavior="stop", UserData=base64.b64encode(userdata).decode(),
+        InstanceInitiatedShutdownBehavior="stop",
         BlockDeviceMappings=[{"DeviceName": "/dev/sda1", "Ebs": {"VolumeSize": args.root_gib,
             "VolumeType": "gp3", "Encrypted": True, "DeleteOnTermination": False}},
             {"DeviceName": "/dev/sdf", "Ebs": {"VolumeSize": args.build_gib, "VolumeType": "gp3",
