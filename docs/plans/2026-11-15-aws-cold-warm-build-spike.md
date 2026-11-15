@@ -1,7 +1,7 @@
 # AWS Mumbai spike: cold build, then warm build on the same disk
 
 **Date:** 2026-11-15
-**Status:** Will authorized the spike on 2026-11-15; preparation is in progress, Will authorized any account with the needed permissions. The diagnostic run launched in Mumbai using wf-terraform at 11:58 Bangkok on 2026-11-15. It required storage, runner and recipe repairs and is not clean cold-build evidence. Will requested a separate fresh cold proof after the diagnostic pipeline works. Diagnostic validation, fresh cold proof and warm-run results are pending.
+**Status:** Diagnostic package/ISO build and desktop/installer launch passed; its instance is stopped with disks retained. A separate empty-volume cold run completed all 63 expected packages and ISO assembly without build intervention. Its post-build inventory collector failed because the ISO builder removes the staging chroot. This is a cold workload success, **not an error-free end-to-end runner pass**. The ISO inventory was recovered from the artifact; cold desktop boot and installer launch are visually verified; warm comparison is next.
 **Related:** [Daily packages, ISO and public update history](2026-11-15-daily-packages-and-iso.md).
 
 ## Question and outcome
@@ -14,18 +14,18 @@ Will requested a fresh AWS run and a second run later today using the same retai
 
 | Run | Starting state | Work performed | Evidence needed |
 |---|---|---|---|
-| Diagnostic (in progress) | Fresh initial VM, subsequently repaired in place | Resolve build and runner defects, then validate the ISO | Preserve failures, interventions and all elapsed cost separately; not a clean benchmark |
+| Diagnostic (completed) | Fresh initial VM, subsequently repaired in place | Resolve build and runner defects, then validate the ISO | Preserve failures, interventions and all elapsed cost separately; not a clean benchmark |
 | A: clean cold proof | Newly provisioned VM and empty build/cache disk; normal OS AMI only | Bootstrap tools and pinned container stacks, fetch sources, build the current Foundry package set, build Anvil, boot and inspect installer | Separate provisioning, downloads, compilation, ISO assembly and validation timings |
 | Between runs | VM stopped; **all disks and caches retained** | Flush logs/cache writes; record disk and cache inventory | EC2 stopped state, volume IDs, cache sizes and run-A receipts |
 | B: warm | Restart the same VM with the same EBS volumes and committed inputs | Check inputs, reuse valid package outputs and caches, **force a new Anvil filesystem/ISO build**, repeat boot/installer checks | Cache hits/misses, bytes fetched, per-stage times, actual speedup |
 
 ### Clean cold proof gate (Will’s additional requirement)
 
-- [ ] Finish the diagnostic package build, ISO assembly and real UEFI desktop/installer checks.
-- [ ] Freeze and publish corrected runner/recipe inputs; record commit IDs and patch hashes.
-- [ ] Stop the diagnostic instance and preserve both of its disks and caches.
-- [ ] Launch a separate instance with newly created empty root/build volumes from the recorded standard OS AMI. Do not restore diagnostic snapshots, Docker layers, Foundry packages or ISO artifacts.
-- [ ] Capture new instance/volume IDs, empty cache inventories, launch/bootstrap timestamps and resource counters before workloads start.
+- [x] Finish the diagnostic package build, ISO assembly and real UEFI desktop/installer checks.
+- [x] Freeze and publish corrected runner/recipe inputs; record commit IDs and patch hashes.
+- [x] Stop the diagnostic instance and preserve both of its disks and caches.
+- [x] Launch a separate instance with newly created empty root/build volumes from the recorded standard OS AMI. Do not restore diagnostic snapshots, Docker layers, Foundry packages or ISO artifacts.
+- [x] Capture new instance/volume IDs, empty cache inventories, launch/bootstrap timestamps and resource counters before workloads start.
 - [ ] Complete all package and ISO stages without interventions, then capture actual desktop and installer evidence and artifact hashes.
 - [ ] If a repair is required, label that attempt diagnostic and repeat clean proof after fixing it.
 - [ ] Run the warm comparison against this successful cold proof using its retained disks and matching inputs.
@@ -318,3 +318,21 @@ The first fresh-launch request was rejected because user data exceeded 16,384 by
 Instance `i-0dbf1f3dfdb62cc29` launched at 15:18:53 Bangkok in ap-south-1a with frozen source `4664e52e1cb104f30be09e4df294cc0269b0e1b0`. New retained volumes are root `vol-0ba1c9a2cc663aab7` (16 GiB) and build/cache `vol-0a8ddc6eb2371c5a4` (48 GiB); neither is a diagnostic volume. The diagnostic instance is stopped. The private proof receipt is `/home/will/powerdevil-upgrade/aws-spike/cold-proof-v2-resources.json`, including exact payload hashes. Independent stop deadline: 23:18:59 Bangkok.
 
 Bootstrap completed without intervention. The cold runner verified absent source checkout, Docker images/containers and populated download cache at 15:19:38. Its initial image inventory contains only the column header. Source clone passed at 15:19:41, the base stack passed at 15:20:15, and the next stack layer is building. These establish the empty starting state; **clean cold completion is still pending**.
+
+
+### Cold workloads complete; evidence collector error — 17:16 Bangkok
+
+The fresh runner completed packages at 16:51:13 and its independent audit at 16:51:14: **63 expected binaries, none missing**. Package-stage wall time was **1 h 24 min 55 s** (15:26:18–16:51:13). ISO assembly ran 16:51:27–17:16:00: **24 min 33 s**. Neither workload required intervention. The final ISO SHA256 is `b3132d28d6d0f3c651a980801c1fd1d4467605816ff62f87cec095ccde3a68a2`.
+
+After ISO success, `run.sh` attempted to copy `chroot/var/lib/dpkg/status`, but the normal ISO script had already deleted that temporary directory. The runner correctly recorded **exit 1**, finished at 17:16:00, and scheduled shutdown at 17:18. Preserve this failure: an uninterrupted cold package/ISO build is proven, but an error-free full runner is not. The instance was restarted for separately measured validation. Its original runner is preserved as `/opt/foundry-spike/run.sh.cold-pinned`; any subsequent collector change has a separate hash receipt.
+
+The inventory is recoverable directly from the shipped SquashFS. Extraction confirmed **no installed `libreoffice*` packages**: Kubuntu temporarily installs them, and Foundry's existing cleanup removes them before image compression. Avoiding their initial download/install is a possible later optimization, deliberately excluded from this matched measurement. The deleted chroot is scratch space; retained Docker layers, download caches, built packages and the cache-verification receipt are unaffected.
+
+The cold ISO is hard-linked into its run directory before a warm rebuild can replace the distribution output. A diskless, offline 2-vCPU/4096-MiB UEFI guest displayed the Foundry desktop, captured at 17:28:06. Screenshot evidence is `/home/will/powerdevil-upgrade/aws-spike/evidence/cold-boot-1.png`, SHA256 `2218f0171aa697a5ec943354cc2caf72c728586b292d0baa1f78ece4f893cf47`. Installer launch is also visually verified; the diskless guest correctly reports no target partitions, so full disk installation remains untested. The warm comparison will explicitly distinguish unchanged workload/cache inputs from the corrected post-build evidence collector. A fully unattended end-to-end cold-run claim still requires a fresh successful run of the corrected runner.
+
+
+### Cold validation and collector correction
+
+The installer screenshot is retained at `/home/will/powerdevil-upgrade/aws-spike/evidence/cold-installer.png`, SHA256 `6f1254fe453ae9d1b8823426f231e3cbe2255d007c84cc55b669c526c54557da`. The collector now reads the package database from the finished ISO through a temporary read-only loop mount, after preserving the artifact and hash. Its output matched the independently recovered cold inventory byte-for-byte. This correction changes post-build evidence collection only; warm source, recipe, builder and package-artifact fingerprints must still match the cold receipt.
+
+The cold observer recorded 6,982 samples from 15:19:38.252 to 17:15:59.950 Bangkok. Maximum sampled filesystem usage was **34,310,283,264 bytes (32.0 GiB)** on the build volume and **2,984,787,968 bytes (2.8 GiB)** on root. Package-container cgroup memory peak was 12,301,942,784 bytes, including file cache; its sampled anonymous-memory maximum was 3,393,347,584 bytes. These different counters must not be conflated into a RAM requirement. Hardware downsizing still needs an actual trial; no final stage-specific instance selection is proven yet.

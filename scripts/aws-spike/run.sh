@@ -115,8 +115,10 @@ mkdir -p foundry-iso/local-debs
 cp foundry-apt/dist/*.deb foundry-iso/local-debs/
 stage iso env EDITION=anvil bash foundry-iso/scripts/build-iso.sh
 docker image inspect ubuntu:26.04 > "$run/iso-builder-image.json"
-cp foundry-iso/chroot/var/lib/dpkg/status "$run/iso-dpkg-status"
 find foundry-iso/dist -maxdepth 1 -name '*.iso' -exec cp -al '{}' "$run/" \;
 find "$run" -maxdepth 1 -name '*.iso' -exec sha256sum '{}' \; > "$run/iso.sha256"
+isos=("$run"/*.iso)
+test "${#isos[@]}" = 1
+stage iso-inventory bash /opt/foundry-spike/iso-inventory.sh "${isos[0]}" "$run/iso-dpkg-status"
 kill "$monitor" 2>/dev/null || true
 echo 'Build stages finished; ISO VM validation is a separate measured stage.'
