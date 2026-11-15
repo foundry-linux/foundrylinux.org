@@ -3,6 +3,10 @@
 **Date:** 2026-11-15
 **Status:** Proposal for Will’s review; scheduling and publication are not enabled by this document.
 
+## Home-lab deployment direction — 2026-11-15
+
+Will selected the planned home lab as the intended production destination. See the [new home-lab deployment plan](../../../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md): Kubernetes scheduling and ordinary CI jobs, an isolated managed VM for initial privileged ISO/KVM stages, persistent caches, R2 public distribution, and release records under wald3n.com/open-source. Lab readiness and measured capacity are prerequisites. AWS/S3 costs below remain an alternative/spike reference; no permanent AWS runner is selected. No infrastructure is deployed by this plan.
+
 ## Measured spike checkpoint — 2026-11-15
 
 The [Mumbai spike](2026-11-15-aws-cold-warm-build-spike.md) has measured a fresh empty-volume build and a matched retained-cache rebuild on m7i.xlarge (4 vCPUs, 16 GiB), with 16-GiB root and 48-GiB build volumes. Cold package work took 1 h 24 min 55 s; warm verification reused identical outputs in 14 s. Forced ISO assembly took 24 min 33 s cold and 17 min 43 s warm. Both ISOs have 2,812 installed packages with identical versions. The cold runner's post-build inventory collector failed after ISO success; that error is preserved and the collector correction passed during warm. An error-free unattended cold runner is still a separate proof gate.

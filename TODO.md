@@ -5,6 +5,8 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
+- [ ] **Deploy daily Foundry builds on the planned home lab** — follow the [lab deployment plan](../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md) once platform readiness gates pass; Kubernetes jobs, isolated ISO/KVM execution, R2 distribution and website release records.
+
 - [x] **Save reproducible 30-day activity and cost projections** — reusable JSON collector/simulator, daily table and graph, same-region S3 publication, separate public-download scenarios, source sizes and stage-specific 4-GiB sensitivity. See [cost history](docs/plans/2026-11-15-daily-build-cost-history.md).
 - [ ] **Trial optimized builds on 4 GiB on 2026-11-16** — no new AWS build today; measure correctness, memory pressure and runtime, then replace the modeled $1.20/month same-runtime saving with evidence. Validation retains a larger host; no automatic run scheduled.
 
