@@ -43,17 +43,17 @@ flowchart TD
     B --> C[Refresh indexes and discover upstream updates]
     C --> D[Pin candidate sources and build changed packages in containers]
     D --> E{Package tests and update policy pass?}
-    E -- No --> H[Record failure or review needed; preserve published artifacts]
-    E -- Yes --> F[Sign and publish complete APT snapshot; verify live]
+    E -- No --> H[Record failure or review needed, preserve published artifacts]
+    E -- Yes --> F[Sign and publish complete APT snapshot, verify live]
     F --> G[Build Anvil from that snapshot in a container]
     G --> I{Manifest, desktop boot and installer launch pass?}
     I -- No --> H
-    I -- Yes --> J[Sign and upload immutable ISO; verify live]
+    I -- Yes --> J[Sign and upload immutable ISO, verify live]
     F --> K[Publish each package update record on wald3n]
     J --> L[Publish ISO record and package snapshot links on wald3n]
     K --> M[Verify exact public release IDs, versions and hashes]
     L --> M
-    M --> N[Mark stages complete; update freshness status]
+    M --> N[Mark stages complete, update freshness status]
     H --> O[Retain logs and report incomplete daily run]
 ```
 
@@ -167,8 +167,8 @@ sequenceDiagram
     P-->>V: Verify exact versions, hashes and release IDs
     V->>M: Durable completion or failure receipt
     V->>V: Flush evidence, stop instance
-    M->>M: Flag stale receipts; enforce 11:00 Bangkok deadline
-    Note over S,V: VM is stopped between runs; EBS cache remains billed
+    M->>M: Flag stale receipts, enforce 11:00 Bangkok deadline
+    Note over S,V: VM is stopped between runs, EBS cache remains billed
 ```
 
 Provision with Terraform and the existing container workflow. Use SSM for administration, a public subnet with an automatically assigned public IPv4 address and a security group with no inbound access. Outbound access supplies APT, Git and Cloudflare. This avoids a dedicated NAT Gateway and its standing charges. Do not reserve an Elastic IP: its idle charge would continue when the VM stops. Keep the build host dedicated because live-build needs elevated container access.

@@ -118,12 +118,12 @@ sequenceDiagram
     O->>V: Start run A — fresh runner
     V->>D: Populate layers, sources, packages and ISO cache
     V->>E: Cold timings and validated ISO
-    V->>D: Flush; record cache inventory
+    V->>D: Flush, record cache inventory
     O->>V: Stop — retain disks
     Note over V,D: Between runs, only storage continues billing
     O->>V: Later today — restart for run B
     D-->>V: Same verified caches and outputs
-    V->>V: Recheck inputs; force fresh ISO; validate
+    V->>V: Recheck inputs, force fresh ISO, validate
     V->>E: Warm timings, cache hits and comparison
     O->>V: Stop — retain disks pending next decision
 ```
