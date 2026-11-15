@@ -43,7 +43,7 @@ flowchart LR
 
 Review state: `DIAGNOSTIC → INPUTS FROZEN → EMPTY VOLUMES VERIFIED → COLD BUILD PASS → BOOT/INSTALLER PASS → WARM COMPARISON`. Each transition requires its corresponding receipt; a successful repaired build cannot advance directly to cold proof.
 
-Keep diagnostic elapsed time and estimated charges, successful stage timings, clean cold totals and warm totals separate. GNU `time` around Docker measures useful wall time but its CPU/RSS describe the client, not the container workload. Use host and cgroup counters for resource claims. The diagnostic raw recorder started after package compilation began, so its coverage is partial; do not present observed peaks as full-run peaks. Charge calculations from rates and running intervals are estimates, not an AWS invoice. Two retained 300-GB disk sets cost $54.72 per month at the recorded gp3 rate, until a later retention decision; stop compute after use.
+Keep diagnostic elapsed time and estimated charges, successful stage timings, clean cold totals and warm totals separate. GNU `time` around Docker measures useful wall time but its CPU/RSS describe the client, not the container workload. Use host and cgroup counters for resource claims. The diagnostic raw recorder started after package compilation began, so its coverage is partial; do not present observed peaks as full-run peaks. Charge calculations from rates and running intervals are estimates, not an AWS invoice. The existing diagnostic disks total 300 GiB and cost $27.36 per month at the recorded gp3 rate. Fresh-proof disk capacity will be chosen from measured peak usage, and its retention cost reported separately; do not assume a second 300-GiB allocation. Stop compute after use.
 
 For run A, use the current package set invoked by the existing full-build workflow; do not silently substitute only PowerDevil or download published Foundry binaries and call that a complete source rebuild. Classify upstream binary-repack packages honestly. Record any recipes that restore prebuilt outputs remotely. If this full bootstrap is much larger than a normal daily update, report that distinction using stage timings rather than treating its total as the daily forecast.
 
@@ -281,3 +281,13 @@ Flycast passed after its nested-submodule repair. RPCS3 passed dependency instal
 The host’s unattended upgrader updated libc and restarted transient services. It stopped the diagnostic controller, whose restart then rejected its existing run directory. The package container itself continued compiling RPCS3; Docker reported it running and not OOM-killed. The controller’s `exit-code` file contained zero from its termination trap and must not be interpreted as successful package completion. Host APT history and journal entries identify the interruption.
 
 Supervision continues in `runs/diagnostic-continuation`, with Docker log timestamps covering the detach interval and an explicit `docker wait` plus container-exit check. Periodic APT timers are disabled for this temporary benchmark; the corrected bootstrap does this before workloads start and lists rather than automatically restarts services during bootstrap package installation. Interrupt signals now produce nonzero runner exits. Fresh cold attempts also reject an existing source tree, image, container or populated download cache. Host kernel and installed-package inventories are retained for comparison. This remains diagnostic evidence, not clean cold timing.
+
+### Diagnostic package completion — 13:52 Bangkok
+
+- [x] All 63 expected binary packages exist with the required package names, versions and architectures; the independent inventory audit reports no missing binaries.
+- [x] Flycast and RPCS3 completed after their recorded recipe repairs.
+- [x] A diskless nested-KVM guest ran until the deliberate three-second timeout; this is infrastructure preflight, not ISO validation.
+- [ ] ISO assembly is in progress, starting with base-system download, validation and configuration.
+- [ ] Actual ISO desktop/installer validation, clean cold proof and warm comparison remain pending.
+
+After package-build scratch cleanup, the build filesystem used about 9.4 GiB, down from an observed 17 GiB near package completion. These observations do not yet include the ISO-stage peak. The completed inventory is retained at `runs/diagnostic-continuation/package-inventory.json` on the runner and copied with SHA256 verification to `/home/will/powerdevil-upgrade/aws-spike/evidence/package-inventory-63-of-63.json`.
