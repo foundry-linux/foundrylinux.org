@@ -1,7 +1,7 @@
 # AWS Mumbai spike: cold build, then warm build on the same disk
 
 **Date:** 2026-11-15
-**Status:** Will authorized the spike on 2026-11-15; preparation is in progress, AWS account selection is pending, and no AWS runner has been launched.
+**Status:** Will authorized the spike on 2026-11-15; preparation is in progress, Will authorized any account with the needed permissions. Preflight succeeded with wf-terraform; the Mumbai runner is ready to launch.
 **Related:** [Daily packages, ISO and public update history](2026-11-15-daily-packages-and-iso.md).
 
 ## Question and outcome
@@ -205,3 +205,12 @@ The provisional m7i.xlarge baseline is $0.2121/hour compute in the Mumbai price 
 - [ ] Confirmation that EC2 is stopped, both disks retained, and the daily scheduler remains disabled.
 
 AI assistance: Codex CLI 0.169.0; model gpt-6-astra; reasoning effort medium, verified from session metadata.
+
+## Execution preparation — 2026-11-15
+
+- [x] AWS wf-terraform identity verified; Mumbai M7i nested virtualization and Canonical Ubuntu 26.04 AMI checked.
+- [x] Added [launch controller](../../scripts/aws-spike/launch.py), [host bootstrap](../../scripts/aws-spike/bootstrap.sh), and [measurement runner](../../scripts/aws-spike/run.sh). Launch payload fits EC2 user-data; Python syntax checked in the pinned test container and shell scripts pass bash syntax checks.
+- [ ] Launch and record instance/volume IDs in the private receipt `/home/will/powerdevil-upgrade/aws-spike/resources.json`.
+- [ ] Finish cold package/ISO stages, then run the separate measured UEFI desktop/installer validation.
+
+The launcher creates only a dedicated security group, SSM instance role/profile, runner with retained volumes, and a scoped deadline role/schedule in the existing default VPC. It records every created resource and stops a launched instance if later provisioning fails. No signing or production publication credentials are sent to the runner. The automatic build service stops the instance after build success or failure; test and warm-run starts are explicit.
