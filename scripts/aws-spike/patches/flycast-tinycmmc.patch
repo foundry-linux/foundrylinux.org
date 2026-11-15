@@ -1,0 +1,50 @@
+diff --git a/foundry-apt/packages/flycast/build.sh b/foundry-apt/packages/flycast/build.sh
+index 51705dc..ab94cf2 100755
+--- a/foundry-apt/packages/flycast/build.sh
++++ b/foundry-apt/packages/flycast/build.sh
+@@ -103,7 +103,10 @@ trap "rm -rf '$WORKDIR'" EXIT
+ SRC_DIR="$WORKDIR/${NAME}-${UPSTREAM_VERSION}"
+ 
+ echo "=== Cloning $REPO_URL at $TAG ==="
+-git clone --depth 1 --branch "$TAG" "$REPO_URL" "$SRC_DIR"
++# Tags are checked out detached by design: the build is pinned to the release
++# object and the scratch tree is discarded afterwards.  Suppress Git's generic
++# interactive-worktree advice without hiding any clone or verification errors.
++git -c advice.detachedHead=false clone --depth 1 --branch "$TAG" "$REPO_URL" "$SRC_DIR"
+ 
+ echo "=== Verifying commit hash ==="
+ ACTUAL_COMMIT=$(git -C "$SRC_DIR" rev-parse HEAD)
+@@ -146,12 +149,17 @@ git -C "$SRC_DIR" submodule update --init --depth 1 \
+     core/deps/tinygettext \
+     core/deps/freetype
+ 
+-# DreamPicoPort-API bundles the Linux libusb CMake project as its only nested
++# DreamPicoPort-API bundles the Linux libusb CMake project as a nested
+ # submodule. Fetch it explicitly, rather than recursing into unrelated
+ # test-only submodules elsewhere in Flycast's dependency tree.
+ git -C "$SRC_DIR/core/deps/DreamPicoPort-API" submodule update --init --depth 1 \
+     ext/libusb-cmake
+ 
++# Flycast 2.7's tinygettext CMake files import this nested utility project.
++# It is not reached by the top-level non-recursive update above.
++git -C "$SRC_DIR/core/deps/tinygettext" submodule update --init --depth 1 \
++    external/tinycmmc
++
+ echo "=== Verifying submodule gitlinks match the superproject tree ==="
+ # git checks this itself, but assert it explicitly so a silent shallow-fetch
+ # regression can never slip the pin.
+@@ -166,6 +174,14 @@ while read -r sha path; do
+         echo "  ok  $path  $sha"
+     fi
+ done < <(git -C "$SRC_DIR" ls-tree -r HEAD | awk '$2=="commit"{print $3, $4}')
++tinycmmc_expected=$(git -C "$SRC_DIR/core/deps/tinygettext" ls-tree HEAD external/tinycmmc | awk '{print $3}')
++tinycmmc_actual=$(git -C "$SRC_DIR/core/deps/tinygettext/external/tinycmmc" rev-parse HEAD)
++if [[ "$tinycmmc_actual" != "$tinycmmc_expected" ]]; then
++    echo "ERROR: tinygettext's tinycmmc is at $tinycmmc_actual, expected $tinycmmc_expected" >&2
++    FAILED=1
++else
++    echo "  ok  core/deps/tinygettext/external/tinycmmc  $tinycmmc_expected"
++fi
+ [[ "$FAILED" -eq 0 ]] || { echo "ERROR: submodule pin verification failed" >&2; exit 1; }
+ 
+ echo "=== Stripping VCS metadata ==="

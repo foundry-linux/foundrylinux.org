@@ -8,6 +8,7 @@ import argparse
 import base64
 import datetime as dt
 import gzip
+import hashlib
 import io
 import json
 import pathlib
@@ -67,6 +68,11 @@ files = {
 for filename in ["stacks/stacks.lock.json", "stacks/stack-base-ubuntu/Dockerfile",
                  "stacks/stack-build-ubuntu/Dockerfile", "stacks/stack-deb/Dockerfile"]:
     files[filename] = git(args.stacks_repo, "show", f"{stacks_commit}:{filename}")
+for filename in ["observe.py", "cache.py", "vm.py"]:
+    files[filename] = (root / "scripts/aws-spike" / filename).read_bytes()
+for patch in sorted((root / "scripts/aws-spike/patches").glob("*.patch")):
+    files["patches/" + patch.name] = patch.read_bytes()
+state["payload_sha256"] = {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}
 archive = io.BytesIO()
 with tarfile.open(fileobj=archive, mode="w:gz") as tar:
     for filename, content in files.items():

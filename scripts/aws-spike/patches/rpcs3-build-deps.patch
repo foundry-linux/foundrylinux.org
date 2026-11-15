@@ -1,0 +1,28 @@
+--- a/foundry-apt/packages/rpcs3/build.sh
++++ b/foundry-apt/packages/rpcs3/build.sh
+@@ -125,21 +125,10 @@
+     # helper that materialises Build-Depends, then install exactly that set.
+     _apt install -y --no-install-recommends \
+         git ca-certificates xz-utils dpkg-dev devscripts equivs
+-    root_args=()
+-    [[ $EUID -ne 0 ]] && root_args=(--root-cmd sudo)
+-    deps_dir="$WORKDIR/build-deps"
+-    mkdir -p "$deps_dir"
+-    # mk-build-deps expects the generated helper .deb in its current directory.
+-    # Do not inherit a caller-wide TMPDIR, which makes equivs place the .deb
+-    # elsewhere and leaves mk-build-deps trying to unpack a nonexistent path.
+-    (
+-        cd "$deps_dir"
+-        unset TMPDIR
+-        mk-build-deps --install --remove \
+-            --tool 'apt-get -y --no-install-recommends' \
+-            "${root_args[@]}" \
+-            "$PKG_DIR/debian/control"
+-    )
++    # Resolve the source dependencies directly. A removable equivs helper
++    # lets APT satisfy a conflict by discarding the helper itself (for example
++    # when an earlier package installed the GnuTLS curl development variant).
++    _apt build-dep -y --no-install-recommends "$PKG_DIR"
+ fi
+ 
+ # Optional local cache. Reuse is gated on the tarball matching ORIG_SHA256

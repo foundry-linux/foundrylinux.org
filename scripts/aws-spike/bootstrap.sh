@@ -5,6 +5,9 @@ exec > >(tee /var/log/foundry-spike-bootstrap.log) 2>&1
 trap 'r=$?; if ((r)); then shutdown -h +2 "Foundry bootstrap failed; disks retained"; fi' EXIT
 export DEBIAN_FRONTEND=noninteractive
 date -u +%FT%TZ > /opt/foundry-spike/bootstrap-started-at
+# Start before dependency downloads; retain bootstrap counters on the root disk.
+python3 /opt/foundry-spike/observe.py --output /opt/foundry-spike/bootstrap-metrics.jsonl &
+bootstrap_monitor=$!
 apt-get update
 apt-get install -y --no-install-recommends ca-certificates curl docker.io git jq ovmf python3 rsync sysstat time xorriso qemu-system-x86 squashfs-tools
 # Select only the new, empty 260-GiB EBS device. Never format by guessed NVMe order.
@@ -33,5 +36,10 @@ systemctl start docker.service
 test -c /dev/kvm
 lsblk -f > /opt/foundry-spike/volumes.txt
 date -u +%FT%TZ > /opt/foundry-spike/bootstrap-finished-at
+kill "$bootstrap_monitor"
+mkdir -p /srv/foundry-build/runs/bootstrap
+cp /opt/foundry-spike/bootstrap-* /srv/foundry-build/runs/bootstrap/
+docker images --digests > /srv/foundry-build/runs/bootstrap/images-before.txt
+find /srv/foundry-build -maxdepth 2 -type d > /srv/foundry-build/runs/bootstrap/directory-inventory.txt
 # No automatic run on later boots: the warm run and VM test are explicit.
 systemd-run --unit=foundry-spike-cold --property=RuntimeMaxSec=7h /bin/bash /opt/foundry-spike/run.sh cold

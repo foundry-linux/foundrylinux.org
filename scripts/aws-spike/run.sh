@@ -13,6 +13,7 @@ exec > >(tee -a "$run/runner.log") 2>&1
 finish() {
     result=$?
     trap - EXIT
+    if [[ -n ${observer:-} ]]; then kill "$observer" 2>/dev/null || true; fi
     if [[ -n ${monitor:-} ]]; then kill "$monitor" 2>/dev/null || true; fi
     printf '%s\n' "$result" > "$run/exit-code"
     date -u +%FT%TZ > "$run/finished-at"
@@ -23,6 +24,14 @@ finish() {
     exit "$result"
 }
 trap finish EXIT
+# Preserve every attempt instead of overwriting a failed run's measurements.
+if [[ -e "$run/started-at" ]]; then
+    echo "Run directory already used; preserve it and choose a new attempt before rerunning" >&2
+    trap - EXIT
+    exit 1
+fi
+python3 /opt/foundry-spike/observe.py --output "$run/raw-metrics.jsonl" &
+observer=$!
 date -u +%FT%TZ > "$run/started-at"
 stage() {
     local name=$1
@@ -39,6 +48,16 @@ fi
 cd source
 git checkout --detach "$SOURCE_COMMIT"
 git rev-parse HEAD > "$run/source-commit"
+for patch in /opt/foundry-spike/patches/*.patch; do
+    if git apply --reverse --check "$patch" 2>/dev/null; then
+        : # Already applied on the retained warm checkout.
+    else
+        git apply --check "$patch"
+        git apply "$patch"
+    fi
+    sha256sum "$patch" >> "$run/patches.sha256"
+done
+git diff --binary > "$run/source.patch"
 cp /opt/foundry-spike/stacks-source.txt "$run/stacks-source.txt"
 docker images --digests > "$run/images-before.txt"
 df -h > "$run/disk-before.txt"
@@ -55,10 +74,11 @@ sed 's|^FROM registry.lab.home.arpa:5000/stacks/stack-deb@.*|FROM foundry-spike/
 stage package-builder docker build --pull=false -f "$base/package-builder.Dockerfile" -t foundry-spike/packages:run foundry-apt/docker
 docker image inspect foundry-spike/packages:run > "$run/builder-image.json"
 mkdir -p "$base/cache/apt" "$base/cache/npm" "$base/cache/pnpm" "$base/cache/yarn"
-if docker container inspect "foundry-spike-packages-$mode" >/dev/null 2>&1; then
-    # Resume an interrupted cold run without discarding its installed deps.
-    # Warm mode has a separate name and therefore starts from the builder image.
-    stage packages docker start -a "foundry-spike-packages-$mode"
+if [[ $mode == warm ]]; then
+    stage packages-cache python3 /opt/foundry-spike/cache.py verify --repo "$PWD" --receipt "$base/packages-cache.json"
+elif docker container inspect "foundry-spike-packages-$mode" >/dev/null 2>&1; then
+    echo "Existing package container invalidates a clean cold attempt" >&2
+    exit 1
 else
 stage packages docker run --name "foundry-spike-packages-$mode" \
     -v "$PWD/foundry-apt:/work" -v "$base/cache/apt:/var/cache/apt/archives" \
@@ -67,6 +87,11 @@ stage packages docker run --name "foundry-spike-packages-$mode" \
     -e DEBIAN_FRONTEND=noninteractive -e CMAKE_BUILD_PARALLEL_LEVEL=2 \
     -e DEB_BUILD_OPTIONS=parallel=2 -e CARGO_BUILD_JOBS=2 \
     foundry-spike/packages:run bash -c 'set -euo pipefail; rm -f /etc/apt/apt.conf.d/docker-clean; apt-get update; bash scripts/build-all.sh'
+fi
+if [[ $mode == cold ]]; then
+    # docker start -a may return success even when the container command failed.
+    test "$(docker inspect -f '{{.State.ExitCode}}' "foundry-spike-packages-$mode")" = 0
+    python3 /opt/foundry-spike/cache.py record --repo "$PWD" --receipt "$base/packages-cache.json"
 fi
 find foundry-apt/dist -maxdepth 1 -type f -print0 | sort -z | xargs -0 -r sha256sum > "$run/packages.sha256"
 mkdir -p foundry-iso/local-debs

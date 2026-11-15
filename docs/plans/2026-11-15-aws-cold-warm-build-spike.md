@@ -1,7 +1,7 @@
 # AWS Mumbai spike: cold build, then warm build on the same disk
 
 **Date:** 2026-11-15
-**Status:** Will authorized the spike on 2026-11-15; preparation is in progress, Will authorized any account with the needed permissions. The cold run launched in Mumbai using wf-terraform at 11:58 Bangkok on 2026-11-15. Build stages are running; validation and warm-run results are pending.
+**Status:** Will authorized the spike on 2026-11-15; preparation is in progress, Will authorized any account with the needed permissions. The diagnostic run launched in Mumbai using wf-terraform at 11:58 Bangkok on 2026-11-15. It required storage, runner and recipe repairs and is not clean cold-build evidence. Will requested a separate fresh cold proof after the diagnostic pipeline works. Diagnostic validation, fresh cold proof and warm-run results are pending.
 **Related:** [Daily packages, ISO and public update history](2026-11-15-daily-packages-and-iso.md).
 
 ## Question and outcome
@@ -14,9 +14,36 @@ Will requested a fresh AWS run and a second run later today using the same retai
 
 | Run | Starting state | Work performed | Evidence needed |
 |---|---|---|---|
-| A: cold | Newly provisioned VM and empty build/cache disk; normal OS AMI only | Bootstrap tools and pinned container stacks, fetch sources, build the current Foundry package set, build Anvil, boot and inspect installer | Separate provisioning, downloads, compilation, ISO assembly and validation timings |
+| Diagnostic (in progress) | Fresh initial VM, subsequently repaired in place | Resolve build and runner defects, then validate the ISO | Preserve failures, interventions and all elapsed cost separately; not a clean benchmark |
+| A: clean cold proof | Newly provisioned VM and empty build/cache disk; normal OS AMI only | Bootstrap tools and pinned container stacks, fetch sources, build the current Foundry package set, build Anvil, boot and inspect installer | Separate provisioning, downloads, compilation, ISO assembly and validation timings |
 | Between runs | VM stopped; **all disks and caches retained** | Flush logs/cache writes; record disk and cache inventory | EC2 stopped state, volume IDs, cache sizes and run-A receipts |
 | B: warm | Restart the same VM with the same EBS volumes and committed inputs | Check inputs, reuse valid package outputs and caches, **force a new Anvil filesystem/ISO build**, repeat boot/installer checks | Cache hits/misses, bytes fetched, per-stage times, actual speedup |
+
+### Clean cold proof gate (Will’s additional requirement)
+
+- [ ] Finish the diagnostic package build, ISO assembly and real UEFI desktop/installer checks.
+- [ ] Freeze and publish corrected runner/recipe inputs; record commit IDs and patch hashes.
+- [ ] Stop the diagnostic instance and preserve both of its disks and caches.
+- [ ] Launch a separate instance with newly created empty root/build volumes from the recorded standard OS AMI. Do not restore diagnostic snapshots, Docker layers, Foundry packages or ISO artifacts.
+- [ ] Capture new instance/volume IDs, empty cache inventories, launch/bootstrap timestamps and resource counters before workloads start.
+- [ ] Complete all package and ISO stages without interventions, then capture actual desktop and installer evidence and artifact hashes.
+- [ ] If a repair is required, label that attempt diagnostic and repeat clean proof after fixing it.
+- [ ] Run the warm comparison against this successful cold proof using its retained disks and matching inputs.
+
+```mermaid
+flowchart LR
+    D[Repair diagnostic run] --> V[Validate packages and ISO]
+    V --> F[Freeze corrected inputs]
+    F --> C[New instance and empty volumes]
+    C --> P[Uninterrupted cold build and boot proof]
+    P --> W[Same disks and inputs for warm comparison]
+    C -->|Repair required| D
+    V --> R[Stop diagnostic compute and retain disks]
+```
+
+Review state: `DIAGNOSTIC → INPUTS FROZEN → EMPTY VOLUMES VERIFIED → COLD BUILD PASS → BOOT/INSTALLER PASS → WARM COMPARISON`. Each transition requires its corresponding receipt; a successful repaired build cannot advance directly to cold proof.
+
+Keep diagnostic elapsed time and estimated charges, successful stage timings, clean cold totals and warm totals separate. GNU `time` around Docker measures useful wall time but its CPU/RSS describe the client, not the container workload. Use host and cgroup counters for resource claims. The diagnostic raw recorder started after package compilation began, so its coverage is partial; do not present observed peaks as full-run peaks. Charge calculations from rates and running intervals are estimates, not an AWS invoice. Two retained 300-GB disk sets cost $54.72 per month at the recorded gp3 rate, until a later retention decision; stop compute after use.
 
 For run A, use the current package set invoked by the existing full-build workflow; do not silently substitute only PowerDevil or download published Foundry binaries and call that a complete source rebuild. Classify upstream binary-repack packages honestly. Record any recipes that restore prebuilt outputs remotely. If this full bootstrap is much larger than a normal daily update, report that distinction using stage timings rather than treating its total as the daily forecast.
 
@@ -211,16 +238,22 @@ AI assistance: Codex CLI 0.169.0; model gpt-6-astra; reasoning effort medium, ve
 - [x] AWS wf-terraform identity verified; Mumbai M7i nested virtualization and Canonical Ubuntu 26.04 AMI checked.
 - [x] Added [launch controller](../../scripts/aws-spike/launch.py), [host bootstrap](../../scripts/aws-spike/bootstrap.sh), and [measurement runner](../../scripts/aws-spike/run.sh). Launch payload fits EC2 user-data; Python syntax checked in the pinned test container and shell scripts pass bash syntax checks.
 - [x] Launch and record instance/volume IDs in the private receipt `/home/will/powerdevil-upgrade/aws-spike/resources.json`.
-- [ ] Finish cold package/ISO stages, then run the separate measured UEFI desktop/installer validation.
+- [ ] Finish diagnostic package/ISO stages, then run the separate measured UEFI desktop/installer validation.
 
 The launcher creates only a dedicated security group, SSM instance role/profile, runner with retained volumes, and a scoped deadline role/schedule in the existing default VPC. It records every created resource and stops a launched instance if later provisioning fails. No signing or production publication credentials are sent to the runner. The automatic build service stops the instance after build success or failure; test and warm-run starts are explicit.
 
-## Live cold run — 2026-11-15
+## Live diagnostic run — 2026-11-15
 
 Runner `i-09ed2b15f19ac5b71`, m7i.xlarge, ap-south-1a, launched at 11:58 Bangkok. Root volume `vol-0926caa68cf02bb0f` and build/cache volume `vol-00d37a922a21b2381` both have DeleteOnTermination=false. Nested virtualization is enabled; cloud-init completed and the cold-run service is active. Independent stop deadline: 19:58 Bangkok. Build inputs: Foundry `96906db229416a053959db58d43f54471336b0dc`, home-lab stacks `a0d9ec5279b5f63662889f3db1153284aed752ea`. No production publication is part of this spike.
 
-### Cold-run setup correction and early observations
+### Diagnostic setup correction and early observations
 
 Docker uses the containerd snapshotter on this Ubuntu image. Docker's data-root setting alone left its image/layer store under `/var/lib/containerd` on the 40 GB root volume. The cold run was stopped, all existing containerd data moved to the retained build volume and bind-mounted back, and the retained package container resumed. No cache was pruned. The bootstrap script now handles this store before starting a new run. Original logs survive in `runs/cold-before-storage-fix` and `runs/cold-before-resume-fix`; setup correction time must remain separate from package/ISO timings.
 
 Observed initial stages: host bootstrap 38 seconds, base stack 38 seconds, build stack 71 seconds, packaging stack 54 seconds, project package-builder layer 191 seconds. On the interrupted-run restart, these image builds reused their layers in approximately one second total. This confirms image-layer reuse only; it is not the warm A/B result. Source packages including drmon and f9dasm passed; the full package set and ISO remain in progress. Early preparation samples were mostly idle and used little memory, so resource sizing remains unproven.
+
+### Recipe repairs under validation
+
+The diagnostic package pass failed Flycast because tinygettext’s nested tinycmmc checkout was absent. The spike includes Will’s existing nested-submodule correction as an explicit hashed patch without staging unrelated working-tree changes. RPCS3’s generated build-dependency helper was removed by APT instead of switching the conflicting curl development package. A direct `apt-get -s build-dep` simulation resolves the dependencies by replacing the GnuTLS development variant with OpenSSL; the spike patch uses direct source build-dependency resolution. Both actual builds still need to pass before corrected inputs are frozen.
+
+New-run instrumentation records raw host and container cgroup counters from bootstrap and build startup, preserves attempt logs, and refuses an existing package container as clean cold input. Warm package reuse requires an exact recipe/builder fingerprint and hashes of every retained output; it remains separate from a forced ISO rebuild.
