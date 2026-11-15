@@ -7,7 +7,7 @@
 
 Check for updates every day, publish tested package updates, and produce a fresh Anvil ISO from the resulting repository snapshot. Publish a dated record of **every package and ISO update under https://wald3n.com/open-source**, with permanent links, downloads, checksums, change summaries and validation results. A run is complete only after the artifacts and their public update records are verified live.
 
-Use local/lab container builds and independently runnable publishing commands. GitHub remains a Git remote; GitHub Actions is excluded. Start with a systemd timer on a designated build host; the same Task commands can become Kubernetes jobs when the lab scheduler exists. An always-on host is required for a dependable daily service; a sleeping or disconnected laptop can only catch up later.
+Use local/lab container builds and independently runnable publishing commands. GitHub remains a Git remote; GitHub Actions is excluded. Will agreed on 2026-11-15 to a dedicated build VM on an always-on home-lab machine, with builds running in containers and a systemd timer inside the VM; the same Task commands can become Kubernetes jobs when the lab scheduler exists. An always-on host is required for a dependable daily service; a sleeping or disconnected laptop can only catch up later.
 
 ## Evidence and existing work
 
@@ -22,7 +22,7 @@ Use local/lab container builds and independently runnable publishing commands. G
 
 ## Daily schedule and update policy
 
-Proposed schedule: **03:00 Asia/Bangkok each day**, with a persistent timer to catch up after downtime. Lock the entire run, bound retries and runtime, and report a skipped overlapping run. Never mark a failed or missed run green.
+Agreed schedule (Will, 2026-11-15): **03:00 Asia/Bangkok each day**, with a persistent timer to catch up after downtime. Lock the entire run, bound retries and runtime, and report a skipped overlapping run. Never mark a failed or missed run green.
 
 | Input | Daily action | Publication gate |
 |---|---|---|
@@ -101,7 +101,7 @@ These Task names are proposed interfaces. Promotion operates on the exact tested
 
 ## Implementation checklist
 
-- [ ] Select an available build host with KVM, storage and network capacity; measure a complete Anvil run. Use the established container stacks and Ubuntu 26.04 where required. Resolve interactive `pkexec` steps through a narrowly scoped build service before scheduling.
+- [ ] Select the physical lab host and provision the dedicated build VM with storage, network capacity and nested KVM for ISO boot tests; measure a complete Anvil run. Use the established container stacks and Ubuntu 26.04 where required. Resolve interactive `pkexec` steps through a narrowly scoped build service before scheduling.
 - [ ] Add a Task include and a single resumable orchestration command with stage receipts, a lock, deadlines and bounded retries. Use isolated checkouts and pinned builder images; record all input revisions and resolved package versions.
 - [ ] Add upstream discovery and reviewable pin/version updates. Define the unattended-update policy and dependency rebuild rules. Reuse verified cached outputs keyed by source, recipe and builder inputs.
 - [ ] Make signed APT publication independently runnable outside Actions. Preserve complete package/source inventories and durable artifacts; upload content before metadata, use by-hash indexes or an equivalent consistent snapshot scheme, and verify from a fresh client. Never replace different bytes under the same package version.
@@ -124,7 +124,8 @@ Do not automatically install daily packages on Will’s laptop or write removabl
 
 ## Review decisions
 
-- [ ] Confirm build host and proposed 03:00 Asia/Bangkok schedule.
+- [x] Will agreed on 2026-11-15: dedicated build VM on an always-on home-lab machine, container builds, and a systemd timer at 03:00 Asia/Bangkok.
+- [ ] Select the physical lab machine, size/provision the VM and verify nested KVM; no machine has been assigned or scheduler activated yet.
 - [ ] Confirm per-package automatic promotion policy and initial Anvil-only daily scope.
 - [ ] Confirm the proposed `/open-source/foundry` history and release-detail routes.
 - [ ] Confirm signing service, notification destination and artifact retention policy before activation.
