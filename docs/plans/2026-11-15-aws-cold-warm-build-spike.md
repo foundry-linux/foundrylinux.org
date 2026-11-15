@@ -383,3 +383,50 @@ The validation VM and observer were stopped at 18:14 Bangkok. Post-run filesyste
 - [ ] Smaller per-stage hardware trials, changed-source rebuild behavior, no-change discovery and publication measurements before production sizing.
 
 Final EC2 API verification confirmed both `i-09ed2b15f19ac5b71` and `i-0dbf1f3dfdb62cc29` in `stopped` state, with `DeleteOnTermination=false` for all four recorded volumes.
+
+
+## CPU and memory optimization review — 2026-11-15
+
+These are source-backed candidates, not implemented changes or measured savings. Historical cost simulation must use the measured current process until a candidate has its own benchmark. Keep activity JSON, measurement JSON and scenario assumptions separate so projections can be regenerated.
+
+| Priority | Change | Evidence in the current process | Expected benefit and validation |
+|---|---|---|---|
+| 1 | Cache and rebuild per package, with dependency-aware invalidation | `scripts/aws-spike/cache.py` fingerprints the entire package/script tree and only accepts a wholly unchanged set; `build-all.sh` otherwise shortcuts mostly by version/file presence | Avoid rebuilding unrelated packages when one upstream changes. Keys must include source hash, recipe/patches, architecture, compiler/builder and resolved build-dependency inputs. Test one changed recipe, changed shared builder, missing/corrupt artifact and dependent-package invalidation. The observed 14-second warm check is unchanged-output reuse, not a changed-source benchmark. |
+| 2 | Prevent unwanted desktop applications from entering the chroot | `--apt-recommends true` plus `kubuntu-desktop` brings applications that hook 0020 purges, including LibreOffice and KDE PIM; Anvil also removes camera applications | Avoid downloading, unpacking, configuring and removing these applications, reducing transient disk and CPU work. Start with narrowly scoped exclusions for packages currently purged; check APT's proposed solution and preserve required KDE/QML modules, firmware and installer components. Do not indiscriminately disable all recommended packages. |
+| 3 | Select verified local packages during initial dependency installation | Hook 0030 installs the edition from published APT; hook 1000 later reinstalls selected local files | Avoid duplicate installations and package triggers. Prepare a build-local repository before resolving edition dependencies, without live-build's broken interactive key generation. Preserve exact hashes, edition filtering, default rejection of older candidates and explicit spike-only downgrade policy. Compare package inventories and boot behavior. |
+| 4 | Cache the ISO tool container | `build-iso.sh` starts a disposable plain `ubuntu:26.04` container, then installs live-build, xorriso, GRUB, mtools and other tools on every run | Build a pinned tool image and rebuild it when tool/base inputs change. This saves repeated setup, without caching an indefinitely stale final desktop filesystem. Retain authenticated repository freshness checks and track tool image provenance. |
+| 5 | Consolidate customization-triggered initramfs generation | Hook 1050 runs `update-initramfs -u -k all`; hook 1100 modifies Casper and then runs `update-initramfs -u` again | Keep all customizations before one final required generation. Do not suppress the final Casper/autologin/network rebuild or assume package-maintainer triggers can simply be disabled. Inspect generated initramfs contents and boot both desktop and installer. Exact saved duration needs instrumentation. |
+| 6 | Add bounded compiler caching for changed-source rebuilds | No explicit ccache/sccache configuration or mounted compiler cache exists in the spike build runner; large C/C++ recipes build in temporary directories | Reuse matching translation units across upstream versions while compiling changed inputs. Stabilize source paths and retain compiler/flag identity; measure cache hits and CPU-seconds across a real version update. C++ module handling, especially RPCS3, needs validation. Bound cache size and evict unused entries; keep useful cross-version results rather than entire obsolete build trees. |
+| 7 | Benchmark compression settings and memory limits | Warm `mksquashfs` used roughly four CPU cores; RPCS3's source archive explicitly uses `xz -6 -T0`, independently of the two-job compile cap | Compare current output with supported compressor/level/thread settings, recording CPU-seconds, peak anonymous memory, wall time, ISO bytes, boot compatibility and transfer/storage cost. A faster but larger image may cost more to publish. Thread limits can reduce memory while increasing runtime; no saving is assumed. |
+| 8 | Size compile, ISO and validation stages separately | Compilation was capped at two jobs on a four-vCPU host, while compression saturated all four; 4-GiB guest validation ran after builds | Trial an 8-GiB host with controlled build/compressor parallelism and retain a KVM-capable validation environment. Keep stages sequential when sharing a small host. Do not infer minimum RAM from cgroup peaks dominated by file cache, or assume a smaller machine is cheaper per completed build. |
+
+Compiler cache behavior and configuration are documented in the [ccache manual](https://ccache.dev/manual/latest.html); thread and memory-limit tradeoffs are documented in the [XZ manual](https://tukaani.org/xz/man/xz.1.html). These explain available mechanisms, not performance measured on this repository.
+
+### Benchmark and projection workflow
+
+```mermaid
+flowchart LR
+    H[Saved upstream and repo activity JSON] --> S[Scenario simulator]
+    M[Measured package and ISO timings] --> S
+    P[Explicit rates and policy assumptions] --> S
+    S --> R[Daily table and monthly projection]
+    O[One optimization at a time] --> B[Container benchmark with matching inputs]
+    B --> V[Inventory and boot checks]
+    V --> M
+```
+
+Review state for each candidate:
+
+```text
+Candidate: prevent applications that the current ISO later purges
+Baseline: saved cold/warm measurements
+Change: build inputs differ only by the selected optimization
+Checks: dependency solution -> installed inventory -> UEFI desktop -> installer
+Compare: CPU-seconds | anonymous RAM peak | elapsed time | artifact bytes
+Projection: replace the relevant measured stage; keep activity history unchanged
+Status: proposed / benchmarked / validated
+```
+
+An optional no-change ISO policy can avoid image assembly when the complete input manifest is unchanged, including Ubuntu/security candidates, local packages, branding, installer and toolchain inputs. It must be a separately labeled scenario: Will's once-per-day ISO baseline still performs a fresh daily build. Reusing an unchanged package artifact is different from skipping the daily ISO.
+
+Do not count dropping tests, weakening integrity checks or indefinitely retaining stale chroots as optimizations. Automatic desktop/installer readiness detection can shorten paid supervision time, but needs observable pass/fail criteria and evidence retention; an arbitrary sleep or a running QEMU process is not proof of a working desktop.
