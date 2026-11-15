@@ -1,0 +1,134 @@
+{
+  "iso_installed_package_counts": {
+    "cold": 2812,
+    "warm": 2812
+  },
+  "iso_package_differences": {},
+  "installed_libreoffice_warm": [],
+  "package_artifact_hashes_identical": true,
+  "runs": {
+    "cold": {
+      "started_at": "2026-11-15T08:19:38Z",
+      "finished_at": "2026-11-15T10:16:00Z",
+      "exit_code": 1,
+      "stages": "2026-11-15T08:19:38Z START clone\n2026-11-15T08:19:41Z PASS clone\n2026-11-15T08:19:41Z START stack-base\n2026-11-15T08:20:15Z PASS stack-base\n2026-11-15T08:20:15Z START stack-build\n2026-11-15T08:21:12Z PASS stack-build\n2026-11-15T08:21:12Z START stack-deb\n2026-11-15T08:22:01Z PASS stack-deb\n2026-11-15T08:22:01Z START package-builder\n2026-11-15T08:26:18Z PASS package-builder\n2026-11-15T08:26:18Z START packages\n2026-11-15T09:51:13Z PASS packages\n2026-11-15T09:51:13Z START package-inventory\n2026-11-15T09:51:14Z PASS package-inventory\n2026-11-15T09:51:27Z START iso\n2026-11-15T10:16:00Z PASS iso\n",
+      "iso_sha256": "b3132d28d6d0f3c651a980801c1fd1d4467605816ff62f87cec095ccde3a68a2  /srv/foundry-build/runs/cold/foundry-anvil-0.9.140-amd64.iso",
+      "metrics": {
+        "input": "/srv/foundry-build/runs/cold/raw-metrics.jsonl",
+        "samples": 6982,
+        "first_utc": "2026-11-15T08:19:38.251715+00:00",
+        "last_utc": "2026-11-15T10:15:59.950234+00:00",
+        "observed_seconds": 6981.698517869,
+        "max_sampled_filesystem_used_bytes": {
+          "/": 2984787968,
+          "/srv/foundry-build": 34310283264
+        },
+        "containers": {
+          "docker-12b3498119294ad709cdd42e399e2bf9a7510adc5bd496c269b1c9505f0915fe.scope": {
+            "first_utc": "2026-11-15T08:19:46.252651+00:00",
+            "peak_memory_bytes": 375148544,
+            "max_sampled_anon_bytes": 151887872,
+            "max_sampled_file_bytes": 249581568,
+            "last_utc": "2026-11-15T08:20:05.254314+00:00",
+            "first_cpu_usec": 14171,
+            "last_cpu_usec": 7257712
+          },
+          "docker-c551bff73444fae1dfa7321435299db0519718d63dd00e2c27765b665f041a71.scope": {
+            "first_utc": "2026-11-15T08:20:17.255560+00:00",
+            "peak_memory_bytes": 937111552,
+            "max_sampled_anon_bytes": 155815936,
+            "max_sampled_file_bytes": 749674496,
+            "last_utc": "2026-11-15T08:20:41.257853+00:00",
+            "first_cpu_usec": 38808,
+            "last_cpu_usec": 11229693
+          },
+          "docker-1e343bca98e8266f54b8d845ea536d15e8a86cbfcfcf4c2892ed7af9da2885f1.scope": {
+            "first_utc": "2026-11-15T08:21:14.261379+00:00",
+            "peak_memory_bytes": 460201984,
+            "max_sampled_anon_bytes": 154652672,
+            "max_sampled_file_bytes": 272490496,
+            "last_utc": "2026-11-15T08:21:49.264677+00:00",
+            "first_cpu_usec": 12402,
+            "last_cpu_usec": 10360255
+          },
+          "docker-a5ace5e3ee4dd66a230d12640980c8249c36b290ce9ca92183f1a53edf4e1fe8.scope": {
+            "first_utc": "2026-11-15T08:22:04.266025+00:00",
+            "peak_memory_bytes": 1435598848,
+            "max_sampled_anon_bytes": 158973952,
+            "max_sampled_file_bytes": 1159905280,
+            "last_utc": "2026-11-15T08:25:12.285048+00:00",
+            "first_cpu_usec": 36793,
+            "last_cpu_usec": 33612534
+          },
+          "docker-b260344cbc1d51ca095af4f12a51a9d0b6223d60aa9c14f64df4f775aaf8906c.scope": {
+            "first_utc": "2026-11-15T08:25:54.289652+00:00",
+            "peak_memory_bytes": 175923200,
+            "max_sampled_anon_bytes": 67579904,
+            "max_sampled_file_bytes": 103718912,
+            "last_utc": "2026-11-15T08:25:54.289652+00:00",
+            "first_cpu_usec": 835566,
+            "last_cpu_usec": 835566
+          },
+          "docker-a8f0fb36bc044d061d52abcc74c78df4f7693ea8173b18bb37864bb5e58fdd5c.scope": {
+            "first_utc": "2026-11-15T08:26:06.290793+00:00",
+            "peak_memory_bytes": 273735680,
+            "max_sampled_anon_bytes": 161656832,
+            "max_sampled_file_bytes": 54108160,
+            "last_utc": "2026-11-15T08:26:14.291697+00:00",
+            "first_cpu_usec": 492049,
+            "last_cpu_usec": 2666988
+          },
+          "docker-1104997d4c5f75cbfcdd52af8d3e2b951f0e343e5404e792a2ddbe906ed41cf0.scope": {
+            "first_utc": "2026-11-15T08:26:19.292146+00:00",
+            "peak_memory_bytes": 12301942784,
+            "max_sampled_anon_bytes": 3393347584,
+            "max_sampled_file_bytes": 11172585472,
+            "last_utc": "2026-11-15T09:51:12.778850+00:00",
+            "first_cpu_usec": 39648,
+            "last_cpu_usec": 9192158594
+          },
+          "docker-54bee4fb6e12e8c2525091d0dd0851b96d7a2fb6f1e0bcea3dd22fb26b0d2bf7.scope": {
+            "first_utc": "2026-11-15T09:51:38.781232+00:00",
+            "peak_memory_bytes": 12145229824,
+            "max_sampled_anon_bytes": 2719195136,
+            "max_sampled_file_bytes": 11032432640,
+            "last_utc": "2026-11-15T10:15:59.950234+00:00",
+            "first_cpu_usec": 30640,
+            "last_cpu_usec": 1412417513
+          }
+        },
+        "limitations": "Observed interval only. memory.peak is cgroup-lifetime peak and includes file cache. Sampled anon/file maxima need not coincide. Missing earlier/later samples are not reconstructed."
+      }
+    },
+    "warm": {
+      "started_at": "2026-11-15T10:43:35Z",
+      "finished_at": "2026-11-15T11:01:44Z",
+      "exit_code": 0,
+      "stages": "2026-11-15T10:43:37Z START stack-base\n2026-11-15T10:43:37Z PASS stack-base\n2026-11-15T10:43:37Z START stack-build\n2026-11-15T10:43:37Z PASS stack-build\n2026-11-15T10:43:37Z START stack-deb\n2026-11-15T10:43:37Z PASS stack-deb\n2026-11-15T10:43:37Z START package-builder\n2026-11-15T10:43:37Z PASS package-builder\n2026-11-15T10:43:37Z START packages-cache\n2026-11-15T10:43:51Z PASS packages-cache\n2026-11-15T10:43:57Z START iso\n2026-11-15T11:01:40Z PASS iso\n2026-11-15T11:01:43Z START iso-inventory\n2026-11-15T11:01:44Z PASS iso-inventory\n",
+      "iso_sha256": "6426d7bb0b549aa2cc3b69cd1ced80560598210f8ac072c77529acba20fd9767  /srv/foundry-build/runs/warm/foundry-anvil-0.9.140-amd64.iso",
+      "metrics": {
+        "input": "/srv/foundry-build/runs/warm/raw-metrics.jsonl",
+        "samples": 1089,
+        "first_utc": "2026-11-15T10:43:35.046774+00:00",
+        "last_utc": "2026-11-15T11:01:43.169687+00:00",
+        "observed_seconds": 1088.122918834,
+        "max_sampled_filesystem_used_bytes": {
+          "/": 3007016960,
+          "/srv/foundry-build": 39012937728
+        },
+        "containers": {
+          "docker-adf4486b8afaca8839eddc502afe1133b3ca7982aecc0cc4321cb2b59184cba5.scope": {
+            "first_utc": "2026-11-15T10:43:59.049199+00:00",
+            "peak_memory_bytes": 14375059456,
+            "max_sampled_anon_bytes": 2693054464,
+            "max_sampled_file_bytes": 13005910016,
+            "last_utc": "2026-11-15T11:01:39.169071+00:00",
+            "first_cpu_usec": 38925,
+            "last_cpu_usec": 1397418569
+          }
+        },
+        "limitations": "Observed interval only. memory.peak is cgroup-lifetime peak and includes file cache. Sampled anon/file maxima need not coincide. Missing earlier/later samples are not reconstructed."
+      }
+    }
+  }
+}

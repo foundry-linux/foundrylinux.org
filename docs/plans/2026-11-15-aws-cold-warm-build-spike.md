@@ -4,6 +4,14 @@
 **Status:** Diagnostic package/ISO build and desktop/installer launch passed; its instance is stopped with disks retained. A separate empty-volume cold run completed all 63 expected packages and ISO assembly without build intervention. Its post-build inventory collector failed because the ISO builder removes the staging chroot. This is a cold workload success, **not an error-free end-to-end runner pass**. The ISO inventory was recovered from the artifact; cold desktop boot and installer launch are visually verified; warm build, inventory comparison, desktop boot and installer launch passed. Both EC2 instances are confirmed stopped; all four disks are retained.
 **Related:** [Daily packages, ISO and public update history](2026-11-15-daily-packages-and-iso.md).
 
+## Measured results — graphs
+
+![Cold and warm build timings](assets/aws-spike-2026-11-15/timings.png)
+
+![Peak filesystem usage compared with allocated capacity](assets/aws-spike-2026-11-15/storage.png)
+
+[Timing graph (SVG)](assets/aws-spike-2026-11-15/timings.svg) · [Storage graph (SVG)](assets/aws-spike-2026-11-15/storage.svg) · [Measured data](assets/aws-spike-2026-11-15/measurements.json). Regenerate with `scripts/aws-spike/plot-results.py` in a Python container with Matplotlib. These charts use measured stage durations and sampled peaks; they do not invent a time series from summary data. Raw one-second counters remain on retained EBS. Cold workloads passed but the post-build collector failed; warm's corrected runner passed.
+
 ## Question and outcome
 
 Measure how long the actual package-and-Anvil pipeline takes on AWS, then how much faster it becomes with persistent caches. **Four hours/day was a sensitivity assumption, not a forecast.** Replace it with measured cold and warm timings before choosing the daily schedule’s budget or machine size.
