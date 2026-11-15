@@ -271,3 +271,7 @@ New-run instrumentation records raw host and container cgroup counters from boot
 ### Local package preference
 
 Will requested making local-candidate preference permanent. ISO staging now retains the newest available local build of each package even when the public repository has the same version. The install hook explicitly reinstalls selected local files and retains the edition dependency filter, so Atelier-only candidates do not enter Anvil. This removes the preliminary published-version fetch/filter; it does not claim that every earlier live-build dependency download is eliminated. Diagnostic execution initially used an equivalent patch; the clean proof will use the committed permanent change.
+
+### Diagnostic checkpoint — 13:20 Bangkok
+
+Flycast passed after its nested-submodule repair. RPCS3 passed dependency installation and source preparation and is compiling. The independent binary-inventory audit found 62 of 63 expected binaries with matching Debian package name, version and architecture; only the in-progress RPCS3 binary is missing. ISO assembly, VM validation, clean cold proof and warm comparison are still pending. The permanent local-package preference passed an isolated Ubuntu container test: same-version files were replaced from the local archive with zero archive download, and an Atelier candidate was excluded from Anvil.

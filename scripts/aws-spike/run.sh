@@ -92,6 +92,7 @@ if [[ $mode == cold ]]; then
     # docker start -a may return success even when the container command failed.
     test "$(docker inspect -f '{{.State.ExitCode}}' "foundry-spike-packages-$mode")" = 0
     docker cp "foundry-spike-packages-$mode:/var/lib/dpkg/status" "$run/package-builder-dpkg-status"
+    stage package-inventory python3 /opt/foundry-spike/audit-packages.py --apt-root "$PWD/foundry-apt"
     python3 /opt/foundry-spike/cache.py record --repo "$PWD" --receipt "$base/packages-cache.json"
 fi
 find foundry-apt/dist -maxdepth 1 -type f -print0 | sort -z | xargs -0 -r sha256sum > "$run/packages.sha256"

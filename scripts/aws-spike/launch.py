@@ -72,7 +72,7 @@ files = {
 for filename in ["stacks/stacks.lock.json", "stacks/stack-base-ubuntu/Dockerfile",
                  "stacks/stack-build-ubuntu/Dockerfile", "stacks/stack-deb/Dockerfile"]:
     files[filename] = git(args.stacks_repo, "show", f"{stacks_commit}:{filename}")
-for filename in ["observe.py", "cache.py", "vm.py"]:
+for filename in ["observe.py", "cache.py", "vm.py", "audit-packages.py"]:
     files[filename] = (root / "scripts/aws-spike" / filename).read_bytes()
 for patch in sorted((root / "scripts/aws-spike/patches").glob("*.patch")):
     files["patches/" + patch.name] = patch.read_bytes()
