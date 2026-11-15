@@ -9,10 +9,11 @@ import subprocess
 import time
 
 p = argparse.ArgumentParser()
-p.add_argument("action", choices=["start", "capture", "keys", "stop"])
+p.add_argument("action", choices=["start", "capture", "keys", "type", "stop"])
 p.add_argument("--output", type=pathlib.Path, required=True)
 p.add_argument("--iso", type=pathlib.Path)
 p.add_argument("--keys", help="QEMU sendkey expression, e.g. ctrl-alt-t")
+p.add_argument("--text", help="Lowercase text to type into the guest, without pressing Enter")
 a = p.parse_args()
 out = a.output.resolve()
 out.mkdir(parents=True, exist_ok=True)
@@ -64,6 +65,14 @@ elif a.action == "keys":
     if not a.keys or any(c not in "abcdefghijklmnopqrstuvwxyz0123456789-_ " for c in a.keys):
         raise SystemExit("Invalid QEMU key expression")
     print(call({"execute": "human-monitor-command", "arguments": {"command-line": "sendkey " + a.keys}}))
+elif a.action == "type":
+    if not a.text or any(c not in "abcdefghijklmnopqrstuvwxyz0123456789 -./" for c in a.text):
+        raise SystemExit("Unsupported guest text; use lowercase letters, digits, spaces or -./")
+    for char in a.text:
+        key = {" ": "spc", ".": "dot", "/": "slash", "-": "minus"}.get(char, char)
+        call({"execute": "human-monitor-command", "arguments": {"command-line": "sendkey " + key}})
+        time.sleep(0.08)
+    print("Typed guest text; Enter is a separate explicit key action")
 else:
     call({"execute": "quit"})
     print("Test VM stopped; screenshots and logs retained")
