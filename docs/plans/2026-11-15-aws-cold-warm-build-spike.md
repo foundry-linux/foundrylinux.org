@@ -1,7 +1,7 @@
 # AWS Mumbai spike: cold build, then warm build on the same disk
 
 **Date:** 2026-11-15
-**Status:** Execution plan requested by Will; no AWS runner has been launched.
+**Status:** Will authorized the spike on 2026-11-15; preparation is in progress, AWS account selection is pending, and no AWS runner has been launched.
 **Related:** [Daily packages, ISO and public update history](2026-11-15-daily-packages-and-iso.md).
 
 ## Question and outcome
@@ -24,16 +24,46 @@ For run B, reuse packages only when source, recipe, patches, architecture and bu
 
 Pin the Git revisions, container digests and source payload checksums for both runs. Refresh authenticated APT metadata for health, but use the same recorded package versions or a retained package snapshot for the controlled comparison. If upstream package availability prevents identical inputs, label the differences and the comparison’s limitation instead of claiming a clean benchmark. No upstream version bumps are required for this cache experiment.
 
+## Resource selection by stage
+
+Will clarified that different stages should be free to use different service offerings. Do not assume the pipeline is CPU-bound or make the initial measurement runner the permanent architecture. Capture CPU utilization, peak RAM, disk IOPS/throughput/wait, network bytes, cache-hit rates, startup overhead and elapsed time separately for every stage.
+
+| Stage | Candidate execution environment | Evidence that selects it |
+|---|---|---|
+| Discovery | Small scheduled container/job | Runtime, API/network demand and dependency footprint |
+| Package builds | Containers on EC2 or an EC2-backed batch service, sized per package | Compile CPU, peak memory, cache hits and cost per successful package |
+| ISO assembly | Container-capable EC2 runner with retained cache disk | Download, unpack/configuration, initramfs, disk I/O and compression timings |
+| Desktop/installer test | Brief nested-KVM EC2 runner | Minimum comfortable host/guest RAM, real boot readiness and duration |
+| Signing/publication/site update | Small isolated publishing job | Upload throughput, credentials and deployment runtime |
+
+These are candidates, not claims that every service supports privileged live-build or nested KVM. Validate each requirement before selecting a managed offering. Discovery and publication do not need the build runner's memory or KVM. A T3 is not selected; burst credits and throttling must be included if it is benchmarked.
+
+The first cold/warm pair may run stages sequentially on one instrumented EC2 VM to avoid confusing cache effects with hardware changes. That is an experimental control, not the daily architecture. After the matched pair, replay the expensive stages on smaller or different offerings using the same inputs. Select by total cost per validated output, including startup, transfer, persistent storage and operational complexity. Do not split stages merely to draw more boxes.
+
+```mermaid
+flowchart LR
+    A[Small discovery job] --> B[Package-specific build runner]
+    B --> C[ISO assembly runner with cache]
+    C --> D[Brief nested-KVM test runner]
+    D --> E[Small publishing job]
+    F[Verified artifact manifests and retained caches] --- B
+    F --- C
+    F --- D
+    E --> G[APT and ISO downloads plus wald3n history]
+```
+
+Pass immutable artifacts with checksums and input fingerprints between stages. Keep EBS caches with their owning build stage. An ordinary gp3 volume is not a shared multi-writer filesystem: detach/reattach only after clean unmount in the same AZ, or copy verified artifacts through object storage/private transfer. Count duplicate storage and transfer overhead. Keep both requested runs on the same retained disks; any hardware comparison is separately labelled.
+
 ## Runner and storage
 
-Start with On-Demand Linux **m7i.2xlarge: 8 vCPUs, 32 GiB RAM**, nested virtualization enabled, and 300 GB encrypted gp3 in Mumbai. Use an Ubuntu 26.04 host image validated at provisioning, with builds in the established Ubuntu-compatible container stacks. Record AMI ID and instance/AZ identifiers. Verify `/dev/kvm` and a nested VM before doing the expensive build.
+Use a configurable On-Demand measurement runner in Mumbai. Start with **m7i.xlarge: 4 vCPUs, 16 GiB RAM** as a provisional cold/warm baseline, with nested virtualization enabled and 300 GB encrypted gp3. Record this choice in both receipts; increase memory only if measured failures require it, and restart the comparison if hardware changes between A and B. The earlier m7i.2xlarge estimates below remain a labelled reference, not a selected permanent size. Use an Ubuntu 26.04 host image validated at provisioning, with builds in the established Ubuntu-compatible container stacks. Record AMI ID and instance/AZ identifiers. Verify `/dev/kvm` and a nested VM before doing the expensive build.
 
 Use 40 GB root + 260 GB build/cache as an initial split. Mount the latter at `/srv/foundry-build` by filesystem UUID. Set **DeleteOnTermination=false on both volumes**, tag them with the spike/run owner, and make the stop/cleanup workflow explicitly retain them. Stop the instance between and after runs; do not terminate it, run `terraform destroy`, prune caches, or delete the volumes. Disk retention is intentional and billed until a later decision.
 
 ```mermaid
 flowchart TB
-    W[Will reviews spike plan] --> T[Terraform plan — Mumbai runner and retained volumes]
-    T --> V[EC2 m7i.2xlarge — nested KVM enabled]
+    W[Will reviews spike plan] --> T[AWS CLI resource plan — Mumbai runner and retained volumes]
+    T --> V[Configurable EC2 measurement runner]
     subgraph Disk["Persistent EBS — survives stop/start"]
         O[Root 40 GB — OS and runner service]
         D[Build 260 GB — /srv/foundry-build]
@@ -72,7 +102,7 @@ Map these stores into the existing recipes rather than assuming proposed directo
 ### 2026-11-15 — run A, after plan review and account access
 
 - [ ] Select the AWS account/profile and confirm the resource plan. The earlier CLI Pricing query had no credentials; public pricing was verified without account access. Check available instance capacity, Ubuntu AMI, quotas and nested virtualization support.
-- [ ] Provision the dedicated runner and retained volumes through Git-managed infrastructure. Record the exact proposed billable resources; no NAT Gateway, load balancer or always-on Kubernetes control plane is needed.
+- [ ] Provision the temporary runner and retained volumes using Git-managed AWS CLI scripts and a resource-ID receipt. Will explicitly accepted avoiding Terraform for this disposable experiment; no distro Terraform configuration exists. Record the exact proposed billable resources; no NAT Gateway, load balancer or always-on Kubernetes control plane is needed.
 - [ ] Install a runner timeout and an independent external stop guard scoped to this instance. Use an initial eight-hour maximum per run, with explicit adjustment if the measured full build needs more time; hitting the limit is an incomplete run, not a benchmark success.
 - [ ] Record empty cache inventory, runner specs and input manifest. Start the cold clock before bootstrap/downloads; capture a second clock for the build-only stages.
 - [ ] Build packages in containers, validate them, then build Anvil from those outputs. Measure each stage; record package skips/repack cases instead of hiding them.
@@ -94,7 +124,8 @@ The following Task entry points are proposed, not commands that already exist. I
 
 ```text
 AWS build spike — Mumbai
-  Runner:        m7i.2xlarge / 8 vCPU / 32 GiB
+  Runner:        configurable baseline m7i.xlarge / 4 vCPU / 16 GiB
+  Stage sizing:  measure separately, choose offerings after A/B
   Input:         <Git SHA> / <builder digest> / <package snapshot>
   Run A:         pending — empty cache
   Run B:         pending — same disk, later today
@@ -148,7 +179,7 @@ Success means both ISOs pass the same real boot/installer checks, warm cache hit
 
 ## Spike costs and retention
 
-Rates verified on 2026-11-15 in the [AWS pricing evidence](2026-11-15-daily-packages-and-iso-aws-rates.json): compute $0.4242/hour; public IPv4 $0.005/hour; gp3 $0.0912/GB-month. Combined running compute/IP is **$0.4292/hour**. A retained 300 GB disk allocation costs **$27.36/month**, roughly **$0.91/day** using a 30-day planning month, including while EC2 is stopped. No production artifact upload is required for these two benchmarks.
+**Reference scenario for the earlier 8-vCPU runner, not the selected baseline:** rates verified on 2026-11-15 in the [AWS pricing evidence](2026-11-15-daily-packages-and-iso-aws-rates.json): compute $0.4242/hour; public IPv4 $0.005/hour; gp3 $0.0912/GB-month. Combined running compute/IP is **$0.4292/hour**. A retained 300 GB disk allocation costs **$27.36/month**, roughly **$0.91/day** using a 30-day planning month, including while EC2 is stopped. No production artifact upload is required for these two benchmarks.
 
 | Combined running time across A and B | Compute + IPv4 | Plus one day’s 300 GB storage |
 |---|---:|---:|
@@ -162,9 +193,12 @@ These are scenarios, not predicted runtimes; exclude tax, logs, optional snapsho
 
 After the second run, leave the instance stopped and disks intact. Present measured results and the ongoing $27.36/month storage obligation before any future decision to keep, resize, migrate or remove them. Do not delete resources automatically at the end of this spike.
 
+The provisional m7i.xlarge baseline is $0.2121/hour compute in the Mumbai price query, or $0.2171/hour including one public IPv4. Confirm the current rate before launch. For example, two combined running hours would be about $0.43 compute/IP plus about $0.91 for one day of retained 300 GB storage. Stage-specific production cost will be the sum of each stage's measured billable time and rate, plus shared storage and artifact transfer; it cannot be inferred from one hourly rate.
+
 ## Deliverables
 
-- [ ] Git-managed runner specification and runnable cold/warm/stop/report entry points.
+- [ ] Git-managed AWS CLI runner scripts, exact resource-ID receipts and runnable cold/warm/stop/report entry points; Terraform is unnecessary for this temporary spike.
+- [ ] Stage-by-stage resource profiles and a comparison of candidate service offerings, including artifact handoff costs.
 - [ ] Input and artifact manifests, cache inventories, per-stage timing/resource data, and actual AWS instance/volume IDs in private runtime evidence.
 - [ ] ISO desktop and installer-launch screenshots for both runs.
 - [ ] A comparison report replacing the parent plan’s four-hour budgeting assumption with measured data and stated publication overhead still to measure.

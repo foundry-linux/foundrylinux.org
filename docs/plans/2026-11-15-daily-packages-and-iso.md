@@ -126,11 +126,22 @@ Do not automatically install daily packages on Will’s laptop or write removabl
 
 **Next step (Will, 2026-11-15):** run the [cold/warm AWS spike](2026-11-15-aws-cold-warm-build-spike.md), retaining the disk for a second run later today. The four-hour daily case below is only a sensitivity example; replace it with measured timings before selecting a budget.
 
-**Recommendation for review:** one On-Demand Linux `m7i.2xlarge` in **Mumbai (`ap-south-1`)**, started for the daily job and stopped afterwards. It provides 8 vCPUs and 32 GiB RAM. Start with 300 GB total encrypted gp3 storage (for example 40 GB OS + 260 GB build/cache). Measure peak disk and memory before final sizing. Stopped EC2 compute stops accruing instance hours; persistent disks continue to cost money. Do not assume a home registry or any other lab service is available.
+**Earlier single-runner cost reference, superseded as an architecture recommendation:** one On-Demand Linux `m7i.2xlarge` in **Mumbai (`ap-south-1`)**, started for the daily job and stopped afterwards. It provides 8 vCPUs and 32 GiB RAM. Start with 300 GB total encrypted gp3 storage (for example 40 GB OS + 260 GB build/cache). Measure peak disk and memory before final sizing. Stopped EC2 compute stops accruing instance hours; persistent disks continue to cost money. Do not assume a home registry or any other lab service is available.
 
 AWS documents nested KVM support for M7i, so the ISO can boot inside this VM without renting a large bare-metal server. Explicitly enable nested virtualization, verify the region/account offering and `/dev/kvm`, then demonstrate a full desktop boot before accepting the runner. The public price list confirms a Mumbai price, not account capacity or a successful benchmark. The account Pricing API query had no available credentials in this session; costs below use AWS’s public catalogs. [Nested virtualization documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-ec2-nested-virtualization.html).
 
 ### Architecture
+
+**Updated direction (Will, 2026-11-15):** choose an execution service and size per stage after profiling. Discovery and publishing can use small jobs, package builds can use different memory/CPU profiles, ISO assembly owns persistent caches, and boot validation can use a short-lived nested-KVM runner. CPU saturation is unmeasured. The single-VM diagrams and prices below are a comparison baseline only, not the target deployment. The [spike](2026-11-15-aws-cold-warm-build-spike.md#resource-selection-by-stage) defines the resource measurements and artifact/cache handoffs. Its temporary provisioning uses AWS CLI scripts and receipts rather than requiring Terraform; permanent infrastructure can be decided after the spike.
+
+```mermaid
+flowchart LR
+    A[Scheduled discovery job] --> B[Build changed packages on suitable runners]
+    B --> C[Assemble ISO with persistent caches]
+    C --> D[Start KVM runner for desktop and installer tests]
+    D --> E[Small signing and publishing job]
+    E --> F[Each update on wald3n]
+```
 
 ```mermaid
 flowchart TB
@@ -230,6 +241,8 @@ Daily Foundry runner — proposed configuration
 - [ ] Keep the home-lab VM migration in the backlog until hardware/network/storage are actually configured; move the same Task pipeline after an equivalent validation run.
 
 ## Review decisions
+
+- [x] Choose resources independently per stage based on measurements; no assumption that the pipeline is CPU-bound.
 
 - [x] Daily start time: 03:00 Asia/Bangkok; builds run in containers.
 - [x] Will clarified that the home lab is not set up and requested the AWS alternative in a cheaper region, using Mumbai for this proposal.
