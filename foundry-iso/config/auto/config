@@ -46,13 +46,12 @@ lb config noauto \
 printf 'EDITION=%s\n' "$EDITION" > config/hook-env.sh
 
 # Write the per-edition package list so live-build pulls it during chroot.
-# Note: calamares-settings-foundry-linux is installed via hook (see
-# config/hooks/normal/1000-install-local-debs.hook.chroot) to avoid lb's
-# packages.chroot/ local-repo signing path, which breaks with gnupg 2.4+
-# in containers (--secret-keyring is obsolete, agent_genkey fails w/o TTY).
+# Seed installer branding while authenticated APT indexes are available.
+# This is required even with no local .debs; hook 1000 may apply newer builds.
 echo "foundry-${EDITION}"                  > config/package-lists/foundry.list.chroot
 echo "kubuntu-desktop"                    >> config/package-lists/foundry.list.chroot
 echo "calamares"                          >> config/package-lists/foundry.list.chroot
+echo "calamares-settings-foundry-linux"   >> config/package-lists/foundry.list.chroot
 echo "casper"                            >> config/package-lists/foundry.list.chroot
 echo "user-setup"                        >> config/package-lists/foundry.list.chroot
 echo "language-pack-en"                  >> config/package-lists/foundry.list.chroot
