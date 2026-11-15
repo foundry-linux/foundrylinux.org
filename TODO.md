@@ -5,6 +5,8 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
+- [ ] **Benchmark cold and warm AWS Mumbai builds** — fresh runner, then a second run on the same retained disk/cache later today; measure package and full Anvil ISO stages before choosing a daily budget. Stop EC2 between runs; retain disks. See [spike plan](docs/plans/2026-11-15-aws-cold-warm-build-spike.md).
+
 - [ ] **Daily package and Anvil ISO publication, with every update recorded on wald3n.com/open-source** — AWS Mumbai option (home lab not set up), container builds, upstream discovery, signed publication, real boot checks, daily scheduling and freshness monitoring without GitHub Actions. See [plan](docs/plans/2026-11-15-daily-packages-and-iso.md).
 
 ### apt-repo resilience — `task` vendored + source health-check
@@ -256,6 +258,10 @@ _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage 
 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
 - [verify] **2026-10-10-lock-screen-24-hour-clock** — Verification section present but no PASS recorded — run + record the steps. _from [2026-10-10-lock-screen-24-hour-clock.md](docs/plans/2026-10-10-lock-screen-24-hour-clock.md)_  <!-- fp:eeb3cf690b62b2c8 -->
+- [ ] **(triage)** [ ] Restart the same instance and verify the same volume IDs, mounts, cache manifests and builder inputs. Do not recreate or pre-clean the runner. — _from [2026-11-15-aws-cold-warm-build-spike.md](docs/plans/2026-11-15-aws-cold-warm-build-spike.md)_  <!-- fp:0c9186f558028b00 -->
+- [ ] **(triage)** [ ] Time the update check and package-cache validation. Record reused packages, actual compilation work and bytes transferred. — _from [2026-11-15-aws-cold-warm-build-spike.md](docs/plans/2026-11-15-aws-cold-warm-build-spike.md)_  <!-- fp:2ed9a568f34ebc20 -->
+- [ ] **(triage)** [ ] Force a fresh Anvil build using cached inputs, then repeat the identical ISO and VM validation gates. — _from [2026-11-15-aws-cold-warm-build-spike.md](docs/plans/2026-11-15-aws-cold-warm-build-spike.md)_  <!-- fp:91dee348f4ee2159 -->
+- [ ] **(triage)** [ ] Save the A/B comparison, cost calculation and a proposed daily budget. Stop the runner, retain both volumes and leave the scheduler disabled. — _from [2026-11-15-aws-cold-warm-build-spike.md](docs/plans/2026-11-15-aws-cold-warm-build-spike.md)_  <!-- fp:66a4fec10556c542 -->
 <!-- END auto-captured-deferrals -->
 <!-- triaged 2026-08-05: the two per-package-publish exclusions dropped — apt format/signing changes are explicit non-goals, not deferred work. -->
 <!-- triaged 2026-08-05: the Debian source packaging was merged into upstream PR #448; the "8 unbuilt targets" follow-up remains curated under "Packaging — new upstreams". -->

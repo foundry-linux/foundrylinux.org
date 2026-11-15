@@ -120,6 +120,8 @@ rows on commit.*
 
 | [Daily Foundry package and ISO updates](2026-11-15-daily-packages-and-iso.md) | Schedule tested package and Anvil ISO publication outside Actions, with every update recorded and verified on wald3n.com/open-source. | _PENDING_ | Infra |
 
+| [AWS Mumbai cold/warm build spike](2026-11-15-aws-cold-warm-build-spike.md) | Measure a fresh package/Anvil build and a second build using the same retained disk and caches before budgeting daily automation. | _PENDING_ | Infra |
+
 ---
 
 ## How this index was derived
@@ -130,3 +132,5 @@ rows on commit.*
 - **Generated** 2026-08-06 for 103 indexed plan(s).
 
 Index addition: 2026-11-15 — daily package and ISO publication plan; historical inventory drift remains separate.
+
+Index addition: 2026-11-15 — AWS cold/warm build spike.
