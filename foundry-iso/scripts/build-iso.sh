@@ -183,59 +183,16 @@ docker run --rm \
           _latest_deb[$_pkg]="$_deb"
         fi
       done
-      # Only bundle local debs NEWER than (or absent from) the published
-      # apt.foundrylinux.org repo.  A local deb identical to the published version
-      # installs from the bundle, marking the installed package origin as local
-      # -- apt then surfaces a confusing "Refresh available" for the very same
-      # version.  Leaving identical packages to the wired repo avoids that.
-      # If the repo index cannot be fetched, fall back to staging ALL: a network
-      # blip must never silently drop an unpublished fix (e.g. a security revert)
-      # from the image.
-      # NOTE: this whole block runs inside docker ... bash -c (SINGLE-QUOTED), so
-      # NO apostrophes or single quotes (including ANSI-C dollar-quote) may appear
-      # ANYWHERE here, comments included -- each one would end the bash -c string.
-      # Hence process substitution below, and no contractions in these comments.
-      declare -A _pub_ver
-      _have_idx=0; _cp=""
-      for _a in amd64 all; do
-        while IFS= read -r _l; do
-          case "$_l" in
-            "Package: "*) _cp="${_l#Package: }" ;;
-            "Version: "*) _pub_ver["$_cp"]="${_l#Version: }" ;;
-          esac
-        done < <(curl -fsSL "https://apt.foundrylinux.org/dists/resolute/main/binary-${_a}/Packages" 2>/dev/null || true)
-      done
-      [[ ${#_pub_ver[@]} -gt 0 ]] && _have_idx=1
-      [[ "$_have_idx" == 0 ]] && echo "  WARNING: apt.foundrylinux.org Packages unreachable - staging ALL local debs (no published-version filter)"
-      # Packages we ALWAYS bundle from local, never deferring to the published repo.
-      # Currently just the installer config (calamares-settings-foundry-linux), which
-      # is PURGED on install -- so bundling it costs zero Discover "Refresh" noise (it
-      # never reaches an installed system) while guaranteeing the ISO ships exactly the
-      # installer build tested here, not a same-version published build that may differ.
-      # The installer sets root passwords and partitions disks, so a version match is
-      # not enough assurance for it. Space-delimited; add future installer-only debs.
-      _always_local=" calamares-settings-foundry-linux "
+      # Prefer available local builds, including same-version rebuilds. Version
+      # equality does not establish identical contents. The install hook filters
+      # these candidates to the target edition dependency closure.
       for _deb in "${_latest_deb[@]}"; do
         _pkg=$(dpkg-deb --field "$_deb" Package)
         _ver=$(dpkg-deb --field "$_deb" Version)
-        _pub="${_pub_ver[$_pkg]:-}"
-        if [[ "$_always_local" == *" $_pkg "* ]]; then
-          echo "  staging local deb (always-local installer config): $(basename "$_deb")"
-          cp "$_deb" config/includes.chroot/tmp/local-debs/
-          continue
-        fi
-        if [[ "$_have_idx" == 1 && -n "$_pub" ]] && dpkg --compare-versions "$_ver" le "$_pub"; then
-          echo "  skip (published $_pub covers local $_ver): $_pkg"
-          continue
-        fi
-        if [[ -n "$_pub" ]]; then
-          echo "  staging local deb (newer than published $_pub): $(basename "$_deb")"
-        else
-          echo "  staging local deb (unpublished): $(basename "$_deb")"
-        fi
+        echo "  staging local build: $(basename "$_deb")"
         cp "$_deb" config/includes.chroot/tmp/local-debs/
       done
-      unset _latest_deb _pub_ver _deb _pkg _ver _cur _pub _cp _l _idx _have_idx _a _always_local
+      unset _latest_deb _deb _pkg _ver _cur
     fi
     # Patch bootstrap cache DNS before lb bootstrap runs, but ONLY when the cache
     # actually contains a real Ubuntu base system.  lb_bootstrap_cache restore checks
