@@ -6,13 +6,13 @@
 
 ## Daily cost and the 4-GiB trial
 
-Replaying the previous 30 complete Bangkok days of upstream and repository activity gives **$25.58 for 30 daily runs ($0.85/day)**, starting with empty artifact retention, or **$26.62 per 30 days once retention is full**. This includes gross outbound transfer; an available account-wide free allowance is a separate scenario. See the [daily table, graph, saved JSON and reusable simulator](2026-11-15-daily-build-cost-history.md).
+Replaying the previous 30 complete Bangkok days of upstream and repository activity gives **$10.46 for 30 daily runs ($0.35/day)**, starting with empty artifact retention, or **$12.07 per 30 days once retention is full**. Publication uses same-region S3 with $0 transfer; public downloads and request fees are additional traffic-dependent costs. See the [daily table, graph, saved JSON and reusable simulator](2026-11-15-daily-build-cost-history.md).
 
 | 4-GiB build runtime versus measured baseline | Total for the first 30 days | Monthly decrease |
 |---|---:|---:|
-| Same runtime | $24.38 | **$1.20 (4.7%)** |
-| 50% longer | $24.84 | **$0.74 (2.9%)** |
-| Twice as long | $25.30 | **$0.28 (1.1%)** |
+| Same runtime | $9.26 | **$1.20 (11.5%)** |
+| 50% longer | $9.72 | **$0.74 (7.1%)** |
+| Twice as long | $10.18 | **$0.28 (2.7%)** |
 
 These compare Mumbai c7i.large build stages with the measured m7i.xlarge rates, including public IPv4. Validation and control stages keep the larger-host rate. Storage and uploads are unchanged, so the absolute decrease also applies with full artifact retention. Break-even is about 2.30× build runtime, before extra host transitions or transfers. A successful trial must establish both correctness and actual runtime; simply avoiding an out-of-memory failure does not establish savings. The next AWS run remains deferred until 2026-11-16 and is not automatically scheduled.
 
@@ -253,7 +253,7 @@ The measured instance rate is **$0.2121/hour compute + $0.005/hour public IPv4 =
 | All disks currently retained | **$1.107** | **$33.20** | No disks deleted |
 | Unchanged warm workflow compute/IP, once daily | $0.066 | $1.97 | 18m 09s each day; excludes changed-package builds, startup, validation, publication and transfers |
 
-The once-daily total must also account for upstream activity and artifact publication. The [30-day history simulation](2026-11-15-daily-build-cost-history.md) provides the daily table and breakdown from saved activity, measured recipe times and explicit scenario assumptions. It separates gross AWS outbound transfer, retained EBS and R2 artifact storage. A smaller instance or optimized runtime is not substituted until measured or explicitly labeled a hypothetical scenario.
+The once-daily total must also account for upstream activity and artifact publication. The [30-day history simulation](2026-11-15-daily-build-cost-history.md) provides the daily table and breakdown from saved activity, measured recipe times and explicit scenario assumptions. It separates free same-region S3 publication, public download traffic, retained EBS and S3 artifact storage. A smaller instance or optimized runtime is not substituted until measured or explicitly labeled a hypothetical scenario.
 
 No production artifacts were uploaded during the spike. Both instances are stopped; disks remain as requested. Production scheduling stays disabled. Retained storage costs continue until a later retention decision; nothing is deleted automatically.
 

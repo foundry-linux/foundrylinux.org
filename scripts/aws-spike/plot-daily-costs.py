@@ -17,8 +17,8 @@ result = json.loads(a.simulation.read_text())
 rows = result['daily']
 components = [('compute_usd', 'Compute + IPv4', '#275dad'),
               ('ebs_usd', 'Retained EBS', '#49a082'),
-              ('egress_usd', 'AWS outbound transfer', '#db671f'),
-              ('r2_storage_usd', 'R2 storage', '#8c70b4')]
+              ('egress_usd', 'Publication/download transfer', '#db671f'),
+              ('artifact_storage_usd', 'S3 storage', '#8c70b4')]
 plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 10,
                      'axes.spines.top': False, 'axes.spines.right': False})
 fig, axes = plt.subplots(1, 2, figsize=(15, 6), gridspec_kw={'width_ratios': [3, 1]})

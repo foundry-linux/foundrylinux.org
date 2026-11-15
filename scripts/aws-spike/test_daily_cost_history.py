@@ -30,7 +30,7 @@ class SimulationTests(unittest.TestCase):
             'ebs_per_gib_month': .1, 'warm_workflow_seconds': 100,
             'discovery_seconds': 10, 'startup_seconds': 20, 'validation_seconds': 30,
             'publication_seconds': 40, 'artifact_retention_days': 2,
-            'r2_per_gb_month': .03, 'egress_per_gb': .1,
+            'storage_per_gb_month': .03, 'egress_per_gb': .1,
         }
 
     def test_coalesces_releases_and_repo_changes_once_per_recipe_day(self):
@@ -46,13 +46,21 @@ class SimulationTests(unittest.TestCase):
         self.assertEqual(result['totals']['package_builds'], 2)
         self.assertEqual(result['daily'][2]['history_day'], '2026-10-31')
         self.assertEqual(result['daily'][2]['date'], '2026-11-02')
-        self.assertAlmostEqual(result['daily'][2]['r2_retained_gb_model'], 2.2)
+        self.assertAlmostEqual(result['daily'][2]['artifact_retained_gb_model'], 2.2)
 
     def test_shared_allowance_resets_by_calendar_month_not_history_window(self):
-        self.scenario['available_egress_free_gb_per_calendar_month'] = 1
+        self.scenario.update(available_egress_free_gb_per_calendar_month=1, public_download_gb_per_day=1.2, public_download_per_gb=.1, egress_per_gb=0)
         result = history_tool.simulate(self.history, self.measured, self.scenario)
         self.assertAlmostEqual(result['daily'][0]['egress_usd'], .02)
-        self.assertAlmostEqual(result['daily'][1]['egress_usd'], 0)
+        self.assertAlmostEqual(result['daily'][1]['egress_usd'], .02)
+
+    def test_same_region_upload_has_no_egress_charge(self):
+        self.scenario.update(egress_per_gb=0, public_download_per_gb=.1)
+        result = history_tool.simulate(self.history, self.measured, self.scenario)
+        self.assertEqual(result['totals']['egress_usd'], 0)
+        self.scenario['public_download_gb_per_day'] = 2
+        result = history_tool.simulate(self.history, self.measured, self.scenario)
+        self.assertAlmostEqual(result['totals']['egress_usd'], .4)
 
     def test_policy_filters_preserve_local_fixes(self):
         self.scenario['upstream_version_prefixes'] = {'example': 'v1.1'}
@@ -85,7 +93,7 @@ class SimulationTests(unittest.TestCase):
         self.scenario.update(build_compute_per_hour=1.8, build_runtime_multiplier=1.5)
         new = history_tool.simulate(self.history, self.measured, self.scenario)
         self.assertAlmostEqual(new['totals']['build_compute_usd'], old['totals']['build_compute_usd'] * .75)
-        for key in ['other_compute_usd', 'ebs_usd', 'egress_usd', 'r2_storage_usd']:
+        for key in ['other_compute_usd', 'ebs_usd', 'egress_usd', 'artifact_storage_usd']:
             self.assertEqual(new['totals'][key], old['totals'][key])
         self.assertEqual(new['daily'][0]['runner_seconds_model'], 340)
 

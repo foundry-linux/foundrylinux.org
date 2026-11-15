@@ -14,11 +14,9 @@
   "startup_seconds": 60,
   "validation_seconds": 180,
   "publication_seconds": 120,
-  "egress_per_gb": 0.1093,
+  "egress_per_gb": 0,
   "available_egress_free_gb_per_calendar_month": 0,
-  "r2_per_gb_month": 0.015,
   "artifact_retention_days": 30,
-  "existing_r2_gb": 0,
   "package_upload_multiplier": 1,
   "recipe_seconds_override": {},
   "binary_to_recipe": {
@@ -34,25 +32,29 @@
     "coverage": "Foundry overlay only; current recipe catalog projected backward; all upstream snapshot commit days selected, which may exceed eventual promotion policy",
     "tag_dates": "Include matching tags without release records, but their tag/commit dates are publication proxies, not exact release dates",
     "package_timings": "Changed recipe cost uses observed cold interval, including dependency and fetch work; no compiler-cache savings assumed",
-    "transfer": "Gross AWS egress without shared free allowance; current ISO/deb and verified local source sizes proxy historical versions; repo-only changes reuse existing orig tarballs; metadata indexes omitted",
+    "transfer": "EC2 to S3 in ap-south-1 is free. Public downloads are separate, default zero traffic; edit public_download_gb_per_day and available monthly allowance. Request charges excluded.",
     "retention": "Start empty and keep each daily ISO/changed deb for 30 days; first month ramps up; repeat longer to see steady retention",
     "excluded": "Legacy diagnostic 300 GiB disks, retries, taxes, request charges, signing/monitoring services, site deployment and initial cold bootstrap",
     "powerdevil": "Stay on Foundry Plasma 6.6; later 6.7/6.8 tags remain in history but are excluded from this scenario",
-    "units": "Explicit conservative decimal GB for transfer and R2; EBS GiB as provisioned. Set egress_bytes_per_gb to1073741824 to compare binary billing units; this is a planning estimate, not invoice reconciliation."
+    "units": "S3 storage uses binary GB (2^30 bytes); public_download_gb_per_day is in billing GB. EBS uses provisioned GiB."
   },
   "rate_sources": {
     "ec2_ebs": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-south-1/index.csv",
     "ipv4": "https://aws.amazon.com/vpc/pricing/",
     "egress": "https://aws.amazon.com/ec2/pricing/on-demand/",
-    "r2": "https://developers.cloudflare.com/r2/pricing/"
+    "s3": "https://aws.amazon.com/s3/pricing/"
   },
   "upstream_version_prefixes": {
     "powerdevil": "v6.6."
   },
   "include_source_uploads": true,
   "egress_bytes_per_gb": 1000000000,
-  "r2_bytes_per_gb": 1000000000,
   "build_compute_per_hour": 0.08925,
   "build_ipv4_per_hour": 0.005,
-  "build_runtime_multiplier": 2
+  "build_runtime_multiplier": 2,
+  "storage_per_gb_month": 0.025,
+  "existing_storage_gb": 0,
+  "storage_bytes_per_gb": 1073741824,
+  "public_download_gb_per_day": 0,
+  "public_download_per_gb": 0.1093
 }

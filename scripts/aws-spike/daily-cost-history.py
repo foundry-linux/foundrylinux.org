@@ -299,10 +299,10 @@ def simulate(history, measured, scenario, projection_days=None):
     if projection_days is not None:
         validate_number('projection days', projection_days, positive=True)
         if not isinstance(projection_days, int):raise ValueError('projection days must be an integer')
-    required = ['compute_per_hour', 'ipv4_per_hour', 'ebs_gib', 'ebs_per_gib_month', 'warm_workflow_seconds', 'discovery_seconds', 'startup_seconds', 'validation_seconds', 'publication_seconds', 'egress_per_gb', 'r2_per_gb_month']
+    required = ['compute_per_hour', 'ipv4_per_hour', 'ebs_gib', 'ebs_per_gib_month', 'warm_workflow_seconds', 'discovery_seconds', 'startup_seconds', 'validation_seconds', 'publication_seconds', 'egress_per_gb', 'storage_per_gb_month']
     for key in required:validate_number(key, scenario[key])
-    for key, default in [('billing_days_per_month',30), ('artifact_retention_days',30), ('egress_bytes_per_gb',1000000000), ('r2_bytes_per_gb',1000000000)]:validate_number(key, scenario.get(key,default), positive=True)
-    for key, default in [('existing_r2_gb',0), ('package_upload_multiplier',1), ('available_egress_free_gb_per_calendar_month',0)]:validate_number(key, scenario.get(key,default))
+    for key, default in [('billing_days_per_month',30), ('artifact_retention_days',30), ('egress_bytes_per_gb',1000000000), ('storage_bytes_per_gb',1000000000)]:validate_number(key, scenario.get(key,default), positive=True)
+    for key, default in [('existing_storage_gb',0), ('package_upload_multiplier',1), ('available_egress_free_gb_per_calendar_month',0)]:validate_number(key, scenario.get(key,default))
     for item in measured['markers']:validate_number('recipe seconds', item['seconds'])
     for item in measured['artifacts']:validate_number('artifact bytes', item['bytes'])
     for item in measured.get('source_artifacts', []):validate_number('source artifact bytes', item['bytes'])
@@ -332,6 +332,8 @@ def simulate(history, measured, scenario, projection_days=None):
     if count < 1:raise ValueError('projection days must be positive')
     start = date.fromisoformat(history['window']['start_date'])
     output_start = date.fromisoformat(scenario.get('projection_start', history['window']['start_date']))
+    validate_number('public download GB/day', scenario.get('public_download_gb_per_day', 0))
+    validate_number('public download rate', scenario.get('public_download_per_gb', 0))
     cpu_rate = scenario['compute_per_hour'] + scenario['ipv4_per_hour']
     build_rate = scenario.get('build_compute_per_hour',scenario['compute_per_hour']) + scenario.get('build_ipv4_per_hour',scenario['ipv4_per_hour'])
     ebs_daily = scenario['ebs_gib'] * scenario['ebs_per_gib_month'] / scenario.get('billing_days_per_month', 30)
@@ -364,25 +366,26 @@ def simulate(history, measured, scenario, projection_days=None):
         upload_gb = upload_bytes / scenario.get('egress_bytes_per_gb', 1e9)
         month = day.strftime('%Y-%m')
         allowance = allowances.setdefault(month, scenario.get('available_egress_free_gb_per_calendar_month', 0))
-        free = min(allowance, upload_gb); allowances[month] -= free
-        transfer = (upload_gb - free) * scenario['egress_per_gb']
+        download_gb = scenario.get('public_download_gb_per_day', 0)
+        free = min(allowance, download_gb); allowances[month] -= free
+        transfer = upload_gb * scenario['egress_per_gb'] + (download_gb - free) * scenario.get('public_download_per_gb', 0)
         retained.append((i, upload_bytes))
         retained = [(j, size) for j, size in retained if i - j < scenario['artifact_retention_days']]
-        r2_gb = sum(size for _, size in retained) / scenario.get('r2_bytes_per_gb', 1e9) + scenario.get('existing_r2_gb', 0)
-        r2 = r2_gb * scenario['r2_per_gb_month'] / scenario.get('billing_days_per_month', 30)
+        storage_gb = sum(size for _, size in retained) / scenario.get('storage_bytes_per_gb', 1e9) + scenario.get('existing_storage_gb', 0)
+        storage_cost = storage_gb * scenario['storage_per_gb_month'] / scenario.get('billing_days_per_month', 30)
         build_compute = modeled_build_seconds / 3600 * build_rate
         other_compute = other_seconds / 3600 * cpu_rate
         compute = build_compute + other_compute
         rows.append({'date': day.isoformat(), 'history_day': source_day.isoformat(), 'packages': packages, 'package_build_seconds_proxy': build_seconds, 'unknown_timing_packages': unknown, 'unknown_size_packages': unknown_sizes, 'unknown_source_size_packages': unknown_sources,
-                     'runner_seconds_model': seconds, 'build_compute_usd': build_compute, 'other_compute_usd': other_compute, 'compute_usd': compute, 'ebs_usd': ebs_daily, 'upload_gb_proxy': upload_gb, 'egress_usd': transfer, 'r2_retained_gb_model': r2_gb, 'r2_storage_usd': r2,
-                     'total_usd': compute + ebs_daily + transfer + r2})
+                     'runner_seconds_model': seconds, 'build_compute_usd': build_compute, 'other_compute_usd': other_compute, 'compute_usd': compute, 'ebs_usd': ebs_daily, 'upload_gb_proxy': upload_gb, 'egress_usd': transfer, 'artifact_retained_gb_model': storage_gb, 'artifact_storage_usd': storage_cost,
+                     'total_usd': compute + ebs_daily + transfer + storage_cost})
     gaps = [x['package'] for x in history['coverage'] if x['status'] == 'unknown']
     if gaps:warnings.append('Unknown upstream coverage (not zero activity): ' + ', '.join(gaps))
     if missing:warnings.append('Unpriced rebuilds due to missing timing: ' + ', '.join(sorted(missing)))
     if missing_sources:warnings.append('Unpriced source transfers/storage due to missing verified source sizes: ' + ', '.join(sorted(missing_sources)))
     if missing_sizes:warnings.append('Unpriced package transfers/storage due to missing artifact sizes: ' + ', '.join(sorted(missing_sizes)))
-    warnings += ['Current package catalog is projected backward; deleted releases and historical promotion eligibility cannot be reconstructed from current feeds.', 'Per-recipe cold intervals are proxies for future changed-source builds, not measured historical runtimes.', 'Current artifact sizes proxy historical uploads. Verified local source sizes are included only when include_source_uploads is enabled; metadata indexes are not sized.', 'Ubuntu archive updates are outside overlay activity coverage; daily ISO still refreshes dependencies.', 'Validation/startup/publication/discovery inputs are explicit scenario allowances, not measured automated stage durations.', 'No automatic CPU-count timing scaling; hardware changes require explicit measured timing overrides.', 'Shared account free allowances are zero by default; retention starts empty unless existing_r2_gb is supplied. Requests, taxes, failures, signing/monitoring services and website operations are excluded.']
-    totals = {key: sum(row[key] for row in rows) for key in ['build_compute_usd', 'other_compute_usd', 'compute_usd', 'ebs_usd', 'egress_usd', 'r2_storage_usd', 'total_usd', 'upload_gb_proxy', 'package_build_seconds_proxy']}
+    warnings += ['Current package catalog is projected backward; deleted releases and historical promotion eligibility cannot be reconstructed from current feeds.', 'Per-recipe cold intervals are proxies for future changed-source builds, not measured historical runtimes.', 'Current artifact sizes proxy historical uploads. Verified local source sizes are included only when include_source_uploads is enabled; metadata indexes are not sized.', 'Ubuntu archive updates are outside overlay activity coverage; daily ISO still refreshes dependencies.', 'Validation/startup/publication/discovery inputs are explicit scenario allowances, not measured automated stage durations.', 'No automatic CPU-count timing scaling; hardware changes require explicit measured timing overrides.', 'Shared account free allowances are zero by default; retention starts empty unless existing_storage_gb is supplied. Requests, taxes, failures, signing/monitoring services and website operations are excluded.']
+    totals = {key: sum(row[key] for row in rows) for key in ['build_compute_usd', 'other_compute_usd', 'compute_usd', 'ebs_usd', 'egress_usd', 'artifact_storage_usd', 'total_usd', 'upload_gb_proxy', 'package_build_seconds_proxy']}
     totals.update(days=count, average_daily_usd=totals['total_usd']/count, package_builds=sum(len(x['packages']) for x in rows), active_package_days=sum(bool(x['packages']) for x in rows))
     return {'schema_version': VERSION, 'is_partial': bool(gaps or missing or missing_sizes or missing_sources), 'generated_at': utcnow(), 'history_window': history['window'], 'projection': 'Repeat the observed daily sequence cyclically; not a release forecast' if count != days else 'Historical activity replay with current measured timing proxies', 'scenario': scenario, 'warnings': warnings, 'totals': totals, 'daily': rows}
 
@@ -391,19 +394,19 @@ def write_report(result, output):
     dump(out / 'simulation.json', result)
     columns = list(result['daily'][0])
     with (out/'daily.csv').open('w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=columns); writer.writeheader()
+        writer = csv.DictWriter(f, fieldnames=columns, lineterminator="\n"); writer.writeheader()
         for row in result['daily']:
             writer.writerow({k: ', '.join(v) if isinstance(v,list) else v for k,v in row.items()})
     t = result['totals']
     total_label = 'Partial known-cost subtotal (unknown components unpriced)' if result['is_partial'] else 'Modeled total'
     lines = ['# Daily Foundry build cost simulation', '', f'**{total_label}: ${t["total_usd"]:.2f} over {t["days"]} days; average ${t["average_daily_usd"]:.3f}/day.**', '', result['projection'], '',
              '| Component | USD |', '|---|---:|']
-    for key, name in [('compute_usd','Compute + IPv4'),('ebs_usd','Retained EBS'),('egress_usd','AWS outbound transfer'),('r2_storage_usd','R2 artifact storage')]:lines.append(f'| {name} | {t[key]:.3f} |')
+    for key, name in [('compute_usd','Compute + IPv4'),('ebs_usd','Retained EBS'),('egress_usd','Publication/download transfer'),('artifact_storage_usd','S3 artifact storage')]:lines.append(f'| {name} | {t[key]:.3f} |')
     lines += ['', '## Assumptions and coverage', ''] + ['- '+w for w in result['warnings']]
-    lines += ['', '## Per-day calculation', '', '| Date | Packages to rebuild (coalesced) | Build proxy min | Compute | EBS | Egress | R2 | Total USD |', '|---|---|---:|---:|---:|---:|---:|---:|']
+    lines += ['', '## Per-day calculation', '', '| Date | Packages to rebuild (coalesced) | Build proxy min | Compute | EBS | Egress | S3 | Total USD |', '|---|---|---:|---:|---:|---:|---:|---:|']
     for row in result['daily']:
         packages=', '.join(row['packages']) or '—'
-        lines.append(f'| {row["date"]} | {packages} | {row["package_build_seconds_proxy"]/60:.2f} | {row["compute_usd"]:.3f} | {row["ebs_usd"]:.3f} | {row["egress_usd"]:.3f} | {row["r2_storage_usd"]:.3f} | **{row["total_usd"]:.3f}** |')
+        lines.append(f'| {row["date"]} | {packages} | {row["package_build_seconds_proxy"]/60:.2f} | {row["compute_usd"]:.3f} | {row["ebs_usd"]:.3f} | {row["egress_usd"]:.3f} | {row["artifact_storage_usd"]:.3f} | **{row["total_usd"]:.3f}** |')
     (out/'report.md').write_text('\n'.join(lines)+'\n')
 
 def main():

@@ -192,34 +192,20 @@ Provision with Terraform and the existing container workflow. Use SSM for admini
 
 Bootstrap the pinned standard container stacks without the home lab: export verified OCI images to accessible storage, restore and verify their digests on the runner, and retain them in its persistent cache. Count initial image upload, storage and cold-cache downloads separately. Keep signing/upload credentials out of source builds; fetch them only for the publishing stage using the instance role and a narrowly scoped secret policy. The full job, including site builds, stays runnable without Actions or the home registry.
 
-### Costs checked on 2026-11-15
+### Corrected S3 architecture and measured budget — 2026-11-15
 
-USD, before taxes and support charges. Linux On-Demand, shared tenancy, no Savings Plan, Reserved Instance, Spot discount or promotional credits assumed. Rates come from the AWS Mumbai EC2 catalog published 2026-11-14 and AWS transfer catalog; selected rows are retained in [the pricing evidence file](2026-11-15-daily-packages-and-iso-aws-rates.json).
+Build and store artifacts in Mumbai: EC2 → S3 Standard in `ap-south-1` has no transfer charge. Use immutable object keys and signed versioned APT metadata; wald3n.com/open-source records every published version and links to its S3 artifact. Preserve current R2 production until migration and repository/client checks are complete. No infrastructure migration has been performed.
 
-| Component | Rate or assumption | Monthly cost at 4 hours/day |
-|---|---|---:|
-| `m7i.2xlarge` compute | $0.4242/hour × 120 hours | $50.90 |
-| gp3 storage, retained all month | 300 GB × $0.0912/GB-month; baseline performance | $27.36 |
-| Automatically assigned public IPv4 | $0.005/hour × 120 hours | $0.60 |
-| AWS outbound uploads | Model 200 GB/month; $0.1093/GB beyond available shared free allowance | $10.93–21.86 |
-| Scheduler, logs, secrets and monitoring | $5 planning allowance, not a quoted service bundle | $5.00 |
-| Additional R2 Standard storage | Model 200 GB retained × $0.015/GB-month, no free storage credit assumed | $3.00 |
-| **Illustrative total** | Existing site/domain charges excluded | **$97.79–108.72** |
+```mermaid
+flowchart LR
+    B[EC2 Mumbai build] -->|Free same-region transfer| S[S3 Mumbai versioned artifacts]
+    S --> D[Public downloads: traffic-based fees]
+    W[wald3n.com/open-source update records] --> D
+```
 
-The outbound scenario rounds each ISO to 5 GB × 30 days = 150 GB and allows another 50 GB for changed packages and other uploads. The low end assumes the account-wide 100 GB/month internet egress allowance is available; the high end assumes other workloads used it. More package uploads increase the bill. Initial bootstrapping and package rebuilds may exceed this model. Sources: [AWS Mumbai EC2/gp3 catalog](https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-south-1/index.csv), [AWS transfer catalog](https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSDataTransfer/current/index.csv), [EC2 egress allowance](https://aws.amazon.com/ec2/pricing/on-demand/), [IPv4 pricing](https://aws.amazon.com/vpc/pricing/).
+The [30-day replay](2026-11-15-daily-build-cost-history.md) now gives **$10.46 first month / $12.07 with retention full**, before public delivery and request fees. Compute/IP $2.88, EBS $5.84, S3 storage $1.74 initially / $3.35 steady, publication transfer $0. The earlier four-hour/300-GB/R2 forecasts are superseded by these measured workload proxies. Retained diagnostic disks remain a separate $27.36/month while kept.
 
-| Runtime scenario | Compute hours/month | Compute alone | Total with the same storage/upload assumptions |
-|---|---:|---:|---:|
-| 2 hours/day | 60 | $25.45 | $72.04–82.97 |
-| **4 hours/day — initial planning case** | **120** | **$50.90** | **$97.79–108.72** |
-| 6 hours/day | 180 | $76.36 | $123.55–134.48 |
-| Left running continuously | 730 | $309.67 | $359.61–370.54 |
-
-Daily scenarios use 30 builds/month; the continuous comparison uses the conventional 730-hour month. These are sensitivity calculations, **not measured AWS build times**. Four hours is a budgeting assumption for incremental package work plus Anvil; rebuilding all large packages can take substantially longer. Each additional hour on every daily run adds about $12.88/month for compute and IPv4. Each additional 100 GB of persistent gp3 adds $9.12/month. A smaller `c7i.2xlarge` costs $0.357/hour but has only 16 GiB RAM; benchmark before choosing it for package builds. A `m7i.4xlarge` doubles memory/CPU and costs $0.8484/hour; it saves money only if its speedup justifies the higher rate.
-
-EventBridge’s published allowance covers 14 million scheduler invocations monthly, far above this workload. Four Secrets Manager secrets at its example $0.40/secret-month would consume $1.60 of the $5 allowance; measure log ingestion and monitoring charges during the pilot. Additional snapshot backups, increased gp3 performance, paid support and any dedicated customer-managed KMS key are excluded and must be added if selected. [Scheduler pricing](https://aws.amazon.com/eventbridge/pricing/), [Secrets Manager pricing](https://aws.amazon.com/secrets-manager/pricing/).
-
-Continue serving public binaries from the existing R2-backed APT/ISO storage. AWS still charges to upload there; R2 has no internet egress charge for subsequent public downloads. The $3 storage line models only 200 GB of added artifacts, not the existing account bill or unlimited history. Without pruning, 150 GB of new ISO data each month adds about $2.25 to the ongoing monthly R2 storage bill per month of retained history. Retention is still a review decision; do not silently delete old releases or Docker caches. R2 operations above the account’s free allowances are additional. [R2 pricing](https://developers.cloudflare.com/r2/pricing/).
+Public download cost depends on users. Direct-S3 transfer at the saved Mumbai planning rate adds $0.1093 per billing GB before the shared account allowance; 500 GB costs $54.65 gross or $43.72 if all 100 GB of monthly allowance is available. GET/PUT/multipart requests and a future CDN have separate charges. Same-region publication is free without consuming this internet allowance. Use the regional endpoint directly, without a NAT gateway; if private subnets are introduced, use an S3 gateway endpoint. See [S3 transfer rules](https://aws.amazon.com/s3/faqs/) and [S3 pricing](https://aws.amazon.com/s3/pricing/).
 
 ### Deployment review screen and pilot
 
@@ -263,4 +249,4 @@ AI assistance: Codex CLI 0.169.0; model gpt-6-astra; reasoning effort medium, ve
 
 ## Activity-based budget update — 2026-11-15
 
-The [30-day replay and reusable simulator](2026-11-15-daily-build-cost-history.md) replace the earlier four-hour sensitivity assumption with measured timing proxies and observed upstream/repository events. Budget $25.58 for the first 30 daily runs, or $26.62 with full artifact retention, before account-wide free allowances and excluded ancillary costs. A successful 4-GiB build trial at unchanged runtime would save $1.20 per 30 days; runtime and transition costs still need measurement. Next trial is deferred to 2026-11-16, not automatically scheduled.
+The [30-day replay and reusable simulator](2026-11-15-daily-build-cost-history.md) replace the earlier four-hour sensitivity assumption with measured timing proxies and observed upstream/repository events. Budget $10.46 for the first 30 daily runs, or $12.07 with full artifact retention, before public download traffic, request fees and excluded ancillary costs. A successful 4-GiB build trial at unchanged runtime would save $1.20 per 30 days; runtime and transition costs still need measurement. Next trial is deferred to 2026-11-16, not automatically scheduled.

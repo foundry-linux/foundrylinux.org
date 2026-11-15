@@ -5,7 +5,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
-- [x] **Save reproducible 30-day activity and cost projections** — reusable JSON collector/simulator, daily table and graph, source upload sizes and stage-specific 4-GiB sensitivity. See [cost history](docs/plans/2026-11-15-daily-build-cost-history.md).
+- [x] **Save reproducible 30-day activity and cost projections** — reusable JSON collector/simulator, daily table and graph, same-region S3 publication, separate public-download scenarios, source sizes and stage-specific 4-GiB sensitivity. See [cost history](docs/plans/2026-11-15-daily-build-cost-history.md).
 - [ ] **Trial optimized builds on 4 GiB on 2026-11-16** — no new AWS build today; measure correctness, memory pressure and runtime, then replace the modeled $1.20/month same-runtime saving with evidence. Validation retains a larger host; no automatic run scheduled.
 
 - [x] **Measure cold and warm AWS Mumbai workloads** — cold package/ISO workflow 1 h 56 min 22 s; warm 18 min 9 s; both desktop/installer launches verified. Cold post-build collector failed and was corrected; do not call its full runner error-free. Disks retained. See [spike results](docs/plans/2026-11-15-aws-cold-warm-build-spike.md).

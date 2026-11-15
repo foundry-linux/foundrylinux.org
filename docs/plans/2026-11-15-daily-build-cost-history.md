@@ -1,12 +1,60 @@
 # Daily Foundry build costs from 30 days of activity
 
-**Evidence window:** 16 October–14 November 2026, inclusive, Asia/Bangkok. **Status:** collected upstream and local activity; offline baseline and future-repeat simulations generated. This is an estimate of operating a daily publisher, not charges incurred during those historical days. Optimization implementation and the next AWS benchmark are deferred until tomorrow.
+**Evidence window:** 16 October–14 November 2026, Asia/Bangkok. **Corrected publication architecture:** EC2 builds and S3 Standard artifact storage are both in Mumbai (`ap-south-1`). Publication no longer copies AWS-built artifacts to R2.
 
-**Main estimate: $0.85/day, or $25.58 for 30 daily runs**, using the measured m7i.xlarge build process, one fresh Anvil ISO each day, changed overlay packages, retained 64-GiB EBS, gross AWS egress, and 30-day retention of new daily artifacts starting empty. Existing published repository storage is outside this incremental estimate unless supplied as `existing_r2_gb`. A repeating workload with retention already full reaches **$26.62 per 30 days ($0.89/day)**. These are scenario totals for the included components; taxes, failures and ancillary services remain outside them.
+**Build and publication estimate: $10.46 for the first 30 days ($0.35/day), or $12.07 per 30 days with retention full.** These totals exclude public download traffic and request charges. The earlier $25.58 estimate incorrectly assumed uploading every daily build out of AWS to R2; it is superseded.
 
-![Daily estimated cost by component](assets/daily-cost-2026-11-15/daily-costs.png)
+![Daily cost components](assets/daily-cost-2026-11-15/daily-costs.png)
 
-[Graph SVG](assets/daily-cost-2026-11-15/daily-costs.svg) · [Daily CSV](assets/daily-cost-2026-11-15/baseline/daily.csv) · [Simulation JSON](assets/daily-cost-2026-11-15/baseline/simulation.json) · [Reusable tool and instructions](../../scripts/aws-spike/DAILY-COST-HISTORY.md).
+[Daily CSV](assets/daily-cost-2026-11-15/baseline/daily.csv) · [Simulation JSON](assets/daily-cost-2026-11-15/baseline/simulation.json) · [Reusable script instructions](../../scripts/aws-spike/DAILY-COST-HISTORY.md).
+
+## Publication and downloads
+
+```mermaid
+flowchart LR
+    E[EC2 build and validation in Mumbai] -->|Same-region transfer: $0| S[S3 Standard in Mumbai]
+    S --> D[Public package and ISO downloads]
+    W[wald3n.com/open-source release records] -->|Versioned artifact links| D
+```
+
+Use immutable versioned S3 object keys for packages, sources, repository snapshots, ISOs, checksums and validation receipts. Publish tested candidates by updating the release manifest and signed APT metadata. Keep the website release history at wald3n.com/open-source and link to these artifacts. Existing production R2 repositories stay in place until a separately validated migration; no bucket, DNS or existing release was changed by this plan update.
+
+EC2-to-S3 transfer within the same region is free. Use the regional S3 endpoint directly; a gateway endpoint can avoid NAT processing if private subnets are later used. Do not introduce a NAT gateway for publication. S3 upload requests and multipart requests still have request charges. Public S3 downloads incur internet delivery and GET charges; a custom HTTPS/CDN front end is a separate delivery decision, with its own traffic pricing. [AWS transfer FAQ](https://aws.amazon.com/s3/faqs/), [S3 pricing](https://aws.amazon.com/s3/pricing/).
+
+## Cost breakdown
+
+| Component | Average/day | First 30 days |
+|---|---:|---:|
+| Compute + public IPv4 | $0.096 | $2.88 |
+| Retained 64-GiB EBS | $0.195 | $5.84 |
+| EC2 → S3 publication transfer | $0 | **$0** |
+| S3 Standard, 30-day retention starting empty | $0.058 | $1.74 |
+| **Build/publication subtotal** | **$0.349** | **$10.46** |
+
+Mumbai S3 Standard costs $0.025 per binary GB-month for the first 50 TB; the [Pricing API receipt](assets/daily-cost-2026-11-15/aws-s3-rate.json) is saved. Storage uses 2^30 bytes per billed GB. Approximately 144.02 decimal GB of new artifacts arrive during the 30-day replay. With retention full, S3 costs about $3.35 per 30 days, bringing the subtotal to $12.07. Existing published storage is additional unless entered as `existing_storage_gb`. Retention is a modeled policy, not authorization to delete existing releases.
+
+### Public download sensitivity
+
+Downloads depend on users, not build frequency. At the saved Mumbai internet-transfer planning rate of $0.1093/GB, the following are additions to the subtotal, before GET/CDN request fees. The 100-GB allowance is account-wide and conditional on remaining availability; it is applied once per billing month, not once per bucket.
+
+| Public downloads/month, billing GB | Gross download transfer | If 100 GB allowance is available |
+|---|---:|---:|
+| 0 | $0 | $0 |
+| 100 | $10.93 | $0 |
+| 500 | $54.65 | $43.72 |
+| 1,000 | $109.30 | $98.37 |
+
+These are direct-S3 delivery scenarios, not assumed audience traffic or a CDN quote. AWS/S3 requests, taxes, failures, signing/monitoring services, website operation, initial cold bootstrap and existing repository storage remain outside the subtotal. Separate retained diagnostic 300-GiB EBS volumes still add $27.36/month while kept; they are excluded from the daily production model.
+
+## If the 4-GiB build trial succeeds
+
+| Build runtime on c7i.large | First 30-day subtotal | Monthly decrease |
+|---|---:|---:|
+| Same time | $9.26 | **$1.20 (11.5%)** |
+| 50% longer | $9.72 | **$0.74 (7.1%)** |
+| Twice as long | $10.18 | **$0.28 (2.7%)** |
+
+The absolute savings are unchanged: c7i.large build compute/IP costs $0.09425/hour versus m7i.xlarge $0.2171/hour. Control and validation retain the larger-host rate. Break-even is about 2.30× build runtime before added transitions/transfers. With full retention and equal runtime, the subtotal falls from $12.07 to $10.87. Tomorrow's trial must measure runtime and correctness; these are scenarios, not a successful 4-GiB measurement.
 
 ## What was measured and what is modeled
 
@@ -20,117 +68,47 @@ The 58 build intervals come from timestamped cold-run Docker logs and total 5,08
 
 The model assumes correct per-recipe selective reuse. The experiment proved whole-set unchanged-output reuse; per-recipe fingerprints now have container fixture and a real package cache-hit check, while full changed-source and promotion validation remain pending. No hypothetical compiler-cache or other optimization savings are included.
 
-## Daily operating assumptions
-
-| Input | Baseline | Evidence or status |
-|---|---:|---|
-| Instance | m7i.xlarge, Mumbai, 4 vCPU / 16 GiB | Actual spike hardware |
-| Compute + public IPv4 | $0.2171/hour | $0.2121 + $0.005; auto-assigned address only while running |
-| Warm ISO workflow | 1,089 s/day | Measured, including cache verification/orchestration |
-| Changed package work | Sum of selected recipe intervals | Measured cold intervals used as future estimates |
-| Discovery | 60 s/day | Editable allowance, unmeasured automated job |
-| Instance start | 60 s/day | Editable allowance |
-| Desktop + installer-launch validation | 180 s/day | Editable automated allowance; manual spike timings are not substituted |
-| Publication | 120 s/day | Editable allowance, not measured upload performance |
-| EBS | 64 GiB × $0.0912/GiB-month | Capacity retained all month; 16 root + 48 build |
-| Outbound AWS transfer | $0.1093 per modeled GB | Gross; no account-wide free allowance assumed |
-| R2 storage | $0.015/GB-month | 30-day rolling history, initially empty |
-| Units | Decimal GB for modeled transfer/R2; GiB for EBS | Explicit conservative planning conversion; `egress_bytes_per_gb` is adjustable |
-
-The seven minutes of daily allowances add about **$0.76/month** in compute/IP. They are not measured savings or guaranteed runtimes. Every extra minute per daily run changes 30-day compute/IP cost by about **$0.109**. Changing the hourly rate does not automatically scale measured timings. R2 storage is accrued at daily granularity; billing rounding, request charges and metadata-index uploads are excluded. No NAT gateway is assumed.
-
-The daily publisher would transfer approximately **144.02 modeled GB over 30 days**, overwhelmingly ISO payloads. Transfer is therefore the largest modeled cost, not package compilation.
-
-## Cost breakdown
-
-| Component | Average/day | 30-day total |
-|---|---:|---:|
-| Compute + IPv4, including explicit allowances | $0.096 | $2.88 |
-| Retained 64-GiB EBS | $0.195 | $5.84 |
-| AWS outbound transfer, no free allowance | $0.525 | $15.74 |
-| R2 storage, first-month accumulation | $0.037 | $1.12 |
-| **Included-component total** | **$0.853** | **$25.58** |
-
-If all **100 GB/month of AWS's account-wide internet egress allowance** were available to Foundry, replaying this workload into a single billing month gives **$14.65/30 days**. That is a separate conditional scenario, not the baseline. The historical window crosses October and November; the alternative deliberately starts on 1 December so it does not improperly claim two months of free allowance for a “monthly” quote. Existing account usage has not been checked. R2 account free allowances are also not assumed. See [AWS transfer policy](https://aws.amazon.com/ec2/pricing/on-demand/) and [R2 pricing](https://developers.cloudflare.com/r2/pricing/).
-
-The separate retained diagnostic **300-GiB disks add $27.36/month** while kept. They are not needed for this modeled daily runner and are excluded from its total. They have not been deleted. Existing published-repository storage, initial cold bootstrap, repeated failed builds, full disk-install testing, signing/monitoring services, request charges, website publishing and taxes are outside this incremental model. Repo-only revisions presume their original source archive already exists in the publication repository. Both spike instances were left stopped after the read-only timing extraction; no new build was run for this analysis.
-
-## If the 4-GiB build trial succeeds
-
-A Mumbai **c7i.large (2 vCPU, 4 GiB)** is $0.08925/hour plus $0.005/hour public IPv4, versus $0.2171/hour combined for the measured m7i.xlarge. Apply this cheaper rate only to package/ISO build stages. The 4-GiB validation guest still needs a larger host; discovery/startup/validation/publication allowances retain the baseline rate in these scenarios. This is a sensitivity calculation pending tomorrow's trial, not a claim that 4 GiB is enough.
-
-| Build runtime on c7i.large | Build-stage compute/IP | Total per 30 days | Saving per 30 days |
-|---|---:|---:|---:|
-| Same time (unproven) | $0.919 | $24.38 | $1.20 |
-| 50% longer | $1.379 | $24.84 | $0.74 |
-| Twice as long | $1.839 | $25.30 | $0.28 |
-
-At equal runtime, this saves **about $1.20/month**, or $0.040/day, for the observed activity. Build time could grow to about **2.30×** before build-stage compute savings disappear. The small total saving is because outbound ISO uploads and retained disks dominate this scenario; changing RAM does not reduce those charges. Additional host transitions, artifact transfers and failure/retry time are not measured and could consume the saving.
-
-The [c7i.large rate receipt](assets/daily-cost-2026-11-15/aws-c7i-large-rate.json) and [same-time](assets/daily-cost-2026-11-15/4gb-same-time-scenario.json), [1.5×](assets/daily-cost-2026-11-15/4gb-50pct-slower-scenario.json), and [2×](assets/daily-cost-2026-11-15/4gb-double-time-scenario.json) scenarios are saved. `build_compute_per_hour`, `build_ipv4_per_hour` and `build_runtime_multiplier` make the assumption explicit; changing hardware never silently grants a speedup.
 
 ## Per-day table
 
 Each row estimates one fresh ISO publication plus the selected recipe changes. Costs include the allowances above. An em dash means no selected event on that date. PowerDevil's 16 October upstream entry uses an explicitly approximate tag date; libvgm entries are snapshot commit days.
 
-| Bangkok date | Upstream recipe updates | Repo recipe changes | Build proxy min | Compute/IP | EBS | Egress | R2 | Total USD |
+| Bangkok date | Upstream recipe updates | Repo recipe changes | Build proxy min | Compute/IP | EBS | Egress | S3 | Total USD |
 |---|---|---|---:|---:|---:|---:|---:|---:|
-| 2026-10-16 | powerdevil, python3-glfw | — | 4.62 | 0.108 | 0.195 | 0.518 | 0.002 | **0.823** |
-| 2026-10-17 | libvgm, xemu-xbox | — | 7.37 | 0.118 | 0.195 | 0.539 | 0.005 | **0.856** |
-| 2026-10-18 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.007 | **0.810** |
-| 2026-10-19 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.010 | **0.813** |
-| 2026-10-20 | uv, xemu-xbox | — | 6.99 | 0.116 | 0.195 | 0.542 | 0.012 | **0.865** |
-| 2026-10-21 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.014 | **0.818** |
-| 2026-10-22 | ghidra, uv, xemu-xbox | — | 12.12 | 0.135 | 0.195 | 0.661 | 0.017 | **1.008** |
-| 2026-10-23 | ruff | — | 0.20 | 0.092 | 0.195 | 0.520 | 0.020 | **0.826** |
-| 2026-10-24 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.022 | **0.825** |
-| 2026-10-25 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.025 | **0.828** |
-| 2026-10-26 | vgmstream | — | 1.04 | 0.095 | 0.195 | 0.519 | 0.027 | **0.835** |
-| 2026-10-27 | libvgm, ruff, uv | — | 1.17 | 0.095 | 0.195 | 0.524 | 0.029 | **0.843** |
-| 2026-10-28 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.032 | **0.835** |
-| 2026-10-29 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.034 | **0.837** |
-| 2026-10-30 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.036 | **0.840** |
-| 2026-10-31 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.039 | **0.842** |
-| 2026-11-01 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.041 | **0.844** |
-| 2026-11-02 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.044 | **0.847** |
-| 2026-11-03 | uv | — | 0.30 | 0.092 | 0.195 | 0.521 | 0.046 | **0.854** |
-| 2026-11-04 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.048 | **0.851** |
-| 2026-11-05 | libvgm | — | 0.68 | 0.093 | 0.195 | 0.518 | 0.051 | **0.857** |
-| 2026-11-06 | ruff | — | 0.20 | 0.092 | 0.195 | 0.520 | 0.053 | **0.859** |
-| 2026-11-07 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.055 | **0.859** |
-| 2026-11-08 | pvsneslib | — | 0.53 | 0.093 | 0.195 | 0.519 | 0.058 | **0.865** |
-| 2026-11-09 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.060 | **0.863** |
-| 2026-11-10 | — | — | 0.00 | 0.091 | 0.195 | 0.518 | 0.063 | **0.866** |
-| 2026-11-11 | python3-picire | — | 0.10 | 0.091 | 0.195 | 0.518 | 0.065 | **0.868** |
-| 2026-11-12 | python3-librosa | — | 0.08 | 0.091 | 0.195 | 0.518 | 0.067 | **0.871** |
-| 2026-11-13 | ruff, uv | — | 0.49 | 0.093 | 0.195 | 0.523 | 0.070 | **0.880** |
-| 2026-11-14 | — | foundry-desktop, powerdevil, python3-inators, python3-mss, python3-picire, python3-pydub | 4.89 | 0.109 | 0.195 | 0.518 | 0.072 | **0.893** |
+| 2026-10-16 | powerdevil, python3-glfw | — | 4.62 | 0.108 | 0.195 | 0.000 | 0.004 | **0.306** |
+| 2026-10-17 | libvgm, xemu-xbox | — | 7.37 | 0.118 | 0.195 | 0.000 | 0.008 | **0.320** |
+| 2026-10-18 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.011 | **0.297** |
+| 2026-10-19 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.015 | **0.300** |
+| 2026-10-20 | uv, xemu-xbox | — | 6.99 | 0.116 | 0.195 | 0.000 | 0.019 | **0.330** |
+| 2026-10-21 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.022 | **0.308** |
+| 2026-10-22 | ghidra, uv, xemu-xbox | — | 12.12 | 0.135 | 0.195 | 0.000 | 0.027 | **0.356** |
+| 2026-10-23 | ruff | — | 0.20 | 0.092 | 0.195 | 0.000 | 0.031 | **0.317** |
+| 2026-10-24 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.034 | **0.320** |
+| 2026-10-25 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.038 | **0.324** |
+| 2026-10-26 | vgmstream | — | 1.04 | 0.095 | 0.195 | 0.000 | 0.042 | **0.331** |
+| 2026-10-27 | libvgm, ruff, uv | — | 1.17 | 0.095 | 0.195 | 0.000 | 0.046 | **0.335** |
+| 2026-10-28 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.049 | **0.335** |
+| 2026-10-29 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.053 | **0.338** |
+| 2026-10-30 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.057 | **0.342** |
+| 2026-10-31 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.060 | **0.346** |
+| 2026-11-01 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.064 | **0.349** |
+| 2026-11-02 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.068 | **0.353** |
+| 2026-11-03 | uv | — | 0.30 | 0.092 | 0.195 | 0.000 | 0.071 | **0.358** |
+| 2026-11-04 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.075 | **0.361** |
+| 2026-11-05 | libvgm | — | 0.68 | 0.093 | 0.195 | 0.000 | 0.079 | **0.367** |
+| 2026-11-06 | ruff | — | 0.20 | 0.092 | 0.195 | 0.000 | 0.082 | **0.369** |
+| 2026-11-07 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.086 | **0.372** |
+| 2026-11-08 | pvsneslib | — | 0.53 | 0.093 | 0.195 | 0.000 | 0.090 | **0.377** |
+| 2026-11-09 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.093 | **0.379** |
+| 2026-11-10 | — | — | 0.00 | 0.091 | 0.195 | 0.000 | 0.097 | **0.383** |
+| 2026-11-11 | python3-picire | — | 0.10 | 0.091 | 0.195 | 0.000 | 0.101 | **0.387** |
+| 2026-11-12 | python3-librosa | — | 0.08 | 0.091 | 0.195 | 0.000 | 0.104 | **0.390** |
+| 2026-11-13 | ruff, uv | — | 0.49 | 0.093 | 0.195 | 0.000 | 0.108 | **0.395** |
+| 2026-11-14 | — | foundry-desktop, powerdevil, python3-inators, python3-mss, python3-picire, python3-pydub | 4.89 | 0.109 | 0.195 | 0.000 | 0.112 | **0.415** |
 
-## Comparing activity policies
 
-All variants below still build/publish an ISO every day. Their small cost differences reflect that package changes are a small share of this workload.
+## Reproducibility and assumptions
 
-| Activity policy | Recipe rebuilds | Active recipe days | 30-day cost |
-|---|---:|---:|---:|
-| Upstream + repo (baseline) | 28 | 15 | $25.58 |
-| Upstream releases/tag proxies/snapshots | 22 | 14 | $25.56 |
-| Only local recipe commits | 6 | 1 | $25.22 |
-| Only dated stable release publications; no tag proxies/snapshots | 18 | 13 | $25.54 |
+The simulator saves activity, measurements and policy/rates separately. It uses the measured 1,089-second warm workflow each day and cold per-recipe intervals for changed packages. Startup/discovery/validation/publication total seven minutes/day of explicit unmeasured allowances. Compile-cache and ISO optimization savings await measurement. No new AWS build was run for this correction.
 
-## Reproduce and project
-
-- [Collector/simulator](../../scripts/aws-spike/daily-cost-history.py): `collect`, `import-sizes`, and offline `simulate` subcommands. It never starts EC2 or publishes anything.
-- [CLI instructions](../../scripts/aws-spike/DAILY-COST-HISTORY.md) and [baseline scenario](../../scripts/aws-spike/daily-cost-baseline.json).
-- [Normalized dated events and coverage](assets/daily-cost-2026-11-15/activity.json), [raw cached API receipts](assets/daily-cost-2026-11-15/api-cache/), and [recipe-source inventory](assets/daily-cost-2026-11-15/recipes.json).
-- [Raw AWS timing/size receipt](assets/daily-cost-2026-11-15/build-measurements-raw.json), SHA256 `06450d482dc94358625ec2723bab2b66a7b2d49151cb5db9d655cce80cf53d79`; [enriched source-size measurements](assets/daily-cost-2026-11-15/build-measurements.json).
-- [90-day repeated-history projection](assets/daily-cost-2026-11-15/repeat-90-days/simulation.json). Repeats this sequence; it does not forecast future releases. Later 30-day blocks show full rolling retention.
-- [Conditional free-egress scenario](assets/daily-cost-2026-11-15/available-free-egress-scenario.json), with its [result](assets/daily-cost-2026-11-15/available-free-egress/simulation.json).
-
-For future projections, reuse `activity.json` and edit a copy of the scenario: instance price, explicit timing overrides, selected upstream branches, snapshot policy, daily versus changed-only ISO policy, retention, or available free allowance. `--projection-days` repeats the observed sequence for the requested duration; `projection_start` controls the calendar. No upstream re-fetch is needed to rerun a cost scenario. New activity collection uses a 24-hour API-cache freshness limit by default and supports `--refresh`.
-
-## Source provenance
-
-Release/commit URLs are attached to every normalized event, and each feed has the exact cached request/response and retrieval timestamp. Examples: [uv releases](https://github.com/astral-sh/uv/releases), [ruff releases](https://github.com/astral-sh/ruff/releases), [xemu-xbox releases](https://github.com/xemu-project/xemu/releases), [Ghidra releases](https://github.com/NationalSecurityAgency/ghidra/releases), [libvgm commits](https://github.com/ValleyBell/libvgm/commits/master/), and [PowerDevil tags](https://github.com/KDE/powerdevil/tags). These are upstream observations, not Foundry publication logs.
-
-Pricing inputs are separated from activity: [saved Mumbai EC2/gp3/transfer rates](2026-11-15-daily-packages-and-iso-aws-rates.json), [fresh m7i.xlarge Pricing API response](assets/daily-cost-2026-11-15/aws-m7i-rate.json), [AWS IPv4 pricing](https://aws.amazon.com/vpc/pricing/), [AWS egress policy](https://aws.amazon.com/ec2/pricing/on-demand/), and [R2 pricing](https://developers.cloudflare.com/r2/pricing/). This is a reproducible planning calculation, not an AWS/Cloudflare invoice or a guarantee that all upstream changes can be promoted without repair.
-
+All scenarios and graphs have been regenerated for S3. `egress_per_gb=0` models same-region publication. `public_download_gb_per_day` and `public_download_per_gb` model direct public delivery independently; `available_egress_free_gb_per_calendar_month` applies to those downloads. Storage keys are provider-neutral: `storage_per_gb_month`, `storage_bytes_per_gb`, `existing_storage_gb`.

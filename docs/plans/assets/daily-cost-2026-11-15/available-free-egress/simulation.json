@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "is_partial": false,
-  "generated_at": "2026-11-15T12:09:32.445019+00:00",
+  "generated_at": "2026-11-15T12:35:46.347010+00:00",
   "history_window": {
     "start_date": "2026-10-16",
     "end_date": "2026-11-14",
@@ -10,7 +10,7 @@
   },
   "projection": "Historical activity replay with current measured timing proxies",
   "scenario": {
-    "name": "Mumbai m7i.xlarge daily Anvil, changed overlay packages, gross transfer",
+    "name": "S3 publication plus 500 GB public downloads, available 100 GB allowance",
     "activity": "both",
     "iso_policy": "daily",
     "include_tag_proxies": true,
@@ -25,11 +25,9 @@
     "startup_seconds": 60,
     "validation_seconds": 180,
     "publication_seconds": 120,
-    "egress_per_gb": 0.1093,
+    "egress_per_gb": 0,
     "available_egress_free_gb_per_calendar_month": 100,
-    "r2_per_gb_month": 0.015,
     "artifact_retention_days": 30,
-    "existing_r2_gb": 0,
     "package_upload_multiplier": 1,
     "recipe_seconds_override": {},
     "binary_to_recipe": {
@@ -45,25 +43,29 @@
       "coverage": "Foundry overlay only; current recipe catalog projected backward; all upstream snapshot commit days selected, which may exceed eventual promotion policy",
       "tag_dates": "Include matching tags without release records, but their tag/commit dates are publication proxies, not exact release dates",
       "package_timings": "Changed recipe cost uses observed cold interval, including dependency and fetch work; no compiler-cache savings assumed",
-      "transfer": "Gross AWS egress without shared free allowance; current ISO/deb and verified local source sizes proxy historical versions; repo-only changes reuse existing orig tarballs; metadata indexes omitted",
+      "transfer": "EC2 to S3 in ap-south-1 is free. Public downloads are separate, default zero traffic; edit public_download_gb_per_day and available monthly allowance. Request charges excluded.",
       "retention": "Start empty and keep each daily ISO/changed deb for 30 days; first month ramps up; repeat longer to see steady retention",
       "excluded": "Legacy diagnostic 300 GiB disks, retries, taxes, request charges, signing/monitoring services, site deployment and initial cold bootstrap",
       "powerdevil": "Stay on Foundry Plasma 6.6; later 6.7/6.8 tags remain in history but are excluded from this scenario",
-      "units": "Explicit conservative decimal GB for transfer and R2; EBS GiB as provisioned. Set egress_bytes_per_gb to1073741824 to compare binary billing units; this is a planning estimate, not invoice reconciliation."
+      "units": "S3 storage uses binary GB (2^30 bytes); public_download_gb_per_day is in billing GB. EBS uses provisioned GiB."
     },
     "rate_sources": {
       "ec2_ebs": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-south-1/index.csv",
       "ipv4": "https://aws.amazon.com/vpc/pricing/",
       "egress": "https://aws.amazon.com/ec2/pricing/on-demand/",
-      "r2": "https://developers.cloudflare.com/r2/pricing/"
+      "s3": "https://aws.amazon.com/s3/pricing/"
     },
     "upstream_version_prefixes": {
       "powerdevil": "v6.6."
     },
     "include_source_uploads": true,
     "egress_bytes_per_gb": 1000000000,
-    "r2_bytes_per_gb": 1000000000,
-    "projection_start": "2026-12-01"
+    "projection_start": "2026-12-01",
+    "storage_per_gb_month": 0.025,
+    "existing_storage_gb": 0,
+    "storage_bytes_per_gb": 1073741824,
+    "public_download_gb_per_day": 16.666666666666668,
+    "public_download_per_gb": 0.1093
   },
   "warnings": [
     "Current package catalog is projected backward; deleted releases and historical promotion eligibility cannot be reconstructed from current feeds.",
@@ -72,20 +74,20 @@
     "Ubuntu archive updates are outside overlay activity coverage; daily ISO still refreshes dependencies.",
     "Validation/startup/publication/discovery inputs are explicit scenario allowances, not measured automated stage durations.",
     "No automatic CPU-count timing scaling; hardware changes require explicit measured timing overrides.",
-    "Shared account free allowances are zero by default; retention starts empty unless existing_r2_gb is supplied. Requests, taxes, failures, signing/monitoring services and website operations are excluded."
+    "Shared account free allowances are zero by default; retention starts empty unless existing_storage_gb is supplied. Requests, taxes, failures, signing/monitoring services and website operations are excluded."
   ],
   "totals": {
     "build_compute_usd": 2.1177352303445,
     "other_compute_usd": 0.75985,
     "compute_usd": 2.8775852303445,
     "ebs_usd": 5.8368,
-    "egress_usd": 4.810956534286601,
-    "r2_storage_usd": 1.1237953420284998,
-    "total_usd": 14.649137106659602,
+    "egress_usd": 43.720000000000006,
+    "artifact_storage_usd": 1.7443599521314417,
+    "total_usd": 54.17874518247595,
     "upload_gb_proxy": 144.016070762,
     "package_build_seconds_proxy": 2446.751862,
     "days": 30,
-    "average_daily_usd": 0.4883045702219867,
+    "average_daily_usd": 1.8059581727491982,
     "package_builds": 28,
     "active_package_days": 15
   },
@@ -108,9 +110,9 @@
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.739066728,
       "egress_usd": 0.0,
-      "r2_retained_gb_model": 4.739066728,
-      "r2_storage_usd": 0.002369533364,
-      "total_usd": 0.3046472177359167
+      "artifact_retained_gb_model": 4.413599826395512,
+      "artifact_storage_usd": 0.003677999855329593,
+      "total_usd": 0.3059556842272463
     },
     {
       "date": "2026-12-02",
@@ -130,9 +132,9 @@
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.927541667,
       "egress_usd": 0.0,
-      "r2_retained_gb_model": 9.666608395,
-      "r2_storage_usd": 0.0048333041975,
-      "total_usd": 0.31706598170408334
+      "artifact_retained_gb_model": 9.002730618230999,
+      "artifact_storage_usd": 0.007502275515192499,
+      "total_usd": 0.31973495302177585
     },
     {
       "date": "2026-12-03",
@@ -149,9 +151,9 @@
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
       "egress_usd": 0.0,
-      "r2_retained_gb_model": 14.402632971,
-      "r2_storage_usd": 0.0072013164855,
-      "total_usd": 0.29276239981883334
+      "artifact_retained_gb_model": 13.413497219793499,
+      "artifact_storage_usd": 0.011177914349827917,
+      "total_usd": 0.29673899768316125
     },
     {
       "date": "2026-12-04",
@@ -168,9 +170,9 @@
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
       "egress_usd": 0.0,
-      "r2_retained_gb_model": 19.138657547,
-      "r2_storage_usd": 0.0095693287735,
-      "total_usd": 0.29513041210683333
+      "artifact_retained_gb_model": 17.824263821356,
+      "artifact_storage_usd": 0.014853553184463332,
+      "total_usd": 0.3004146365177967
     },
     {
       "date": "2026-12-05",
@@ -190,9 +192,9 @@
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.95958939,
       "egress_usd": 0.0,
-      "r2_retained_gb_model": 24.098246937,
-      "r2_storage_usd": 0.0120491234685,
-      "total_usd": 0.3229072862985556
+      "artifact_retained_gb_model": 22.44324138108641,
+      "artifact_storage_usd": 0.018702701150905342,
+      "total_usd": 0.3295608639809609
     },
     {
       "date": "2026-12-06",
@@ -208,10 +210,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 28.834271513,
-      "r2_storage_usd": 0.014417135756499999,
-      "total_usd": 0.29997821908983335
+      "egress_usd": 2.3298696305573683e-15,
+      "artifact_retained_gb_model": 26.85400798264891,
+      "artifact_storage_usd": 0.02237833998554076,
+      "total_usd": 0.30793942331887647
     },
     {
       "date": "2026-12-07",
@@ -231,10 +233,10 @@
       "compute_usd": 0.13484051058291666,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 6.045323252,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 34.879594765,
-      "r2_storage_usd": 0.0174397973825,
-      "total_usd": 0.34684030796541665
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 32.484153998084366,
+      "artifact_storage_usd": 0.027070128331736974,
+      "total_usd": 2.1781373055813202
     },
     {
       "date": "2026-12-08",
@@ -252,10 +254,10 @@
       "compute_usd": 0.09172098856158334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.753881709,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 39.633476474,
-      "r2_storage_usd": 0.019816738236999996,
-      "total_usd": 0.3060977267985833
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 36.91155135072768,
+      "artifact_storage_usd": 0.0307596261256064,
+      "total_usd": 2.1387072813538563
     },
     {
       "date": "2026-12-09",
@@ -271,10 +273,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 44.36950105,
-      "r2_storage_usd": 0.022184750524999998,
-      "total_usd": 0.3077458338583334
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 41.32231795229018,
+      "artifact_storage_usd": 0.03443526496024182,
+      "total_usd": 2.1416630149602423
     },
     {
       "date": "2026-12-10",
@@ -290,10 +292,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 49.105525626,
-      "r2_storage_usd": 0.024552762813,
-      "total_usd": 0.31011384614633336
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 45.73308455385268,
+      "artifact_storage_usd": 0.038110903794877235,
+      "total_usd": 2.1453386537948775
     },
     {
       "date": "2026-12-11",
@@ -311,10 +313,10 @@
       "compute_usd": 0.09477451477613891,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.745591236,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 53.851116862,
-      "r2_storage_usd": 0.026925558430999995,
-      "total_usd": 0.3162600732071389
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 50.15276080183685,
+      "artifact_storage_usd": 0.04179396733486405,
+      "total_usd": 2.1527951487776695
     },
     {
       "date": "2026-12-12",
@@ -334,10 +336,10 @@
       "compute_usd": 0.09523243940383333,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.79045559,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 58.641572452,
-      "r2_storage_usd": 0.029320786225999998,
-      "total_usd": 0.31911322562983335
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 54.61422023549676,
+      "artifact_storage_usd": 0.0455118501962473,
+      "total_usd": 2.1569709562667474
     },
     {
       "date": "2026-12-13",
@@ -353,10 +355,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 63.377597028,
-      "r2_storage_usd": 0.031688798514,
-      "total_usd": 0.3172498818473334
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 59.02498683705926,
+      "artifact_storage_usd": 0.04918748903088272,
+      "total_usd": 2.156415239030883
     },
     {
       "date": "2026-12-14",
@@ -372,10 +374,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 68.113621604,
-      "r2_storage_usd": 0.034056810801999994,
-      "total_usd": 0.31961789413533337
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 63.43575343862176,
+      "artifact_storage_usd": 0.05286312786551814,
+      "total_usd": 2.1600908778655183
     },
     {
       "date": "2026-12-15",
@@ -391,10 +393,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 72.84964618,
-      "r2_storage_usd": 0.036424823089999996,
-      "total_usd": 0.32198590642333336
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 67.84652004018426,
+      "artifact_storage_usd": 0.05653876670015355,
+      "total_usd": 2.1637665167001536
     },
     {
       "date": "2026-12-16",
@@ -410,10 +412,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 77.585670756,
-      "r2_storage_usd": 0.038792835378000004,
-      "total_usd": 0.32435391871133334
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 72.25728664174676,
+      "artifact_storage_usd": 0.06021440553478897,
+      "total_usd": 2.1674421555347894
     },
     {
       "date": "2026-12-17",
@@ -429,10 +431,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 82.321695332,
-      "r2_storage_usd": 0.041160847666000006,
-      "total_usd": 0.32672193099933333
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 76.66805324330926,
+      "artifact_storage_usd": 0.06389004436942439,
+      "total_usd": 2.1711177943694246
     },
     {
       "date": "2026-12-18",
@@ -448,10 +450,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 87.057719908,
-      "r2_storage_usd": 0.043528859954,
-      "total_usd": 0.3290899432873334
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 81.07881984487176,
+      "artifact_storage_usd": 0.06756568320405981,
+      "total_usd": 2.17479343320406
     },
     {
       "date": "2026-12-19",
@@ -469,10 +471,10 @@
       "compute_usd": 0.09206955141619444,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.770335378,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 91.828055286,
-      "r2_storage_usd": 0.045914027643,
-      "total_usd": 0.33254357905919446
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 85.52154087089002,
+      "artifact_storage_usd": 0.07126795072574169,
+      "total_usd": 2.179564168808603
     },
     {
       "date": "2026-12-20",
@@ -488,10 +490,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.0,
-      "r2_retained_gb_model": 96.564079862,
-      "r2_storage_usd": 0.048282039931,
-      "total_usd": 0.33384312326433335
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 89.93230747245252,
+      "artifact_storage_usd": 0.07494358956037711,
+      "total_usd": 2.1821713395603775
     },
     {
       "date": "2026-12-21",
@@ -509,10 +511,10 @@
       "compute_usd": 0.09344406609272224,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.738287655,
-      "egress_usd": 0.1423487696081013,
-      "r2_retained_gb_model": 101.302367517,
-      "r2_storage_usd": 0.050651183758499994,
-      "total_usd": 0.4810040194593235
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 94.34518173057586,
+      "artifact_storage_usd": 0.0786209847754799,
+      "total_usd": 2.188291717534869
     },
     {
       "date": "2026-12-22",
@@ -530,10 +532,10 @@
       "compute_usd": 0.09172098856158334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.753881709,
-      "egress_usd": 0.5195992707936999,
-      "r2_retained_gb_model": 106.056249226,
-      "r2_storage_usd": 0.053028124613,
-      "total_usd": 0.8589083839682833
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 98.77257908321917,
+      "artifact_storage_usd": 0.08231048256934931,
+      "total_usd": 2.1902581377975996
     },
     {
       "date": "2026-12-23",
@@ -549,10 +551,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.5176474861568,
-      "r2_retained_gb_model": 110.792273802,
-      "r2_storage_usd": 0.055396136900999995,
-      "total_usd": 0.8586047063911334
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 103.18334568478167,
+      "artifact_storage_usd": 0.08598612140398473,
+      "total_usd": 2.193213871403985
     },
     {
       "date": "2026-12-24",
@@ -570,10 +572,10 @@
       "compute_usd": 0.09293558858422221,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.752973351,
-      "egress_usd": 0.5194999872642999,
-      "r2_retained_gb_model": 115.545247153,
-      "r2_storage_usd": 0.0577726235765,
-      "total_usd": 0.8647681994250221
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 107.60989706311375,
+      "artifact_storage_usd": 0.08967491421926146,
+      "total_usd": 2.1988371694701505
     },
     {
       "date": "2026-12-25",
@@ -589,10 +591,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.5176474861568,
-      "r2_retained_gb_model": 120.281271729,
-      "r2_storage_usd": 0.0601406358645,
-      "total_usd": 0.8633492053546334
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 112.02066366467625,
+      "artifact_storage_usd": 0.09335055305389689,
+      "total_usd": 2.2005783030538972
     },
     {
       "date": "2026-12-26",
@@ -608,10 +610,10 @@
       "compute_usd": 0.09100108333333334,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736024576,
-      "egress_usd": 0.5176474861568,
-      "r2_retained_gb_model": 125.017296305,
-      "r2_storage_usd": 0.0625086481525,
-      "total_usd": 0.8657172176426334
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 116.43143026623875,
+      "artifact_storage_usd": 0.09702619188853229,
+      "total_usd": 2.2042539418885325
     },
     {
       "date": "2026-12-27",
@@ -629,10 +631,10 @@
       "compute_usd": 0.09137128731900002,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736075449,
-      "egress_usd": 0.5176530465757,
-      "r2_retained_gb_model": 129.753371754,
-      "r2_storage_usd": 0.06487668587699999,
-      "total_usd": 0.8684610197717
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 120.84224424697459,
+      "artifact_storage_usd": 0.10070187020581217,
+      "total_usd": 2.208299824191479
     },
     {
       "date": "2026-12-28",
@@ -650,10 +652,10 @@
       "compute_usd": 0.09128378407849999,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.736621257,
-      "egress_usd": 0.5177127033901,
-      "r2_retained_gb_model": 134.489993011,
-      "r2_storage_usd": 0.06724499650549999,
-      "total_usd": 0.8708014839741
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 125.25356655102223,
+      "artifact_storage_usd": 0.10437797212585186,
+      "total_usd": 2.2118884228710187
     },
     {
       "date": "2026-12-29",
@@ -672,10 +674,10 @@
       "compute_usd": 0.09278945664444443,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.788192511,
-      "egress_usd": 0.5233494414523,
-      "r2_retained_gb_model": 139.278185522,
-      "r2_storage_usd": 0.069639092761,
-      "total_usd": 0.8803379908577444
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 129.7129183281213,
+      "artifact_storage_usd": 0.10809409860676776,
+      "total_usd": 2.2171102219178787
     },
     {
       "date": "2026-12-30",
@@ -698,10 +700,10 @@
       "compute_usd": 0.10869727961480555,
       "ebs_usd": 0.19456,
       "upload_gb_proxy": 4.73788524,
-      "egress_usd": 0.5178508567319999,
-      "r2_retained_gb_model": 144.016070762,
-      "r2_storage_usd": 0.072008035381,
-      "total_usd": 0.8931161717278054
+      "egress_usd": 1.8216666666666668,
+      "artifact_retained_gb_model": 134.12541780807078,
+      "artifact_storage_usd": 0.11177118150672566,
+      "total_usd": 2.236695127788198
     }
   ]
 }
