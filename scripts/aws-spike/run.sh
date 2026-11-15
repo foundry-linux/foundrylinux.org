@@ -55,6 +55,11 @@ sed 's|^FROM registry.lab.home.arpa:5000/stacks/stack-deb@.*|FROM foundry-spike/
 stage package-builder docker build --pull=false -f "$base/package-builder.Dockerfile" -t foundry-spike/packages:run foundry-apt/docker
 docker image inspect foundry-spike/packages:run > "$run/builder-image.json"
 mkdir -p "$base/cache/apt" "$base/cache/npm" "$base/cache/pnpm" "$base/cache/yarn"
+if docker container inspect "foundry-spike-packages-$mode" >/dev/null 2>&1; then
+    # Resume an interrupted cold run without discarding its installed deps.
+    # Warm mode has a separate name and therefore starts from the builder image.
+    stage packages docker start -a "foundry-spike-packages-$mode"
+else
 stage packages docker run --name "foundry-spike-packages-$mode" \
     -v "$PWD/foundry-apt:/work" -v "$base/cache/apt:/var/cache/apt/archives" \
     -v "$base/cache/npm:/root/.npm" -v "$base/cache/pnpm:/root/.local/share/pnpm/store" \
@@ -62,6 +67,7 @@ stage packages docker run --name "foundry-spike-packages-$mode" \
     -e DEBIAN_FRONTEND=noninteractive -e CMAKE_BUILD_PARALLEL_LEVEL=2 \
     -e DEB_BUILD_OPTIONS=parallel=2 -e CARGO_BUILD_JOBS=2 \
     foundry-spike/packages:run bash -c 'set -euo pipefail; rm -f /etc/apt/apt.conf.d/docker-clean; apt-get update; bash scripts/build-all.sh'
+fi
 find foundry-apt/dist -maxdepth 1 -type f -print0 | sort -z | xargs -0 -r sha256sum > "$run/packages.sha256"
 mkdir -p foundry-iso/local-debs
 cp foundry-apt/dist/*.deb foundry-iso/local-debs/

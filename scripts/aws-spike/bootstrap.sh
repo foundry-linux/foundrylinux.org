@@ -20,8 +20,15 @@ uuid=$(blkid -s UUID -o value "$device")
 printf 'UUID=%s /srv/foundry-build ext4 defaults,nofail 0 2\n' "$uuid" >> /etc/fstab
 mount /srv/foundry-build
 systemctl stop docker.service docker.socket
+systemctl stop containerd.service
 mkdir -p /srv/foundry-build/docker /etc/docker
+# Docker's containerd snapshotter has a separate store from Docker data-root.
+mv /var/lib/containerd /srv/foundry-build/containerd
+mkdir -p /var/lib/containerd
+printf '/srv/foundry-build/containerd /var/lib/containerd none bind 0 0\n' >> /etc/fstab
+mount /var/lib/containerd
 printf '{"data-root":"/srv/foundry-build/docker"}\n' > /etc/docker/daemon.json
+systemctl start containerd.service
 systemctl start docker.service
 test -c /dev/kvm
 lsblk -f > /opt/foundry-spike/volumes.txt
