@@ -295,3 +295,16 @@ After package-build scratch cleanup, the build filesystem used about 9.4 GiB, do
 ### Same-version preference and frozen-input downgrades
 
 The diagnostic ISO hook reinstalled 25 same-version packages but also selected six older frozen local builds: foundry-core, halfempty, powerdevil, tilemap-studio and xemu/xemu-xbox. The permanent default now skips local versions older than the installed repository version and does not permit implicit APT downgrades. Same-version local replacement remains enabled. An explicit spike patch sets `FOUNDRY_ALLOW_OLDER_LOCAL=1` so the controlled cold/warm comparison tests its frozen source inputs even when publication has advanced. This is candidate validation, not production publication. An isolated Ubuntu container test passed same-version replacement, default rejection of older local builds, and the explicit controlled override.
+
+### Diagnostic validation complete; fresh proof sizing
+
+The diagnostic ISO finished at 14:16:39 Bangkok with exit code 0. ISO assembly took **25 minutes 32.75 seconds**; this is wall time, not Docker-client CPU/RSS. The 4.5-GiB candidate SHA256 is `1b4222ffd96a97ac8d6da6e5d9c3489a1c40c1637b59c779c6436181e4cc7e76`. The instance then stopped automatically and was restarted for VM validation.
+
+A 2-vCPU, 4096-MiB offline UEFI/KVM guest displayed the Foundry desktop and welcome window. Its desktop screenshot was captured at 14:28:14 Bangkok. The actual `/usr/local/bin/launch-calamares.sh` entry point opened the branded Calamares installer. The deliberately diskless guest reports no installation target; **full installation to disk was not tested**. Local screenshots and the result receipt are under `/home/will/powerdevil-upgrade/aws-spike/evidence/`.
+
+The 4,923 filesystem samples from 12:56:36 to 14:18:39 Bangkok cover the complete ISO stage and the later diagnostic package work. Peak used space was **34,426,802,176 bytes (32.1 GiB)** on the build disk and **3,884,081,152 bytes (3.6 GiB)** on root. Earlier uninstrumented package phases are not reconstructed. Fresh proof will use **16 GiB root + 48 GiB build/cache = 64 GiB**, giving build-space headroom above the measured peak. At the recorded gp3 rate, that new allocation is $5.84/month (about $0.19/day), separate from the preserved diagnostic disks’ $27.36/month. This is experimental capacity, not a permanent cache-retention recommendation.
+
+- [x] Diagnostic package inventory, ISO build, desktop boot and installer launch validated.
+- [ ] Stop diagnostic compute while retaining its disks and evidence.
+- [ ] Launch a separate empty 64-GiB runner with frozen corrected inputs; complete uninterrupted cold proof.
+- [ ] Run the matched warm comparison on the proof runner’s retained disks.

@@ -7,6 +7,7 @@ Large build artifacts remain on retained EBS; use this for screenshots/receipts.
 import argparse
 import base64
 import hashlib
+import concurrent.futures
 import json
 import pathlib
 import shlex
@@ -54,11 +55,15 @@ meta = json.loads(remote('import sys,pathlib,hashlib,json; p=pathlib.Path(sys.ar
 if meta['bytes'] > 8 * 1024 * 1024:
     raise SystemExit('Evidence exceeds 8 MiB; preserve large artifacts on EBS')
 a.output.parent.mkdir(parents=True, exist_ok=True)
-with a.output.open('xb') as output:
-    for offset in range(0, meta['bytes'], 12000):
-        data = remote('import sys,base64; f=open(sys.argv[1],"rb"); '
-            f'f.seek({offset}); print(base64.b64encode(f.read(12000)).decode())')
-        output.write(base64.b64decode(data, validate=True))
+def chunk(offset):
+    data = remote('import sys,base64; f=open(sys.argv[1],"rb"); '
+        f'f.seek({offset}); print(base64.b64encode(f.read(12000)).decode())')
+    return base64.b64decode(data, validate=True)
+
+
+with a.output.open('xb') as output, concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+    for data in pool.map(chunk, range(0, meta['bytes'], 12000)):
+        output.write(data)
 actual = hashlib.sha256(a.output.read_bytes()).hexdigest()
 if a.output.stat().st_size != meta['bytes'] or actual != meta['sha256']:
     raise SystemExit('Evidence changed or transfer incomplete; output is NOT verified')
