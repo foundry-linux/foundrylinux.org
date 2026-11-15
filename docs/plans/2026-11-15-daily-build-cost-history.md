@@ -1,5 +1,12 @@
 # Daily Foundry build costs from 30 days of activity
 
+## AWS cleanup completed — 2026-11-15
+
+Both spike instances were terminated and all four EBS volumes (364 GiB total) deleted. Temporary spike IAM roles/profiles, security groups and any remaining receipted stop schedules were removed. The final API check found no spike-tagged EBS volumes; audit also found no spike-tagged snapshots or Elastic IPs. [Cleanup receipt](assets/aws-spike-2026-11-15/cleanup.json).
+
+The prior approximately $33.20/month EBS retention charge no longer accrues for these deleted disks; usage already incurred remains payable. Local screenshots, inventories, comparison results and committed normalized measurements remain. Cloud-only raw logs, caches and experimental build artifacts were disposable and removed with the disks. No production repository, public release, shared VPC/subnet or home-lab infrastructure was changed.
+
+
 ## Closed — rejected for public download cost, 2026-11-15
 
 Will closed the AWS/S3 deployment option because direct S3 ISO downloads are too expensive. Latest-only retention is corrected: keep one validated ISO, replacing the previous ISO after verification. This reduces storage but does not reduce bandwidth per download: approximately $482 for 1,000 complete measured-ISO downloads, or $471 if the shared monthly 100-GB allowance is available, before requests/taxes.
@@ -8,7 +15,7 @@ Will closed the AWS/S3 deployment option because direct S3 ISO downloads are too
 - [x] Cancel the proposed 2026-11-16 AWS 4-GiB follow-up trial; no replacement AWS run is scheduled.
 - [x] Hand production planning to the [home-lab/R2 deployment plan](../../../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md).
 
-Existing measurements, scripts and unmet validation gates below are preserved as historical evidence, not active AWS tasks or claims of completed proof. Retained experimental EBS disks remain a separate cleanup decision and can continue billing (last recorded total: $33.20/month); closing this plan does not delete them. Both instances were last verified stopped; no infrastructure action was performed for this closeout.
+Existing measurements, scripts and unmet validation gates below are preserved as historical evidence, not active AWS tasks or claims of completed proof. The subsequently authorized AWS cleanup is complete, as recorded above. Resource-retention statements in the historical evidence below describe the earlier experiment, not current infrastructure.
 
 
 **Evidence window:** 16 October–14 November 2026, Asia/Bangkok. **Corrected publication architecture:** EC2 builds and S3 Standard artifact storage are both in Mumbai (`ap-south-1`). Publication no longer copies AWS-built artifacts to R2.

@@ -6,7 +6,7 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 ## Open
 
 - [x] **Close AWS/S3 deployment option on download cost** — latest-only ISO storage corrected; AWS follow-up trial canceled. Home-lab/R2 plan remains active.
-- [ ] **Resolve retained AWS spike disk cleanup** — last recorded stopped instances retain four EBS volumes costing about $33.20/month. Preserve evidence and obtain a separate retention/deletion decision; plan closure does not stop disk charges.
+- [x] **Clean up AWS spike infrastructure** — both instances terminated, four EBS disks (364 GiB) deleted, temporary IAM/security groups/schedules removed; saved local evidence retained. [Verified receipt](docs/plans/assets/aws-spike-2026-11-15/cleanup.json).
 
 - [ ] **Deploy daily Foundry builds on the planned home lab** — follow the [lab deployment plan](../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md) once platform readiness gates pass; Kubernetes jobs, isolated ISO/KVM execution, R2 distribution and website release records.
 

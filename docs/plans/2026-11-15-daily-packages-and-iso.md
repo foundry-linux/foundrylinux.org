@@ -5,6 +5,8 @@
 
 ## Home-lab deployment direction — 2026-11-15
 
+**AWS cleanup completed:** both spike instances terminated, all four disks deleted and temporary support resources removed; [receipt](assets/aws-spike-2026-11-15/cleanup.json). Saved local evidence retained.
+
 **AWS/S3 option closed:** Will rejected it because public download bandwidth is too expensive. The 2026-11-16 AWS follow-up is canceled. The home-lab/R2 plan remains active; AWS figures below are retained only as historical comparison. One validated ISO is retained, with temporary overlap during replacement.
 
 Will selected the planned home lab as the intended production destination. See the [new home-lab deployment plan](../../../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md): Kubernetes scheduling and ordinary CI jobs, an isolated managed VM for initial privileged ISO/KVM stages, persistent caches, R2 public distribution, and release records under wald3n.com/open-source. Lab readiness and measured capacity are prerequisites. AWS/S3 costs below remain an alternative/spike reference; no permanent AWS runner is selected. No infrastructure is deployed by this plan.

@@ -1,0 +1,180 @@
+{
+  "verified_at": "2026-11-15T13:19:56.835222+00:00",
+  "region": "ap-south-1",
+  "instances_terminated": [
+    "i-09ed2b15f19ac5b71",
+    "i-0dbf1f3dfdb62cc29"
+  ],
+  "volumes_deleted": [
+    {
+      "id": "vol-0926caa68cf02bb0f",
+      "gib": 40
+    },
+    {
+      "id": "vol-00d37a922a21b2381",
+      "gib": 260
+    },
+    {
+      "id": "vol-0ba1c9a2cc663aab7",
+      "gib": 16
+    },
+    {
+      "id": "vol-0a8ddc6eb2371c5a4",
+      "gib": 48
+    }
+  ],
+  "removed_resource_actions": [
+    {
+      "service": "ec2",
+      "action": "terminate-instances",
+      "ids": {
+        "InstanceIds": [
+          "i-09ed2b15f19ac5b71",
+          "i-0dbf1f3dfdb62cc29"
+        ]
+      }
+    },
+    {
+      "service": "ec2",
+      "action": "delete-volume",
+      "ids": {
+        "VolumeId": "vol-0926caa68cf02bb0f"
+      }
+    },
+    {
+      "service": "ec2",
+      "action": "delete-volume",
+      "ids": {
+        "VolumeId": "vol-00d37a922a21b2381"
+      }
+    },
+    {
+      "service": "ec2",
+      "action": "delete-volume",
+      "ids": {
+        "VolumeId": "vol-0ba1c9a2cc663aab7"
+      }
+    },
+    {
+      "service": "ec2",
+      "action": "delete-volume",
+      "ids": {
+        "VolumeId": "vol-0a8ddc6eb2371c5a4"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "remove-role-from-instance-profile",
+      "ids": {
+        "InstanceProfileName": "foundry-spike-20261115-045810-ssm",
+        "RoleName": "foundry-spike-20261115-045810-ssm"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "delete-instance-profile",
+      "ids": {
+        "InstanceProfileName": "foundry-spike-20261115-045810-ssm"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "detach-role-policy",
+      "ids": {
+        "RoleName": "foundry-spike-20261115-045810-ssm",
+        "PolicyArn": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "delete-role",
+      "ids": {
+        "RoleName": "foundry-spike-20261115-045810-ssm"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "delete-role-policy",
+      "ids": {
+        "RoleName": "foundry-spike-20261115-045810-stop",
+        "PolicyName": "StopOnlySpike"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "delete-role",
+      "ids": {
+        "RoleName": "foundry-spike-20261115-045810-stop"
+      }
+    },
+    {
+      "service": "ec2",
+      "action": "delete-security-group",
+      "ids": {
+        "GroupId": "sg-05895e5667e4cda5d"
+      }
+    },
+    {
+      "service": "scheduler",
+      "action": "delete-schedule",
+      "ids": {
+        "Name": "foundry-spike-20261115-081830"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "remove-role-from-instance-profile",
+      "ids": {
+        "InstanceProfileName": "foundry-spike-20261115-081830-ssm",
+        "RoleName": "foundry-spike-20261115-081830-ssm"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "delete-instance-profile",
+      "ids": {
+        "InstanceProfileName": "foundry-spike-20261115-081830-ssm"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "detach-role-policy",
+      "ids": {
+        "RoleName": "foundry-spike-20261115-081830-ssm",
+        "PolicyArn": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "delete-role",
+      "ids": {
+        "RoleName": "foundry-spike-20261115-081830-ssm"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "delete-role-policy",
+      "ids": {
+        "RoleName": "foundry-spike-20261115-081830-stop",
+        "PolicyName": "StopOnlySpike"
+      }
+    },
+    {
+      "service": "iam",
+      "action": "delete-role",
+      "ids": {
+        "RoleName": "foundry-spike-20261115-081830-stop"
+      }
+    },
+    {
+      "service": "ec2",
+      "action": "delete-security-group",
+      "ids": {
+        "GroupId": "sg-09fc605593f64489d"
+      }
+    }
+  ],
+  "remaining_spike_volumes": [],
+  "preserved_evidence_manifest": "/home/will/powerdevil-upgrade/aws-spike/preserved-evidence.json",
+  "disposable_outputs": "Cloud-only raw logs, scratch, build caches and experimental ISO/package artifacts removed with disks. Saved local evidence and committed normalized measurements retained."
+}
