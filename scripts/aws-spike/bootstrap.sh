@@ -40,6 +40,10 @@ printf '{"data-root":"/srv/foundry-build/docker"}\n' > /etc/docker/daemon.json
 systemctl start containerd.service
 systemctl start docker.service
 test -c /dev/kvm
+kvm_status=0
+timeout 3 qemu-system-x86_64 -machine q35,accel=kvm -cpu host -m 128 \
+    -display none -nodefaults -nic none > /opt/foundry-spike/bootstrap-kvm-smoke.log 2>&1 || kvm_status=$?
+test "$kvm_status" = 124
 lsblk -f > /opt/foundry-spike/volumes.txt
 date -u +%FT%TZ > /opt/foundry-spike/bootstrap-finished-at
 kill "$bootstrap_monitor"
