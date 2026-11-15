@@ -5,15 +5,16 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
+- [x] **Close AWS/S3 deployment option on download cost** — latest-only ISO storage corrected; AWS follow-up trial canceled. Home-lab/R2 plan remains active.
+- [ ] **Resolve retained AWS spike disk cleanup** — last recorded stopped instances retain four EBS volumes costing about $33.20/month. Preserve evidence and obtain a separate retention/deletion decision; plan closure does not stop disk charges.
+
 - [ ] **Deploy daily Foundry builds on the planned home lab** — follow the [lab deployment plan](../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md) once platform readiness gates pass; Kubernetes jobs, isolated ISO/KVM execution, R2 distribution and website release records.
 
 - [x] **Save reproducible 30-day activity and cost projections** — reusable JSON collector/simulator, daily table and graph, same-region S3 publication, separate public-download scenarios, source sizes and stage-specific 4-GiB sensitivity. See [cost history](docs/plans/2026-11-15-daily-build-cost-history.md).
-- [ ] **Trial optimized builds on 4 GiB on 2026-11-16** — no new AWS build today; measure correctness, memory pressure and runtime, then replace the modeled $1.20/month same-runtime saving with evidence. Validation retains a larger host; no automatic run scheduled.
 
 - [x] **Measure cold and warm AWS Mumbai workloads** — cold package/ISO workflow 1 h 56 min 22 s; warm 18 min 9 s; both desktop/installer launches verified. Cold post-build collector failed and was corrected; do not call its full runner error-free. Disks retained. See [spike results](docs/plans/2026-11-15-aws-cold-warm-build-spike.md).
-- [ ] **Close AWS spike proof and sizing gaps** — repeat a fresh end-to-end cold run with the corrected evidence collector; measure smaller stage-specific hardware, changed-source builds, discovery and publication before activating daily production. See [remaining gates](docs/plans/2026-11-15-aws-cold-warm-build-spike.md).
 
-- [ ] **Daily package and Anvil ISO publication, with every update recorded on wald3n.com/open-source** — AWS Mumbai option (home lab not set up), container builds, upstream discovery, signed publication, real boot checks, daily scheduling and freshness monitoring without GitHub Actions. See [plan](docs/plans/2026-11-15-daily-packages-and-iso.md).
+- [ ] **Daily package and Anvil ISO publication, with every update recorded on wald3n.com/open-source** — planned home-lab/R2 deployment after readiness gates, container builds, upstream discovery, signed publication, real boot checks, daily scheduling and freshness monitoring without GitHub Actions. See [plan](docs/plans/2026-11-15-daily-packages-and-iso.md).
 
 ### apt-repo resilience — `task` vendored + source health-check
 

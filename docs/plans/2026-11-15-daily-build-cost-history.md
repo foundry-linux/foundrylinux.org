@@ -1,5 +1,16 @@
 # Daily Foundry build costs from 30 days of activity
 
+## Closed — rejected for public download cost, 2026-11-15
+
+Will closed the AWS/S3 deployment option because direct S3 ISO downloads are too expensive. Latest-only retention is corrected: keep one validated ISO, replacing the previous ISO after verification. This reduces storage but does not reduce bandwidth per download: approximately $482 for 1,000 complete measured-ISO downloads, or $471 if the shared monthly 100-GB allowance is available, before requests/taxes.
+
+- [x] Correct the storage model and record the decision to reject AWS/S3 production deployment.
+- [x] Cancel the proposed 2026-11-16 AWS 4-GiB follow-up trial; no replacement AWS run is scheduled.
+- [x] Hand production planning to the [home-lab/R2 deployment plan](../../../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md).
+
+Existing measurements, scripts and unmet validation gates below are preserved as historical evidence, not active AWS tasks or claims of completed proof. Retained experimental EBS disks remain a separate cleanup decision and can continue billing (last recorded total: $33.20/month); closing this plan does not delete them. Both instances were last verified stopped; no infrastructure action was performed for this closeout.
+
+
 **Evidence window:** 16 October–14 November 2026, Asia/Bangkok. **Corrected publication architecture:** EC2 builds and S3 Standard artifact storage are both in Mumbai (`ap-south-1`). Publication no longer copies AWS-built artifacts to R2.
 
 **Build and publication estimate: $8.87 per 30 days ($0.30/day), keeping one validated ISO and the current package/source catalog.** These totals exclude public download traffic and request charges. The earlier $25.58 estimate incorrectly assumed uploading every daily build out of AWS to R2; it is superseded.
@@ -56,7 +67,7 @@ These are direct-S3 delivery scenarios, not assumed audience traffic or a CDN qu
 | 50% longer | $8.13 | **$0.74 (8.3%)** |
 | Twice as long | $8.59 | **$0.28 (3.1%)** |
 
-The absolute savings are unchanged: c7i.large build compute/IP costs $0.09425/hour versus m7i.xlarge $0.2171/hour. Control and validation retain the larger-host rate. Break-even is about 2.30× build runtime before added transitions/transfers. With equal runtime, the subtotal falls from $8.87 to $7.67. Tomorrow's trial must measure runtime and correctness; these are scenarios, not a successful 4-GiB measurement.
+The absolute savings are unchanged: c7i.large build compute/IP costs $0.09425/hour versus m7i.xlarge $0.2171/hour. Control and validation retain the larger-host rate. Break-even is about 2.30× build runtime before added transitions/transfers. With equal runtime, the subtotal falls from $8.87 to $7.67. The proposed AWS trial is canceled; these remain unproven sensitivity scenarios.
 
 ## What was measured and what is modeled
 

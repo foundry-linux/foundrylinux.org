@@ -5,6 +5,8 @@
 
 ## Home-lab deployment direction — 2026-11-15
 
+**AWS/S3 option closed:** Will rejected it because public download bandwidth is too expensive. The 2026-11-16 AWS follow-up is canceled. The home-lab/R2 plan remains active; AWS figures below are retained only as historical comparison. One validated ISO is retained, with temporary overlap during replacement.
+
 Will selected the planned home lab as the intended production destination. See the [new home-lab deployment plan](../../../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md): Kubernetes scheduling and ordinary CI jobs, an isolated managed VM for initial privileged ISO/KVM stages, persistent caches, R2 public distribution, and release records under wald3n.com/open-source. Lab readiness and measured capacity are prerequisites. AWS/S3 costs below remain an alternative/spike reference; no permanent AWS runner is selected. No infrastructure is deployed by this plan.
 
 ## Measured spike checkpoint — 2026-11-15
@@ -253,4 +255,4 @@ AI assistance: Codex CLI 0.169.0; model gpt-6-astra; reasoning effort medium, ve
 
 ## Activity-based budget update — 2026-11-15
 
-The [30-day replay and reusable simulator](2026-11-15-daily-build-cost-history.md) replace the earlier four-hour sensitivity assumption with measured timing proxies and observed upstream/repository events. Budget $8.87 per 30 daily runs with latest-only ISO retention, before public download traffic, request fees and excluded ancillary costs. A successful 4-GiB build trial at unchanged runtime would save $1.20 per 30 days; runtime and transition costs still need measurement. Next trial is deferred to 2026-11-16, not automatically scheduled.
+The [30-day replay and reusable simulator](2026-11-15-daily-build-cost-history.md) replace the earlier four-hour sensitivity assumption with measured timing proxies and observed upstream/repository events. Budget $8.87 per 30 daily runs with latest-only ISO retention, before public download traffic, request fees and excluded ancillary costs. A successful 4-GiB build trial at unchanged runtime would save $1.20 per 30 days; runtime and transition costs still need measurement. The AWS follow-up trial is canceled; future hardware trials belong to the home-lab plan.

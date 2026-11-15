@@ -1,7 +1,18 @@
 # AWS Mumbai spike: cold build, then warm build on the same disk
 
+## Closed — rejected for public download cost, 2026-11-15
+
+Will closed the AWS/S3 deployment option because direct S3 ISO downloads are too expensive. Latest-only retention is corrected: keep one validated ISO, replacing the previous ISO after verification. This reduces storage but does not reduce bandwidth per download: approximately $482 for 1,000 complete measured-ISO downloads, or $471 if the shared monthly 100-GB allowance is available, before requests/taxes.
+
+- [x] Correct the storage model and record the decision to reject AWS/S3 production deployment.
+- [x] Cancel the proposed 2026-11-16 AWS 4-GiB follow-up trial; no replacement AWS run is scheduled.
+- [x] Hand production planning to the [home-lab/R2 deployment plan](../../../home-lab/docs/plans/2026-11-15-foundry-daily-builds-on-homelab.md).
+
+Existing measurements, scripts and unmet validation gates below are preserved as historical evidence, not active AWS tasks or claims of completed proof. Retained experimental EBS disks remain a separate cleanup decision and can continue billing (last recorded total: $33.20/month); closing this plan does not delete them. Both instances were last verified stopped; no infrastructure action was performed for this closeout.
+
+
 **Date:** 2026-11-15
-**Status:** Diagnostic package/ISO build and desktop/installer launch passed; its instance is stopped with disks retained. A separate empty-volume cold run completed all 63 expected packages and ISO assembly without build intervention. Its post-build inventory collector failed because the ISO builder removes the staging chroot. This is a cold workload success, **not an error-free end-to-end runner pass**. The ISO inventory was recovered from the artifact; cold desktop boot and installer launch are visually verified; warm build, inventory comparison, desktop boot and installer launch passed. Both EC2 instances are confirmed stopped; all four disks are retained.
+**Status:** Closed; AWS deployment rejected on public download cost. Historical spike outcome: diagnostic package/ISO build and desktop/installer launch passed; its instance is stopped with disks retained. A separate empty-volume cold run completed all 63 expected packages and ISO assembly without build intervention. Its post-build inventory collector failed because the ISO builder removes the staging chroot. This is a cold workload success, **not an error-free end-to-end runner pass**. The ISO inventory was recovered from the artifact; cold desktop boot and installer launch are visually verified; warm build, inventory comparison, desktop boot and installer launch passed. Both EC2 instances are confirmed stopped; all four disks are retained.
 **Related:** [Daily publication plan](2026-11-15-daily-packages-and-iso.md) · [30-day activity and cost simulation](2026-11-15-daily-build-cost-history.md).
 
 ## Daily cost and the 4-GiB trial
@@ -14,7 +25,7 @@ Replaying the previous 30 complete Bangkok days of upstream and repository activ
 | 50% longer | $8.13 | **$0.74 (8.3%)** |
 | Twice as long | $8.59 | **$0.28 (3.1%)** |
 
-These compare Mumbai c7i.large build stages with the measured m7i.xlarge rates, including public IPv4. Validation and control stages keep the larger-host rate. Storage and uploads are unchanged, so the absolute decrease is independent of artifact retention. Break-even is about 2.30× build runtime, before extra host transitions or transfers. A successful trial must establish both correctness and actual runtime; simply avoiding an out-of-memory failure does not establish savings. The next AWS run remains deferred until 2026-11-16 and is not automatically scheduled.
+These compare Mumbai c7i.large build stages with the measured m7i.xlarge rates, including public IPv4. Validation and control stages keep the larger-host rate. Storage and uploads are unchanged, so the absolute decrease is independent of artifact retention. Break-even is about 2.30× build runtime, before extra host transitions or transfers. A successful trial must establish both correctness and actual runtime; simply avoiding an out-of-memory failure does not establish savings. The proposed next AWS run is canceled by the closeout decision above.
 
 ## Measured results — graphs
 
@@ -167,7 +178,7 @@ Map these stores into the existing recipes rather than assuming proposed directo
 - [x] Saved measurements and stopped compute; all four experimental disks retained.
 - [ ] Finish optimization implementation and local container checks; update the reusable 30-day cost simulation. No new AWS build today.
 
-### 2026-11-16 — next trial, not automatically scheduled
+### Canceled agenda — originally proposed for 2026-11-16
 
 - [ ] Run the optimized build on a 4-GiB host with explicit compile/compressor limits.
 - [ ] Measure anonymous memory, reclaim pressure, swap/OOM events, CPU time, runtime and cost per completed artifact; use 8 GiB as a fallback comparison if needed.
