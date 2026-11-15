@@ -19,6 +19,7 @@ USER root
 RUN sed -i 's/^Components: main restricted$/Components: main restricted universe multiverse/' /etc/apt/sources.list.d/ubuntu.sources \
     && apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
+        ccache \
         libcairo2-dev \
         libfontconfig-dev \
         libgif-dev \

@@ -204,6 +204,8 @@ mv "$CLONE" "$SRC_DIR"
 echo "=== Packing deterministically ==="
 # Fixed mtime from the changelog date, sorted entries, numeric root ownership,
 # and xz (which records no timestamp) make this reproducible byte for byte.
+# Force multithreaded format even at one worker (+1). Do not let a memory
+# limit silently change dictionary/preset settings and invalidate ORIG_SHA256.
 SOURCE_DATE_EPOCH=$(date -u -d "$(dpkg-parsechangelog -l "$PKG_DIR/debian/changelog" -SDate)" +%s)
 export SOURCE_DATE_EPOCH
 tar --create \
@@ -212,7 +214,7 @@ tar --create \
     --mtime="@$SOURCE_DATE_EPOCH" \
     --owner=root --group=root --numeric-owner \
     -C "$WORKDIR" "$(basename "$SRC_DIR")" \
-  | xz -6 -T0 > "$ORIG_TARBALL"
+  | xz -6 -T+"${FOUNDRY_COMPRESSION_THREADS:-2}" --memlimit-compress="${FOUNDRY_XZ_MEMLIMIT:-512MiB}" --no-adjust > "$ORIG_TARBALL"
 
 if [[ -n "${RPCS3_ORIG_CACHE:-}" && -d "$RPCS3_ORIG_CACHE" && -w "$RPCS3_ORIG_CACHE" ]]; then
     cp "$ORIG_TARBALL" "$RPCS3_ORIG_CACHE/" && echo "OK   cached orig for reuse"

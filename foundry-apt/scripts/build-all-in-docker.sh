@@ -14,7 +14,7 @@ cd "$(dirname "$0")/.."   # foundry-apt/
 PKG_FILTERS="$*"
 BUILDER_IMAGE="foundry-apt-builder:ubuntu-26.04"
 BUILDER_CACHE="$(pwd)/dist/.builder-cache"
-mkdir -p "$BUILDER_CACHE/npm" "$BUILDER_CACHE/pnpm" "$BUILDER_CACHE/yarn"
+mkdir -p "$BUILDER_CACHE/npm" "$BUILDER_CACHE/pnpm" "$BUILDER_CACHE/yarn" "$BUILDER_CACHE/ccache" "$BUILDER_CACHE/apt"
 
 # Keep the expensive Ubuntu/Node/Qt toolchain in a versioned Docker layer. The
 # Dockerfile is still rebuilt when its inputs change, while repeated package
@@ -24,13 +24,22 @@ docker build --pull=false \
   -t "$BUILDER_IMAGE" \
   docker
 
+BUILDER_ID=$(docker image inspect --format '{{.Id}}' "$BUILDER_IMAGE")
+
 docker run --rm \
   -v "$(pwd):/work" \
   -v "$BUILDER_CACHE/npm:/root/.npm" \
   -v "$BUILDER_CACHE/pnpm:/root/.local/share/pnpm/store" \
   -v "$BUILDER_CACHE/yarn:/root/.cache/yarn" \
+  -v "$BUILDER_CACHE/ccache:/cache/ccache" \
+  -v "$BUILDER_CACHE/apt:/var/cache/apt/archives" \
     -w /work \
     -e DEBIAN_FRONTEND=noninteractive \
+    -e FOUNDRY_BUILDER_ID="$BUILDER_ID" \
+    -e FOUNDRY_BUILD_JOBS="${FOUNDRY_BUILD_JOBS:-2}" \
+    -e FOUNDRY_COMPRESSION_THREADS="${FOUNDRY_COMPRESSION_THREADS:-2}" \
+    -e FOUNDRY_XZ_MEMLIMIT="${FOUNDRY_XZ_MEMLIMIT:-512MiB}" \
+    -e CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-2G}" \
     -e INCLUDE_SHARED_ELECTRON="${INCLUDE_SHARED_ELECTRON:-0}" \
     -e PKG_FILTERS="$PKG_FILTERS" \
   "$BUILDER_IMAGE" \
@@ -40,6 +49,7 @@ docker run --rm \
     # Package build wrappers install their own Build-Depends, so refresh once
     # before dispatching them; otherwise every package outside the image seed
     # looks unavailable even though universe and multiverse are enabled.
+    rm -f /etc/apt/apt.conf.d/docker-clean
     apt-get update -qq
     read -r -a filters <<< "$PKG_FILTERS"
     bash scripts/build-all.sh "${filters[@]}"

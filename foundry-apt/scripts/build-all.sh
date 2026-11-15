@@ -26,6 +26,9 @@ cd "$(dirname "$0")/.."
 
 REPO_ROOT="$(pwd)"
 mkdir -p dist
+exec 8>dist/.build.lock
+flock -n 8 || { echo 'Another package build owns dist/' >&2; exit 1; }
+source scripts/build-resources.sh
 
 # Optional package filters. No arguments preserves the all-package release path.
 PKG_FILTERS=("$@")
@@ -53,17 +56,6 @@ build_canonical() {
     if [[ -z "$ver" ]]; then
         echo "FAIL $name (could not parse version from debian/changelog)" >&2
         return 1
-    fi
-
-    # Skip only if BOTH the .deb AND the source .dsc for this version are present
-    # (we publish a Sources index too — a .deb without a .dsc must be rebuilt).
-    local existing existing_dsc=""
-    # shellcheck disable=SC2012  # dist/ filenames are controlled (name_version_arch.deb); ls is safe
-    existing=$(ls "${REPO_ROOT}/dist/${name}_${ver}_"*.deb 2>/dev/null | head -1 || true)
-    [[ -f "${REPO_ROOT}/dist/${name}_${ver}.dsc" ]] && existing_dsc=1
-    if [[ -n "$existing" && -n "$existing_dsc" ]]; then
-        echo "SKIP $name (dist/$(basename "$existing") + .dsc already current)"
-        return 0
     fi
 
     builddir=$(mktemp -d -t "${name}-build-XXXXXX")
@@ -100,6 +92,7 @@ build_canonical() {
 }
 
 fail=0
+ccache_disabled_by_caller=${CCACHE_DISABLE:-}
 for pkgdir in packages/*/; do
     name=$(basename "$pkgdir")
 
@@ -115,21 +108,29 @@ for pkgdir in packages/*/; do
         continue
     fi
 
+    # Reuse only a validated per-recipe receipt. A same-version source edit,
+    # changed dependency candidate, missing output or corrupt artifact rebuilds.
+    if [[ "${FOUNDRY_FORCE_REBUILD:-0}" != 1 ]] &&
+       python3 scripts/recipe-cache.py check --recipe "$name"; then
+        continue
+    fi
+    # The compiler cache is deliberately disabled for RPCS3's C++ modules until
+    # the installed ccache/module combination has been validated.
+    export CCACHE_NAMESPACE="$name"
+    if [[ "$name" == rpcs3 || -n "$ccache_disabled_by_caller" ]]; then
+        export CCACHE_DISABLE=${ccache_disabled_by_caller:-1}
+    else
+        unset CCACHE_DISABLE
+    fi
+    export TMPDIR="${FOUNDRY_BUILD_TMP:-/tmp/foundry-build}/$name"
+    mkdir -p "$TMPDIR"
+    build_started_ns=$(date +%s%N)
     if [[ -x "$pkgdir/build.sh" ]]; then
-        # Skip if the current changelog version is already in dist/.
-        if [[ -f "$pkgdir/debian/changelog" ]]; then
-            _ver=$(dpkg-parsechangelog -l "$pkgdir/debian/changelog" -SVersion 2>/dev/null || true)
-            if [[ -n "$_ver" ]]; then
-                # shellcheck disable=SC2012  # controlled dist/ filenames; ls is safe
-                _existing=$(ls "${REPO_ROOT}/dist/${name}_${_ver}_"*.deb 2>/dev/null | head -1 || true)
-                if [[ -n "$_existing" ]]; then
-                    echo "SKIP $name (dist/$(basename "$_existing") already current)"
-                    continue
-                fi
-            fi
-        fi
         echo "=== Running $name/build.sh ==="
-        if ! bash "$pkgdir/build.sh"; then
+        if bash "$pkgdir/build.sh"; then
+            python3 scripts/recipe-cache.py record --recipe "$name" --built-after-ns "$build_started_ns" ||
+                echo "NOTE: $name built, but no reusable cache receipt was recorded"
+        else
             echo "FAIL $name (build.sh exited non-zero)" >&2
             fail=1
         fi
@@ -138,7 +139,10 @@ for pkgdir in packages/*/; do
 
     if [[ -f "$pkgdir/debian/control" && -f "$pkgdir/debian/changelog" ]]; then
         echo "=== Building $name (canonical debian/ source format) ==="
-        if ! build_canonical "$pkgdir" "$name"; then
+        if build_canonical "$pkgdir" "$name"; then
+            python3 scripts/recipe-cache.py record --recipe "$name" --built-after-ns "$build_started_ns" ||
+                echo "NOTE: $name built, but no reusable cache receipt was recorded"
+        else
             fail=1
         fi
         continue
