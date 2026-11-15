@@ -91,12 +91,15 @@ fi
 if [[ $mode == cold ]]; then
     # docker start -a may return success even when the container command failed.
     test "$(docker inspect -f '{{.State.ExitCode}}' "foundry-spike-packages-$mode")" = 0
+    docker cp "foundry-spike-packages-$mode:/var/lib/dpkg/status" "$run/package-builder-dpkg-status"
     python3 /opt/foundry-spike/cache.py record --repo "$PWD" --receipt "$base/packages-cache.json"
 fi
 find foundry-apt/dist -maxdepth 1 -type f -print0 | sort -z | xargs -0 -r sha256sum > "$run/packages.sha256"
 mkdir -p foundry-iso/local-debs
 cp foundry-apt/dist/*.deb foundry-iso/local-debs/
 stage iso env EDITION=anvil bash foundry-iso/scripts/build-iso.sh
+docker image inspect ubuntu:26.04 > "$run/iso-builder-image.json"
+cp foundry-iso/chroot/var/lib/dpkg/status "$run/iso-dpkg-status"
 find foundry-iso/dist -maxdepth 1 -name '*.iso' -exec cp -al '{}' "$run/" \;
 find "$run" -maxdepth 1 -name '*.iso' -exec sha256sum '{}' \; > "$run/iso.sha256"
 kill "$monitor" 2>/dev/null || true
