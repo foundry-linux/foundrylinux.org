@@ -5,6 +5,8 @@ See [`docs/plans/`](docs/plans/) for written plans behind each item, and
 
 ## Open
 
+- [ ] **Daily package and Anvil ISO publication, with every update recorded on wald3n.com/open-source** — container builds, upstream discovery, signed publication, real boot checks, daily scheduling and freshness monitoring without GitHub Actions. See [plan](docs/plans/2026-11-15-daily-packages-and-iso.md).
+
 ### apt-repo resilience — `task` vendored + source health-check
 
 - [T3] **Port the durable R2 mirror design to `apt.worldfoundry.org`** — the per-package publish path (restore `dist/` from the live pool instead of the GitHub Actions cache) is proven on apt.foundrylinux.org (`v1.5.49` was a green production run); apply the same workflow shape to the WorldFoundry repo. See [plan](docs/plans/2026-08-06-package-publish-pipeline-hardening.md) and [r2-403 plan](docs/plans/2026-08-06-foundry-apt-dist-r2-403.md).
@@ -77,7 +79,7 @@ Check [wnpp.debian.org](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=wnpp) 
 
 ### Housekeeping
 - [T3] **VM distribution artifacts (qcow2 / OVA)** — build VirtualBox/VMware/QEMU images alongside ISOs (homepage VM rows are intentional, not placeholders); folds in GRUB-theme activation + OVMF custom-logo work (VM-only). **Start after Internet Archive migration.** See [phase-3 ISO plan](docs/plans/2026-05-22-phase-3-foundry-iso.md), [boot-branding](docs/plans/2026-05-24-boot-branding.md).
-- [T1] **Restore foundry-iso CI triggers after 1.0 ships** — re-add `push: tags: ['v*']` + monthly cron to `foundry-iso/.github/workflows/publish.yml`; evaluate self-hosted runner for atelier vs GH-hosted for anvil. Disabled 2026-05-22 to conserve GH Actions minutes.
+- [ ] **Replace the retired GitHub Actions ISO schedule with local/lab daily publication** — tracked in the [daily package and ISO plan](docs/plans/2026-11-15-daily-packages-and-iso.md); do not restore Actions triggers.
 - [T2] **Get `apt.foundrylinux.org` tracked by Repology (as a producer)** — we fit the BackBox add-on-derivative pattern (an Ubuntu derivative tracked at `minpackages: 10`), so size is not a blocker. Order: ~~(1) publish source packages → `main/source/Sources.gz`~~ + ~~(2) `Origin`/`Label` = `Foundry Linux`~~ — **both ✅ live as of v1.5.35 (2026-06-21)**; ~~(3) `scripts/generate-repology-ruleset.sh` emitting the `repology-rules` YAML~~ ✅ **done 2026-06-21** — `task gen-repology-ruleset` → `repology/foundry-linux.yaml` (9 `setname` remaps + 31 `remove`, all scoped `ruleset: foundry_linux`); **(4)** register on the [Debian Derivatives Census](https://wiki.debian.org/Derivatives/Census); **(5)** PR repo def → `repology-updater` (the `repos.d/deb/foundry-linux.yaml` from the investigation) + ruleset → `repology-rules`. Just (4)+(5) left — both are submissions to external repos. See [investigation](docs/investigations/2026-06-21-repology-tracking-foundry-apt.md).
 
 ## Watch

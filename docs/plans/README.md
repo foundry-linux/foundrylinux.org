@@ -118,6 +118,8 @@ rows on commit.*
 | [Foundry anvil favicons](2026-09-26-foundry-favicons.md) | Add anvil ICO fallbacks to the main, APT, and ISO sites and audit related Foundry domains. | _PENDING_ | Fix |
 | [Make the lock-screen clock use 24-hour time](2026-10-10-lock-screen-24-hour-clock.md) | Package a time-locale default for the Plasma lock screen; Anvil ISO and installed-system checks remain pending. | _PENDING_ | Fix |
 
+| [Daily Foundry package and ISO updates](2026-11-15-daily-packages-and-iso.md) | Schedule tested package and Anvil ISO publication outside Actions, with every update recorded and verified on wald3n.com/open-source. | _PENDING_ | Infra |
+
 ---
 
 ## How this index was derived
@@ -126,3 +128,5 @@ rows on commit.*
 - **Commit(s)** = the full `git log --follow` set per plan, oldest → newest.
 - **Summaries / categories** auto-generated from each plan's TL;DR (Sonnet, medium effort) — refine as needed.
 - **Generated** 2026-08-06 for 103 indexed plan(s).
+
+Index addition: 2026-11-15 — daily package and ISO publication plan; historical inventory drift remains separate.
