@@ -219,10 +219,20 @@ tasks:
     cmds:
       - bash scripts/build-packages-page.sh {{.CLI_ARGS}}
 
+  node-deps:
+    desc: "Install the site's Node dev dependencies (esbuild, react) from package-lock.json"
+    dir: "{{.ROOT_DIR}}"
+    sources: [package.json, package-lock.json]
+    status:
+      - test -d node_modules/esbuild
+      - test node_modules/.package-lock.json -nt package-lock.json
+    cmds:
+      - npm ci --no-audit --no-fund
+
   site-build:
     desc: SSR-render site/*.jsx → fully-static site/index.html + site/packages.html (no React runtime)
     dir: "{{.ROOT_DIR}}"
-    deps: [packages-page]
+    deps: [packages-page, node-deps]
     cmds:
       - node scripts/ssr-render.js
 
